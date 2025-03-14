@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chandas Meter Analyzer</title>
+    <script src="meter_analysis.js" defer></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            margin: 50px;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: auto;
+            transition: all 0.3s ease-in-out;
+        }
+        textarea {
+            width: 100%;
+            height: 120px;
+            font-size: 16px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            resize: none;
+            transition: all 0.3s ease-in-out;
+        }
+        textarea:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 10px rgba(0, 123, 255, 0.2);
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            text-align: left;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.5s, transform 0.5s;
+        }
+        .result.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .label {
+            font-weight: bold;
+            color: #333;
+        }
+        .output {
+            background: #e3f2fd;
+            padding: 10px;
+            border-radius: 5px;
+            transition: all 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Chandas Meter Analyzer</h1>
+        <textarea id="inputText" placeholder="Enter text in an Indian script..."></textarea>
+        <div class="result" id="result">
+            <p class="label">Meter Pattern:</p>
+            <p class="output" id="patternOutput">-</p>
+            <p class="label">Detected Script:</p>
+            <p class="output" id="scriptOutput">-</p>
+            <p class="label">Number of Syllables:</p>
+            <p class="output" id="syllableCount">-</p>
+            <p class="label">Total Maatras:</p>
+            <p class="output" id="maatraCount">-</p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("inputText").addEventListener("input", analyzeText);
+
+        function analyzeText() {
+            const text = document.getElementById("inputText").value;
+            const resultContainer = document.getElementById("result");
+            
+            if (!text.trim()) {
+                resultContainer.classList.remove("show");
+                document.getElementById("patternOutput").innerText = "-";
+                document.getElementById("scriptOutput").innerText = "-";
+                document.getElementById("syllableCount").innerText = "-";
+                document.getElementById("maatraCount").innerText = "-";
+                return;
+            }
+            
+            const result = analyzeMeter(text);
+            document.getElementById("patternOutput").innerText = result.pattern;
+            document.getElementById("scriptOutput").innerText = result.detectedScript;
+            
+            // Count syllables and calculate total maatra
+            const syllables = result.pattern.split(" ");
+            const syllableCount = syllables.length;
+            let maatraCount = 0;
+            syllables.forEach(syllable => {
+                if (syllable.endsWith("G")) {
+                    maatraCount += 2; // Guru = 2 maatra
+                } else if (syllable.endsWith("L")) {
+                    maatraCount += 1; // Laghu = 1 maatra
+                }
+            });
+            
+            document.getElementById("syllableCount").innerText = syllableCount;
+            document.getElementById("maatraCount").innerText = maatraCount;
+            
+            // Show result smoothly
+            resultContainer.classList.add("show");
+        }
+    </script>
+</body>
+</html>

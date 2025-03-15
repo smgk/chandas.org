@@ -34,45 +34,62 @@ function analyzeMeter(text, selectedMeter = null) {
     let pattern = [];
     let syllables = [];
 
-    // Step 1: Detect script and segment text into syllables
-    for (let i = 0; i < text.length; i++) {
-        let char = text[i];
-        let nextChar = text[i + 1] || "";
-        let classified = false;
+    // Function to correctly segment text into syllables
+    function segmentSyllables(text) {
+        let segmented = [];
+        let buffer = "";
 
-        for (const script in scriptPatterns) {
-            const { shortVowels, longVowels, consonants, vowelMarks, anusvaraVisarga, virama } = scriptPatterns[script];
-            
-            detectedScript = script;
-            
-            if (consonants.test(char)) {
-                if (vowelMarks.test(nextChar)) {
-                    syllables.push(char + nextChar);
-                    i++;
+        for (let i = 0; i < text.length; i++) {
+            let char = text[i];
+            let nextChar = text[i + 1] || "";
+            let nextNextChar = text[i + 2] || "";
+
+            for (const script in scriptPatterns) {
+                const { consonants, vowelMarks, virama, anusvaraVisarga } = scriptPatterns[script];
+                detectedScript = script;
+
+                if (consonants.test(char)) {
+                    if (vowelMarks.test(nextChar)) {
+                        if (anusvaraVisarga.test(nextNextChar)) {
+                            segmented.push(char + nextChar + nextNextChar); // Consonant + Vowel + Anusvara/Visarga
+                            i += 2;
+                        } else if (virama.test(nextNextChar)) {
+                            segmented.push(char + nextChar + nextNextChar); // Consonant + Vowel + Conjunct
+                            i += 2;
+                        } else {
+                            segmented.push(char + nextChar); // Consonant + Vowel (CV)
+                            i++;
+                        }
+                    } else if (anusvaraVisarga.test(nextChar)) {
+                        segmented.push(char + nextChar); // Consonant + Anusvara/Visarga
+                        i++;
+                    } else if (virama.test(nextChar)) {
+                        buffer += char + nextChar; // Store consonant with virama (may form conjunct)
+                        i++;
+                    } else {
+                        if (buffer) {
+                            segmented.push(buffer + char); // Store conjunct cluster
+                            buffer = "";
+                        } else {
+                            segmented.push(char);
+                        }
+                    }
+                } else if (vowelMarks.test(char) || anusvaraVisarga.test(char)) {
+                    if (buffer) {
+                        segmented.push(buffer + char);
+                        buffer = "";
+                    } else {
+                        segmented.push(char);
+                    }
                 } else {
-                    syllables.push(char);
+                    segmented.push(char);
                 }
-                classified = true;
-                break;
-            }
-            
-            if (shortVowels.test(char)) {
-                syllables.push(char);
-                classified = true;
-                break;
-            }
-            
-            if (longVowels.test(char) || anusvaraVisarga.test(char)) {
-                syllables.push(char);
-                classified = true;
-                break;
             }
         }
-        
-        if (!classified) {
-            syllables.push(char);
-        }
+        return segmented;
     }
+
+    syllables = segmentSyllables(text);
     
     // Step 2: Classify each syllable as Laghu (L) or Guru (G)
     let detailedPattern = [];

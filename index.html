@@ -57,21 +57,31 @@
             border-radius: 5px;
             transition: all 0.3s ease-in-out;
         }
+        .line-results {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            padding: 5px;
+            background: #fff;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Chandas Meter Analyzer</h1>
         <textarea id="inputText" placeholder="Enter text in an Indian script..."></textarea>
+        <div id="lineResultsContainer"></div>
         <div class="result" id="result">
             <p class="label">Meter Pattern:</p>
             <p class="output" id="patternOutput">-</p>
             <p class="label">Detected Script:</p>
             <p class="output" id="scriptOutput">-</p>
-            <p class="label">Number of Syllables:</p>
-            <p class="output" id="syllableCount">-</p>
-            <p class="label">Total Maatras:</p>
-            <p class="output" id="maatraCount">-</p>
+            <p class="label">Detected Meter:</p>
+            <p class="output" id="detectedMeter">-</p>
+            <p class="label">Approximate Meters:</p>
+            <p class="output" id="approxMeters">-</p>
         </div>
     </div>
 
@@ -81,36 +91,45 @@
         function analyzeText() {
             const text = document.getElementById("inputText").value;
             const resultContainer = document.getElementById("result");
+            const lineResultsContainer = document.getElementById("lineResultsContainer");
+            lineResultsContainer.innerHTML = "";
             
             if (!text.trim()) {
                 resultContainer.classList.remove("show");
                 document.getElementById("patternOutput").innerText = "-";
                 document.getElementById("scriptOutput").innerText = "-";
-                document.getElementById("syllableCount").innerText = "-";
-                document.getElementById("maatraCount").innerText = "-";
+                document.getElementById("detectedMeter").innerText = "-";
+                document.getElementById("approxMeters").innerText = "-";
                 return;
             }
             
-            const result = analyzeMeter(text);
-            document.getElementById("patternOutput").innerText = result.pattern;
-            document.getElementById("scriptOutput").innerText = result.detectedScript;
-            
-            // Count syllables and calculate total maatra
-            const syllables = result.pattern.split(" ");
-            const syllableCount = syllables.length;
-            let maatraCount = 0;
-            syllables.forEach(syllable => {
-                if (syllable.endsWith("G")) {
-                    maatraCount += 2; // Guru = 2 maatra
-                } else if (syllable.endsWith("L")) {
-                    maatraCount += 1; // Laghu = 1 maatra
+            const lines = text.split("\n");
+            lines.forEach(line => {
+                if (line.trim()) {
+                    const result = analyzeMeter(line);
+                    const syllables = result.pattern.split(" ");
+                    const syllableCount = syllables.length;
+                    let maatraCount = 0;
+                    syllables.forEach(syllable => {
+                        if (syllable.endsWith("G")) {
+                            maatraCount += 2; // Guru = 2 maatra
+                        } else if (syllable.endsWith("L")) {
+                            maatraCount += 1; // Laghu = 1 maatra
+                        }
+                    });
+                    
+                    const lineResult = document.createElement("div");
+                    lineResult.classList.add("line-results");
+                    lineResult.innerHTML = `<span><strong>${syllableCount}</strong> Syllables</span> <span><strong>${maatraCount}</strong> Maatras</span>`;
+                    lineResultsContainer.appendChild(lineResult);
                 }
             });
             
-            document.getElementById("syllableCount").innerText = syllableCount;
-            document.getElementById("maatraCount").innerText = maatraCount;
+            document.getElementById("patternOutput").innerText = result.pattern;
+            document.getElementById("scriptOutput").innerText = result.detectedScript;
+            document.getElementById("detectedMeter").innerText = result.detectedmeter || "-";
+            document.getElementById("approxMeters").innerText = result.aproxmeters ? result.aproxmeters.join(", ") : "-";
             
-            // Show result smoothly
             resultContainer.classList.add("show");
         }
     </script>

@@ -66,7 +66,11 @@
 <body>
     <div class="container">
         <h1>Chandas Meter Analyzer</h1>
+        
+        <!-- Text input area for users to enter poetry -->
         <textarea id="inputText" placeholder="Enter text in an Indian script..."></textarea>
+        
+        <!-- Dropdown to select a predefined meter -->
         <label for="meterSelect">Choose a meter:</label>
         <select id="meterSelect">
             <option value="">Auto Detect</option>
@@ -74,7 +78,9 @@
             <option value="Indravajra">Indravajra</option>
             <option value="Upendravajra">Upendravajra</option>
         </select>
+        
         <div id="lineResultsContainer"></div>
+        
         <div class="result" id="result">
             <p class="label">Detected Script:</p>
             <p class="output" id="scriptOutput">-</p>
@@ -88,6 +94,7 @@
     </div>
 
     <script>
+        // Event listeners to trigger analysis when text is entered or meter is selected
         document.getElementById("inputText").addEventListener("input", analyzeText);
         document.getElementById("meterSelect").addEventListener("change", analyzeText);
 
@@ -98,6 +105,7 @@
             const lineResultsContainer = document.getElementById("lineResultsContainer");
             lineResultsContainer.innerHTML = "";
             
+            // If input is empty, reset the results
             if (!text.trim()) {
                 resultContainer.classList.remove("show");
                 document.getElementById("patternOutput").innerHTML = "-";
@@ -107,11 +115,13 @@
                 return;
             }
             
+            // Call meter analysis function with selected meter if applicable
             const result = analyzeMeter(text, selectedMeter);
             document.getElementById("scriptOutput").innerText = result.detectedScript;
             document.getElementById("detectedMeter").innerText = result.detectedmeter || "-";
             document.getElementById("approxMeters").innerText = result.aproxmeters ? result.aproxmeters.join(", ") : "-";
             
+            // Generate HTML for the metrical pattern, highlighting deviations in red
             let patternHTML = "";
             result.pattern.forEach(syllableObj => {
                 if (syllableObj.expected && syllableObj.expected !== syllableObj.actual) {
@@ -122,6 +132,7 @@
             });
             document.getElementById("patternOutput").innerHTML = patternHTML;
             
+            // Display the result section
             resultContainer.classList.add("show");
         }
     </script>

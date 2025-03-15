@@ -19,15 +19,8 @@ function analyzeMeter(text, selectedMeter = null) {
             vowelMarks: /[ಾ-ೌ]/,
             anusvaraVisarga: /[ಂಃ]/,
             virama: /್/
-        },
-        telugu: {
-            shortVowels: /[అఇఉఋఎఒ]/,
-            longVowels: /[ఆఈఊౠఐఔ]/,
-            consonants: /[క-హ]/,
-            vowelMarks: /[ా-ౌ]/,
-            anusvaraVisarga: /[ంః]/,
-            virama: /్/
         }
+
     };
 
     let detectedScript = "Unknown";

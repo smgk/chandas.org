@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chandas Meter Analyzer</title>
+    <title>chaṃdas (Beta)</title>
     <script src="meter_analysis.js" defer></script>
+    <script src="utils.js" defer></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -20,6 +22,31 @@
             max-width: 600px;
             margin: auto;
             transition: all 0.3s ease-in-out;
+            position: relative;
+        }
+        .social-buttons {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        .social-buttons a {
+            margin: 0 5px;
+            color: #333;
+            text-decoration: none;
+            font-size: 20px;
+        }
+        .social-buttons a:hover {
+            color: #007bff;
+        }
+        .copy-button {
+            margin: 0 5px;
+            color: #333;
+            text-decoration: none;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        .copy-button:hover {
+            color: #007bff;
         }
         textarea {
             width: 100%;
@@ -65,10 +92,16 @@
 </head>
 <body>
     <div class="container">
-        <h1>Chandas Meter Analyzer</h1>
+        <div class="social-buttons">
+            <a href="https://www.facebook.com" target="_blank"><i class="fab fa-facebook-f"></i></a>
+            <a href="https://www.twitter.com" target="_blank"><i class="fab fa-twitter"></i></a>
+            <a href="https://www.linkedin.com" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+            <span class="copy-button" onclick="copyToClipboard()"><i class="fas fa-copy"></i></span>
+        </div>
+        <h1>chaṃdas.org (Beta)</h1>
         
         <!-- Text input area for users to enter poetry -->
-        <textarea id="inputText" placeholder="Enter text in an Indian script..."></textarea>
+        <textarea id="inputText" placeholder="Enter text in an Devanagari/Kannada..."></textarea>
         
         <!-- Dropdown to select a predefined meter -->
         <label for="meterSelect">Choose a meter:</label>
@@ -115,8 +148,11 @@
                 return;
             }
             
+            // Normalize whitespace in the input text
+            const normalizedText = normalizeWhitespace(text);
+            
             // Call meter analysis function with selected meter if applicable
-            const result = analyzeMeter(text, selectedMeter);
+            const result = analyzeMeter(normalizedText, selectedMeter);
             document.getElementById("scriptOutput").innerText = result.detectedScript;
             document.getElementById("detectedMeter").innerText = result.detectedmeter || "-";
             document.getElementById("approxMeters").innerText = result.aproxmeters ? result.aproxmeters.join(", ") : "-";
@@ -134,6 +170,15 @@
             
             // Display the result section
             resultContainer.classList.add("show");
+        }
+
+        function copyToClipboard() {
+            const text = document.getElementById("inputText").value;
+            navigator.clipboard.writeText(text).then(() => {
+                alert("Text copied to clipboard!");
+            }).catch(err => {
+                console.error("Failed to copy text: ", err);
+            });
         }
     </script>
 </body>

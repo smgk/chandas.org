@@ -1,11 +1,8 @@
 // Meter analysis logic in JavaScript (shared by both frontend and API)
 // This script classifies syllables as Laghu (L) or Guru (G), detects script, and finds metrical patterns.
 
-
-
-function analyzeMeter(text, selectedMeter = null) {
     // Define script-specific patterns for vowels, consonants, and special characters
-		const scriptPatterns = {
+/*		const scriptPatterns = {
 			devanagari: {
 				shortVowels: /[अइउऋऌएओ]/, // Laghu
 				longVowels: /[आईऊॠॡऐऔ]/, // Guru
@@ -24,7 +21,44 @@ function analyzeMeter(text, selectedMeter = null) {
 				anusvaraVisarga: /[ಂಃ]/,
 				virama: /್/
 			}
+		}; */
+
+		const scriptPatterns = {
+			devanagari: {
+				shortVowels: /[\u0905\u0907\u0909\u090B\u090C\u090F\u0913]/, // Laghu
+				longVowels: /[\u0906\u0908\u090A\u0960\u0961\u0910\u0914]/, // Guru
+				consonants: /[\u0915-\u0939]/,
+				shortVowelMarks: /[\u093F\u0941\u0946\u094A]/, // Short dependent vowel markers
+				longVowelMarks: /[\u0940\u0942\u0947\u0948\u094B\u094C]/, // Long dependent vowel markers
+				anusvaraVisarga: /[\u0902\u0903]/,
+				virama: /\u094D/
+			},
+			kannada: {
+				shortVowels: /[\u0C85\u0C87\u0C89\u0C8B\u0C8E\u0C92]/,
+				longVowels: /[\u0C86\u0C88\u0C8A\u0C60\u0C61\u0C90\u0C94]/,
+				consonants: /[\u0C95-\u0CB9]/,
+				shortVowelMarks: /[\u0CBF\u0CC1\u0CC6\u0CCA]/,
+				longVowelMarks: /[\u0CC0\u0CC2\u0CC7\u0CC8\u0CCB\u0CCC\u0CBE]/,
+				anusvaraVisarga: /[\u0C82\u0C83]/,
+				virama: /\u0CCD/
+			}
 		};
+		const LAGHU = "L";
+		const GURU = "G";
+		const PUNCT = "P";
+
+function normalizeWhitespace(text) {
+    // Replace multiple spaces with a single space
+    text = text.replace(/\s+/g, ' ');
+
+    // Replace multiple newlines with a single newline
+    text = text.replace(/\n+/g, '\n');
+
+    // Trim leading and trailing whitespace
+    return text.trim();
+}
+
+function analyzeMeter(text, selectedMeter = null) {
 
     let detectedScript = "Unknown";
     let pattern = [];
@@ -55,15 +89,7 @@ function analyzeMeter(text, selectedMeter = null) {
 		return count;
 	}
 	
-	// Example usage:
-	//const textArray = ['ಕ', 'ಾ', 'ಕ', 'ು', 'ತ', '್', 'ಸ', '್', 'ಥ', 'ಂ'];
-	//const x = 3; // Starting index
-	
-	// Pass the array and the starting index
-	//const repeatingPairCount = countRepeatingConsonantViramaPairs(textArray, x);
-	//console.log(repeatingPairCount); // Output will depend on the subarray
-
-    // Function to correctly segment text into syllables and classify Laghu (L) or Guru (G)
+	// Function to correctly segment text into syllables and classify Laghu (L) or Guru (G)
 	// 1. A syllable starts with consonant or an independent vowel
 	// 2. if consonant, it is optionally followed by a dependant vowel
 	// 3. then it is optionally followed by anuswara
@@ -91,7 +117,7 @@ function analyzeMeter(text, selectedMeter = null) {
 
             switch (state) {
                 case "START":
-					//TODO slurp the leading conjunct special here.
+					//TODO slurp the leading conjunct special here.move it out of while loop later.
 					if (i==0){
 						conjunctCount = countRepeatingConsonantViramaPairs(text,0)
 						if (conjunctCount>0){
@@ -134,9 +160,10 @@ function analyzeMeter(text, selectedMeter = null) {
 						}
 						//TODO deal with conjuncts across new line. pre process it out.
 						conjunctCount = countRepeatingConsonantViramaPairs(text,i+slurpCount);
-                    } else {
-						console.log("no hit\n");
+                    } else { //spaces and punctuations
+						console.log("no hit");
 						i++;
+						classification = PUNCT;
 					}
 
 					if (conjunctCount>0){
@@ -148,7 +175,7 @@ function analyzeMeter(text, selectedMeter = null) {
                     break;
                 case "SYLLABLE_COMPLETE":
 					syllable = syllable + text.slice(i, i + slurpCount);
-					segmented.push({ syllable, classification });
+					segmented.push({ syllable, classification, i });
 					console.log({ i, char, nextChar, nextNextChar, classification, syllable, slurpCount, conjunctCount, state,detectedScript });
 
 					state = "START";
@@ -171,7 +198,12 @@ function analyzeMeter(text, selectedMeter = null) {
     syllables = segmentSyllables(text);
     
     // Step 2: Store the pattern directly from segmentation
-    let detailedPattern = syllables.map(({ syllable, classification }) => ({ syllable, expected: "", actual: classification }));
+    let detailedPattern = syllables.map(({ syllable, classification }, index) => ({
+        syllable,
+        expected: "",
+        actual: classification,
+        index
+    }));
     
     let meterPatterns = {
         "Anushtubh": "GLGL GLGL GLGL GLGL",

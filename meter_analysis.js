@@ -115,8 +115,8 @@ function analyzeMeter(text, selectedMeter = null) {
             let nextChar = text[i + 1] || "";
 			let nextNextChar = text[i + 2] || "";
 
-            switch (state) {
-                case "START":
+            //switch (state) {
+                //case "START":
 					//TODO slurp the leading conjunct special here.move it out of while loop later.
 					if (i==0){
 						conjunctCount = countRepeatingConsonantViramaPairs(text,0)
@@ -172,8 +172,8 @@ function analyzeMeter(text, selectedMeter = null) {
 					}
 					
 					state = "SYLLABLE_COMPLETE";
-                    break;
-                case "SYLLABLE_COMPLETE":
+                    //break; fall through, TODO: remove the switch case
+                //case "SYLLABLE_COMPLETE":
 					syllable = syllable + text.slice(i, i + slurpCount);
 					segmented.push({ syllable, classification, i });
 					console.log({ i, char, nextChar, nextNextChar, classification, syllable, slurpCount, conjunctCount, state,detectedScript });
@@ -185,8 +185,8 @@ function analyzeMeter(text, selectedMeter = null) {
 					classification = "L";
 					syllable = '';
 
-                    break;
-            }
+                  //  break;
+            //}
         }
     
         return segmented;

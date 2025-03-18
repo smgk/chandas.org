@@ -109,7 +109,12 @@ function analyzeMeter(text, selectedMeter = null) {
 		let syllable = "";
 
 
-
+		// when i==0, the first conjuct is a laghu
+			conjunctCount = countRepeatingConsonantViramaPairs(text,0)
+			if (conjunctCount>0){
+				syllable = text.slice(0, conjunctCount); //prepend the conjunct
+				i=conjunctCount; //move the index up
+			}
 		while (i < text.length) {
             let char = text[i];
             let nextChar = text[i + 1] || "";

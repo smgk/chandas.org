@@ -115,78 +115,70 @@ function analyzeMeter(text, selectedMeter = null) {
             let nextChar = text[i + 1] || "";
 			let nextNextChar = text[i + 2] || "";
 
-            //switch (state) {
-                //case "START":
-					//TODO slurp the leading conjunct special here.move it out of while loop later.
-					if (i==0){
-						conjunctCount = countRepeatingConsonantViramaPairs(text,0)
-						if (conjunctCount>0){
-							syllable = text.slice(0, conjunctCount); //prepend the conjunct
-							i=conjunctCount; //move the index up
-							char = text[i];
-							nextChar = text[i + 1] || "";
-							nextNextChar = text[i + 2] || "";
-						}
+			if (i==0){
+				conjunctCount = countRepeatingConsonantViramaPairs(text,0)
+				if (conjunctCount>0){
+					syllable = text.slice(0, conjunctCount); //prepend the conjunct
+					i=conjunctCount; //move the index up
+					char = text[i];
+					nextChar = text[i + 1] || "";
+					nextNextChar = text[i + 2] || "";
+				}
+			}
+			if (consonants.test(char)) {
+				console.log("consonant");
+				slurpCount++;
+				if (shortVowelMarks.test(nextChar) || longVowelMarks.test(nextChar)){
+					slurpCount++;
+					if (longVowelMarks.test(nextChar)){
+						classification = "G";
 					}
-                    if (consonants.test(char)) {
-						console.log("consonant");
-						slurpCount++;
-						if (shortVowelMarks.test(nextChar) || longVowelMarks.test(nextChar)){
+					if (anusvaraVisarga.test(nextNextChar)){
 							slurpCount++;
-							if (longVowelMarks.test(nextChar)){
-								classification = "G";
-							}
-							if (anusvaraVisarga.test(nextNextChar)){
-									slurpCount++;
-									classification = "G";
-								}							
-						} else if (anusvaraVisarga.test(nextChar)){
-								slurpCount++;
-								classification = "G";
-							}							
-						
-						//TODO deal with conjuncts across new line. pre process it out.
-						conjunctCount = countRepeatingConsonantViramaPairs(text,i+slurpCount);
-
-                    } else if (shortVowels.test(char)|| longVowels.test(char)) {
-						console.log("vowel");
-						slurpCount++;
-						if (longVowels.test(char)){
 							classification = "G";
-						}
-						if (anusvaraVisarga.test(nextChar)){
-								slurpCount++;
-								classification = "G";
-						}
-						//TODO deal with conjuncts across new line. pre process it out.
-						conjunctCount = countRepeatingConsonantViramaPairs(text,i+slurpCount);
-                    } else { //spaces and punctuations
-						console.log("no hit");
-						i++;
-						classification = PUNCT;
-					}
+						}							
+				} else if (anusvaraVisarga.test(nextChar)){
+						slurpCount++;
+						classification = "G";
+					}							
+				
+				//TODO deal with conjuncts across new line. pre process it out.
+				conjunctCount = countRepeatingConsonantViramaPairs(text,i+slurpCount);
 
-					if (conjunctCount>0){
-							slurpCount +=conjunctCount
-							classification = "G" 
-					}
-					
-					state = "SYLLABLE_COMPLETE";
-                    //break; fall through, TODO: remove the switch case
-                //case "SYLLABLE_COMPLETE":
-					syllable = syllable + text.slice(i, i + slurpCount);
-					segmented.push({ syllable, classification, i });
-					console.log({ i, char, nextChar, nextNextChar, classification, syllable, slurpCount, conjunctCount, state,detectedScript });
+			} else if (shortVowels.test(char)|| longVowels.test(char)) {
+				console.log("vowel");
+				slurpCount++;
+				if (longVowels.test(char)){
+					classification = "G";
+				}
+				if (anusvaraVisarga.test(nextChar)){
+						slurpCount++;
+						classification = "G";
+				}
+				//TODO deal with conjuncts across new line. pre process it out.
+				conjunctCount = countRepeatingConsonantViramaPairs(text,i+slurpCount);
+			} else { //spaces and punctuations
+				console.log("no hit");
+				i++;
+				classification = PUNCT;
+			}
 
-					state = "START";
-					i=i+slurpCount;
-					slurpCount = 0;
-					conjunctCount = 0;
-					classification = "L";
-					syllable = '';
+			if (conjunctCount>0){
+					slurpCount +=conjunctCount
+					classification = "G" 
+			}
+			
+			syllable = syllable + text.slice(i, i + slurpCount);
+			segmented.push({ syllable, classification, i });
+			console.log({ i, char, nextChar, nextNextChar, classification, syllable, slurpCount, conjunctCount, state,detectedScript });
 
-                  //  break;
-            //}
+
+			i=i+slurpCount;
+			slurpCount = 0;
+			conjunctCount = 0;
+			classification = "L";
+			syllable = '';
+
         }
     
         return segmented;

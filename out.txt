@@ -1,0 +1,1509 @@
+consonant
+{
+  i: 4,
+  char: 'ಥ',
+  nextChar: 'ಾ',
+  nextNextChar: 'ಂ',
+  classification: 'G',
+  syllable: 'ತ್ಸ್ಥಾಂಕ್',
+  slurpCount: 5,
+  conjunctCount: 2,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 9,
+  char: 'ಷ',
+  nextChar: 'ು',
+  nextNextChar: 'ಂ',
+  classification: 'G',
+  syllable: 'ಷುಂ',
+  slurpCount: 3,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+no hit
+{
+  i: 13,
+  char: ' ',
+  nextChar: 'ಪ',
+  nextNextChar: '್',
+  classification: 'P',
+  syllable: '',
+  slurpCount: 0,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 13,
+  char: 'ಪ',
+  nextChar: '್',
+  nextNextChar: 'ರ',
+  classification: 'L',
+  syllable: 'ಪ',
+  slurpCount: 1,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+no hit
+{
+  i: 15,
+  char: '್',
+  nextChar: 'ರ',
+  nextNextChar: 'ಾ',
+  classification: 'P',
+  syllable: '',
+  slurpCount: 0,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 15,
+  char: 'ರ',
+  nextChar: 'ಾ',
+  nextNextChar: 'ಂ',
+  classification: 'G',
+  syllable: 'ರಾಂಕ್',
+  slurpCount: 5,
+  conjunctCount: 2,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 20,
+  char: 'ಸ',
+  nextChar: 'ು',
+  nextNextChar: 'ಥ',
+  classification: 'L',
+  syllable: 'ಸು',
+  slurpCount: 2,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 22,
+  char: 'ಥ',
+  nextChar: 'ಮ',
+  nextNextChar: ' ',
+  classification: 'L',
+  syllable: 'ಥ',
+  slurpCount: 1,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 23,
+  char: 'ಮ',
+  nextChar: ' ',
+  nextNextChar: 'ಎ',
+  classification: 'L',
+  syllable: 'ಮ',
+  slurpCount: 1,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+no hit
+{
+  i: 25,
+  char: ' ',
+  nextChar: 'ಎ',
+  nextNextChar: 'ರ',
+  classification: 'P',
+  syllable: '',
+  slurpCount: 0,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+vowel
+{
+  i: 25,
+  char: 'ಎ',
+  nextChar: 'ರ',
+  nextNextChar: 'ೆ',
+  classification: 'L',
+  syllable: 'ಎ',
+  slurpCount: 1,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 26,
+  char: 'ರ',
+  nextChar: 'ೆ',
+  nextNextChar: 'ಯ',
+  classification: 'L',
+  syllable: 'ರೆ',
+  slurpCount: 2,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 28,
+  char: 'ಯ',
+  nextChar: 'ನ',
+  nextNextChar: ' ',
+  classification: 'L',
+  syllable: 'ಯ',
+  slurpCount: 1,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 29,
+  char: 'ನ',
+  nextChar: ' ',
+  nextNextChar: 'ಮ',
+  classification: 'L',
+  syllable: 'ನ',
+  slurpCount: 1,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+no hit
+{
+  i: 31,
+  char: ' ',
+  nextChar: 'ಮ',
+  nextNextChar: 'ನ',
+  classification: 'P',
+  syllable: '',
+  slurpCount: 0,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 31,
+  char: 'ಮ',
+  nextChar: 'ನ',
+  nextNextChar: 'ೆ',
+  classification: 'L',
+  syllable: 'ಮ',
+  slurpCount: 1,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 32,
+  char: 'ನ',
+  nextChar: 'ೆ',
+  nextNextChar: 'ಯ',
+  classification: 'L',
+  syllable: 'ನೆ',
+  slurpCount: 2,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 34,
+  char: 'ಯ',
+  nextChar: 'ೋ',
+  nextNextChar: ' ',
+  classification: 'G',
+  syllable: 'ಯೋ',
+  slurpCount: 2,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+no hit
+{
+  i: 37,
+  char: ' ',
+  nextChar: 'ಗ',
+  nextNextChar: 'ದ',
+  classification: 'P',
+  syllable: '',
+  slurpCount: 0,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 37,
+  char: 'ಗ',
+  nextChar: 'ದ',
+  nextNextChar: '್',
+  classification: 'G',
+  syllable: 'ಗದ್',
+  slurpCount: 3,
+  conjunctCount: 2,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 40,
+  char: 'ದ',
+  nextChar: 'ಲ',
+  nextNextChar: ' ',
+  classification: 'L',
+  syllable: 'ದ',
+  slurpCount: 1,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 41,
+  char: 'ಲ',
+  nextChar: ' ',
+  nextNextChar: 'ದ',
+  classification: 'L',
+  syllable: 'ಲ',
+  slurpCount: 1,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+no hit
+{
+  i: 43,
+  char: ' ',
+  nextChar: 'ದ',
+  nextNextChar: 'ರ',
+  classification: 'P',
+  syllable: '',
+  slurpCount: 0,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 43,
+  char: 'ದ',
+  nextChar: 'ರ',
+  nextNextChar: 'ಮ',
+  classification: 'L',
+  syllable: 'ದ',
+  slurpCount: 1,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 44,
+  char: 'ರ',
+  nextChar: 'ಮ',
+  nextNextChar: 'ನ',
+  classification: 'L',
+  syllable: 'ರ',
+  slurpCount: 1,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 45,
+  char: 'ಮ',
+  nextChar: 'ನ',
+  nextNextChar: 'ೆ',
+  classification: 'L',
+  syllable: 'ಮ',
+  slurpCount: 1,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 46,
+  char: 'ನ',
+  nextChar: 'ೆ',
+  nextNextChar: ' ',
+  classification: 'L',
+  syllable: 'ನೆ',
+  slurpCount: 2,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+no hit
+{
+  i: 49,
+  char: ' ',
+  nextChar: 'ತ',
+  nextNextChar: 'ವ',
+  classification: 'P',
+  syllable: '',
+  slurpCount: 0,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 49,
+  char: 'ತ',
+  nextChar: 'ವ',
+  nextNextChar: 'ರ',
+  classification: 'L',
+  syllable: 'ತ',
+  slurpCount: 1,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 50,
+  char: 'ವ',
+  nextChar: 'ರ',
+  nextNextChar: 'ೇ',
+  classification: 'L',
+  syllable: 'ವ',
+  slurpCount: 1,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 51,
+  char: 'ರ',
+  nextChar: 'ೇ',
+  nextNextChar: 'ಂ',
+  classification: 'G',
+  syllable: 'ರೇಂ',
+  slurpCount: 3,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+no hit
+{
+  i: 55,
+  char: ' ',
+  nextChar: 'ಪ',
+  nextNextChar: 'ೆ',
+  classification: 'P',
+  syllable: '',
+  slurpCount: 0,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 55,
+  char: 'ಪ',
+  nextChar: 'ೆ',
+  nextNextChar: 'ರ',
+  classification: 'L',
+  syllable: 'ಪೆ',
+  slurpCount: 2,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 57,
+  char: 'ರ',
+  nextChar: 'ತ',
+  nextNextChar: 'ೇ',
+  classification: 'L',
+  syllable: 'ರ',
+  slurpCount: 1,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 58,
+  char: 'ತ',
+  nextChar: 'ೇ',
+  nextNextChar: 'ಮ',
+  classification: 'G',
+  syllable: 'ತೇ',
+  slurpCount: 2,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 60,
+  char: 'ಮ',
+  nextChar: 'ದ',
+  nextNextChar: 'ರ',
+  classification: 'L',
+  syllable: 'ಮ',
+  slurpCount: 1,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 61,
+  char: 'ದ',
+  nextChar: 'ರ',
+  nextNextChar: 'ಿ',
+  classification: 'L',
+  syllable: 'ದ',
+  slurpCount: 1,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 62,
+  char: 'ರ',
+  nextChar: 'ಿ',
+  nextNextChar: 'ಂ',
+  classification: 'G',
+  syllable: 'ರಿಂ',
+  slurpCount: 3,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+no hit
+{
+  i: 66,
+  char: ' ',
+  nextChar: 'ಘ',
+  nextNextChar: 'ನ',
+  classification: 'P',
+  syllable: '',
+  slurpCount: 0,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 66,
+  char: 'ಘ',
+  nextChar: 'ನ',
+  nextNextChar: 'ಕ',
+  classification: 'L',
+  syllable: 'ಘ',
+  slurpCount: 1,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 67,
+  char: 'ನ',
+  nextChar: 'ಕ',
+  nextNextChar: 'ಾ',
+  classification: 'L',
+  syllable: 'ನ',
+  slurpCount: 1,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 68,
+  char: 'ಕ',
+  nextChar: 'ಾ',
+  nextNextChar: 'ಂ',
+  classification: 'G',
+  syllable: 'ಕಾಂ',
+  slurpCount: 3,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+no hit
+{
+  i: 72,
+  char: '|',
+  nextChar: ' ',
+  nextNextChar: 'ತ',
+  classification: 'P',
+  syllable: '',
+  slurpCount: 0,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+no hit
+{
+  i: 73,
+  char: ' ',
+  nextChar: 'ತ',
+  nextNextChar: 'ಾ',
+  classification: 'P',
+  syllable: '',
+  slurpCount: 0,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 73,
+  char: 'ತ',
+  nextChar: 'ಾ',
+  nextNextChar: 'ರ',
+  classification: 'G',
+  syllable: 'ತಾ',
+  slurpCount: 2,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 75,
+  char: 'ರ',
+  nextChar: 'ಮ',
+  nextNextChar: 'ೆ',
+  classification: 'L',
+  syllable: 'ರ',
+  slurpCount: 1,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 76,
+  char: 'ಮ',
+  nextChar: 'ೆ',
+  nextNextChar: ' ',
+  classification: 'L',
+  syllable: 'ಮೆ',
+  slurpCount: 2,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+no hit
+{
+  i: 79,
+  char: ' ',
+  nextChar: 'ಸ',
+  nextNextChar: 'ರ',
+  classification: 'P',
+  syllable: '',
+  slurpCount: 0,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 79,
+  char: 'ಸ',
+  nextChar: 'ರ',
+  nextNextChar: 'ಿ',
+  classification: 'L',
+  syllable: 'ಸ',
+  slurpCount: 1,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 80,
+  char: 'ರ',
+  nextChar: 'ಿ',
+  nextNextChar: 'ಯ',
+  classification: 'L',
+  syllable: 'ರಿ',
+  slurpCount: 2,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 82,
+  char: 'ಯ',
+  nextChar: 'ೆ',
+  nextNextChar: 'ಮ',
+  classification: 'L',
+  syllable: 'ಯೆ',
+  slurpCount: 2,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 84,
+  char: 'ಮ',
+  nextChar: 'ಗ',
+  nextNextChar: 'ೆ',
+  classification: 'L',
+  syllable: 'ಮ',
+  slurpCount: 1,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 85,
+  char: 'ಗ',
+  nextChar: 'ೆ',
+  nextNextChar: 'ನ',
+  classification: 'L',
+  syllable: 'ಗೆ',
+  slurpCount: 2,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 87,
+  char: 'ನ',
+  nextChar: 'ು',
+  nextNextChar: 'ತ',
+  classification: 'L',
+  syllable: 'ನು',
+  slurpCount: 2,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 89,
+  char: 'ತ',
+  nextChar: 'ೆ',
+  nextNextChar: ' ',
+  classification: 'L',
+  syllable: 'ತೆ',
+  slurpCount: 2,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+no hit
+{
+  i: 92,
+  char: ' ',
+  nextChar: 'ಗ',
+  nextNextChar: ' ',
+  classification: 'P',
+  syllable: '',
+  slurpCount: 0,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 92,
+  char: 'ಗ',
+  nextChar: ' ',
+  nextNextChar: 'ವ',
+  classification: 'L',
+  syllable: 'ಗ',
+  slurpCount: 1,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+no hit
+{
+  i: 94,
+  char: ' ',
+  nextChar: 'ವ',
+  nextNextChar: 'ಿ',
+  classification: 'P',
+  syllable: '',
+  slurpCount: 0,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 94,
+  char: 'ವ',
+  nextChar: 'ಿ',
+  nextNextChar: 'ರ',
+  classification: 'L',
+  syllable: 'ವಿ',
+  slurpCount: 2,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 96,
+  char: 'ರ',
+  nextChar: 'ಹ',
+  nextNextChar: 'ದ',
+  classification: 'L',
+  syllable: 'ರ',
+  slurpCount: 1,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 97,
+  char: 'ಹ',
+  nextChar: 'ದ',
+  nextNextChar: 'ೆ',
+  classification: 'L',
+  syllable: 'ಹ',
+  slurpCount: 1,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 98,
+  char: 'ದ',
+  nextChar: 'ೆ',
+  nextNextChar: ' ',
+  classification: 'L',
+  syllable: 'ದೆ',
+  slurpCount: 2,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+no hit
+{
+  i: 101,
+  char: ' ',
+  nextChar: 'ಸ',
+  nextNextChar: 'ಂ',
+  classification: 'P',
+  syllable: '',
+  slurpCount: 0,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 101,
+  char: 'ಸ',
+  nextChar: 'ಂ',
+  nextNextChar: 'ತ',
+  classification: 'G',
+  syllable: 'ಸಂ',
+  slurpCount: 2,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 103,
+  char: 'ತ',
+  nextChar: 'ಸ',
+  nextNextChar: 'ದ',
+  classification: 'L',
+  syllable: 'ತ',
+  slurpCount: 1,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 104,
+  char: 'ಸ',
+  nextChar: 'ದ',
+  nextNextChar: 'ೆ',
+  classification: 'L',
+  syllable: 'ಸ',
+  slurpCount: 1,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 105,
+  char: 'ದ',
+  nextChar: 'ೆ',
+  nextNextChar: ' ',
+  classification: 'L',
+  syllable: 'ದೆ',
+  slurpCount: 2,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+no hit
+{
+  i: 108,
+  char: ' ',
+  nextChar: 'ನ',
+  nextNextChar: 'ಲ',
+  classification: 'P',
+  syllable: '',
+  slurpCount: 0,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 108,
+  char: 'ನ',
+  nextChar: 'ಲ',
+  nextNextChar: 'ಿ',
+  classification: 'L',
+  syllable: 'ನ',
+  slurpCount: 1,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 109,
+  char: 'ಲ',
+  nextChar: 'ಿ',
+  nextNextChar: 'ದ',
+  classification: 'L',
+  syllable: 'ಲಿ',
+  slurpCount: 2,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 111,
+  char: 'ದ',
+  nextChar: 'ು',
+  nextNextChar: ' ',
+  classification: 'L',
+  syllable: 'ದು',
+  slurpCount: 2,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+no hit
+{
+  i: 114,
+  char: ' ',
+  nextChar: 'ನ',
+  nextNextChar: 'ರ',
+  classification: 'P',
+  syllable: '',
+  slurpCount: 0,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 114,
+  char: 'ನ',
+  nextChar: 'ರ',
+  nextNextChar: '್',
+  classification: 'G',
+  syllable: 'ನರ್',
+  slurpCount: 3,
+  conjunctCount: 2,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 117,
+  char: 'ತ',
+  nextChar: 'ಿ',
+  nextNextChar: 'ಸ',
+  classification: 'L',
+  syllable: 'ತಿ',
+  slurpCount: 2,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 119,
+  char: 'ಸ',
+  nextChar: 'ು',
+  nextNextChar: 'ತ',
+  classification: 'L',
+  syllable: 'ಸು',
+  slurpCount: 2,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 121,
+  char: 'ತ',
+  nextChar: 'ಿ',
+  nextNextChar: 'ರ',
+  classification: 'G',
+  syllable: 'ತಿರ್',
+  slurpCount: 4,
+  conjunctCount: 2,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+consonant
+{
+  i: 125,
+  char: 'ದ',
+  nextChar: 'ಳ',
+  nextNextChar: '್',
+  classification: 'G',
+  syllable: 'ದಳ್',
+  slurpCount: 3,
+  conjunctCount: 2,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+no hit
+{
+  i: 129,
+  char: '|',
+  nextChar: '|',
+  nextNextChar: '',
+  classification: 'P',
+  syllable: '',
+  slurpCount: 0,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+no hit
+{
+  i: 130,
+  char: '|',
+  nextChar: '',
+  nextNextChar: '',
+  classification: 'P',
+  syllable: '',
+  slurpCount: 0,
+  conjunctCount: 0,
+  state: 'START',
+  detectedScript: 'kannada'
+}
+{
+  "pattern": [
+    {
+      "syllable": "ತ್ಸ್ಥಾಂಕ್",
+      "expected": "",
+      "actual": "G",
+      "index": 0
+    },
+    {
+      "syllable": "ಷುಂ",
+      "expected": "",
+      "actual": "G",
+      "index": 1
+    },
+    {
+      "syllable": "",
+      "expected": "",
+      "actual": "P",
+      "index": 2
+    },
+    {
+      "syllable": "ಪ",
+      "expected": "",
+      "actual": "L",
+      "index": 3
+    },
+    {
+      "syllable": "",
+      "expected": "",
+      "actual": "P",
+      "index": 4
+    },
+    {
+      "syllable": "ರಾಂಕ್",
+      "expected": "",
+      "actual": "G",
+      "index": 5
+    },
+    {
+      "syllable": "ಸು",
+      "expected": "",
+      "actual": "L",
+      "index": 6
+    },
+    {
+      "syllable": "ಥ",
+      "expected": "",
+      "actual": "L",
+      "index": 7
+    },
+    {
+      "syllable": "ಮ",
+      "expected": "",
+      "actual": "L",
+      "index": 8
+    },
+    {
+      "syllable": "",
+      "expected": "",
+      "actual": "P",
+      "index": 9
+    },
+    {
+      "syllable": "ಎ",
+      "expected": "",
+      "actual": "L",
+      "index": 10
+    },
+    {
+      "syllable": "ರೆ",
+      "expected": "",
+      "actual": "L",
+      "index": 11
+    },
+    {
+      "syllable": "ಯ",
+      "expected": "",
+      "actual": "L",
+      "index": 12
+    },
+    {
+      "syllable": "ನ",
+      "expected": "",
+      "actual": "L",
+      "index": 13
+    },
+    {
+      "syllable": "",
+      "expected": "",
+      "actual": "P",
+      "index": 14
+    },
+    {
+      "syllable": "ಮ",
+      "expected": "",
+      "actual": "L",
+      "index": 15
+    },
+    {
+      "syllable": "ನೆ",
+      "expected": "",
+      "actual": "L",
+      "index": 16
+    },
+    {
+      "syllable": "ಯೋ",
+      "expected": "",
+      "actual": "G",
+      "index": 17
+    },
+    {
+      "syllable": "",
+      "expected": "",
+      "actual": "P",
+      "index": 18
+    },
+    {
+      "syllable": "ಗದ್",
+      "expected": "",
+      "actual": "G",
+      "index": 19
+    },
+    {
+      "syllable": "ದ",
+      "expected": "",
+      "actual": "L",
+      "index": 20
+    },
+    {
+      "syllable": "ಲ",
+      "expected": "",
+      "actual": "L",
+      "index": 21
+    },
+    {
+      "syllable": "",
+      "expected": "",
+      "actual": "P",
+      "index": 22
+    },
+    {
+      "syllable": "ದ",
+      "expected": "",
+      "actual": "L",
+      "index": 23
+    },
+    {
+      "syllable": "ರ",
+      "expected": "",
+      "actual": "L",
+      "index": 24
+    },
+    {
+      "syllable": "ಮ",
+      "expected": "",
+      "actual": "L",
+      "index": 25
+    },
+    {
+      "syllable": "ನೆ",
+      "expected": "",
+      "actual": "L",
+      "index": 26
+    },
+    {
+      "syllable": "",
+      "expected": "",
+      "actual": "P",
+      "index": 27
+    },
+    {
+      "syllable": "ತ",
+      "expected": "",
+      "actual": "L",
+      "index": 28
+    },
+    {
+      "syllable": "ವ",
+      "expected": "",
+      "actual": "L",
+      "index": 29
+    },
+    {
+      "syllable": "ರೇಂ",
+      "expected": "",
+      "actual": "G",
+      "index": 30
+    },
+    {
+      "syllable": "",
+      "expected": "",
+      "actual": "P",
+      "index": 31
+    },
+    {
+      "syllable": "ಪೆ",
+      "expected": "",
+      "actual": "L",
+      "index": 32
+    },
+    {
+      "syllable": "ರ",
+      "expected": "",
+      "actual": "L",
+      "index": 33
+    },
+    {
+      "syllable": "ತೇ",
+      "expected": "",
+      "actual": "G",
+      "index": 34
+    },
+    {
+      "syllable": "ಮ",
+      "expected": "",
+      "actual": "L",
+      "index": 35
+    },
+    {
+      "syllable": "ದ",
+      "expected": "",
+      "actual": "L",
+      "index": 36
+    },
+    {
+      "syllable": "ರಿಂ",
+      "expected": "",
+      "actual": "G",
+      "index": 37
+    },
+    {
+      "syllable": "",
+      "expected": "",
+      "actual": "P",
+      "index": 38
+    },
+    {
+      "syllable": "ಘ",
+      "expected": "",
+      "actual": "L",
+      "index": 39
+    },
+    {
+      "syllable": "ನ",
+      "expected": "",
+      "actual": "L",
+      "index": 40
+    },
+    {
+      "syllable": "ಕಾಂ",
+      "expected": "",
+      "actual": "G",
+      "index": 41
+    },
+    {
+      "syllable": "",
+      "expected": "",
+      "actual": "P",
+      "index": 42
+    },
+    {
+      "syllable": "",
+      "expected": "",
+      "actual": "P",
+      "index": 43
+    },
+    {
+      "syllable": "ತಾ",
+      "expected": "",
+      "actual": "G",
+      "index": 44
+    },
+    {
+      "syllable": "ರ",
+      "expected": "",
+      "actual": "L",
+      "index": 45
+    },
+    {
+      "syllable": "ಮೆ",
+      "expected": "",
+      "actual": "L",
+      "index": 46
+    },
+    {
+      "syllable": "",
+      "expected": "",
+      "actual": "P",
+      "index": 47
+    },
+    {
+      "syllable": "ಸ",
+      "expected": "",
+      "actual": "L",
+      "index": 48
+    },
+    {
+      "syllable": "ರಿ",
+      "expected": "",
+      "actual": "L",
+      "index": 49
+    },
+    {
+      "syllable": "ಯೆ",
+      "expected": "",
+      "actual": "L",
+      "index": 50
+    },
+    {
+      "syllable": "ಮ",
+      "expected": "",
+      "actual": "L",
+      "index": 51
+    },
+    {
+      "syllable": "ಗೆ",
+      "expected": "",
+      "actual": "L",
+      "index": 52
+    },
+    {
+      "syllable": "ನು",
+      "expected": "",
+      "actual": "L",
+      "index": 53
+    },
+    {
+      "syllable": "ತೆ",
+      "expected": "",
+      "actual": "L",
+      "index": 54
+    },
+    {
+      "syllable": "",
+      "expected": "",
+      "actual": "P",
+      "index": 55
+    },
+    {
+      "syllable": "ಗ",
+      "expected": "",
+      "actual": "L",
+      "index": 56
+    },
+    {
+      "syllable": "",
+      "expected": "",
+      "actual": "P",
+      "index": 57
+    },
+    {
+      "syllable": "ವಿ",
+      "expected": "",
+      "actual": "L",
+      "index": 58
+    },
+    {
+      "syllable": "ರ",
+      "expected": "",
+      "actual": "L",
+      "index": 59
+    },
+    {
+      "syllable": "ಹ",
+      "expected": "",
+      "actual": "L",
+      "index": 60
+    },
+    {
+      "syllable": "ದೆ",
+      "expected": "",
+      "actual": "L",
+      "index": 61
+    },
+    {
+      "syllable": "",
+      "expected": "",
+      "actual": "P",
+      "index": 62
+    },
+    {
+      "syllable": "ಸಂ",
+      "expected": "",
+      "actual": "G",
+      "index": 63
+    },
+    {
+      "syllable": "ತ",
+      "expected": "",
+      "actual": "L",
+      "index": 64
+    },
+    {
+      "syllable": "ಸ",
+      "expected": "",
+      "actual": "L",
+      "index": 65
+    },
+    {
+      "syllable": "ದೆ",
+      "expected": "",
+      "actual": "L",
+      "index": 66
+    },
+    {
+      "syllable": "",
+      "expected": "",
+      "actual": "P",
+      "index": 67
+    },
+    {
+      "syllable": "ನ",
+      "expected": "",
+      "actual": "L",
+      "index": 68
+    },
+    {
+      "syllable": "ಲಿ",
+      "expected": "",
+      "actual": "L",
+      "index": 69
+    },
+    {
+      "syllable": "ದು",
+      "expected": "",
+      "actual": "L",
+      "index": 70
+    },
+    {
+      "syllable": "",
+      "expected": "",
+      "actual": "P",
+      "index": 71
+    },
+    {
+      "syllable": "ನರ್",
+      "expected": "",
+      "actual": "G",
+      "index": 72
+    },
+    {
+      "syllable": "ತಿ",
+      "expected": "",
+      "actual": "L",
+      "index": 73
+    },
+    {
+      "syllable": "ಸು",
+      "expected": "",
+      "actual": "L",
+      "index": 74
+    },
+    {
+      "syllable": "ತಿರ್",
+      "expected": "",
+      "actual": "G",
+      "index": 75
+    },
+    {
+      "syllable": "ದಳ್",
+      "expected": "",
+      "actual": "G",
+      "index": 76
+    },
+    {
+      "syllable": "",
+      "expected": "",
+      "actual": "P",
+      "index": 77
+    },
+    {
+      "syllable": "",
+      "expected": "",
+      "actual": "P",
+      "index": 78
+    }
+  ],
+  "detectedScript": "kannada",
+  "detectedmeter": "Unknown",
+  "aproxmeters": [],
+  "selectedMeter": null
+}

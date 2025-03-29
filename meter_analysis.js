@@ -23,29 +23,29 @@
 			}
 		}; */
 
-		const scriptPatterns = {
-			devanagari: {
-				shortVowels: /[\u0905\u0907\u0909\u090B\u090C\u090F\u0913]/, // Laghu
-				longVowels: /[\u0906\u0908\u090A\u0960\u0961\u0910\u0914]/, // Guru
-				consonants: /[\u0915-\u0939]/,
-				shortVowelMarks: /[\u093F\u0941\u0946\u094A]/, // Short dependent vowel markers
-				longVowelMarks: /[\u0940\u0942\u0947\u0948\u094B\u094C]/, // Long dependent vowel markers
-				anusvaraVisarga: /[\u0902\u0903]/,
-				virama: /\u094D/
-			},
-			kannada: {
-				shortVowels: /[\u0C85\u0C87\u0C89\u0C8B\u0C8E\u0C92]/,
-				longVowels: /[\u0C86\u0C88\u0C8A\u0C60\u0C61\u0C90\u0C94]/,
-				consonants: /[\u0C95-\u0CB9]/,
-				shortVowelMarks: /[\u0CBF\u0CC1\u0CC6\u0CCA]/,
-				longVowelMarks: /[\u0CC0\u0CC2\u0CC7\u0CC8\u0CCB\u0CCC\u0CBE]/,
-				anusvaraVisarga: /[\u0C82\u0C83]/,
-				virama: /\u0CCD/
-			}
-		};
-		const LAGHU = "L";
-		const GURU = "G";
-		const PUNCT = "P";
+const scriptPatterns = {
+	devanagari: {
+		shortVowels: /[\u0905\u0907\u0909\u090B\u090C\u090F\u0913]/, // Laghu
+		longVowels: /[\u0906\u0908\u090A\u0960\u0961\u0910\u0914]/, // Guru
+		consonants: /[\u0915-\u0939]/,
+		shortVowelMarks: /[\u093F\u0941\u0946\u094A]/, // Short dependent vowel markers
+		longVowelMarks: /[\u0940\u0942\u0947\u0948\u094B\u094C]/, // Long dependent vowel markers
+		anusvaraVisarga: /[\u0902\u0903]/,
+		virama: /\u094D/
+	},
+	kannada: {
+		shortVowels: /[\u0C85\u0C87\u0C89\u0C8B\u0C8E\u0C92]/,
+		longVowels: /[\u0C86\u0C88\u0C8A\u0C60\u0C61\u0C90\u0C94]/,
+		consonants: /[\u0C95-\u0CB9]/,
+		shortVowelMarks: /[\u0CBF\u0CC1\u0CC6\u0CCA]/,
+		longVowelMarks: /[\u0CC0\u0CC2\u0CC7\u0CC8\u0CCB\u0CCC\u0CBE]/,
+		anusvaraVisarga: /[\u0C82\u0C83]/,
+		virama: /\u0CCD/
+	}
+};
+const LAGHU = "L";
+const GURU = "G";
+const PUNCT = "P";
 
 function normalizeWhitespace(text) {
     // Replace multiple spaces with a single space
@@ -56,6 +56,18 @@ function normalizeWhitespace(text) {
 
     // Trim leading and trailing whitespace
     return text.trim();
+}
+function removePunctuation(text) {
+	// Remove punctuation marks from the text
+	// This regex matches common punctuation marks. You can add more if needed.
+	// Note: This will not remove spaces, only punctuation characters.
+	const punctuationRegex = /[.,;:!?()\"'“”‘’\[\]{}]/g;
+	text = text.replace(punctuationRegex, '');
+
+	// Optionally, you can also normalize whitespace after removing punctuation
+	text = normalizeWhitespace(text);
+
+	return text;
 }
 
 function analyzeMeter(text, selectedMeter = null) {
@@ -77,6 +89,10 @@ function analyzeMeter(text, selectedMeter = null) {
     }
 	
 	// Function to extract ottakshara/conjuncts
+	// This function counts the number of repeating consonant+virama pairs in the text.
+	// It helps in identifying the number of consonants that form a conjunct.
+	// It takes an array of characters and a starting index as input.
+	// It returns the count of pairs found.
 	function countRepeatingConsonantViramaPairs(arr, startIndex = 0) {
 		const { consonants, virama } = scriptPatterns[detectedScript];
 		let count = 0;
@@ -94,7 +110,11 @@ function analyzeMeter(text, selectedMeter = null) {
 	// 2. if consonant, it is optionally followed by a dependant vowel
 	// 3. then it is optionally followed by anuswara
 	// 4. then it is optionally followed by pair(s) of consonant+virama
-	// 5. 
+	// 5. if there are no consonant+virama pairs, it is a Laghu (L)
+	// 6. if there are one or more consonant+virama pairs, it is a Guru (G)
+	// 7. if there are no valid syllables, return empty array
+	// 8. The function will return an array of objects with syllable, classification (L or G), and index.
+	// This function will parse the text and segment it into syllables based on the rules above.
     function segmentSyllables(text) {
         let segmented = [];
         let state = "START";
@@ -189,8 +209,15 @@ function analyzeMeter(text, selectedMeter = null) {
         return segmented;
     }
 
+	//Execution starts here, main(){} if you will
+
     // Trim the text to remove leading and trailing spaces
-    text = text.trim();
+    text = removePunctuation(text); // Remove punctuation from the text
+	text = normalizeWhitespace(text); // Normalize whitespace in the text
+	if (text.length === 0) {
+		// If the text is empty after removing punctuation, return empty pattern
+		return { pattern: [], detectedScript: "Unknown", detectedmeter: "Unknown", aproxmeters: [], selectedMeter };
+	}
 
     syllables = segmentSyllables(text);
     

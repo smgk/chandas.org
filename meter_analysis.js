@@ -49,10 +49,10 @@ const PUNCT = "P";
 
 function normalizeWhitespace(text) {
     // Replace multiple spaces with a single space
-    text = text.replace(/\s+/g, ' ');
+    text = text.replace(/[ \t\r\f\v]/g, ' ');
 
-    // Replace multiple newlines with none single newline
-    text = text.replace(/\s*\n+\s*/g, '\n');
+    // Replace multiple space+newlines+space with one single newline
+    text = text.replace(/[ \t\r\f\v]*\n+[ \t\r\f\v]*/g, '\n');
 
     // Trim leading and trailing whitespace
     return text.trim();
@@ -64,12 +64,35 @@ function removePunctuation(text) {
 	const punctuationRegex = /[.,;:!?()\"'“”‘’\[\]{}।]/g;
 	text = text.replace(punctuationRegex, '');
 
-	// Optionally, you can also normalize whitespace after removing punctuation
-	text = normalizeWhitespace(text);
-
 	return text;
 }
 
+// Function to extract ottakshara/conjuncts
+// This function counts the number of repeating consonant+virama pairs in the text.
+// It helps in identifying the number of consonants that form a conjunct.
+// It takes an array of characters and a starting index as input.
+// It returns the count of pairs found.
+function countRepeatingConsonantViramaPairs(arr,detectedScript, startIndex = 0) {
+	const { consonants, virama } = scriptPatterns[detectedScript];
+	let count = 0;
+	let i = startIndex;
+
+	if (i >= arr.length) {
+		return 0; // No pairs if the index is out of bounds
+	}
+	if(arr[i] === "\n"){
+		count = 1; // may be there are conjuct across newline, khanda praasa
+		i++ 
+	}
+	while (i < arr.length - 2 && consonants.test(arr[i]) && virama.test(arr[i + 1])) {
+		count += 2; // Increment by 2 for each pair found
+		i += 2; // Move to the next potential pair
+	}
+	if (count === 1){
+		count = 0; // newline was not followed by conjunct
+	}
+	return count;
+}
 function analyzeMeter(text, selectedMeter = null) {
 
     let detectedScript = "Unknown";
@@ -88,22 +111,7 @@ function analyzeMeter(text, selectedMeter = null) {
         return { pattern: [], detectedScript: "Unknown", detectedmeter: "Unknown", aproxmeters: [], selectedMeter };
     }
 	
-	// Function to extract ottakshara/conjuncts
-	// This function counts the number of repeating consonant+virama pairs in the text.
-	// It helps in identifying the number of consonants that form a conjunct.
-	// It takes an array of characters and a starting index as input.
-	// It returns the count of pairs found.
-	function countRepeatingConsonantViramaPairs(arr, startIndex = 0) {
-		const { consonants, virama } = scriptPatterns[detectedScript];
-		let count = 0;
-		let i = startIndex;
-	
-		while (i < arr.length - 2 && consonants.test(arr[i]) && virama.test(arr[i + 1])) {
-			count += 2; // Increment by 2 for each pair found
-			i += 2; // Move to the next potential pair
-		}
-		return count;
-	}
+
 	
 	// Function to correctly segment text into syllables and classify Laghu (L) or Guru (G)
 	// 1. A syllable starts with consonant or an independent vowel
@@ -130,26 +138,16 @@ function analyzeMeter(text, selectedMeter = null) {
 
 
 		// when i==0, the first conjuct is a laghu
-			conjunctCount = countRepeatingConsonantViramaPairs(text,0)
-			if (conjunctCount>0){
-				syllable = text.slice(0, conjunctCount); //prepend the conjunct
-				i=conjunctCount; //move the index up
-			}
+		conjunctCount = countRepeatingConsonantViramaPairs(text,detectedScript, 0)
+		if (conjunctCount>0){
+			syllable = text.slice(0, conjunctCount); //prepend the conjunct
+			i=conjunctCount; //move the index up
+		}
 		while (i < text.length) {
             let char = text[i];
             let nextChar = text[i + 1] || "";
 			let nextNextChar = text[i + 2] || "";
 
-			if (i==0){
-				conjunctCount = countRepeatingConsonantViramaPairs(text,0)
-				if (conjunctCount>0){
-					syllable = text.slice(0, conjunctCount); //prepend the conjunct
-					i=conjunctCount; //move the index up
-					char = text[i];
-					nextChar = text[i + 1] || "";
-					nextNextChar = text[i + 2] || "";
-				}
-			}
 			if (consonants.test(char)) {
 				console.log("consonant");
 				slurpCount++;
@@ -168,7 +166,7 @@ function analyzeMeter(text, selectedMeter = null) {
 					}							
 				
 				//TODO deal with conjuncts across new line. pre process it out.
-				conjunctCount = countRepeatingConsonantViramaPairs(text,i+slurpCount);
+				conjunctCount = countRepeatingConsonantViramaPairs(text,detectedScript,i+slurpCount);
 
 			} else if (shortVowels.test(char)|| longVowels.test(char)) {
 				console.log("vowel");
@@ -181,7 +179,7 @@ function analyzeMeter(text, selectedMeter = null) {
 						classification = "G";
 				}
 				//TODO deal with conjuncts across new line. pre process it out.
-				conjunctCount = countRepeatingConsonantViramaPairs(text,i+slurpCount);
+				conjunctCount = countRepeatingConsonantViramaPairs(text,detectedScript, i+slurpCount);
 			} else { //spaces and punctuations
 				console.log("no hit");
 				i++;
@@ -214,6 +212,7 @@ function analyzeMeter(text, selectedMeter = null) {
     // Trim the text to remove leading and trailing spaces
     text = removePunctuation(text); // Remove punctuation from the text
 	text = normalizeWhitespace(text); // Normalize whitespace in the text
+	console.log(text)
 	if (text.length === 0) {
 		// If the text is empty after removing punctuation, return empty pattern
 		return { pattern: [], detectedScript: "Unknown", detectedmeter: "Unknown", aproxmeters: [], selectedMeter };

@@ -95,6 +95,115 @@ function countRepeatingConsonantViramaPairs(arr,detectedScript, startIndex = 0) 
 	}
 	return count;
 }
+
+
+// Function to correctly segment text into syllables and classify Laghu (L) or Guru (G)
+// 1. A syllable starts with consonant or an independent vowel
+// 2. if consonant, it is optionally followed by a dependant vowel
+// 3. then it is optionally followed by anuswara
+// 4. then it is optionally followed by pair(s) of consonant+virama
+// 5. if there are no consonant+virama pairs, it is a Laghu (L)
+// 6. if there are one or more consonant+virama pairs, it is a Guru (G)
+// 7. if there are no valid syllables, return empty array
+// 8. The function will return an array of objects with syllable, classification (L or G), and index.
+// This function will parse the text and segment it into syllables based on the rules above.
+function segmentSyllables(text, detectedScript) {
+	// Check if the detected script is valid
+	if (!scriptPatterns[detectedScript]) {
+		throw new Error("Unsupported script detected: " + detectedScript);
+	}
+	// Initialize variables
+	// Initialize an empty array to store the segmented syllables
+	let segmented = [];
+	let state = "START";
+
+	const { consonants, shortVowelMarks, longVowelMarks, shortVowels, longVowels, anusvaraVisarga, virama } = scriptPatterns[detectedScript];
+
+	// Parse the text one unicode character at a time, peeking into the next.
+	let i=0;
+	let slurpCount = 0;
+	let conjunctCount = 0;
+	let classification = LAGHU;
+	let syllable = "";
+
+
+	// when i==0, the first conjuct is a laghu
+	conjunctCount = countRepeatingConsonantViramaPairs(text,detectedScript, 0)
+	if (conjunctCount>0){
+		syllable = text.slice(0, conjunctCount); //prepend the conjunct
+		i=conjunctCount; //move the index up
+	}
+	while (i < text.length) {
+		let char = text[i];
+		let nextChar = text[i + 1] || "";
+		let nextNextChar = text[i + 2] || "";
+
+		if (consonants.test(char)) {
+			console.log("consonant");
+			slurpCount++;
+			if (shortVowelMarks.test(nextChar) || longVowelMarks.test(nextChar)){
+				slurpCount++;
+				if (longVowelMarks.test(nextChar)){
+					classification = GURU;
+				}
+				if (anusvaraVisarga.test(nextNextChar)){
+						slurpCount++;
+						classification = GURU;
+					}							
+			} else if (anusvaraVisarga.test(nextChar)){
+					slurpCount++;
+					classification = GURU;
+				}							
+			
+			//TODO deal with conjuncts across new line. pre process it out.
+			conjunctCount = countRepeatingConsonantViramaPairs(text,detectedScript,i+slurpCount);
+
+		} else if (shortVowels.test(char)|| longVowels.test(char)) {
+			console.log("vowel");
+			slurpCount++;
+			if (longVowels.test(char)){
+				classification = GURU;
+			}
+			if (anusvaraVisarga.test(nextChar)){
+					slurpCount++;
+					classification = GURU;
+			}
+			//TODO deal with conjuncts across new line. pre process it out.
+			conjunctCount = countRepeatingConsonantViramaPairs(text,detectedScript, i+slurpCount);
+		} else { //spaces and punctuations
+			console.log("Space or puncuation");
+			//i++;
+			if (char === "\n"){
+				classification = NWLINE;
+			}else if (char === " "){
+				classification = SPACE;
+			}else{
+				classification = PUNCT;
+			}
+			slurpCount++;
+		}
+
+		if (conjunctCount>0){
+				slurpCount +=conjunctCount
+				classification = GURU;
+		}
+		
+		syllable = syllable + text.slice(i, i + slurpCount);
+		segmented.push({ syllable, classification, i });
+		console.log({ i, char, nextChar, nextNextChar, classification, syllable, slurpCount, conjunctCount, state,detectedScript });
+
+
+		i=i+slurpCount;
+		slurpCount = 0;
+		conjunctCount = 0;
+		classification = "L";
+		syllable = '';
+
+	}
+
+	return segmented;
+}
+
 function analyzeMeter(text, selectedMeter = null) {
 
     let detectedScript = "Unknown";
@@ -115,106 +224,6 @@ function analyzeMeter(text, selectedMeter = null) {
 	
 
 	
-	// Function to correctly segment text into syllables and classify Laghu (L) or Guru (G)
-	// 1. A syllable starts with consonant or an independent vowel
-	// 2. if consonant, it is optionally followed by a dependant vowel
-	// 3. then it is optionally followed by anuswara
-	// 4. then it is optionally followed by pair(s) of consonant+virama
-	// 5. if there are no consonant+virama pairs, it is a Laghu (L)
-	// 6. if there are one or more consonant+virama pairs, it is a Guru (G)
-	// 7. if there are no valid syllables, return empty array
-	// 8. The function will return an array of objects with syllable, classification (L or G), and index.
-	// This function will parse the text and segment it into syllables based on the rules above.
-    function segmentSyllables(text) {
-        let segmented = [];
-        let state = "START";
-    
-        const { consonants, shortVowelMarks, longVowelMarks, shortVowels, longVowels, anusvaraVisarga, virama } = scriptPatterns[detectedScript];
-    
-		// Parse the text one unicode character at a time, peeking into the next.
-		let i=0;
-		let slurpCount = 0;
-		let conjunctCount = 0;
-		let classification = LAGHU;
-		let syllable = "";
-
-
-		// when i==0, the first conjuct is a laghu
-		conjunctCount = countRepeatingConsonantViramaPairs(text,detectedScript, 0)
-		if (conjunctCount>0){
-			syllable = text.slice(0, conjunctCount); //prepend the conjunct
-			i=conjunctCount; //move the index up
-		}
-		while (i < text.length) {
-            let char = text[i];
-            let nextChar = text[i + 1] || "";
-			let nextNextChar = text[i + 2] || "";
-
-			if (consonants.test(char)) {
-				console.log("consonant");
-				slurpCount++;
-				if (shortVowelMarks.test(nextChar) || longVowelMarks.test(nextChar)){
-					slurpCount++;
-					if (longVowelMarks.test(nextChar)){
-						classification = GURU;
-					}
-					if (anusvaraVisarga.test(nextNextChar)){
-							slurpCount++;
-							classification = GURU;
-						}							
-				} else if (anusvaraVisarga.test(nextChar)){
-						slurpCount++;
-						classification = GURU;
-					}							
-				
-				//TODO deal with conjuncts across new line. pre process it out.
-				conjunctCount = countRepeatingConsonantViramaPairs(text,detectedScript,i+slurpCount);
-
-			} else if (shortVowels.test(char)|| longVowels.test(char)) {
-				console.log("vowel");
-				slurpCount++;
-				if (longVowels.test(char)){
-					classification = GURU;
-				}
-				if (anusvaraVisarga.test(nextChar)){
-						slurpCount++;
-						classification = GURU;
-				}
-				//TODO deal with conjuncts across new line. pre process it out.
-				conjunctCount = countRepeatingConsonantViramaPairs(text,detectedScript, i+slurpCount);
-			} else { //spaces and punctuations
-				console.log("Space or puncuation");
-				//i++;
-				if (char === "\n"){
-					classification = NWLINE;
-				}else if (char === " "){
-					classification = SPACE;
-				}else{
-					classification = PUNCT;
-				}
-				slurpCount++;
-			}
-
-			if (conjunctCount>0){
-					slurpCount +=conjunctCount
-					classification = GURU;
-			}
-			
-			syllable = syllable + text.slice(i, i + slurpCount);
-			segmented.push({ syllable, classification, i });
-			console.log({ i, char, nextChar, nextNextChar, classification, syllable, slurpCount, conjunctCount, state,detectedScript });
-
-
-			i=i+slurpCount;
-			slurpCount = 0;
-			conjunctCount = 0;
-			classification = "L";
-			syllable = '';
-
-        }
-    
-        return segmented;
-    }
 
 	//Execution starts here, main(){} if you will
 
@@ -227,7 +236,7 @@ function analyzeMeter(text, selectedMeter = null) {
 		return { pattern: [], detectedScript: "Unknown", detectedmeter: "Unknown", aproxmeters: [], selectedMeter };
 	}
 
-    syllables = segmentSyllables(text);
+    syllables = segmentSyllables(text, detectedScript);
 	// Extract and print only the classification field from the syllables structure
 	let classifications = syllables.map(({ classification }) => classification);
 	console.log(classifications);

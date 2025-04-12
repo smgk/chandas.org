@@ -1,3 +1,8 @@
+ತ್ಸ್ಥಾಂಕ್ಷುಂಡ್ರ
+ಪ್ರಾಂಕ್ಸುಥಮ ಎರೆಯನ ಮನೆಯೋ ಗದ್ದಲ
+ದರಮನೆ ತವರೇಂ ಪೆರತೇಮದರಿಂ ಘನಕಾಂ|
+ತಾರಮೆ ಸರಿಯೆಮಗೆನುತೆ ಗ
+ವಿರಹದೆ ಸಂತಸದೆ ನಲಿದು ನರ್ತಿಸುತಿರ್ದಳ್||
 consonant
 {
   i: 4,
@@ -18,54 +23,28 @@ consonant
   nextChar: 'ು',
   nextNextChar: 'ಂ',
   classification: 'G',
-  syllable: 'ಷುಂ',
-  slurpCount: 3,
-  conjunctCount: 0,
-  state: 'START',
-  detectedScript: 'kannada'
-}
-no hit
-{
-  i: 13,
-  char: ' ',
-  nextChar: 'ಪ',
-  nextNextChar: '್',
-  classification: 'P',
-  syllable: '',
-  slurpCount: 0,
-  conjunctCount: 0,
+  syllable: 'ಷುಂಡ್',
+  slurpCount: 5,
+  conjunctCount: 2,
   state: 'START',
   detectedScript: 'kannada'
 }
 consonant
 {
-  i: 13,
-  char: 'ಪ',
-  nextChar: '್',
-  nextNextChar: 'ರ',
-  classification: 'L',
-  syllable: 'ಪ',
-  slurpCount: 1,
-  conjunctCount: 0,
-  state: 'START',
-  detectedScript: 'kannada'
-}
-no hit
-{
-  i: 15,
-  char: '್',
-  nextChar: 'ರ',
-  nextNextChar: 'ಾ',
-  classification: 'P',
-  syllable: '',
-  slurpCount: 0,
-  conjunctCount: 0,
+  i: 14,
+  char: 'ರ',
+  nextChar: '\n',
+  nextNextChar: 'ಪ',
+  classification: 'G',
+  syllable: 'ರ\nಪ್',
+  slurpCount: 4,
+  conjunctCount: 3,
   state: 'START',
   detectedScript: 'kannada'
 }
 consonant
 {
-  i: 15,
+  i: 18,
   char: 'ರ',
   nextChar: 'ಾ',
   nextNextChar: 'ಂ',
@@ -78,7 +57,7 @@ consonant
 }
 consonant
 {
-  i: 20,
+  i: 23,
   char: 'ಸ',
   nextChar: 'ು',
   nextNextChar: 'ಥ',
@@ -91,7 +70,7 @@ consonant
 }
 consonant
 {
-  i: 22,
+  i: 25,
   char: 'ಥ',
   nextChar: 'ಮ',
   nextNextChar: ' ',
@@ -104,7 +83,7 @@ consonant
 }
 consonant
 {
-  i: 23,
+  i: 26,
   char: 'ಮ',
   nextChar: ' ',
   nextNextChar: 'ಎ',
@@ -117,7 +96,7 @@ consonant
 }
 no hit
 {
-  i: 25,
+  i: 28,
   char: ' ',
   nextChar: 'ಎ',
   nextNextChar: 'ರ',
@@ -130,7 +109,7 @@ no hit
 }
 vowel
 {
-  i: 25,
+  i: 28,
   char: 'ಎ',
   nextChar: 'ರ',
   nextNextChar: 'ೆ',
@@ -143,7 +122,7 @@ vowel
 }
 consonant
 {
-  i: 26,
+  i: 29,
   char: 'ರ',
   nextChar: 'ೆ',
   nextNextChar: 'ಯ',
@@ -156,7 +135,7 @@ consonant
 }
 consonant
 {
-  i: 28,
+  i: 31,
   char: 'ಯ',
   nextChar: 'ನ',
   nextNextChar: ' ',
@@ -169,7 +148,7 @@ consonant
 }
 consonant
 {
-  i: 29,
+  i: 32,
   char: 'ನ',
   nextChar: ' ',
   nextNextChar: 'ಮ',
@@ -182,7 +161,7 @@ consonant
 }
 no hit
 {
-  i: 31,
+  i: 34,
   char: ' ',
   nextChar: 'ಮ',
   nextNextChar: 'ನ',
@@ -195,7 +174,7 @@ no hit
 }
 consonant
 {
-  i: 31,
+  i: 34,
   char: 'ಮ',
   nextChar: 'ನ',
   nextNextChar: 'ೆ',
@@ -208,7 +187,7 @@ consonant
 }
 consonant
 {
-  i: 32,
+  i: 35,
   char: 'ನ',
   nextChar: 'ೆ',
   nextNextChar: 'ಯ',
@@ -221,7 +200,7 @@ consonant
 }
 consonant
 {
-  i: 34,
+  i: 37,
   char: 'ಯ',
   nextChar: 'ೋ',
   nextNextChar: ' ',
@@ -234,7 +213,7 @@ consonant
 }
 no hit
 {
-  i: 37,
+  i: 40,
   char: ' ',
   nextChar: 'ಗ',
   nextNextChar: 'ದ',
@@ -247,7 +226,7 @@ no hit
 }
 consonant
 {
-  i: 37,
+  i: 40,
   char: 'ಗ',
   nextChar: 'ದ',
   nextNextChar: '್',
@@ -260,10 +239,10 @@ consonant
 }
 consonant
 {
-  i: 40,
+  i: 43,
   char: 'ದ',
   nextChar: 'ಲ',
-  nextNextChar: ' ',
+  nextNextChar: '\n',
   classification: 'L',
   syllable: 'ದ',
   slurpCount: 1,
@@ -273,9 +252,9 @@ consonant
 }
 consonant
 {
-  i: 41,
+  i: 44,
   char: 'ಲ',
-  nextChar: ' ',
+  nextChar: '\n',
   nextNextChar: 'ದ',
   classification: 'L',
   syllable: 'ಲ',
@@ -286,8 +265,8 @@ consonant
 }
 no hit
 {
-  i: 43,
-  char: ' ',
+  i: 46,
+  char: '\n',
   nextChar: 'ದ',
   nextNextChar: 'ರ',
   classification: 'P',
@@ -299,7 +278,7 @@ no hit
 }
 consonant
 {
-  i: 43,
+  i: 46,
   char: 'ದ',
   nextChar: 'ರ',
   nextNextChar: 'ಮ',
@@ -312,7 +291,7 @@ consonant
 }
 consonant
 {
-  i: 44,
+  i: 47,
   char: 'ರ',
   nextChar: 'ಮ',
   nextNextChar: 'ನ',
@@ -325,7 +304,7 @@ consonant
 }
 consonant
 {
-  i: 45,
+  i: 48,
   char: 'ಮ',
   nextChar: 'ನ',
   nextNextChar: 'ೆ',
@@ -338,7 +317,7 @@ consonant
 }
 consonant
 {
-  i: 46,
+  i: 49,
   char: 'ನ',
   nextChar: 'ೆ',
   nextNextChar: ' ',
@@ -351,7 +330,7 @@ consonant
 }
 no hit
 {
-  i: 49,
+  i: 52,
   char: ' ',
   nextChar: 'ತ',
   nextNextChar: 'ವ',
@@ -364,7 +343,7 @@ no hit
 }
 consonant
 {
-  i: 49,
+  i: 52,
   char: 'ತ',
   nextChar: 'ವ',
   nextNextChar: 'ರ',
@@ -377,7 +356,7 @@ consonant
 }
 consonant
 {
-  i: 50,
+  i: 53,
   char: 'ವ',
   nextChar: 'ರ',
   nextNextChar: 'ೇ',
@@ -390,7 +369,7 @@ consonant
 }
 consonant
 {
-  i: 51,
+  i: 54,
   char: 'ರ',
   nextChar: 'ೇ',
   nextNextChar: 'ಂ',
@@ -403,7 +382,7 @@ consonant
 }
 no hit
 {
-  i: 55,
+  i: 58,
   char: ' ',
   nextChar: 'ಪ',
   nextNextChar: 'ೆ',
@@ -416,7 +395,7 @@ no hit
 }
 consonant
 {
-  i: 55,
+  i: 58,
   char: 'ಪ',
   nextChar: 'ೆ',
   nextNextChar: 'ರ',
@@ -429,7 +408,7 @@ consonant
 }
 consonant
 {
-  i: 57,
+  i: 60,
   char: 'ರ',
   nextChar: 'ತ',
   nextNextChar: 'ೇ',
@@ -442,7 +421,7 @@ consonant
 }
 consonant
 {
-  i: 58,
+  i: 61,
   char: 'ತ',
   nextChar: 'ೇ',
   nextNextChar: 'ಮ',
@@ -455,7 +434,7 @@ consonant
 }
 consonant
 {
-  i: 60,
+  i: 63,
   char: 'ಮ',
   nextChar: 'ದ',
   nextNextChar: 'ರ',
@@ -468,7 +447,7 @@ consonant
 }
 consonant
 {
-  i: 61,
+  i: 64,
   char: 'ದ',
   nextChar: 'ರ',
   nextNextChar: 'ಿ',
@@ -481,7 +460,7 @@ consonant
 }
 consonant
 {
-  i: 62,
+  i: 65,
   char: 'ರ',
   nextChar: 'ಿ',
   nextNextChar: 'ಂ',
@@ -494,7 +473,7 @@ consonant
 }
 no hit
 {
-  i: 66,
+  i: 69,
   char: ' ',
   nextChar: 'ಘ',
   nextNextChar: 'ನ',
@@ -507,7 +486,7 @@ no hit
 }
 consonant
 {
-  i: 66,
+  i: 69,
   char: 'ಘ',
   nextChar: 'ನ',
   nextNextChar: 'ಕ',
@@ -520,7 +499,7 @@ consonant
 }
 consonant
 {
-  i: 67,
+  i: 70,
   char: 'ನ',
   nextChar: 'ಕ',
   nextNextChar: 'ಾ',
@@ -533,7 +512,7 @@ consonant
 }
 consonant
 {
-  i: 68,
+  i: 71,
   char: 'ಕ',
   nextChar: 'ಾ',
   nextNextChar: 'ಂ',
@@ -546,9 +525,9 @@ consonant
 }
 no hit
 {
-  i: 72,
+  i: 75,
   char: '|',
-  nextChar: ' ',
+  nextChar: '\n',
   nextNextChar: 'ತ',
   classification: 'P',
   syllable: '',
@@ -559,8 +538,8 @@ no hit
 }
 no hit
 {
-  i: 73,
-  char: ' ',
+  i: 76,
+  char: '\n',
   nextChar: 'ತ',
   nextNextChar: 'ಾ',
   classification: 'P',
@@ -572,7 +551,7 @@ no hit
 }
 consonant
 {
-  i: 73,
+  i: 76,
   char: 'ತ',
   nextChar: 'ಾ',
   nextNextChar: 'ರ',
@@ -585,7 +564,7 @@ consonant
 }
 consonant
 {
-  i: 75,
+  i: 78,
   char: 'ರ',
   nextChar: 'ಮ',
   nextNextChar: 'ೆ',
@@ -598,7 +577,7 @@ consonant
 }
 consonant
 {
-  i: 76,
+  i: 79,
   char: 'ಮ',
   nextChar: 'ೆ',
   nextNextChar: ' ',
@@ -611,7 +590,7 @@ consonant
 }
 no hit
 {
-  i: 79,
+  i: 82,
   char: ' ',
   nextChar: 'ಸ',
   nextNextChar: 'ರ',
@@ -624,7 +603,7 @@ no hit
 }
 consonant
 {
-  i: 79,
+  i: 82,
   char: 'ಸ',
   nextChar: 'ರ',
   nextNextChar: 'ಿ',
@@ -637,7 +616,7 @@ consonant
 }
 consonant
 {
-  i: 80,
+  i: 83,
   char: 'ರ',
   nextChar: 'ಿ',
   nextNextChar: 'ಯ',
@@ -650,7 +629,7 @@ consonant
 }
 consonant
 {
-  i: 82,
+  i: 85,
   char: 'ಯ',
   nextChar: 'ೆ',
   nextNextChar: 'ಮ',
@@ -663,7 +642,7 @@ consonant
 }
 consonant
 {
-  i: 84,
+  i: 87,
   char: 'ಮ',
   nextChar: 'ಗ',
   nextNextChar: 'ೆ',
@@ -676,7 +655,7 @@ consonant
 }
 consonant
 {
-  i: 85,
+  i: 88,
   char: 'ಗ',
   nextChar: 'ೆ',
   nextNextChar: 'ನ',
@@ -689,7 +668,7 @@ consonant
 }
 consonant
 {
-  i: 87,
+  i: 90,
   char: 'ನ',
   nextChar: 'ು',
   nextNextChar: 'ತ',
@@ -702,7 +681,7 @@ consonant
 }
 consonant
 {
-  i: 89,
+  i: 92,
   char: 'ತ',
   nextChar: 'ೆ',
   nextNextChar: ' ',
@@ -715,10 +694,10 @@ consonant
 }
 no hit
 {
-  i: 92,
+  i: 95,
   char: ' ',
   nextChar: 'ಗ',
-  nextNextChar: ' ',
+  nextNextChar: '\n',
   classification: 'P',
   syllable: '',
   slurpCount: 0,
@@ -728,9 +707,9 @@ no hit
 }
 consonant
 {
-  i: 92,
+  i: 95,
   char: 'ಗ',
-  nextChar: ' ',
+  nextChar: '\n',
   nextNextChar: 'ವ',
   classification: 'L',
   syllable: 'ಗ',
@@ -741,8 +720,8 @@ consonant
 }
 no hit
 {
-  i: 94,
-  char: ' ',
+  i: 97,
+  char: '\n',
   nextChar: 'ವ',
   nextNextChar: 'ಿ',
   classification: 'P',
@@ -754,7 +733,7 @@ no hit
 }
 consonant
 {
-  i: 94,
+  i: 97,
   char: 'ವ',
   nextChar: 'ಿ',
   nextNextChar: 'ರ',
@@ -767,7 +746,7 @@ consonant
 }
 consonant
 {
-  i: 96,
+  i: 99,
   char: 'ರ',
   nextChar: 'ಹ',
   nextNextChar: 'ದ',
@@ -780,7 +759,7 @@ consonant
 }
 consonant
 {
-  i: 97,
+  i: 100,
   char: 'ಹ',
   nextChar: 'ದ',
   nextNextChar: 'ೆ',
@@ -793,7 +772,7 @@ consonant
 }
 consonant
 {
-  i: 98,
+  i: 101,
   char: 'ದ',
   nextChar: 'ೆ',
   nextNextChar: ' ',
@@ -806,7 +785,7 @@ consonant
 }
 no hit
 {
-  i: 101,
+  i: 104,
   char: ' ',
   nextChar: 'ಸ',
   nextNextChar: 'ಂ',
@@ -819,7 +798,7 @@ no hit
 }
 consonant
 {
-  i: 101,
+  i: 104,
   char: 'ಸ',
   nextChar: 'ಂ',
   nextNextChar: 'ತ',
@@ -832,7 +811,7 @@ consonant
 }
 consonant
 {
-  i: 103,
+  i: 106,
   char: 'ತ',
   nextChar: 'ಸ',
   nextNextChar: 'ದ',
@@ -845,7 +824,7 @@ consonant
 }
 consonant
 {
-  i: 104,
+  i: 107,
   char: 'ಸ',
   nextChar: 'ದ',
   nextNextChar: 'ೆ',
@@ -858,7 +837,7 @@ consonant
 }
 consonant
 {
-  i: 105,
+  i: 108,
   char: 'ದ',
   nextChar: 'ೆ',
   nextNextChar: ' ',
@@ -871,7 +850,7 @@ consonant
 }
 no hit
 {
-  i: 108,
+  i: 111,
   char: ' ',
   nextChar: 'ನ',
   nextNextChar: 'ಲ',
@@ -884,7 +863,7 @@ no hit
 }
 consonant
 {
-  i: 108,
+  i: 111,
   char: 'ನ',
   nextChar: 'ಲ',
   nextNextChar: 'ಿ',
@@ -897,7 +876,7 @@ consonant
 }
 consonant
 {
-  i: 109,
+  i: 112,
   char: 'ಲ',
   nextChar: 'ಿ',
   nextNextChar: 'ದ',
@@ -910,7 +889,7 @@ consonant
 }
 consonant
 {
-  i: 111,
+  i: 114,
   char: 'ದ',
   nextChar: 'ು',
   nextNextChar: ' ',
@@ -923,7 +902,7 @@ consonant
 }
 no hit
 {
-  i: 114,
+  i: 117,
   char: ' ',
   nextChar: 'ನ',
   nextNextChar: 'ರ',
@@ -936,7 +915,7 @@ no hit
 }
 consonant
 {
-  i: 114,
+  i: 117,
   char: 'ನ',
   nextChar: 'ರ',
   nextNextChar: '್',
@@ -949,7 +928,7 @@ consonant
 }
 consonant
 {
-  i: 117,
+  i: 120,
   char: 'ತ',
   nextChar: 'ಿ',
   nextNextChar: 'ಸ',
@@ -962,7 +941,7 @@ consonant
 }
 consonant
 {
-  i: 119,
+  i: 122,
   char: 'ಸ',
   nextChar: 'ು',
   nextNextChar: 'ತ',
@@ -975,7 +954,7 @@ consonant
 }
 consonant
 {
-  i: 121,
+  i: 124,
   char: 'ತ',
   nextChar: 'ಿ',
   nextNextChar: 'ರ',
@@ -988,7 +967,7 @@ consonant
 }
 consonant
 {
-  i: 125,
+  i: 128,
   char: 'ದ',
   nextChar: 'ಳ',
   nextNextChar: '್',
@@ -1001,7 +980,7 @@ consonant
 }
 no hit
 {
-  i: 129,
+  i: 132,
   char: '|',
   nextChar: '|',
   nextNextChar: '',
@@ -1014,7 +993,7 @@ no hit
 }
 no hit
 {
-  i: 130,
+  i: 133,
   char: '|',
   nextChar: '',
   nextNextChar: '',
@@ -1025,6 +1004,16 @@ no hit
   state: 'START',
   detectedScript: 'kannada'
 }
+[
+  'G', 'G', 'G', 'G', 'L', 'L', 'L', 'P', 'L', 'L',
+  'L', 'L', 'P', 'L', 'L', 'G', 'P', 'G', 'L', 'L',
+  'P', 'L', 'L', 'L', 'L', 'P', 'L', 'L', 'G', 'P',
+  'L', 'L', 'G', 'L', 'L', 'G', 'P', 'L', 'L', 'G',
+  'P', 'P', 'G', 'L', 'L', 'P', 'L', 'L', 'L', 'L',
+  'L', 'L', 'L', 'P', 'L', 'P', 'L', 'L', 'L', 'L',
+  'P', 'G', 'L', 'L', 'L', 'P', 'L', 'L', 'L', 'P',
+  'G', 'L', 'L', 'G', 'G', 'P', 'P'
+]
 {
   "pattern": [
     {
@@ -1034,325 +1023,325 @@ no hit
       "index": 0
     },
     {
-      "syllable": "ಷುಂ",
+      "syllable": "ಷುಂಡ್",
       "expected": "",
       "actual": "G",
       "index": 1
     },
     {
-      "syllable": "",
+      "syllable": "ರ\nಪ್",
       "expected": "",
-      "actual": "P",
+      "actual": "G",
       "index": 2
-    },
-    {
-      "syllable": "ಪ",
-      "expected": "",
-      "actual": "L",
-      "index": 3
-    },
-    {
-      "syllable": "",
-      "expected": "",
-      "actual": "P",
-      "index": 4
     },
     {
       "syllable": "ರಾಂಕ್",
       "expected": "",
       "actual": "G",
-      "index": 5
+      "index": 3
     },
     {
       "syllable": "ಸು",
       "expected": "",
       "actual": "L",
-      "index": 6
+      "index": 4
     },
     {
       "syllable": "ಥ",
       "expected": "",
       "actual": "L",
-      "index": 7
+      "index": 5
     },
     {
       "syllable": "ಮ",
       "expected": "",
       "actual": "L",
-      "index": 8
+      "index": 6
     },
     {
       "syllable": "",
       "expected": "",
       "actual": "P",
-      "index": 9
+      "index": 7
     },
     {
       "syllable": "ಎ",
       "expected": "",
       "actual": "L",
-      "index": 10
+      "index": 8
     },
     {
       "syllable": "ರೆ",
       "expected": "",
       "actual": "L",
-      "index": 11
+      "index": 9
     },
     {
       "syllable": "ಯ",
       "expected": "",
       "actual": "L",
-      "index": 12
+      "index": 10
     },
     {
       "syllable": "ನ",
+      "expected": "",
+      "actual": "L",
+      "index": 11
+    },
+    {
+      "syllable": "",
+      "expected": "",
+      "actual": "P",
+      "index": 12
+    },
+    {
+      "syllable": "ಮ",
       "expected": "",
       "actual": "L",
       "index": 13
     },
     {
-      "syllable": "",
-      "expected": "",
-      "actual": "P",
-      "index": 14
-    },
-    {
-      "syllable": "ಮ",
-      "expected": "",
-      "actual": "L",
-      "index": 15
-    },
-    {
       "syllable": "ನೆ",
       "expected": "",
       "actual": "L",
-      "index": 16
+      "index": 14
     },
     {
       "syllable": "ಯೋ",
       "expected": "",
       "actual": "G",
-      "index": 17
+      "index": 15
     },
     {
       "syllable": "",
       "expected": "",
       "actual": "P",
-      "index": 18
+      "index": 16
     },
     {
       "syllable": "ಗದ್",
       "expected": "",
       "actual": "G",
-      "index": 19
+      "index": 17
     },
     {
       "syllable": "ದ",
       "expected": "",
       "actual": "L",
-      "index": 20
+      "index": 18
     },
     {
       "syllable": "ಲ",
       "expected": "",
       "actual": "L",
-      "index": 21
+      "index": 19
     },
     {
       "syllable": "",
       "expected": "",
       "actual": "P",
-      "index": 22
+      "index": 20
     },
     {
       "syllable": "ದ",
+      "expected": "",
+      "actual": "L",
+      "index": 21
+    },
+    {
+      "syllable": "ರ",
+      "expected": "",
+      "actual": "L",
+      "index": 22
+    },
+    {
+      "syllable": "ಮ",
       "expected": "",
       "actual": "L",
       "index": 23
     },
     {
-      "syllable": "ರ",
+      "syllable": "ನೆ",
       "expected": "",
       "actual": "L",
       "index": 24
     },
     {
-      "syllable": "ಮ",
-      "expected": "",
-      "actual": "L",
-      "index": 25
-    },
-    {
-      "syllable": "ನೆ",
-      "expected": "",
-      "actual": "L",
-      "index": 26
-    },
-    {
       "syllable": "",
       "expected": "",
       "actual": "P",
-      "index": 27
+      "index": 25
     },
     {
       "syllable": "ತ",
       "expected": "",
       "actual": "L",
-      "index": 28
+      "index": 26
     },
     {
       "syllable": "ವ",
       "expected": "",
       "actual": "L",
-      "index": 29
+      "index": 27
     },
     {
       "syllable": "ರೇಂ",
       "expected": "",
       "actual": "G",
-      "index": 30
+      "index": 28
     },
     {
       "syllable": "",
       "expected": "",
       "actual": "P",
-      "index": 31
+      "index": 29
     },
     {
       "syllable": "ಪೆ",
       "expected": "",
       "actual": "L",
-      "index": 32
+      "index": 30
     },
     {
       "syllable": "ರ",
       "expected": "",
       "actual": "L",
-      "index": 33
+      "index": 31
     },
     {
       "syllable": "ತೇ",
       "expected": "",
       "actual": "G",
-      "index": 34
+      "index": 32
     },
     {
       "syllable": "ಮ",
       "expected": "",
       "actual": "L",
-      "index": 35
+      "index": 33
     },
     {
       "syllable": "ದ",
       "expected": "",
       "actual": "L",
-      "index": 36
+      "index": 34
     },
     {
       "syllable": "ರಿಂ",
       "expected": "",
       "actual": "G",
-      "index": 37
+      "index": 35
     },
     {
       "syllable": "",
       "expected": "",
       "actual": "P",
-      "index": 38
+      "index": 36
     },
     {
       "syllable": "ಘ",
       "expected": "",
       "actual": "L",
-      "index": 39
+      "index": 37
     },
     {
       "syllable": "ನ",
       "expected": "",
       "actual": "L",
-      "index": 40
+      "index": 38
     },
     {
       "syllable": "ಕಾಂ",
       "expected": "",
       "actual": "G",
+      "index": 39
+    },
+    {
+      "syllable": "",
+      "expected": "",
+      "actual": "P",
+      "index": 40
+    },
+    {
+      "syllable": "",
+      "expected": "",
+      "actual": "P",
       "index": 41
-    },
-    {
-      "syllable": "",
-      "expected": "",
-      "actual": "P",
-      "index": 42
-    },
-    {
-      "syllable": "",
-      "expected": "",
-      "actual": "P",
-      "index": 43
     },
     {
       "syllable": "ತಾ",
       "expected": "",
       "actual": "G",
-      "index": 44
+      "index": 42
     },
     {
       "syllable": "ರ",
       "expected": "",
       "actual": "L",
-      "index": 45
+      "index": 43
     },
     {
       "syllable": "ಮೆ",
       "expected": "",
       "actual": "L",
-      "index": 46
+      "index": 44
     },
     {
       "syllable": "",
       "expected": "",
       "actual": "P",
-      "index": 47
+      "index": 45
     },
     {
       "syllable": "ಸ",
       "expected": "",
       "actual": "L",
-      "index": 48
+      "index": 46
     },
     {
       "syllable": "ರಿ",
       "expected": "",
       "actual": "L",
-      "index": 49
+      "index": 47
     },
     {
       "syllable": "ಯೆ",
       "expected": "",
       "actual": "L",
-      "index": 50
+      "index": 48
     },
     {
       "syllable": "ಮ",
       "expected": "",
       "actual": "L",
-      "index": 51
+      "index": 49
     },
     {
       "syllable": "ಗೆ",
       "expected": "",
       "actual": "L",
-      "index": 52
+      "index": 50
     },
     {
       "syllable": "ನು",
       "expected": "",
       "actual": "L",
-      "index": 53
+      "index": 51
     },
     {
       "syllable": "ತೆ",
+      "expected": "",
+      "actual": "L",
+      "index": 52
+    },
+    {
+      "syllable": "",
+      "expected": "",
+      "actual": "P",
+      "index": 53
+    },
+    {
+      "syllable": "ಗ",
       "expected": "",
       "actual": "L",
       "index": 54
@@ -1364,142 +1353,130 @@ no hit
       "index": 55
     },
     {
-      "syllable": "ಗ",
+      "syllable": "ವಿ",
       "expected": "",
       "actual": "L",
       "index": 56
     },
     {
-      "syllable": "",
-      "expected": "",
-      "actual": "P",
-      "index": 57
-    },
-    {
-      "syllable": "ವಿ",
-      "expected": "",
-      "actual": "L",
-      "index": 58
-    },
-    {
       "syllable": "ರ",
       "expected": "",
       "actual": "L",
-      "index": 59
+      "index": 57
     },
     {
       "syllable": "ಹ",
       "expected": "",
       "actual": "L",
-      "index": 60
+      "index": 58
     },
     {
       "syllable": "ದೆ",
       "expected": "",
       "actual": "L",
-      "index": 61
+      "index": 59
     },
     {
       "syllable": "",
       "expected": "",
       "actual": "P",
-      "index": 62
+      "index": 60
     },
     {
       "syllable": "ಸಂ",
       "expected": "",
       "actual": "G",
-      "index": 63
+      "index": 61
     },
     {
       "syllable": "ತ",
       "expected": "",
       "actual": "L",
-      "index": 64
+      "index": 62
     },
     {
       "syllable": "ಸ",
       "expected": "",
       "actual": "L",
-      "index": 65
+      "index": 63
     },
     {
       "syllable": "ದೆ",
       "expected": "",
       "actual": "L",
-      "index": 66
+      "index": 64
     },
     {
       "syllable": "",
       "expected": "",
       "actual": "P",
-      "index": 67
+      "index": 65
     },
     {
       "syllable": "ನ",
       "expected": "",
       "actual": "L",
-      "index": 68
+      "index": 66
     },
     {
       "syllable": "ಲಿ",
       "expected": "",
       "actual": "L",
-      "index": 69
+      "index": 67
     },
     {
       "syllable": "ದು",
       "expected": "",
       "actual": "L",
-      "index": 70
+      "index": 68
     },
     {
       "syllable": "",
       "expected": "",
       "actual": "P",
-      "index": 71
+      "index": 69
     },
     {
       "syllable": "ನರ್",
       "expected": "",
       "actual": "G",
-      "index": 72
+      "index": 70
     },
     {
       "syllable": "ತಿ",
       "expected": "",
       "actual": "L",
-      "index": 73
+      "index": 71
     },
     {
       "syllable": "ಸು",
       "expected": "",
       "actual": "L",
-      "index": 74
+      "index": 72
     },
     {
       "syllable": "ತಿರ್",
       "expected": "",
       "actual": "G",
-      "index": 75
+      "index": 73
     },
     {
       "syllable": "ದಳ್",
       "expected": "",
       "actual": "G",
+      "index": 74
+    },
+    {
+      "syllable": "",
+      "expected": "",
+      "actual": "P",
+      "index": 75
+    },
+    {
+      "syllable": "",
+      "expected": "",
+      "actual": "P",
       "index": 76
-    },
-    {
-      "syllable": "",
-      "expected": "",
-      "actual": "P",
-      "index": 77
-    },
-    {
-      "syllable": "",
-      "expected": "",
-      "actual": "P",
-      "index": 78
     }
   ],
   "detectedScript": "kannada",

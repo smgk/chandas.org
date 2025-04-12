@@ -51,8 +51,8 @@ function normalizeWhitespace(text) {
     // Replace multiple spaces with a single space
     text = text.replace(/\s+/g, ' ');
 
-    // Replace multiple newlines with a single newline
-    text = text.replace(/\n+/g, '\n');
+    // Replace multiple newlines with none single newline
+    text = text.replace(/\s*\n+\s*/g, '\n');
 
     // Trim leading and trailing whitespace
     return text.trim();
@@ -61,7 +61,7 @@ function removePunctuation(text) {
 	// Remove punctuation marks from the text
 	// This regex matches common punctuation marks. You can add more if needed.
 	// Note: This will not remove spaces, only punctuation characters.
-	const punctuationRegex = /[.,;:!?()\"'“”‘’\[\]{}]/g;
+	const punctuationRegex = /[.,;:!?()\"'“”‘’\[\]{}।]/g;
 	text = text.replace(punctuationRegex, '');
 
 	// Optionally, you can also normalize whitespace after removing punctuation
@@ -220,7 +220,9 @@ function analyzeMeter(text, selectedMeter = null) {
 	}
 
     syllables = segmentSyllables(text);
-    
+	// Extract and print only the classification field from the syllables structure
+	let classifications = syllables.map(({ classification }) => classification);
+	console.log(classifications);
     // Step 2: Store the pattern directly from segmentation
     let detailedPattern = syllables.map(({ syllable, classification }, index) => ({
         syllable,

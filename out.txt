@@ -94,15 +94,15 @@ consonant
   state: 'START',
   detectedScript: 'kannada'
 }
-no hit
+Space or puncuation
 {
-  i: 28,
+  i: 27,
   char: ' ',
   nextChar: 'ಎ',
   nextNextChar: 'ರ',
-  classification: 'P',
-  syllable: '',
-  slurpCount: 0,
+  classification: 'S',
+  syllable: ' ',
+  slurpCount: 1,
   conjunctCount: 0,
   state: 'START',
   detectedScript: 'kannada'
@@ -159,15 +159,15 @@ consonant
   state: 'START',
   detectedScript: 'kannada'
 }
-no hit
+Space or puncuation
 {
-  i: 34,
+  i: 33,
   char: ' ',
   nextChar: 'ಮ',
   nextNextChar: 'ನ',
-  classification: 'P',
-  syllable: '',
-  slurpCount: 0,
+  classification: 'S',
+  syllable: ' ',
+  slurpCount: 1,
   conjunctCount: 0,
   state: 'START',
   detectedScript: 'kannada'
@@ -211,15 +211,15 @@ consonant
   state: 'START',
   detectedScript: 'kannada'
 }
-no hit
+Space or puncuation
 {
-  i: 40,
+  i: 39,
   char: ' ',
   nextChar: 'ಗ',
   nextNextChar: 'ದ',
-  classification: 'P',
-  syllable: '',
-  slurpCount: 0,
+  classification: 'S',
+  syllable: ' ',
+  slurpCount: 1,
   conjunctCount: 0,
   state: 'START',
   detectedScript: 'kannada'
@@ -263,15 +263,15 @@ consonant
   state: 'START',
   detectedScript: 'kannada'
 }
-no hit
+Space or puncuation
 {
-  i: 46,
+  i: 45,
   char: '\n',
   nextChar: 'ದ',
   nextNextChar: 'ರ',
-  classification: 'P',
-  syllable: '',
-  slurpCount: 0,
+  classification: 'N',
+  syllable: '\n',
+  slurpCount: 1,
   conjunctCount: 0,
   state: 'START',
   detectedScript: 'kannada'
@@ -328,15 +328,15 @@ consonant
   state: 'START',
   detectedScript: 'kannada'
 }
-no hit
+Space or puncuation
 {
-  i: 52,
+  i: 51,
   char: ' ',
   nextChar: 'ತ',
   nextNextChar: 'ವ',
-  classification: 'P',
-  syllable: '',
-  slurpCount: 0,
+  classification: 'S',
+  syllable: ' ',
+  slurpCount: 1,
   conjunctCount: 0,
   state: 'START',
   detectedScript: 'kannada'
@@ -380,15 +380,15 @@ consonant
   state: 'START',
   detectedScript: 'kannada'
 }
-no hit
+Space or puncuation
 {
-  i: 58,
+  i: 57,
   char: ' ',
   nextChar: 'ಪ',
   nextNextChar: 'ೆ',
-  classification: 'P',
-  syllable: '',
-  slurpCount: 0,
+  classification: 'S',
+  syllable: ' ',
+  slurpCount: 1,
   conjunctCount: 0,
   state: 'START',
   detectedScript: 'kannada'
@@ -471,15 +471,15 @@ consonant
   state: 'START',
   detectedScript: 'kannada'
 }
-no hit
+Space or puncuation
 {
-  i: 69,
+  i: 68,
   char: ' ',
   nextChar: 'ಘ',
   nextNextChar: 'ನ',
-  classification: 'P',
-  syllable: '',
-  slurpCount: 0,
+  classification: 'S',
+  syllable: ' ',
+  slurpCount: 1,
   conjunctCount: 0,
   state: 'START',
   detectedScript: 'kannada'
@@ -523,28 +523,28 @@ consonant
   state: 'START',
   detectedScript: 'kannada'
 }
-no hit
+Space or puncuation
 {
-  i: 75,
+  i: 74,
   char: '|',
   nextChar: '\n',
   nextNextChar: 'ತ',
   classification: 'P',
-  syllable: '',
-  slurpCount: 0,
+  syllable: '|',
+  slurpCount: 1,
   conjunctCount: 0,
   state: 'START',
   detectedScript: 'kannada'
 }
-no hit
+Space or puncuation
 {
-  i: 76,
+  i: 75,
   char: '\n',
   nextChar: 'ತ',
   nextNextChar: 'ಾ',
-  classification: 'P',
-  syllable: '',
-  slurpCount: 0,
+  classification: 'N',
+  syllable: '\n',
+  slurpCount: 1,
   conjunctCount: 0,
   state: 'START',
   detectedScript: 'kannada'
@@ -588,15 +588,15 @@ consonant
   state: 'START',
   detectedScript: 'kannada'
 }
-no hit
+Space or puncuation
 {
-  i: 82,
+  i: 81,
   char: ' ',
   nextChar: 'ಸ',
   nextNextChar: 'ರ',
-  classification: 'P',
-  syllable: '',
-  slurpCount: 0,
+  classification: 'S',
+  syllable: ' ',
+  slurpCount: 1,
   conjunctCount: 0,
   state: 'START',
   detectedScript: 'kannada'
@@ -692,15 +692,15 @@ consonant
   state: 'START',
   detectedScript: 'kannada'
 }
-no hit
+Space or puncuation
 {
-  i: 95,
+  i: 94,
   char: ' ',
   nextChar: 'ಗ',
   nextNextChar: '\n',
-  classification: 'P',
-  syllable: '',
-  slurpCount: 0,
+  classification: 'S',
+  syllable: ' ',
+  slurpCount: 1,
   conjunctCount: 0,
   state: 'START',
   detectedScript: 'kannada'
@@ -718,15 +718,15 @@ consonant
   state: 'START',
   detectedScript: 'kannada'
 }
-no hit
+Space or puncuation
 {
-  i: 97,
+  i: 96,
   char: '\n',
   nextChar: 'ವ',
   nextNextChar: 'ಿ',
-  classification: 'P',
-  syllable: '',
-  slurpCount: 0,
+  classification: 'N',
+  syllable: '\n',
+  slurpCount: 1,
   conjunctCount: 0,
   state: 'START',
   detectedScript: 'kannada'
@@ -783,15 +783,15 @@ consonant
   state: 'START',
   detectedScript: 'kannada'
 }
-no hit
+Space or puncuation
 {
-  i: 104,
+  i: 103,
   char: ' ',
   nextChar: 'ಸ',
   nextNextChar: 'ಂ',
-  classification: 'P',
-  syllable: '',
-  slurpCount: 0,
+  classification: 'S',
+  syllable: ' ',
+  slurpCount: 1,
   conjunctCount: 0,
   state: 'START',
   detectedScript: 'kannada'
@@ -848,15 +848,15 @@ consonant
   state: 'START',
   detectedScript: 'kannada'
 }
-no hit
+Space or puncuation
 {
-  i: 111,
+  i: 110,
   char: ' ',
   nextChar: 'ನ',
   nextNextChar: 'ಲ',
-  classification: 'P',
-  syllable: '',
-  slurpCount: 0,
+  classification: 'S',
+  syllable: ' ',
+  slurpCount: 1,
   conjunctCount: 0,
   state: 'START',
   detectedScript: 'kannada'
@@ -900,15 +900,15 @@ consonant
   state: 'START',
   detectedScript: 'kannada'
 }
-no hit
+Space or puncuation
 {
-  i: 117,
+  i: 116,
   char: ' ',
   nextChar: 'ನ',
   nextNextChar: 'ರ',
-  classification: 'P',
-  syllable: '',
-  slurpCount: 0,
+  classification: 'S',
+  syllable: ' ',
+  slurpCount: 1,
   conjunctCount: 0,
   state: 'START',
   detectedScript: 'kannada'
@@ -978,40 +978,40 @@ consonant
   state: 'START',
   detectedScript: 'kannada'
 }
-no hit
+Space or puncuation
 {
-  i: 132,
+  i: 131,
   char: '|',
   nextChar: '|',
   nextNextChar: '',
   classification: 'P',
-  syllable: '',
-  slurpCount: 0,
+  syllable: '|',
+  slurpCount: 1,
   conjunctCount: 0,
   state: 'START',
   detectedScript: 'kannada'
 }
-no hit
+Space or puncuation
 {
-  i: 133,
+  i: 132,
   char: '|',
   nextChar: '',
   nextNextChar: '',
   classification: 'P',
-  syllable: '',
-  slurpCount: 0,
+  syllable: '|',
+  slurpCount: 1,
   conjunctCount: 0,
   state: 'START',
   detectedScript: 'kannada'
 }
 [
-  'G', 'G', 'G', 'G', 'L', 'L', 'L', 'P', 'L', 'L',
-  'L', 'L', 'P', 'L', 'L', 'G', 'P', 'G', 'L', 'L',
-  'P', 'L', 'L', 'L', 'L', 'P', 'L', 'L', 'G', 'P',
-  'L', 'L', 'G', 'L', 'L', 'G', 'P', 'L', 'L', 'G',
-  'P', 'P', 'G', 'L', 'L', 'P', 'L', 'L', 'L', 'L',
-  'L', 'L', 'L', 'P', 'L', 'P', 'L', 'L', 'L', 'L',
-  'P', 'G', 'L', 'L', 'L', 'P', 'L', 'L', 'L', 'P',
+  'G', 'G', 'G', 'G', 'L', 'L', 'L', 'S', 'L', 'L',
+  'L', 'L', 'S', 'L', 'L', 'G', 'S', 'G', 'L', 'L',
+  'N', 'L', 'L', 'L', 'L', 'S', 'L', 'L', 'G', 'S',
+  'L', 'L', 'G', 'L', 'L', 'G', 'S', 'L', 'L', 'G',
+  'P', 'N', 'G', 'L', 'L', 'S', 'L', 'L', 'L', 'L',
+  'L', 'L', 'L', 'S', 'L', 'N', 'L', 'L', 'L', 'L',
+  'S', 'G', 'L', 'L', 'L', 'S', 'L', 'L', 'L', 'S',
   'G', 'L', 'L', 'G', 'G', 'P', 'P'
 ]
 {
@@ -1059,9 +1059,9 @@ no hit
       "index": 6
     },
     {
-      "syllable": "",
+      "syllable": " ",
       "expected": "",
-      "actual": "P",
+      "actual": "S",
       "index": 7
     },
     {
@@ -1089,9 +1089,9 @@ no hit
       "index": 11
     },
     {
-      "syllable": "",
+      "syllable": " ",
       "expected": "",
-      "actual": "P",
+      "actual": "S",
       "index": 12
     },
     {
@@ -1113,9 +1113,9 @@ no hit
       "index": 15
     },
     {
-      "syllable": "",
+      "syllable": " ",
       "expected": "",
-      "actual": "P",
+      "actual": "S",
       "index": 16
     },
     {
@@ -1137,9 +1137,9 @@ no hit
       "index": 19
     },
     {
-      "syllable": "",
+      "syllable": "\n",
       "expected": "",
-      "actual": "P",
+      "actual": "N",
       "index": 20
     },
     {
@@ -1167,9 +1167,9 @@ no hit
       "index": 24
     },
     {
-      "syllable": "",
+      "syllable": " ",
       "expected": "",
-      "actual": "P",
+      "actual": "S",
       "index": 25
     },
     {
@@ -1191,9 +1191,9 @@ no hit
       "index": 28
     },
     {
-      "syllable": "",
+      "syllable": " ",
       "expected": "",
-      "actual": "P",
+      "actual": "S",
       "index": 29
     },
     {
@@ -1233,9 +1233,9 @@ no hit
       "index": 35
     },
     {
-      "syllable": "",
+      "syllable": " ",
       "expected": "",
-      "actual": "P",
+      "actual": "S",
       "index": 36
     },
     {
@@ -1257,15 +1257,15 @@ no hit
       "index": 39
     },
     {
-      "syllable": "",
+      "syllable": "|",
       "expected": "",
       "actual": "P",
       "index": 40
     },
     {
-      "syllable": "",
+      "syllable": "\n",
       "expected": "",
-      "actual": "P",
+      "actual": "N",
       "index": 41
     },
     {
@@ -1287,9 +1287,9 @@ no hit
       "index": 44
     },
     {
-      "syllable": "",
+      "syllable": " ",
       "expected": "",
-      "actual": "P",
+      "actual": "S",
       "index": 45
     },
     {
@@ -1335,9 +1335,9 @@ no hit
       "index": 52
     },
     {
-      "syllable": "",
+      "syllable": " ",
       "expected": "",
-      "actual": "P",
+      "actual": "S",
       "index": 53
     },
     {
@@ -1347,9 +1347,9 @@ no hit
       "index": 54
     },
     {
-      "syllable": "",
+      "syllable": "\n",
       "expected": "",
-      "actual": "P",
+      "actual": "N",
       "index": 55
     },
     {
@@ -1377,9 +1377,9 @@ no hit
       "index": 59
     },
     {
-      "syllable": "",
+      "syllable": " ",
       "expected": "",
-      "actual": "P",
+      "actual": "S",
       "index": 60
     },
     {
@@ -1407,9 +1407,9 @@ no hit
       "index": 64
     },
     {
-      "syllable": "",
+      "syllable": " ",
       "expected": "",
-      "actual": "P",
+      "actual": "S",
       "index": 65
     },
     {
@@ -1431,9 +1431,9 @@ no hit
       "index": 68
     },
     {
-      "syllable": "",
+      "syllable": " ",
       "expected": "",
-      "actual": "P",
+      "actual": "S",
       "index": 69
     },
     {
@@ -1467,13 +1467,13 @@ no hit
       "index": 74
     },
     {
-      "syllable": "",
+      "syllable": "|",
       "expected": "",
       "actual": "P",
       "index": 75
     },
     {
-      "syllable": "",
+      "syllable": "|",
       "expected": "",
       "actual": "P",
       "index": 76

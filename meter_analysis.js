@@ -46,6 +46,8 @@ const scriptPatterns = {
 const LAGHU = "L";
 const GURU = "G";
 const PUNCT = "P";
+const SPACE = "S";
+const NWLINE = "N";
 
 function normalizeWhitespace(text) {
     // Replace multiple spaces with a single space
@@ -133,7 +135,7 @@ function analyzeMeter(text, selectedMeter = null) {
 		let i=0;
 		let slurpCount = 0;
 		let conjunctCount = 0;
-		let classification = "L";
+		let classification = LAGHU;
 		let syllable = "";
 
 
@@ -154,15 +156,15 @@ function analyzeMeter(text, selectedMeter = null) {
 				if (shortVowelMarks.test(nextChar) || longVowelMarks.test(nextChar)){
 					slurpCount++;
 					if (longVowelMarks.test(nextChar)){
-						classification = "G";
+						classification = GURU;
 					}
 					if (anusvaraVisarga.test(nextNextChar)){
 							slurpCount++;
-							classification = "G";
+							classification = GURU;
 						}							
 				} else if (anusvaraVisarga.test(nextChar)){
 						slurpCount++;
-						classification = "G";
+						classification = GURU;
 					}							
 				
 				//TODO deal with conjuncts across new line. pre process it out.
@@ -172,23 +174,30 @@ function analyzeMeter(text, selectedMeter = null) {
 				console.log("vowel");
 				slurpCount++;
 				if (longVowels.test(char)){
-					classification = "G";
+					classification = GURU;
 				}
 				if (anusvaraVisarga.test(nextChar)){
 						slurpCount++;
-						classification = "G";
+						classification = GURU;
 				}
 				//TODO deal with conjuncts across new line. pre process it out.
 				conjunctCount = countRepeatingConsonantViramaPairs(text,detectedScript, i+slurpCount);
 			} else { //spaces and punctuations
-				console.log("no hit");
-				i++;
-				classification = PUNCT;
+				console.log("Space or puncuation");
+				//i++;
+				if (char === "\n"){
+					classification = NWLINE;
+				}else if (char === " "){
+					classification = SPACE;
+				}else{
+					classification = PUNCT;
+				}
+				slurpCount++;
 			}
 
 			if (conjunctCount>0){
 					slurpCount +=conjunctCount
-					classification = "G" 
+					classification = GURU;
 			}
 			
 			syllable = syllable + text.slice(i, i + slurpCount);

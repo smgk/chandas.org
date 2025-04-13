@@ -102,11 +102,14 @@ function countRepeatingConsonantViramaPairs(arr,detectedScript, startIndex = 0) 
 // 2. if consonant, it is optionally followed by a dependant vowel
 // 3. then it is optionally followed by anuswara
 // 4. then it is optionally followed by pair(s) of consonant+virama
-// 5. if there are no consonant+virama pairs, it is a Laghu (L)
-// 6. if there are one or more consonant+virama pairs, it is a Guru (G)
-// 7. if there are no valid syllables, return empty array
-// 8. The function will return an array of objects with syllable, classification (L or G), and index.
+// 5. if there are no dependent long vowels, it is a Laghu (L)
+// 6. if there are no consonant+virama pairs, it is a Laghu (L)
+// 7. if consonant+virama pairs can start on a new line, it is a guru (G)
+// 8. if there are one or more consonant+virama pairs, it is a Guru (G)
+// 9. if there are no valid syllables, return empty array
+// 10. The function will return an array of objects with syllable, classification (L or G), and index.
 // This function will parse the text and segment it into syllables based on the rules above.
+
 function segmentSyllables(text, detectedScript) {
 	// Check if the detected script is valid
 	if (!scriptPatterns[detectedScript]) {
@@ -139,7 +142,7 @@ function segmentSyllables(text, detectedScript) {
 		let nextNextChar = text[i + 2] || "";
 
 		if (consonants.test(char)) {
-			console.log("consonant");
+			//console.log("consonant");
 			slurpCount++;
 			if (shortVowelMarks.test(nextChar) || longVowelMarks.test(nextChar)){
 				slurpCount++;
@@ -159,7 +162,7 @@ function segmentSyllables(text, detectedScript) {
 			conjunctCount = countRepeatingConsonantViramaPairs(text,detectedScript,i+slurpCount);
 
 		} else if (shortVowels.test(char)|| longVowels.test(char)) {
-			console.log("vowel");
+			//console.log("vowel");
 			slurpCount++;
 			if (longVowels.test(char)){
 				classification = GURU;
@@ -171,7 +174,7 @@ function segmentSyllables(text, detectedScript) {
 			//TODO deal with conjuncts across new line. pre process it out.
 			conjunctCount = countRepeatingConsonantViramaPairs(text,detectedScript, i+slurpCount);
 		} else { //spaces and punctuations
-			console.log("Space or puncuation");
+			//console.log("Space or puncuation");
 			//i++;
 			if (char === "\n"){
 				classification = NWLINE;
@@ -190,7 +193,7 @@ function segmentSyllables(text, detectedScript) {
 		
 		syllable = syllable + text.slice(i, i + slurpCount);
 		segmented.push({ syllable, classification, i });
-		console.log({ i, char, nextChar, nextNextChar, classification, syllable, slurpCount, conjunctCount, state,detectedScript });
+		//console.log({ i, char, nextChar, nextNextChar, classification, syllable, slurpCount, conjunctCount, state,detectedScript });
 
 
 		i=i+slurpCount;
@@ -222,10 +225,6 @@ function analyzeMeter(text, selectedMeter = null) {
         return { pattern: [], detectedScript: "Unknown", detectedmeter: "Unknown", aproxmeters: [], selectedMeter };
     }
 	
-
-	
-
-	//Execution starts here, main(){} if you will
 
     // Trim the text to remove leading and trailing spaces
     text = removePunctuation(text); // Remove punctuation from the text

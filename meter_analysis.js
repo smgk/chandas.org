@@ -1,27 +1,7 @@
 // Meter analysis logic in JavaScript (shared by both frontend and API)
 // This script classifies syllables as Laghu (L) or Guru (G), detects script, and finds metrical patterns.
 
-    // Define script-specific patterns for vowels, consonants, and special characters
-/*		const scriptPatterns = {
-			devanagari: {
-				shortVowels: /[अइउऋऌएओ]/, // Laghu
-				longVowels: /[आईऊॠॡऐऔ]/, // Guru
-				consonants: /[क-ह]/,
-				shortVowelMarks: /[िुॆॊ]/, // Short dependent vowel markers
-				longVowelMarks: /[ीूेैोौ]/, // Long dependent vowel markers
-				anusvaraVisarga: /[ंः]/,
-				virama: /्/
-			},
-			kannada: {
-				shortVowels: /[ಅಇಉಋಎಒ]/,
-				longVowels: /[ಆಈಊೠಐಔ]/,
-				consonants: /[ಕ-ಹ]/,
-				shortVowelMarks: /[ಿುೆೊ]/,
-				longVowelMarks: /[ೀೂೇೈೋೌಾ]/,
-				anusvaraVisarga: /[ಂಃ]/,
-				virama: /್/
-			}
-		}; */
+const fs = require("fs"); // Ensure fs is available for reading the JSON file
 
 const scriptPatterns = {
 	devanagari: {
@@ -207,6 +187,49 @@ function segmentSyllables(text, detectedScript) {
 	return segmented;
 }
 
+/**
+ * Function to rebuild text and G/L classification one line at a time.
+ * @param {Array} syllables - Array of syllable objects with `syllable` and `classification`.
+ * @returns {Object} - An object containing two arrays: `lines` (text by line) and `patterns` (corresponding patterns).
+ */
+function rebuildLinesAndPatterns(syllables) {
+    let lines = [];
+    let patterns = [];
+    let currentLineText = "";
+    let currentLineGL = "";
+
+    syllables.forEach(({ syllable, classification }) => {
+        if (classification === NWLINE) {
+            // Push the current line and reset
+            lines.push(currentLineText.trim());
+            patterns.push(currentLineGL.trim());
+            currentLineText = "";
+            currentLineGL = "";
+        } else if (/\n/.test(syllable)) {
+            // Push the current line and reset
+			syllable=syllable.replace(/\n/g, ""); // Remove newline character from syllable
+			currentLineText += syllable;
+            currentLineGL += classification;
+            lines.push(currentLineText.trim());
+            patterns.push(currentLineGL.trim());
+            currentLineText = "";
+            currentLineGL = "";
+        } else {
+
+            currentLineText += syllable;
+            currentLineGL += classification;
+        }
+    });
+
+    // Push the last line if any content remains
+    if (currentLineText.trim()) {
+        lines.push(currentLineText.trim());
+        patterns.push(currentLineGL.trim());
+    }
+
+    return { lines, patterns };
+}
+
 function analyzeMeter(text, selectedMeter = null) {
 
     let detectedScript = "Unknown";
@@ -229,16 +252,23 @@ function analyzeMeter(text, selectedMeter = null) {
     // Trim the text to remove leading and trailing spaces
     text = removePunctuation(text); // Remove punctuation from the text
 	text = normalizeWhitespace(text); // Normalize whitespace in the text
-	console.log(text)
+	console.log("Normalized text:");
+	console.log(text);
 	if (text.length === 0) {
 		// If the text is empty after removing punctuation, return empty pattern
 		return { pattern: [], detectedScript: "Unknown", detectedmeter: "Unknown", aproxmeters: [], selectedMeter };
 	}
 
     syllables = segmentSyllables(text, detectedScript);
-	// Extract and print only the classification field from the syllables structure
-	let classifications = syllables.map(({ classification }) => classification);
-	console.log(classifications);
+
+    // Use the new function to rebuild lines and patterns
+    const { lines, patterns } = rebuildLinesAndPatterns(syllables);
+    console.log("\nLines and patterns:");
+	lines.forEach((line, index) => {
+        console.log(line);
+        console.log(patterns[index]);
+    });
+
     // Step 2: Store the pattern directly from segmentation
     let detailedPattern = syllables.map(({ syllable, classification }, index) => ({
         syllable,
@@ -247,12 +277,16 @@ function analyzeMeter(text, selectedMeter = null) {
         index
     }));
     
-    let meterPatterns = {
-        "Anushtubh": "GLGL GLGL GLGL GLGL",
-        "Indravajra": "GGLG GGLG GGLG",
-        "Upendravajra": "GLGG GLGG GLGG"
-    };
-    
+    // Load meter patterns from jason
+    let meterPatterns = {};
+    try {
+        const meterPatternsData = fs.readFileSync("mishra.json", "utf8");
+        meterPatterns = JSON.parse(meterPatternsData);
+    } catch (error) {
+        console.error("Error loading meter patterns from mishra.json:", error);
+        return { pattern: [], detectedScript: "Unknown", detectedmeter: "Unknown", aproxmeters: [], selectedMeter };
+    }
+
     let detectedMeter = "Unknown";
     let approxMeters = [];
     let patternString = detailedPattern.map(item => item.actual).join(" ");

@@ -30,6 +30,10 @@ Chandas Meter Analyzer is a web-based tool designed to analyze Sanskrit and othe
 - **Detects the script** based on character patterns.
 - **Matches against predefined meters** (e.g., Anushtubh, Indravajra, Upendravajra).
 - Returns JSON output with:
+  - `lines`: Array of text lines.
+  - `patterns`: Array of corresponding Laghu/Guru patterns per line.
+  - `syllableCounts`: Array of syllable counts per line.
+  - `maatraCounts`: Array of maatras per line (if applicable).
   - `pattern`: List of syllables with their classification
   - `detectedScript`: Identified script
   - `detectedMeter`: Exact meter match (if found)
@@ -74,6 +78,10 @@ Chandas Meter Analyzer is a web-based tool designed to analyze Sanskrit and othe
 ### **3. Expected JSON Output (Example)**
 ```json
 {
+    "lines": ["ಕುಂ ಕಾರ", "ನಿಃ ನೀಃ"],
+    "patterns": ["G L", "G G"],
+    "syllableCounts": [2, 2],
+    "maatraCounts": [3, 4],
     "pattern": [
         {"syllable": "ಕುಂ", "expected": "G", "actual": "G"},
         {"syllable": "ಕಾರ", "expected": "L", "actual": "L"}

@@ -853,6 +853,11 @@
                     script: segmented.script,
                     syllables,
                     pattern: syllables.map((item) => item.classification).join(""),
+                    matraCount: syllables.reduce(
+                        (total, item) =>
+                            total + (item.classification === GURU ? 2 : 1),
+                        0
+                    ),
                     expectedPattern,
                     missingCount: selectedFixedMeter
                         ? Math.max(0, expectedPattern.length - syllables.length)
@@ -906,7 +911,7 @@
 
         return {
             text: originalText,
-            analysisVersion: "2.0.0",
+            analysisVersion: "2.1.0",
             catalogVersion: catalog && catalog.structuralCatalogVersion
                 ? String(catalog.structuralCatalogVersion)
                 : "",

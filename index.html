@@ -88,9 +88,12 @@
                         <span class="legend-item"><i class="sample guru" aria-hidden="true">ಗಾ</i><span data-i18n="guru">Guru</span></span>
                         <span class="legend-item"><i class="sample violation" aria-hidden="true">ಭಾ</i><span data-i18n="violation">Violation</span></span>
                     </div>
-                    <p id="editor-help" class="editor-help" data-i18n="stanzaHelp">
-                        Leave a blank line between stanzas.
-                    </p>
+                    <div class="editor-status">
+                        <output id="cursor-metrics" class="cursor-metrics">Syllable 0 · Mātrās 0</output>
+                        <p id="editor-help" class="editor-help" data-i18n="stanzaHelp">
+                            Leave a blank line between stanzas.
+                        </p>
+                    </div>
                 </div>
             </div>
 
@@ -120,8 +123,17 @@
 
                     <div id="selected-meter-reference" class="selected-meter-reference" aria-live="polite" hidden>
                         <span class="mini-label" data-i18n="selectedMeterReference">Selected meter</span>
-                        <strong id="selected-meter-name"></strong>
+                        <div class="selected-meter-heading">
+                            <strong id="selected-meter-name"></strong>
+                            <button id="clear-meter" class="selected-meter-clear" type="button" data-i18n="clearSelection">
+                                Clear selected meter
+                            </button>
+                        </div>
                         <output id="selected-meter-signature" class="meter-signature"></output>
+                        <label class="template-toggle">
+                            <input id="show-template" type="checkbox">
+                            <span data-i18n="showTemplate">Show template</span>
+                        </label>
                     </div>
 
                     <div class="suggestion-heading">
@@ -137,9 +149,6 @@
                         <label for="meter-search" data-i18n="findMeter">Find a meter</label>
                         <input id="meter-search" type="search" autocomplete="off" data-i18n-placeholder="searchMeters" placeholder="Search meters…">
                         <select id="meter-select" size="7" aria-label="All meters"></select>
-                        <button id="clear-meter" class="quiet-button full-width" type="button" data-i18n="clearSelection">
-                            Clear selected meter
-                        </button>
                     </details>
 
                     <div id="validation-summary" class="validation-summary" aria-live="polite"></div>

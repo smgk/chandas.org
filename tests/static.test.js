@@ -54,6 +54,20 @@ test("the composition control and live regions have accessible labels", () => {
     assert.match(html, /id="draft-state"[^>]*aria-live="polite"/);
     assert.match(html, /id="validation-summary"[^>]*aria-live="polite"/);
     assert.match(html, /id="toast"[^>]*role="status"[^>]*aria-live="polite"/);
+    assert.match(html, /id="cursor-metrics"/);
+    assert.match(html, /id="show-template"[^>]*type="checkbox"/);
+});
+
+test("selected-meter actions remain outside the full meter picker", () => {
+    const html = read("index.html");
+    const selectedReference = html.indexOf('id="selected-meter-reference"');
+    const clearAction = html.indexOf('id="clear-meter"');
+    const meterPicker = html.indexOf('id="meter-picker"');
+
+    assert.ok(selectedReference >= 0);
+    assert.ok(clearAction > selectedReference);
+    assert.ok(clearAction < meterPicker);
+    assert.match(read("styles.css"), /font-size:\s*clamp\(1\.05rem,\s*1\.8vw,\s*1\.3rem\)/);
 });
 
 test("branding and public navigation use the compact approved copy", () => {

@@ -103,6 +103,7 @@ test("source ranges reconstruct the analyzed syllables without shifting punctuat
         assert.equal(text.slice(segment.start, segment.end), segment.text);
     });
     assert.equal(result.text, text);
+    assert.equal(result.stanzas[0].lines[0].matraCount, 4);
 });
 
 test("ranks exact patterns above compatible and approximate patterns", () => {
@@ -225,7 +226,7 @@ test("keeps an incomplete structural meter compatible without red violations", (
 
     assert.equal(stanza.violationCount, 0);
     assert.ok(stanza.missingCount > 0);
-    assert.equal(result.analysisVersion, "2.0.0");
+    assert.equal(result.analysisVersion, "2.1.0");
     assert.equal(result.catalogVersion, structuralCatalog.catalogVersion);
 });
 

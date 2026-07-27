@@ -121,6 +121,9 @@ recommended, and optional behavior.
    keyboards.
 6. The editor MUST perform analysis locally so typing does not depend on a
    network round trip.
+7. The default composition font SHOULD favor fitting a useful poetic line
+   without wrapping while remaining at least 16 CSS pixels on mobile and fully
+   legible for Kannada and Devanagari combining marks.
 
 ### FR-2: Live analysis
 
@@ -160,6 +163,13 @@ recommended, and optional behavior.
    and responsive layout changes.
 5. Updates SHOULD feel immediate and MUST NOT cause visible caret jumps,
    flicker, or layout shifts.
+6. Each non-empty logical line MUST show faint, non-editable syllable and
+   mātrā totals immediately above its final analyzed letter. These counters
+   MUST NOT affect wrapping, source offsets, selection, analysis, copy, or
+   sharing.
+7. The editor MUST show the syllable ordinal and accumulated mātrā count from
+   the beginning of the composition to the caret. Moving the caret without
+   editing MUST update these counts.
 
 ### FR-4: Meter detection and suggestions
 
@@ -209,6 +219,8 @@ recommended, and optional behavior.
    define and test how selections are handled when stanzas split or merge.
 8. A user MUST be able to clear a stanza's selection and return that stanza to
    suggestion-only mode.
+   The clear action MUST remain available with the selected-meter reference
+   outside the expanded **Choose any meter** control.
 9. When no meter has been selected for a stanza, approximate differences in
    that stanza MUST NOT be shown as errors.
 10. When a meter is selected, its name and applicable signature—fixed
@@ -579,10 +591,11 @@ The MVP is acceptable when:
 - **Contract tests:** Verify the analysis result schema and identical core
   results across web and Android.
 - **Component tests:** Editor/highlight alignment, meter dropdown behavior,
-  stanza boundary handling, per-stanza selected-meter persistence, anonymous
-  local draft recovery/clearing, ghost-template toggling and alignment, proof
-  that ghost symbols never enter source text, copy, share fallback, and
-  synonym-dropdown placeholder behavior where present.
+  line-end syllable/mātrā counters, caret-position counting, stanza boundary
+  handling, per-stanza selected-meter persistence, the always-available clear
+  action, anonymous local draft recovery/clearing, ghost-template toggling and
+  alignment, proof that ghost symbols never enter source text, copy, share
+  fallback, and synonym-dropdown placeholder behavior where present.
 - **End-to-end tests:** Type with simulated IME events; paste; undo/redo; select
   different meters in multiple stanzas; split and merge stanzas; repair a
   violation; enable and disable a ghost template without changing the poem;

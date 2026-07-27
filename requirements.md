@@ -2,7 +2,7 @@
 
 **Status:** Draft for stakeholder review
 
-**Last updated:** 2026-07-26
+**Last updated:** 2026-07-27
 
 **Products:** `chandas.org` website and Android application
 
@@ -63,11 +63,13 @@ metrical verse.
 4. A compact control lists the closest meters in ranked order.
 5. The user may select a suggested meter or choose another supported meter.
 6. The user may select a different meter for each stanza.
-7. Violations of each stanza's selected meter appear inline in red while
+7. When a meter is selected, the user may enable a faint, non-destructive
+   ghost template as a composition guide.
+8. Violations of each stanza's selected meter appear inline in red while
    editing continues.
-8. The user's composition is recovered locally after an accidental refresh or
+9. The user's composition is recovered locally after an accidental refresh or
    restart.
-9. The user copies or shares the composition.
+10. The user copies or shares the composition.
 
 ## 4. Release Scope
 
@@ -80,6 +82,7 @@ metrical verse.
 - Inline Guru/Laghu presentation.
 - Ranked meter suggestions in a non-obtrusive dropdown.
 - Stanza-level meter selection, validation, and inline violation highlighting.
+- An optional ghost template for the selected stanza's meter.
 - Anonymous on-device draft recovery without login.
 - Copy and operating-system-supported sharing, including paths to X/Twitter and
   Facebook when those destinations are available.
@@ -93,6 +96,8 @@ metrical verse.
 - Accounts and authentication.
 - Saving, naming, reopening, and syncing drafts and completed compositions.
 - Synonyms for the current word in a second non-obtrusive dropdown.
+- A strong template mode for structured, arbitrary-position composition while
+  retaining the ghost template as an alternative.
 - More Indic scripts and meter traditions.
 - Optional transliteration.
 
@@ -294,6 +299,60 @@ recommended, and optional behavior.
 6. Sync conflict, privacy, retention, export, and account-deletion behavior
    MUST be specified before account functionality is implemented.
 
+### FR-11: Guided composition templates
+
+#### FR-11.1: Ghost template (first version)
+
+1. When a stanza has a selected meter, the UI MUST offer a **Show template**
+   checkbox outside the general meter-picker expansion.
+2. Enabling the checkbox MUST display a faint metrical guide associated with
+   the selected stanza while preserving the ordinary free-text editor.
+3. The guide MUST be presentation-only. Template symbols and empty positions
+   MUST NOT become characters in the composition, be analyzed as authored
+   syllables, alter source offsets, or appear in copy/share output.
+4. For a fixed Guru/Laghu meter, the guide MUST show its Laghu and Guru
+   signature using symbols appropriate to the selected language or active
+   composition script.
+5. For a structural meter, the guide MUST distinguish fixed positions from
+   variable or rule-constrained positions rather than inventing a single fixed
+   Guru/Laghu sequence.
+6. For a mātrā meter, the guide MUST show mātrā-group capacities and progress
+   rather than implying that the meter has one mandatory Guru/Laghu sequence.
+7. The guide MUST follow the stanza's selected meter and MUST update or close
+   predictably when that selection changes or is cleared.
+8. Showing or hiding the guide MUST NOT move the caret, change wrapping,
+   corrupt IME composition, or interfere with selection, undo, redo, paste,
+   highlighting, scrolling, or accessibility.
+9. The first-version ghost template MAY assume sequential free-text
+   composition. It is not required to let the user fill a later empty metrical
+   position while earlier positions remain empty.
+
+#### FR-11.2: Strong template (later version)
+
+1. A later release MUST offer both **Ghost template** and **Strong template**
+   choices when guided composition is available.
+2. Strong template mode MUST provide structured, fillable metrical positions.
+   The user MUST be able to populate arbitrary positions while any other
+   positions remain blank.
+3. Empty strong-template positions MUST remain UI/model state rather than
+   literal placeholder characters in the authored composition.
+4. A filled position MUST retain its association with the intended metrical
+   slot when other positions are filled, cleared, or edited.
+5. Strong template mode MUST support Kannada and Devanagari IMEs, Unicode
+   aksharas, punctuation, whitespace, paste, selection, undo/redo, and
+   accessible keyboard and touch navigation.
+6. Anonymous recovery and future synchronized drafts MUST preserve the
+   selected template mode, filled positions, unfilled positions, meter/catalog
+   version, and enough structure to restore the guided draft without loss.
+7. Switching between ghost and strong modes, or temporarily hiding a guide,
+   MUST NOT discard authored text or filled-slot structure.
+8. Copying or sharing MUST exclude unfilled positions and template symbols and
+   MUST include only text authored by the user, subject to the existing
+   optional meter-name and link settings.
+9. Fixed, structural, and mātrā meters MAY use different strong-template slot
+   representations, but each representation MUST expose only constraints
+   actually supported by the versioned meter catalog.
+
 ## 6. Analysis Engine Requirements
 
 The existing `meter_analysis.js` implementation is the baseline for
@@ -472,6 +531,9 @@ The MVP is acceptable when:
    remain.
 11. A subject-matter expert signs off on the supported rules, meter catalog, and
    validation corpus.
+12. Enabling or disabling the selected meter's ghost template leaves the
+    original composition, analysis ranges, caret, copy output, and share output
+    unchanged.
 
 ## 10. Test Strategy
 
@@ -518,12 +580,18 @@ The MVP is acceptable when:
   results across web and Android.
 - **Component tests:** Editor/highlight alignment, meter dropdown behavior,
   stanza boundary handling, per-stanza selected-meter persistence, anonymous
-  local draft recovery/clearing, copy, share fallback, and synonym-dropdown
-  placeholder behavior where present.
+  local draft recovery/clearing, ghost-template toggling and alignment, proof
+  that ghost symbols never enter source text, copy, share fallback, and
+  synonym-dropdown placeholder behavior where present.
 - **End-to-end tests:** Type with simulated IME events; paste; undo/redo; select
   different meters in multiple stanzas; split and merge stanzas; repair a
-  violation; recover a draft after restart; copy; and initiate sharing on
-  representative viewports.
+  violation; enable and disable a ghost template without changing the poem;
+  recover a draft after restart; copy; and initiate sharing on representative
+  viewports.
+- **Later strong-template tests:** Fill positions out of order, retain blank
+  positions, edit and clear filled slots, switch between ghost and strong
+  modes, restore a partially filled structured draft, and verify that copy and
+  sharing contain only authored text.
 - **Accessibility tests:** Automated checks plus manual keyboard,
   screen-reader, contrast, zoom, dynamic-type, and color-vision checks.
 - **Performance tests:** Record input latency and analysis duration for typical,
@@ -649,6 +717,9 @@ The MVP is acceptable when:
 11. Structural meters are maintained in a separate versioned catalog;
     pathyā Anuṣṭubh and the initial Āryā-family group-total rules are the first
     supported set.
+12. The first template release uses a non-destructive ghost guide. A later
+    release offers both ghost and strong templates, with the strong template
+    supporting arbitrary out-of-order position filling.
 
 ### Remaining review and expansion work
 
@@ -677,6 +748,8 @@ The MVP is acceptable when:
 - Server-side storage or analysis of composition text.
 - Support for every Indic script or every regional prosody tradition.
 - Claims of meter correctness outside the reviewed meter catalog and ruleset.
+- Strong-template editing and arbitrary out-of-order slot filling; the first
+  version includes only the ghost template.
 
 ## 14. Change Control
 

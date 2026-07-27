@@ -8,11 +8,11 @@
     const messages = {
         en: {
             skip: "Skip to composition",
-            brandTagline: "compose in rhythm",
+            brandTagline: "say it in-verse",
             language: "Interface language",
             newDraft: "New",
             eyebrow: "A live prosody companion",
-            title: "Let the rhythm appear as you write.",
+            title: "Chandas - say it in-verse",
             intro: "Type Kannada or Devanagari verse. Guru and Laghu appear in place, and the closest meters stay quietly within reach.",
             composition: "Composition",
             savedLocally: "Saved privately on this device",
@@ -62,11 +62,11 @@
         },
         kn: {
             skip: "ರಚನೆಗೆ ಹೋಗಿ",
-            brandTagline: "ಲಯದಲ್ಲಿ ರಚಿಸಿ",
+            brandTagline: "ಪದ್ಯದಲ್ಲಿ ಹೇಳಿ",
             language: "ತೆರೆಯ ಭಾಷೆ",
             newDraft: "ಹೊಸದು",
             eyebrow: "ನೇರ ಛಂದಸ್ಸಿನ ಸಂಗಾತಿ",
-            title: "ನೀವು ಬರೆಯುತ್ತಿದ್ದಂತೆ ಲಯ ಕಾಣಿಸಲಿ.",
+            title: "ಛಂದಸ್ - ಪದ್ಯದಲ್ಲಿ ಹೇಳಿ",
             intro: "ಕನ್ನಡ ಅಥವಾ ದೇವನಾಗರಿ ಪದ್ಯವನ್ನು ಬರೆಯಿರಿ. ಗುರು–ಲಘು ಅದೇ ಪಠ್ಯದಲ್ಲಿ ಕಾಣುತ್ತದೆ; ಸಮೀಪದ ಛಂದಸ್ಸುಗಳು ಪಕ್ಕದಲ್ಲಿರುತ್ತವೆ.",
             composition: "ರಚನೆ",
             savedLocally: "ಈ ಸಾಧನದಲ್ಲಿ ಖಾಸಗಿಯಾಗಿ ಉಳಿಸಲಾಗಿದೆ",

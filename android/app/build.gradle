@@ -61,6 +61,7 @@ tasks.register("syncWebAssets", Copy) {
     include "privacy.html"
     include "terms.html"
     include "notices.html"
+    include "about.html"
     into(generatedWebAssets)
 }
 

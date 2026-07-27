@@ -66,7 +66,7 @@ test("recovers the anonymous local draft and meter selection", async ({ page }) 
 test("switches to the Kannada interface", async ({ page }) => {
     await page.locator("#language").selectOption("kn");
 
-    await expect(page.locator("#page-title")).toHaveText("ನೀವು ಬರೆಯುತ್ತಿದ್ದಂತೆ ಲಯ ಕಾಣಿಸಲಿ.");
+    await expect(page.locator("#page-title")).toHaveText("ಛಂದಸ್ - ಪದ್ಯದಲ್ಲಿ ಹೇಳಿ");
     await expect(page.locator("html")).toHaveAttribute("lang", "kn");
 });
 

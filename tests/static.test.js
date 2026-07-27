@@ -34,6 +34,7 @@ test("service worker pre-caches every core web asset", () => {
         "mishra.json",
         "manifest.webmanifest",
         "icon.svg",
+        "about.html",
         "privacy.html",
         "terms.html",
         "notices.html"
@@ -52,4 +53,15 @@ test("the composition control and live regions have accessible labels", () => {
     assert.match(html, /id="draft-state"[^>]*aria-live="polite"/);
     assert.match(html, /id="validation-summary"[^>]*aria-live="polite"/);
     assert.match(html, /id="toast"[^>]*role="status"[^>]*aria-live="polite"/);
+});
+
+test("branding and public navigation use the compact approved copy", () => {
+    const index = read("index.html");
+    const about = read("about.html");
+    const publicPages = [index, read("privacy.html"), read("terms.html")].join("\n");
+
+    assert.match(index, /say it in-verse/);
+    assert.doesNotMatch(index, /Let the rhythm appear as you write/i);
+    assert.doesNotMatch(publicPages, /github\.com\/smgk\/chandas\.org/);
+    assert.match(about, /href="https:\/\/x\.com\/ganeshkrishna"[^>]*>@ganeshkrishna<\/a>/);
 });

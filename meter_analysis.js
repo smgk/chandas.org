@@ -1,347 +1,590 @@
-// Meter analysis logic in JavaScript (shared by both frontend and API)
-// This script classifies syllables as Laghu (L) or Guru (G), detects script, and finds metrical patterns.
+(function chandasModule(globalScope, factory) {
+    const api = factory();
 
-const fs = require("fs"); // Ensure fs is available for reading the JSON file
+    if (typeof module !== "undefined" && module.exports) {
+        module.exports = api;
+    }
 
-const scriptPatterns = {
-	devanagari: {
-		shortVowels: /[\u0905\u0907\u0909\u090B\u090C\u090F\u0913]/, // Laghu
-		longVowels: /[\u0906\u0908\u090A\u0960\u0961\u0910\u0914]/, // Guru
-		consonants: /[\u0915-\u0939]/,
-		shortVowelMarks: /[\u093F\u0941\u0946\u094A]/, // Short dependent vowel markers
-		longVowelMarks: /[\u0940\u0942\u0947\u0948\u094B\u094C]/, // Long dependent vowel markers
-		anusvaraVisarga: /[\u0902\u0903]/,
-		virama: /\u094D/
-	},
-	kannada: {
-		shortVowels: /[\u0C85\u0C87\u0C89\u0C8B\u0C8E\u0C92]/,
-		longVowels: /[\u0C86\u0C88\u0C8A\u0C60\u0C61\u0C90\u0C94]/,
-		consonants: /[\u0C95-\u0CB9]/,
-		shortVowelMarks: /[\u0CBF\u0CC1\u0CC6\u0CCA]/,
-		longVowelMarks: /[\u0CC0\u0CC2\u0CC7\u0CC8\u0CCB\u0CCC\u0CBE]/,
-		anusvaraVisarga: /[\u0C82\u0C83]/,
-		virama: /\u0CCD/
-	}
-};
-const LAGHU = "L";
-const GURU = "G";
-const PUNCT = "P";
-const SPACE = "S";
-const NWLINE = "N";
+    if (globalScope) {
+        globalScope.Chandas = api;
+        // Backwards-compatible entry point for the original prototype.
+        globalScope.analyzeMeter = api.analyzeMeter;
+    }
+}(typeof globalThis !== "undefined" ? globalThis : this, function createChandasApi() {
+    "use strict";
 
-function normalizeWhitespace(text) {
-    // Replace multiple spaces with a single space
-    text = text.replace(/[ \t\r\f\v]/g, ' ');
+    const LAGHU = "L";
+    const GURU = "G";
 
-    // Replace multiple space+newlines+space with one single newline
-    text = text.replace(/[ \t\r\f\v]*\n+[ \t\r\f\v]*/g, '\n');
-
-    // Trim leading and trailing whitespace
-    return text.trim();
-}
-function removePunctuation(text) {
-	// Remove punctuation marks from the text
-	// This regex matches common punctuation marks. You can add more if needed.
-	// Note: This will not remove spaces, only punctuation characters.
-	const punctuationRegex = /[.,;:!?()\"'“”‘’\[\]{}।]/g;
-	text = text.replace(punctuationRegex, '');
-
-	return text;
-}
-
-// Function to extract ottakshara/conjuncts
-// This function counts the number of repeating consonant+virama pairs in the text.
-// It helps in identifying the number of consonants that form a conjunct.
-// It takes an array of characters and a starting index as input.
-// It returns the count of pairs found.
-function countRepeatingConsonantViramaPairs(arr,detectedScript, startIndex = 0) {
-	const { consonants, virama } = scriptPatterns[detectedScript];
-	let count = 0;
-	let i = startIndex;
-
-	if (i >= arr.length) {
-		return 0; // No pairs if the index is out of bounds
-	}
-	if(arr[i] === "\n"){
-		count = 1; // may be there are conjuct across newline, khanda praasa
-		i++ 
-	}
-	while (i < arr.length - 2 && consonants.test(arr[i]) && virama.test(arr[i + 1])) {
-		count += 2; // Increment by 2 for each pair found
-		i += 2; // Move to the next potential pair
-	}
-	if (count === 1){
-		count = 0; // newline was not followed by conjunct
-	}
-	return count;
-}
-
-
-// Function to correctly segment text into syllables and classify Laghu (L) or Guru (G)
-// 1. A syllable starts with consonant or an independent vowel
-// 2. if consonant, it is optionally followed by a dependant vowel
-// 3. then it is optionally followed by anuswara
-// 4. then it is optionally followed by pair(s) of consonant+virama
-// 5. if there are no dependent long vowels, it is a Laghu (L)
-// 6. if there are no consonant+virama pairs, it is a Laghu (L)
-// 7. if consonant+virama pairs can start on a new line, it is a guru (G)
-// 8. if there are one or more consonant+virama pairs, it is a Guru (G)
-// 9. if there are no valid syllables, return empty array
-// 10. The function will return an array of objects with syllable, classification (L or G), and index.
-// This function will parse the text and segment it into syllables based on the rules above.
-
-function segmentSyllables(text, detectedScript) {
-	// Check if the detected script is valid
-	if (!scriptPatterns[detectedScript]) {
-		throw new Error("Unsupported script detected: " + detectedScript);
-	}
-	// Initialize variables
-	// Initialize an empty array to store the segmented syllables
-	let segmented = [];
-	let state = "START";
-
-	const { consonants, shortVowelMarks, longVowelMarks, shortVowels, longVowels, anusvaraVisarga, virama } = scriptPatterns[detectedScript];
-
-	// Parse the text one unicode character at a time, peeking into the next.
-	let i=0;
-	let slurpCount = 0;
-	let conjunctCount = 0;
-	let classification = LAGHU;
-	let syllable = "";
-
-
-	// when i==0, the first conjuct is a laghu
-	conjunctCount = countRepeatingConsonantViramaPairs(text,detectedScript, 0)
-	if (conjunctCount>0){
-		syllable = text.slice(0, conjunctCount); //prepend the conjunct
-		i=conjunctCount; //move the index up
-	}
-	while (i < text.length) {
-		let char = text[i];
-		let nextChar = text[i + 1] || "";
-		let nextNextChar = text[i + 2] || "";
-
-		if (consonants.test(char)) {
-			//console.log("consonant");
-			slurpCount++;
-			if (shortVowelMarks.test(nextChar) || longVowelMarks.test(nextChar)){
-				slurpCount++;
-				if (longVowelMarks.test(nextChar)){
-					classification = GURU;
-				}
-				if (anusvaraVisarga.test(nextNextChar)){
-						slurpCount++;
-						classification = GURU;
-					}							
-			} else if (anusvaraVisarga.test(nextChar)){
-					slurpCount++;
-					classification = GURU;
-				}							
-			
-			//TODO deal with conjuncts across new line. pre process it out.
-			conjunctCount = countRepeatingConsonantViramaPairs(text,detectedScript,i+slurpCount);
-
-		} else if (shortVowels.test(char)|| longVowels.test(char)) {
-			//console.log("vowel");
-			slurpCount++;
-			if (longVowels.test(char)){
-				classification = GURU;
-			}
-			if (anusvaraVisarga.test(nextChar)){
-					slurpCount++;
-					classification = GURU;
-			}
-			//TODO deal with conjuncts across new line. pre process it out.
-			conjunctCount = countRepeatingConsonantViramaPairs(text,detectedScript, i+slurpCount);
-		} else { //spaces and punctuations
-			//console.log("Space or puncuation");
-			//i++;
-			if (char === "\n"){
-				classification = NWLINE;
-			}else if (char === " "){
-				classification = SPACE;
-			}else{
-				classification = PUNCT;
-			}
-			slurpCount++;
-		}
-
-		if (conjunctCount>0){
-				slurpCount +=conjunctCount
-				classification = GURU;
-		}
-		
-		syllable = syllable + text.slice(i, i + slurpCount);
-		segmented.push({ syllable, classification, i });
-		//console.log({ i, char, nextChar, nextNextChar, classification, syllable, slurpCount, conjunctCount, state,detectedScript });
-
-
-		i=i+slurpCount;
-		slurpCount = 0;
-		conjunctCount = 0;
-		classification = "L";
-		syllable = '';
-
-	}
-
-	return segmented;
-}
-
-/**
- * Function to rebuild text and G/L classification one line at a time.
- * @param {Array} syllables - Array of syllable objects with `syllable` and `classification`.
- * @returns {Object} - An object containing two arrays: `lines` (text by line) and `patterns` (corresponding patterns).
- */
-function rebuildLinesAndPatterns(syllables) {
-    let lines = [];
-    let patterns = [];
-    let currentLineText = "";
-    let currentLineGL = "";
-
-    syllables.forEach(({ syllable, classification }) => {
-        if (classification === NWLINE) {
-            // Push the current line and reset
-            lines.push(currentLineText.trim());
-            patterns.push(currentLineGL.trim());
-            currentLineText = "";
-            currentLineGL = "";
-        } else if (/\n/.test(syllable)) {
-            // Push the current line and reset
-			syllable=syllable.replace(/\n/g, ""); // Remove newline character from syllable
-			currentLineText += syllable;
-            currentLineGL += classification;
-            lines.push(currentLineText.trim());
-            patterns.push(currentLineGL.trim());
-            currentLineText = "";
-            currentLineGL = "";
-        } else {
-
-            currentLineText += syllable;
-            currentLineGL += classification;
+    const SCRIPT_CONFIG = {
+        devanagari: {
+            label: "Devanagari",
+            block: [0x0900, 0x097f],
+            consonant: [0x0915, 0x0939],
+            independentShort: new Set([0x0905, 0x0907, 0x0909, 0x090b, 0x090c, 0x090f, 0x0913]),
+            independentLong: new Set([0x0906, 0x0908, 0x090a, 0x0960, 0x0961, 0x0910, 0x0914]),
+            dependentShort: new Set([0x093f, 0x0941, 0x0943, 0x0944, 0x0946, 0x094a]),
+            dependentLong: new Set([0x093e, 0x0940, 0x0942, 0x0947, 0x0948, 0x094b, 0x094c]),
+            virama: 0x094d,
+            heavyMarks: new Set([0x0902, 0x0903]),
+            ignoredMarks: new Set([0x0901, 0x093c, 0x0951, 0x0952, 0x0953, 0x0954])
+        },
+        kannada: {
+            label: "Kannada",
+            block: [0x0c80, 0x0cff],
+            consonant: [0x0c95, 0x0cb9],
+            independentShort: new Set([0x0c85, 0x0c87, 0x0c89, 0x0c8b, 0x0c8c, 0x0c8e, 0x0c92]),
+            independentLong: new Set([0x0c86, 0x0c88, 0x0c8a, 0x0ce0, 0x0ce1, 0x0c90, 0x0c94]),
+            dependentShort: new Set([0x0cbf, 0x0cc1, 0x0cc3, 0x0cc4, 0x0cc6, 0x0cca]),
+            dependentLong: new Set([0x0cbe, 0x0cc0, 0x0cc2, 0x0cc7, 0x0cc8, 0x0ccb, 0x0ccc]),
+            virama: 0x0ccd,
+            heavyMarks: new Set([0x0c82, 0x0c83]),
+            ignoredMarks: new Set([0x0c81, 0x0cbc])
         }
-    });
-
-    // Push the last line if any content remains
-    if (currentLineText.trim()) {
-        lines.push(currentLineText.trim());
-        patterns.push(currentLineGL.trim());
-    }
-
-    return { lines, patterns };
-}
-
-function analyzeMeter(text, selectedMeter = null) {
-
-    let detectedScript = "Unknown";
-    let pattern = [];
-    let syllables = [];
-
-    // Step 1: Detect the script by majority consonants occurrence
-    let scriptCounts = {};
-    for (const script in scriptPatterns) {
-        scriptCounts[script] = (text.match(scriptPatterns[script].consonants) || []).length;
-    }
-    detectedScript = Object.keys(scriptCounts).reduce((a, b) => scriptCounts[a] > scriptCounts[b] ? a : b);
-
-    // Fallback: If no script detected, return empty segmentation
-    if (!scriptCounts[detectedScript]) {
-        return { pattern: [], detectedScript: "Unknown", detectedmeter: "Unknown", aproxmeters: [], selectedMeter };
-    }
-	
-
-    // Trim the text to remove leading and trailing spaces
-    text = removePunctuation(text); // Remove punctuation from the text
-	text = normalizeWhitespace(text); // Normalize whitespace in the text
-	console.log("Normalized text:");
-	console.log(text);
-	if (text.length === 0) {
-		// If the text is empty after removing punctuation, return empty pattern
-		return { pattern: [], detectedScript: "Unknown", detectedmeter: "Unknown", aproxmeters: [], selectedMeter };
-	}
-
-    syllables = segmentSyllables(text, detectedScript);
-
-    // Use the new function to rebuild lines and patterns
-    const { lines, patterns } = rebuildLinesAndPatterns(syllables);
-    console.log("\nLines and patterns:");
-	lines.forEach((line, index) => {
-        console.log(line);
-        console.log(patterns[index]);
-    });
-
-    // Step 2: Store the pattern directly from segmentation
-    let detailedPattern = syllables.map(({ syllable, classification }, index) => ({
-        syllable,
-        expected: "",
-        actual: classification,
-        index
-    }));
-    
-    // Load meter patterns from jason
-    let meterPatterns = {};
-    try {
-        const meterPatternsData = fs.readFileSync("mishra.json", "utf8");
-        meterPatterns = JSON.parse(meterPatternsData);
-    } catch (error) {
-        console.error("Error loading meter patterns from mishra.json:", error);
-        return { pattern: [], detectedScript: "Unknown", detectedmeter: "Unknown", aproxmeters: [], selectedMeter };
-    }
-
-    let detectedMeter = "Unknown";
-    let approxMeters = [];
-    let patternString = detailedPattern.map(item => item.actual).join(" ");
-
-    for (const [meter, meterPattern] of Object.entries(meterPatterns)) {
-        if (patternString === meterPattern) {
-            detectedMeter = meter;
-            break;
-        } else if (patternString.length === meterPattern.length) {
-            approxMeters.push(meter);
-        }
-    }
-
-    // If user has selected a meter, set expected values
-    if (selectedMeter && meterPatterns[selectedMeter]) {
-        let expectedPattern = meterPatterns[selectedMeter].split(" ");
-        detailedPattern.forEach((item, index) => {
-            item.expected = expectedPattern[index] || "";
-        });
-    }
-    
-    return {
-        pattern: detailedPattern,
-        detectedScript,
-        detectedmeter: detectedMeter,
-        aproxmeters: approxMeters,
-        selectedMeter
     };
-}
 
+    const MARK_RE = /\p{Mark}/u;
 
-// Export for both browser and Node.js compatibility
-if (typeof module !== "undefined" && module.exports) {
-    module.exports = analyzeMeter;
-}
+    function codePoints(text, offset) {
+        const points = [];
+        let index = 0;
+        const baseOffset = offset || 0;
 
-// Command-line support for file input with optional meter selection
-if (typeof require !== "undefined" && require.main === module) {
-    const fs = require("fs");
+        for (const char of text) {
+            points.push({
+                char,
+                cp: char.codePointAt(0),
+                start: baseOffset + index,
+                end: baseOffset + index + char.length
+            });
+            index += char.length;
+        }
 
-    // Read input from a file passed as a command-line argument
-    const inputFile = process.argv[2];
-    const selectedMeter = process.argv[3] || null;
-
-    if (!inputFile) {
-        console.error("Usage: node meter_analysis.js <input_file> [selected_meter]");
-        process.exit(1);
+        return points;
     }
 
-    fs.readFile(inputFile, "utf8", (err, data) => {
-        if (err) {
-            console.error("Error reading file:", err);
-            process.exit(1);
+    function inRange(cp, range) {
+        return cp >= range[0] && cp <= range[1];
+    }
+
+    function isConsonant(point, config) {
+        return Boolean(point) && inRange(point.cp, config.consonant);
+    }
+
+    function isIndependentVowel(point, config) {
+        return Boolean(point) &&
+            (config.independentShort.has(point.cp) || config.independentLong.has(point.cp));
+    }
+
+    function isJoiner(point) {
+        return Boolean(point) && (point.cp === 0x200c || point.cp === 0x200d);
+    }
+
+    function detectScript(text) {
+        const counts = { devanagari: 0, kannada: 0 };
+
+        for (const point of codePoints(text)) {
+            for (const [name, config] of Object.entries(SCRIPT_CONFIG)) {
+                if (inRange(point.cp, config.block)) {
+                    counts[name] += 1;
+                }
+            }
         }
-        const result = analyzeMeter(data.trim(), selectedMeter);
-        console.log(JSON.stringify(result, null, 2));
-    });
-}
+
+        const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+        return sorted[0][1] > 0 ? sorted[0][0] : "unknown";
+    }
+
+    function consumeMarks(points, index, config, state) {
+        let cursor = index;
+
+        while (cursor < points.length) {
+            const point = points[cursor];
+
+            if (config.dependentLong.has(point.cp)) {
+                state.isLong = true;
+                state.reasons.add("long-vowel");
+                cursor += 1;
+                continue;
+            }
+
+            if (config.dependentShort.has(point.cp)) {
+                cursor += 1;
+                continue;
+            }
+
+            if (config.heavyMarks.has(point.cp)) {
+                state.isHeavy = true;
+                state.reasons.add("anusvara-or-visarga");
+                cursor += 1;
+                continue;
+            }
+
+            if (config.ignoredMarks.has(point.cp) || isJoiner(point) || MARK_RE.test(point.char)) {
+                cursor += 1;
+                continue;
+            }
+
+            break;
+        }
+
+        return cursor;
+    }
+
+    function consumeConsonantViramaPair(points, index, config) {
+        if (!isConsonant(points[index], config) || !points[index + 1] ||
+            points[index + 1].cp !== config.virama) {
+            return index;
+        }
+
+        let cursor = index + 2;
+        while (isJoiner(points[cursor])) {
+            cursor += 1;
+        }
+        return cursor;
+    }
+
+    function consumeOnset(points, index, config) {
+        let cursor = index;
+
+        while (isConsonant(points[cursor], config)) {
+            const afterPair = consumeConsonantViramaPair(points, cursor, config);
+            if (afterPair === cursor || !isConsonant(points[afterPair], config)) {
+                break;
+            }
+            cursor = afterPair;
+        }
+
+        return cursor;
+    }
+
+    function segmentLine(text, absoluteOffset, forcedScript) {
+        const script = forcedScript && SCRIPT_CONFIG[forcedScript]
+            ? forcedScript
+            : detectScript(text);
+
+        if (!SCRIPT_CONFIG[script]) {
+            return {
+                script: "unknown",
+                syllables: [],
+                unsupported: text.trim() ? [{
+                    start: absoluteOffset,
+                    end: absoluteOffset + text.length,
+                    reason: "unsupported-script"
+                }] : []
+            };
+        }
+
+        const config = SCRIPT_CONFIG[script];
+        const points = codePoints(text, absoluteOffset);
+        const syllables = [];
+        const unsupported = [];
+        let cursor = 0;
+
+        while (cursor < points.length) {
+            const first = points[cursor];
+
+            if (!isConsonant(first, config) && !isIndependentVowel(first, config)) {
+                const unsupportedStart = cursor;
+                cursor += 1;
+                while (cursor < points.length &&
+                    !isConsonant(points[cursor], config) &&
+                    !isIndependentVowel(points[cursor], config)) {
+                    cursor += 1;
+                }
+                const raw = text.slice(
+                    points[unsupportedStart].start - absoluteOffset,
+                    points[cursor - 1].end - absoluteOffset
+                );
+                if (raw.trim() && /[\p{Letter}\p{Number}]/u.test(raw)) {
+                    unsupported.push({
+                        start: points[unsupportedStart].start,
+                        end: points[cursor - 1].end,
+                        reason: "unsupported-sequence"
+                    });
+                }
+                continue;
+            }
+
+            const startCursor = cursor;
+            const state = {
+                isHeavy: false,
+                isLong: false,
+                reasons: new Set()
+            };
+
+            if (isIndependentVowel(points[cursor], config)) {
+                if (config.independentLong.has(points[cursor].cp)) {
+                    state.isLong = true;
+                    state.reasons.add("long-vowel");
+                }
+                cursor += 1;
+            } else {
+                // A conjunct at the beginning of a word is the onset of this syllable.
+                cursor = consumeOnset(points, cursor, config);
+                if (!isConsonant(points[cursor], config)) {
+                    cursor = startCursor + 1;
+                } else {
+                    cursor += 1;
+                }
+            }
+
+            cursor = consumeMarks(points, cursor, config, state);
+
+            // As in the original implementation, a following consonant+virama
+            // closes the preceding syllable and makes it Guru.
+            let closedByConjunct = false;
+            while (cursor < points.length) {
+                const afterPair = consumeConsonantViramaPair(points, cursor, config);
+                if (afterPair === cursor) {
+                    break;
+                }
+                cursor = afterPair;
+                closedByConjunct = true;
+            }
+
+            if (closedByConjunct) {
+                state.isHeavy = true;
+                state.reasons.add("closed-by-conjunct");
+            }
+
+            const start = points[startCursor].start;
+            const end = points[Math.max(startCursor, cursor - 1)].end;
+            const classification = state.isHeavy || state.isLong ? GURU : LAGHU;
+
+            syllables.push({
+                syllable: text.slice(start - absoluteOffset, end - absoluteOffset),
+                text: text.slice(start - absoluteOffset, end - absoluteOffset),
+                start,
+                end,
+                classification,
+                actual: classification,
+                script,
+                reasons: Array.from(state.reasons)
+            });
+        }
+
+        return { script, syllables, unsupported };
+    }
+
+    function parseStanzas(text) {
+        const lines = [];
+        const matcher = /([^\n]*)(\n|$)/g;
+        let match;
+
+        while ((match = matcher.exec(text)) !== null) {
+            if (match.index === text.length && match[0] === "") {
+                break;
+            }
+            lines.push({
+                text: match[1],
+                start: match.index,
+                end: match.index + match[1].length,
+                hasNewline: match[2] === "\n"
+            });
+            if (match[2] === "") {
+                break;
+            }
+        }
+
+        const stanzas = [];
+        let current = null;
+
+        for (const line of lines) {
+            if (!line.text.trim()) {
+                if (current) {
+                    current.end = current.lines[current.lines.length - 1].end;
+                    stanzas.push(current);
+                    current = null;
+                }
+                continue;
+            }
+
+            if (!current) {
+                current = {
+                    index: stanzas.length,
+                    start: line.start,
+                    end: line.end,
+                    text: "",
+                    lines: []
+                };
+            }
+
+            current.lines.push(line);
+            current.end = line.end;
+        }
+
+        if (current) {
+            stanzas.push(current);
+        }
+
+        for (const stanza of stanzas) {
+            stanza.text = text.slice(stanza.start, stanza.end);
+        }
+
+        return stanzas;
+    }
+
+    function sanitizePattern(pattern) {
+        return String(pattern || "").toUpperCase().replace(/[^GL]/g, "");
+    }
+
+    function normalizeCatalog(catalog) {
+        if (!catalog) {
+            return [];
+        }
+
+        const rawEntries = Array.isArray(catalog) ? catalog : catalog.metres;
+        if (!Array.isArray(rawEntries)) {
+            return [];
+        }
+
+        return rawEntries
+            .filter((entry) => Array.isArray(entry) && entry.length >= 2)
+            .map((entry, index) => {
+                const rawPatterns = Array.isArray(entry[1]) ? entry[1] : [entry[1]];
+                return {
+                    id: String(entry[0]),
+                    name: String(entry[0]),
+                    sourceIndex: index,
+                    patterns: rawPatterns.map(sanitizePattern).filter(Boolean)
+                };
+            })
+            .filter((meter) => meter.patterns.length > 0);
+    }
+
+    function editDistance(left, right) {
+        const a = sanitizePattern(left);
+        const b = sanitizePattern(right);
+        const previous = Array.from({ length: b.length + 1 }, (_, index) => index);
+
+        for (let i = 1; i <= a.length; i += 1) {
+            const current = [i];
+            for (let j = 1; j <= b.length; j += 1) {
+                current[j] = Math.min(
+                    current[j - 1] + 1,
+                    previous[j] + 1,
+                    previous[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)
+                );
+            }
+            previous.splice(0, previous.length, ...current);
+        }
+
+        return previous[b.length];
+    }
+
+    function expectedForLine(meter, lineIndex) {
+        if (!meter || meter.patterns.length === 0) {
+            return "";
+        }
+        if (meter.patterns.length === 1) {
+            return meter.patterns[0];
+        }
+        return meter.patterns[lineIndex] || "";
+    }
+
+    function scoreMeter(linePatterns, meter) {
+        let distance = 0;
+        let comparedLength = 0;
+        let prefixCompatible = linePatterns.length > 0;
+        let exactLines = linePatterns.length > 0;
+
+        for (let index = 0; index < linePatterns.length; index += 1) {
+            const actual = linePatterns[index];
+            const expected = expectedForLine(meter, index);
+            if (!expected) {
+                distance += Math.max(1, actual.length);
+                comparedLength += Math.max(1, actual.length);
+                prefixCompatible = false;
+                exactLines = false;
+                continue;
+            }
+
+            distance += editDistance(actual, expected);
+            comparedLength += Math.max(actual.length, expected.length, 1);
+            prefixCompatible = prefixCompatible && expected.startsWith(actual);
+            exactLines = exactLines && actual === expected;
+        }
+
+        if (meter.patterns.length > 1 && linePatterns.length > meter.patterns.length) {
+            prefixCompatible = false;
+            exactLines = false;
+        }
+
+        const hasExpectedLineCount = meter.patterns.length === 1 ||
+            linePatterns.length === meter.patterns.length;
+        const status = exactLines && hasExpectedLineCount
+            ? "exact"
+            : prefixCompatible
+                ? "compatible"
+                : "approximate";
+
+        return {
+            status,
+            distance,
+            score: comparedLength ? distance / comparedLength : 1
+        };
+    }
+
+    function rankMeters(linePatterns, meters, limit) {
+        const statusRank = { exact: 0, compatible: 1, approximate: 2 };
+        const scored = meters.map((meter) => ({
+            id: meter.id,
+            name: meter.name,
+            patterns: meter.patterns,
+            ...scoreMeter(linePatterns, meter)
+        }));
+
+        scored.sort((left, right) =>
+            statusRank[left.status] - statusRank[right.status] ||
+            left.score - right.score ||
+            left.distance - right.distance ||
+            left.name.localeCompare(right.name)
+        );
+
+        return scored.slice(0, limit || 8);
+    }
+
+    function selectedMeterFor(index, selectedMeters) {
+        if (!selectedMeters) {
+            return "";
+        }
+        if (typeof selectedMeters === "string") {
+            return selectedMeters;
+        }
+        if (Array.isArray(selectedMeters)) {
+            return selectedMeters[index] || "";
+        }
+        return selectedMeters[index] || selectedMeters[String(index)] || "";
+    }
+
+    function analyzeComposition(text, catalog, selectedMeters) {
+        const originalText = String(text || "");
+        const meters = normalizeCatalog(catalog);
+        const meterById = new Map(meters.map((meter) => [meter.id, meter]));
+        const parsedStanzas = parseStanzas(originalText);
+        const allSegments = [];
+        const unsupported = [];
+        const scripts = new Set();
+
+        const stanzas = parsedStanzas.map((stanza, stanzaIndex) => {
+            const selectedMeterId = selectedMeterFor(stanzaIndex, selectedMeters);
+            const selectedMeter = meterById.get(selectedMeterId) || null;
+            const lines = stanza.lines.map((line, lineIndex) => {
+                const segmented = segmentLine(line.text, line.start);
+                if (segmented.script !== "unknown") {
+                    scripts.add(segmented.script);
+                }
+
+                const expectedPattern = expectedForLine(selectedMeter, lineIndex);
+                const syllables = segmented.syllables.map((syllable, syllableIndex) => {
+                    const expected = expectedPattern[syllableIndex] || "";
+                    const violation = Boolean(selectedMeter) &&
+                        (!expected || expected !== syllable.classification);
+                    const result = {
+                        ...syllable,
+                        expected,
+                        violation,
+                        violationReason: !expected
+                            ? "extra-syllable"
+                            : violation
+                                ? "weight-mismatch"
+                                : ""
+                    };
+                    allSegments.push(result);
+                    return result;
+                });
+                unsupported.push(...segmented.unsupported);
+
+                return {
+                    ...line,
+                    index: lineIndex,
+                    script: segmented.script,
+                    syllables,
+                    pattern: syllables.map((item) => item.classification).join(""),
+                    expectedPattern,
+                    missingCount: selectedMeter
+                        ? Math.max(0, expectedPattern.length - syllables.length)
+                        : 0,
+                    violationCount: syllables.filter((item) => item.violation).length
+                };
+            });
+
+            const linePatterns = lines.map((line) => line.pattern);
+            const candidates = rankMeters(linePatterns, meters, 8);
+            const violationCount = lines.reduce((sum, line) => sum + line.violationCount, 0);
+            const missingCount = lines.reduce((sum, line) => sum + line.missingCount, 0);
+
+            return {
+                ...stanza,
+                index: stanzaIndex,
+                lines,
+                patterns: linePatterns,
+                scripts: Array.from(new Set(lines.map((line) => line.script)
+                    .filter((script) => script !== "unknown"))),
+                candidates,
+                selectedMeterId: selectedMeter ? selectedMeter.id : "",
+                selectedMeter: selectedMeter ? {
+                    id: selectedMeter.id,
+                    name: selectedMeter.name,
+                    patterns: selectedMeter.patterns
+                } : null,
+                violationCount,
+                missingCount
+            };
+        });
+
+        return {
+            text: originalText,
+            stanzas,
+            segments: allSegments.sort((a, b) => a.start - b.start),
+            unsupported,
+            scripts: Array.from(scripts),
+            meterCount: meters.length
+        };
+    }
+
+    function analyzeMeter(text, selectedMeter, catalog) {
+        const activeCatalog = catalog ||
+            (typeof globalThis !== "undefined" ? globalThis.CHANDAS_METER_CATALOG : null);
+        const result = analyzeComposition(text, activeCatalog, selectedMeter || "");
+        const firstStanza = result.stanzas[0];
+        const firstCandidate = firstStanza && firstStanza.candidates[0];
+
+        return {
+            pattern: result.segments.map((item, index) => ({
+                syllable: item.text,
+                expected: item.expected,
+                actual: item.actual,
+                index,
+                start: item.start,
+                end: item.end,
+                violation: item.violation
+            })),
+            detectedScript: result.scripts[0] || "Unknown",
+            detectedmeter: firstCandidate && firstCandidate.status === "exact"
+                ? firstCandidate.name
+                : "Unknown",
+            aproxmeters: firstStanza
+                ? firstStanza.candidates.map((candidate) => candidate.name)
+                : [],
+            selectedMeter: selectedMeter || null,
+            stanzas: result.stanzas
+        };
+    }
+
+    return {
+        GURU,
+        LAGHU,
+        SCRIPT_CONFIG,
+        analyzeComposition,
+        analyzeMeter,
+        detectScript,
+        editDistance,
+        normalizeCatalog,
+        parseStanzas,
+        rankMeters,
+        sanitizePattern,
+        segmentLine
+    };
+}));

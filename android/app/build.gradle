@@ -1,0 +1,70 @@
+plugins {
+    id "com.android.application"
+}
+
+android {
+    namespace "org.chandas.app"
+    compileSdk 36
+
+    defaultConfig {
+        applicationId "org.chandas.app"
+        minSdk 24
+        targetSdk 36
+        versionCode 1
+        versionName "1.0.0"
+    }
+
+    buildFeatures {
+        buildConfig true
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    lint {
+        abortOnError true
+        checkReleaseBuilds true
+    }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
+}
+
+dependencies {
+    implementation "androidx.activity:activity:1.13.0"
+    implementation "androidx.webkit:webkit:1.16.0"
+}
+
+def generatedWebAssets = file("$buildDir/generated/chandas-web-assets")
+
+tasks.register("syncWebAssets", Copy) {
+    from(rootProject.projectDir.parentFile)
+    include "index.html"
+    include "styles.css"
+    include "app.js"
+    include "meter_analysis.js"
+    include "mishra.json"
+    include "manifest.webmanifest"
+    include "icon.svg"
+    include "service-worker.js"
+    include "privacy.html"
+    include "terms.html"
+    include "notices.html"
+    into(generatedWebAssets)
+}
+
+android.sourceSets.main.assets.srcDir(generatedWebAssets)
+tasks.named("preBuild").configure {
+    dependsOn(tasks.named("syncWebAssets"))
+}

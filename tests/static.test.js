@@ -1,0 +1,55 @@
+"use strict";
+
+const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const path = require("node:path");
+const test = require("node:test");
+
+const root = path.join(__dirname, "..");
+
+function read(file) {
+    return fs.readFileSync(path.join(root, file), "utf8");
+}
+
+test("the web shell has no external runtime asset dependencies", () => {
+    const html = read("index.html");
+    const externalAssets = Array.from(
+        html.matchAll(/(?:<script[^>]+src|<link[^>]+href)=["'](https?:\/\/[^"']+)/g),
+        (match) => match[1]
+    );
+
+    assert.deepEqual(externalAssets, []);
+    assert.match(html, /manifest\.webmanifest/);
+    assert.match(html, /meter_analysis\.js/);
+    assert.match(html, /app\.js/);
+});
+
+test("service worker pre-caches every core web asset", () => {
+    const worker = read("service-worker.js");
+    const expectedAssets = [
+        "index.html",
+        "styles.css",
+        "app.js",
+        "meter_analysis.js",
+        "mishra.json",
+        "manifest.webmanifest",
+        "icon.svg",
+        "privacy.html",
+        "terms.html",
+        "notices.html"
+    ];
+
+    expectedAssets.forEach((asset) => {
+        assert.match(worker, new RegExp(asset.replace(".", "\\.")));
+        assert.ok(fs.existsSync(path.join(root, asset)), `${asset} is missing`);
+    });
+});
+
+test("the composition control and live regions have accessible labels", () => {
+    const html = read("index.html");
+
+    assert.match(html, /<label for="composition"/);
+    assert.match(html, /id="draft-state"[^>]*aria-live="polite"/);
+    assert.match(html, /id="validation-summary"[^>]*aria-live="polite"/);
+    assert.match(html, /id="toast"[^>]*role="status"[^>]*aria-live="polite"/);
+});

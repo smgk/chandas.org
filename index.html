@@ -1,185 +1,194 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>chaṃdas (Beta)</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#f4efe5">
+    <meta name="description" content="Compose Kannada and Devanagari verse with live Guru/Laghu and chandas guidance.">
+    <meta name="color-scheme" content="light">
+    <title>Chandas — compose in rhythm</title>
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="icon" href="icon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="styles.css">
     <script src="meter_analysis.js" defer></script>
-    <script src="utils.js" defer></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f4f4;
-            text-align: center;
-            margin: 50px;
-        }
-        .container {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-            max-width: 600px;
-            margin: auto;
-            transition: all 0.3s ease-in-out;
-            position: relative;
-        }
-        .social-buttons {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-        }
-        .social-buttons a {
-            margin: 0 5px;
-            color: #333;
-            text-decoration: none;
-            font-size: 20px;
-        }
-        .social-buttons a:hover {
-            color: #007bff;
-        }
-        .copy-button {
-            margin: 0 5px;
-            color: #333;
-            text-decoration: none;
-            font-size: 20px;
-            cursor: pointer;
-        }
-        .copy-button:hover {
-            color: #007bff;
-        }
-        textarea {
-            width: 100%;
-            height: 120px;
-            font-size: 16px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            resize: none;
-            transition: all 0.3s ease-in-out;
-        }
-        textarea:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 10px rgba(0, 123, 255, 0.2);
-        }
-        .result {
-            margin-top: 20px;
-            font-size: 18px;
-            text-align: left;
-            opacity: 0;
-            transform: translateY(10px);
-            transition: opacity 0.5s, transform 0.5s;
-        }
-        .result.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        .label {
-            font-weight: bold;
-            color: #333;
-        }
-        .output {
-            background: #e3f2fd;
-            padding: 10px;
-            border-radius: 5px;
-            transition: all 0.3s ease-in-out;
-        }
-        .deviation {
-            color: red;
-            font-weight: bold;
-        }
-    </style>
+    <script src="app.js" defer></script>
 </head>
 <body>
-    <div class="container">
-        <div class="social-buttons">
-            <a href="https://www.facebook.com" target="_blank"><i class="fab fa-facebook-f"></i></a>
-            <a href="https://www.twitter.com" target="_blank"><i class="fab fa-twitter"></i></a>
-            <a href="https://www.linkedin.com" target="_blank"><i class="fab fa-linkedin-in"></i></a>
-            <span class="copy-button" onclick="copyToClipboard()"><i class="fas fa-copy"></i></span>
+    <a class="skip-link" href="#composition" data-i18n="skip">Skip to composition</a>
+
+    <header class="site-header">
+        <a class="brand" href="./" aria-label="Chandas home">
+            <span class="brand-mark" aria-hidden="true">ಛಂ</span>
+            <span>
+                <strong>chandas</strong>
+                <small data-i18n="brandTagline">compose in rhythm</small>
+            </span>
+        </a>
+
+        <div class="header-actions">
+            <label class="language-control">
+                <span class="sr-only" data-i18n="language">Interface language</span>
+                <select id="language" aria-label="Interface language">
+                    <option value="en">English</option>
+                    <option value="kn">ಕನ್ನಡ</option>
+                </select>
+            </label>
+            <button class="quiet-button" id="new-draft" type="button" data-i18n="newDraft">New</button>
         </div>
-        <h1>chaṃdas.org (Beta)</h1>
-        
-        <!-- Text input area for users to enter poetry -->
-        <textarea id="inputText" placeholder="Enter text in an Devanagari/Kannada..."></textarea>
-        
-        <!-- Dropdown to select a predefined meter -->
-        <label for="meterSelect">Choose a meter:</label>
-        <select id="meterSelect">
-            <option value="">Auto Detect</option>
-            <option value="Anushtubh">Anushtubh</option>
-            <option value="Indravajra">Indravajra</option>
-            <option value="Upendravajra">Upendravajra</option>
-        </select>
-        
-        <div id="lineResultsContainer"></div>
-        
-        <div class="result" id="result">
-            <p class="label">Detected Script:</p>
-            <p class="output" id="scriptOutput">-</p>
-            <p class="label">Detected Meter:</p>
-            <p class="output" id="detectedMeter">-</p>
-            <p class="label">Approximate Meters:</p>
-            <p class="output" id="approxMeters">-</p>
-            <p class="label">Meter Pattern:</p>
-            <p class="output" id="patternOutput"></p>
-        </div>
-    </div>
+    </header>
 
-    <script>
-        // Event listeners to trigger analysis when text is entered or meter is selected
-        document.getElementById("inputText").addEventListener("input", analyzeText);
-        document.getElementById("meterSelect").addEventListener("change", analyzeText);
+    <main class="page-shell">
+        <section class="intro" aria-labelledby="page-title">
+            <p class="eyebrow" data-i18n="eyebrow">A live prosody companion</p>
+            <h1 id="page-title" data-i18n="title">Let the rhythm appear as you write.</h1>
+            <p data-i18n="intro">
+                Type Kannada or Devanagari verse. Guru and Laghu appear in place,
+                and the closest meters stay quietly within reach.
+            </p>
+        </section>
 
-        function analyzeText() {
-            const text = document.getElementById("inputText").value;
-            const selectedMeter = document.getElementById("meterSelect").value;
-            const resultContainer = document.getElementById("result");
-            const lineResultsContainer = document.getElementById("lineResultsContainer");
-            lineResultsContainer.innerHTML = "";
-            
-            // If input is empty, reset the results
-            if (!text.trim()) {
-                resultContainer.classList.remove("show");
-                document.getElementById("patternOutput").innerHTML = "-";
-                document.getElementById("scriptOutput").innerText = "-";
-                document.getElementById("detectedMeter").innerText = "-";
-                document.getElementById("approxMeters").innerText = "-";
-                return;
-            }
-            
-            // Normalize whitespace in the input text
-            const normalizedText = normalizeWhitespace(text);
-            
-            // Call meter analysis function with selected meter if applicable
-            const result = analyzeMeter(normalizedText, selectedMeter);
-            document.getElementById("scriptOutput").innerText = result.detectedScript;
-            document.getElementById("detectedMeter").innerText = result.detectedmeter || "-";
-            document.getElementById("approxMeters").innerText = result.aproxmeters ? result.aproxmeters.join(", ") : "-";
-            
-            // Generate HTML for the metrical pattern, highlighting deviations in red
-            let patternHTML = "";
-            result.pattern.forEach(syllableObj => {
-                if (syllableObj.expected && syllableObj.expected !== syllableObj.actual) {
-                    patternHTML += `<span class="deviation">${syllableObj.syllable}${syllableObj.actual}</span> `;
-                } else {
-                    patternHTML += `<span>${syllableObj.syllable}${syllableObj.actual}</span> `;
-                }
-            });
-            document.getElementById("patternOutput").innerHTML = patternHTML;
-            
-            // Display the result section
-            resultContainer.classList.add("show");
-        }
+        <section class="workspace" aria-label="Composition workspace">
+            <div class="composer-card">
+                <div class="composer-heading">
+                    <div>
+                        <label for="composition" class="section-label" data-i18n="composition">Composition</label>
+                        <p class="draft-state" id="draft-state" aria-live="polite" data-i18n="savedLocally">
+                            Saved privately on this device
+                        </p>
+                    </div>
+                    <div class="composer-actions">
+                        <button id="copy" class="icon-button" type="button">
+                            <span aria-hidden="true">⧉</span>
+                            <span data-i18n="copy">Copy</span>
+                        </button>
+                        <button id="share" class="primary-button" type="button">
+                            <span aria-hidden="true">↗</span>
+                            <span data-i18n="share">Share</span>
+                        </button>
+                    </div>
+                </div>
 
-        function copyToClipboard() {
-            const text = document.getElementById("inputText").value;
-            navigator.clipboard.writeText(text).then(() => {
-                alert("Text copied to clipboard!");
-            }).catch(err => {
-                console.error("Failed to copy text: ", err);
-            });
-        }
-    </script>
+                <div class="editor-shell" id="editor-shell">
+                    <div id="highlight-layer" class="highlight-layer" aria-hidden="true"></div>
+                    <textarea
+                        id="composition"
+                        rows="14"
+                        autocomplete="off"
+                        autocapitalize="off"
+                        spellcheck="false"
+                        aria-describedby="legend editor-help"
+                        data-i18n-placeholder="placeholder"
+                        placeholder="ಕನ್ನಡ ಅಥವಾ देवनागरीಯಲ್ಲಿ ಬರೆಯಿರಿ…"
+                    ></textarea>
+                </div>
+
+                <div class="editor-footer">
+                    <div id="legend" class="legend" aria-label="Highlight legend">
+                        <span class="legend-item"><i class="sample laghu" aria-hidden="true">ಲ</i><span data-i18n="laghu">Laghu</span></span>
+                        <span class="legend-item"><i class="sample guru" aria-hidden="true">ಗಾ</i><span data-i18n="guru">Guru</span></span>
+                        <span class="legend-item"><i class="sample violation" aria-hidden="true">ಭಾ</i><span data-i18n="violation">Violation</span></span>
+                    </div>
+                    <p id="editor-help" class="editor-help" data-i18n="stanzaHelp">
+                        Leave a blank line between stanzas.
+                    </p>
+                </div>
+            </div>
+
+            <aside class="analysis-card" aria-labelledby="analysis-title">
+                <div class="analysis-heading">
+                    <div>
+                        <p class="eyebrow" data-i18n="activeStanza">Active stanza</p>
+                        <h2 id="analysis-title">—</h2>
+                    </div>
+                    <div class="stanza-nav" aria-label="Stanza navigation">
+                        <button id="previous-stanza" type="button" aria-label="Previous stanza">←</button>
+                        <button id="next-stanza" type="button" aria-label="Next stanza">→</button>
+                    </div>
+                </div>
+
+                <div id="empty-analysis" class="empty-analysis">
+                    <span aria-hidden="true">ಲಘು · ಗುರು</span>
+                    <p data-i18n="analysisEmpty">Your meter suggestions will appear here.</p>
+                </div>
+
+                <div id="analysis-content" hidden>
+                    <div class="pattern-block">
+                        <span class="mini-label" data-i18n="pattern">Pattern</span>
+                        <output id="active-pattern" class="pattern-output">—</output>
+                    </div>
+
+                    <div class="suggestion-heading">
+                        <div>
+                            <span class="mini-label" data-i18n="closestMeters">Closest meters</span>
+                            <p id="suggestion-note" data-i18n="suggestionNote">Suggestions adjust while you type.</p>
+                        </div>
+                    </div>
+                    <div id="candidate-list" class="candidate-list"></div>
+
+                    <details class="meter-picker" id="meter-picker">
+                        <summary data-i18n="chooseAnother">Choose any meter</summary>
+                        <label for="meter-search" data-i18n="findMeter">Find a meter</label>
+                        <input id="meter-search" type="search" autocomplete="off" data-i18n-placeholder="searchMeters" placeholder="Search meters…">
+                        <select id="meter-select" size="7" aria-label="All meters"></select>
+                        <button id="clear-meter" class="quiet-button full-width" type="button" data-i18n="clearSelection">
+                            Clear selected meter
+                        </button>
+                    </details>
+
+                    <div id="validation-summary" class="validation-summary" aria-live="polite"></div>
+                </div>
+            </aside>
+        </section>
+
+        <section class="privacy-note">
+            <span aria-hidden="true">◌</span>
+            <p><strong data-i18n="privateTitle">Your verse stays with you.</strong>
+                <span data-i18n="privateText">Analysis and draft recovery happen on this device, including when Android is offline.</span>
+            </p>
+        </section>
+
+        <footer class="site-footer">
+            <span>© 2026 Chandas.org</span>
+            <nav aria-label="Legal and project links">
+                <a href="privacy.html">Privacy</a>
+                <a href="terms.html">Terms</a>
+                <a href="https://github.com/smgk/chandas.org" target="_blank" rel="noopener noreferrer">Source</a>
+            </nav>
+        </footer>
+    </main>
+
+    <dialog id="share-dialog" class="share-dialog">
+        <form method="dialog">
+            <div class="dialog-heading">
+                <div>
+                    <p class="eyebrow" data-i18n="share">Share</p>
+                    <h2 data-i18n="shareComposition">Share composition</h2>
+                </div>
+                <button class="close-button" value="cancel" aria-label="Close">×</button>
+            </div>
+
+            <label class="check-row">
+                <input id="include-meter" type="checkbox">
+                <span data-i18n="includeMeter">Include selected meter names</span>
+            </label>
+            <label class="check-row">
+                <input id="include-link" type="checkbox">
+                <span data-i18n="includeLink">Include chandas.org link</span>
+            </label>
+
+            <div class="share-destinations">
+                <button id="system-share" type="button" class="primary-button" data-i18n="deviceShare">Device share</button>
+                <button id="twitter-share" type="button" class="destination-button">X / Twitter</button>
+                <button id="facebook-share" type="button" class="destination-button">Facebook</button>
+                <button id="dialog-copy" type="button" class="destination-button" data-i18n="copyText">Copy text</button>
+            </div>
+        </form>
+    </dialog>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <noscript>
+        <p class="noscript">Chandas needs JavaScript to analyze verse locally in your browser.</p>
+    </noscript>
 </body>
 </html>

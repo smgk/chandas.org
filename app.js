@@ -1,0 +1,699 @@
+(function chandasApp() {
+    "use strict";
+
+    const DRAFT_KEY = "chandas.draft.v1";
+    const LANGUAGE_KEY = "chandas.language.v1";
+    const SAVE_DELAY_MS = 280;
+
+    const messages = {
+        en: {
+            skip: "Skip to composition",
+            brandTagline: "compose in rhythm",
+            language: "Interface language",
+            newDraft: "New",
+            eyebrow: "A live prosody companion",
+            title: "Let the rhythm appear as you write.",
+            intro: "Type Kannada or Devanagari verse. Guru and Laghu appear in place, and the closest meters stay quietly within reach.",
+            composition: "Composition",
+            savedLocally: "Saved privately on this device",
+            saving: "Saving on this device…",
+            restored: "Local draft restored",
+            copy: "Copy",
+            copied: "Composition copied",
+            copyFailed: "Copy was unavailable",
+            share: "Share",
+            placeholder: "ಕನ್ನಡ ಅಥವಾ देवनागरीಯಲ್ಲಿ ಬರೆಯಿರಿ…",
+            laghu: "Laghu",
+            guru: "Guru",
+            violation: "Violation",
+            stanzaHelp: "Leave a blank line between stanzas.",
+            activeStanza: "Active stanza",
+            stanza: "Stanza {number} of {total}",
+            analysisEmpty: "Your meter suggestions will appear here.",
+            pattern: "Pattern",
+            closestMeters: "Closest meters",
+            suggestionNote: "Suggestions adjust while you type.",
+            chooseAnother: "Choose any meter",
+            findMeter: "Find a meter",
+            searchMeters: "Search meters…",
+            clearSelection: "Clear selected meter",
+            exact: "Exact",
+            compatible: "Possible",
+            approximate: "Closest",
+            selected: "Selected",
+            noMeterSelected: "Choose a meter to check this stanza.",
+            validMeter: "This stanza follows {meter}.",
+            validationIssues: "{violations} mismatched and {missing} missing syllables for {meter}.",
+            privateTitle: "Your verse stays with you.",
+            privateText: "Analysis and draft recovery happen on this device, including when Android is offline.",
+            shareComposition: "Share composition",
+            includeMeter: "Include selected meter names",
+            includeLink: "Include chandas.org link",
+            deviceShare: "Device share",
+            copyText: "Copy text",
+            shared: "Share sheet opened",
+            facebookCopied: "Text copied; paste it into your Facebook post.",
+            shareUnavailable: "Sharing is unavailable; the text was copied instead.",
+            clearConfirm: "Clear this local draft and begin a new composition?",
+            catalogError: "The meter catalog could not be loaded.",
+            noResults: "No matching meters",
+            previousStanza: "Previous stanza",
+            nextStanza: "Next stanza"
+        },
+        kn: {
+            skip: "ರಚನೆಗೆ ಹೋಗಿ",
+            brandTagline: "ಲಯದಲ್ಲಿ ರಚಿಸಿ",
+            language: "ತೆರೆಯ ಭಾಷೆ",
+            newDraft: "ಹೊಸದು",
+            eyebrow: "ನೇರ ಛಂದಸ್ಸಿನ ಸಂಗಾತಿ",
+            title: "ನೀವು ಬರೆಯುತ್ತಿದ್ದಂತೆ ಲಯ ಕಾಣಿಸಲಿ.",
+            intro: "ಕನ್ನಡ ಅಥವಾ ದೇವನಾಗರಿ ಪದ್ಯವನ್ನು ಬರೆಯಿರಿ. ಗುರು–ಲಘು ಅದೇ ಪಠ್ಯದಲ್ಲಿ ಕಾಣುತ್ತದೆ; ಸಮೀಪದ ಛಂದಸ್ಸುಗಳು ಪಕ್ಕದಲ್ಲಿರುತ್ತವೆ.",
+            composition: "ರಚನೆ",
+            savedLocally: "ಈ ಸಾಧನದಲ್ಲಿ ಖಾಸಗಿಯಾಗಿ ಉಳಿಸಲಾಗಿದೆ",
+            saving: "ಈ ಸಾಧನದಲ್ಲಿ ಉಳಿಸಲಾಗುತ್ತಿದೆ…",
+            restored: "ಸ್ಥಳೀಯ ಕರಡು ಮರುಪಡೆಯಲಾಗಿದೆ",
+            copy: "ನಕಲಿಸಿ",
+            copied: "ರಚನೆಯನ್ನು ನಕಲಿಸಲಾಗಿದೆ",
+            copyFailed: "ನಕಲಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ",
+            share: "ಹಂಚಿಕೊಳ್ಳಿ",
+            placeholder: "ಕನ್ನಡ ಅಥವಾ देवनागरीಯಲ್ಲಿ ಬರೆಯಿರಿ…",
+            laghu: "ಲಘು",
+            guru: "ಗುರು",
+            violation: "ದೋಷ",
+            stanzaHelp: "ಪದ್ಯಗಳ ನಡುವೆ ಒಂದು ಖಾಲಿ ಸಾಲು ಬಿಡಿ.",
+            activeStanza: "ಪ್ರಸ್ತುತ ಪದ್ಯ",
+            stanza: "ಪದ್ಯ {number} / {total}",
+            analysisEmpty: "ಛಂದಸ್ಸಿನ ಸೂಚನೆಗಳು ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತವೆ.",
+            pattern: "ಗಣ ವಿನ್ಯಾಸ",
+            closestMeters: "ಸಮೀಪದ ಛಂದಸ್ಸುಗಳು",
+            suggestionNote: "ಬರೆಯುತ್ತಿದ್ದಂತೆ ಸೂಚನೆಗಳು ಬದಲಾಗುತ್ತವೆ.",
+            chooseAnother: "ಬೇರೆ ಛಂದಸ್ಸನ್ನು ಆರಿಸಿ",
+            findMeter: "ಛಂದಸ್ಸನ್ನು ಹುಡುಕಿ",
+            searchMeters: "ಛಂದಸ್ಸು ಹುಡುಕಿ…",
+            clearSelection: "ಆಯ್ದ ಛಂದಸ್ಸನ್ನು ತೆರವುಗೊಳಿಸಿ",
+            exact: "ಸರಿಯಾಗಿ",
+            compatible: "ಸಾಧ್ಯ",
+            approximate: "ಸಮೀಪ",
+            selected: "ಆಯ್ಕೆ",
+            noMeterSelected: "ಈ ಪದ್ಯವನ್ನು ಪರೀಕ್ಷಿಸಲು ಛಂದಸ್ಸನ್ನು ಆರಿಸಿ.",
+            validMeter: "ಈ ಪದ್ಯವು {meter} ಛಂದಸ್ಸಿಗೆ ಹೊಂದುತ್ತದೆ.",
+            validationIssues: "{meter}: {violations} ವ್ಯತ್ಯಾಸ, {missing} ಕೊರತೆಯ ಅಕ್ಷರಗಳು.",
+            privateTitle: "ನಿಮ್ಮ ಪದ್ಯ ನಿಮ್ಮಲ್ಲೇ ಉಳಿಯುತ್ತದೆ.",
+            privateText: "ವಿಶ್ಲೇಷಣೆ ಮತ್ತು ಕರಡು ಮರುಪಡೆಯುವಿಕೆ ಈ ಸಾಧನದಲ್ಲೇ ನಡೆಯುತ್ತದೆ; Android ಆಫ್‌ಲೈನ್‌ನಲ್ಲಿಯೂ ಕೆಲಸ ಮಾಡುತ್ತದೆ.",
+            shareComposition: "ರಚನೆಯನ್ನು ಹಂಚಿಕೊಳ್ಳಿ",
+            includeMeter: "ಆಯ್ದ ಛಂದಸ್ಸಿನ ಹೆಸರು ಸೇರಿಸಿ",
+            includeLink: "chandas.org ಕೊಂಡಿ ಸೇರಿಸಿ",
+            deviceShare: "ಸಾಧನದ ಮೂಲಕ",
+            copyText: "ಪಠ್ಯ ನಕಲಿಸಿ",
+            shared: "ಹಂಚಿಕೆ ತೆರೆಯಲಾಗಿದೆ",
+            facebookCopied: "ಪಠ್ಯ ನಕಲಾಗಿದೆ; Facebook ಪೋಸ್ಟ್‌ಗೆ ಅಂಟಿಸಿ.",
+            shareUnavailable: "ಹಂಚಿಕೆ ಲಭ್ಯವಿಲ್ಲ; ಪಠ್ಯವನ್ನು ನಕಲಿಸಲಾಗಿದೆ.",
+            clearConfirm: "ಈ ಸ್ಥಳೀಯ ಕರಡನ್ನು ಅಳಿಸಿ ಹೊಸ ರಚನೆ ಆರಂಭಿಸಬೇಕೆ?",
+            catalogError: "ಛಂದಸ್ಸಿನ ಪಟ್ಟಿ ತೆರೆಯಲಾಗಲಿಲ್ಲ.",
+            noResults: "ಹೊಂದುವ ಛಂದಸ್ಸುಗಳಿಲ್ಲ",
+            previousStanza: "ಹಿಂದಿನ ಪದ್ಯ",
+            nextStanza: "ಮುಂದಿನ ಪದ್ಯ"
+        }
+    };
+
+    const elements = {};
+    const state = {
+        catalog: null,
+        meters: [],
+        filteredMeters: [],
+        analysis: null,
+        selections: {},
+        activeStanzaIndex: 0,
+        language: "en",
+        composing: false,
+        saveTimer: null,
+        renderTimer: null,
+        toastTimer: null
+    };
+
+    function cacheElements() {
+        [
+            "composition", "highlight-layer", "editor-shell", "draft-state",
+            "language", "new-draft", "copy", "share", "analysis-title",
+            "previous-stanza", "next-stanza", "empty-analysis", "analysis-content",
+            "active-pattern", "candidate-list", "meter-picker", "meter-search",
+            "meter-select", "clear-meter", "validation-summary", "share-dialog",
+            "include-meter", "include-link", "system-share", "twitter-share",
+            "facebook-share", "dialog-copy", "toast"
+        ].forEach((id) => {
+            elements[id] = document.getElementById(id);
+        });
+    }
+
+    function t(key, replacements) {
+        let value = (messages[state.language] && messages[state.language][key]) ||
+            messages.en[key] || key;
+        for (const [name, replacement] of Object.entries(replacements || {})) {
+            value = value.replace(`{${name}}`, String(replacement));
+        }
+        return value;
+    }
+
+    function updateLanguage() {
+        document.documentElement.lang = state.language;
+        elements.language.value = state.language;
+
+        document.querySelectorAll("[data-i18n]").forEach((node) => {
+            node.textContent = t(node.dataset.i18n);
+        });
+        document.querySelectorAll("[data-i18n-placeholder]").forEach((node) => {
+            node.placeholder = t(node.dataset.i18nPlaceholder);
+        });
+
+        elements["previous-stanza"].setAttribute("aria-label", t("previousStanza"));
+        elements["next-stanza"].setAttribute("aria-label", t("nextStanza"));
+        renderAnalysisPanel();
+    }
+
+    function escapeHtml(value) {
+        return String(value)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;");
+    }
+
+    function renderPlainOverlay() {
+        elements["highlight-layer"].innerHTML =
+            `${escapeHtml(elements.composition.value)}\n`;
+        syncScroll();
+    }
+
+    function renderOverlay() {
+        const text = elements.composition.value;
+        if (!state.analysis || !text) {
+            renderPlainOverlay();
+            return;
+        }
+
+        const ranges = [
+            ...state.analysis.segments.map((segment) => ({
+                start: segment.start,
+                end: segment.end,
+                className: segment.violation
+                    ? "violation"
+                    : segment.classification === Chandas.GURU
+                        ? "guru"
+                        : "laghu"
+            })),
+            ...state.analysis.unsupported.map((range) => ({
+                start: range.start,
+                end: range.end,
+                className: "uncertain"
+            }))
+        ].sort((left, right) => left.start - right.start || left.end - right.end);
+
+        let cursor = 0;
+        let html = "";
+        for (const range of ranges) {
+            if (range.start < cursor || range.start > text.length) {
+                continue;
+            }
+            html += escapeHtml(text.slice(cursor, range.start));
+            html += `<span class="${range.className}">${escapeHtml(text.slice(range.start, range.end))}</span>`;
+            cursor = Math.max(cursor, range.end);
+        }
+        html += escapeHtml(text.slice(cursor));
+        // A final newline ensures matching textarea height and scroll behavior.
+        elements["highlight-layer"].innerHTML = `${html}\n`;
+        syncScroll();
+    }
+
+    function syncScroll() {
+        elements["highlight-layer"].scrollTop = elements.composition.scrollTop;
+        elements["highlight-layer"].scrollLeft = elements.composition.scrollLeft;
+    }
+
+    function stanzaAtOffset(stanzas, offset) {
+        if (!stanzas.length) {
+            return 0;
+        }
+
+        const containing = stanzas.findIndex((stanza) =>
+            offset >= stanza.start && offset <= stanza.end);
+        if (containing >= 0) {
+            return containing;
+        }
+
+        let nearest = 0;
+        let nearestDistance = Number.POSITIVE_INFINITY;
+        stanzas.forEach((stanza, index) => {
+            const distance = Math.min(
+                Math.abs(offset - stanza.start),
+                Math.abs(offset - stanza.end)
+            );
+            if (distance < nearestDistance) {
+                nearest = index;
+                nearestDistance = distance;
+            }
+        });
+        return nearest;
+    }
+
+    function reconcileSelections(oldStanzas, newStanzas, caretOffset) {
+        if (!oldStanzas || oldStanzas.length === newStanzas.length) {
+            return;
+        }
+
+        const oldSelections = { ...state.selections };
+        const nextSelections = {};
+        const usedOld = new Set();
+
+        newStanzas.forEach((newStanza, newIndex) => {
+            const exactIndex = oldStanzas.findIndex((oldStanza, oldIndex) =>
+                !usedOld.has(oldIndex) &&
+                oldStanza.text.trim() === newStanza.text.trim());
+            if (exactIndex >= 0 && oldSelections[exactIndex]) {
+                nextSelections[newIndex] = oldSelections[exactIndex];
+                usedOld.add(exactIndex);
+            }
+        });
+
+        const oldActive = stanzaAtOffset(oldStanzas, caretOffset);
+        const newActive = stanzaAtOffset(newStanzas, caretOffset);
+        if (!nextSelections[newActive] && oldSelections[oldActive]) {
+            nextSelections[newActive] = oldSelections[oldActive];
+        }
+
+        state.selections = nextSelections;
+    }
+
+    function scheduleAnalysis() {
+        window.clearTimeout(state.renderTimer);
+        if (state.composing) {
+            renderPlainOverlay();
+            return;
+        }
+        state.renderTimer = window.setTimeout(runAnalysis, 35);
+    }
+
+    function runAnalysis() {
+        const text = elements.composition.value;
+        const oldStanzas = state.analysis ? state.analysis.stanzas : null;
+        const parsedStanzas = Chandas.parseStanzas(text);
+        reconcileSelections(oldStanzas, parsedStanzas, elements.composition.selectionStart);
+
+        state.analysis = Chandas.analyzeComposition(text, state.catalog, state.selections);
+        state.activeStanzaIndex = stanzaAtOffset(
+            state.analysis.stanzas,
+            elements.composition.selectionStart
+        );
+
+        renderOverlay();
+        renderAnalysisPanel();
+        scheduleSave();
+    }
+
+    function setActiveStanza(index, moveCaret) {
+        if (!state.analysis || !state.analysis.stanzas.length) {
+            state.activeStanzaIndex = 0;
+            renderAnalysisPanel();
+            return;
+        }
+
+        state.activeStanzaIndex = Math.max(
+            0,
+            Math.min(index, state.analysis.stanzas.length - 1)
+        );
+        if (moveCaret) {
+            const stanza = state.analysis.stanzas[state.activeStanzaIndex];
+            elements.composition.focus();
+            elements.composition.setSelectionRange(stanza.start, stanza.start);
+        }
+        renderAnalysisPanel();
+    }
+
+    function updateActiveFromCaret() {
+        if (!state.analysis) {
+            return;
+        }
+        const nextIndex = stanzaAtOffset(
+            state.analysis.stanzas,
+            elements.composition.selectionStart
+        );
+        if (nextIndex !== state.activeStanzaIndex) {
+            state.activeStanzaIndex = nextIndex;
+            renderAnalysisPanel();
+        }
+    }
+
+    function candidateButton(candidate, selectedMeterId) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = `candidate${candidate.id === selectedMeterId ? " selected" : ""}`;
+        button.dataset.status = candidate.status;
+        button.dataset.meterId = candidate.id;
+        button.setAttribute("aria-pressed", candidate.id === selectedMeterId ? "true" : "false");
+
+        const name = document.createElement("span");
+        name.className = "candidate-name";
+        name.textContent = candidate.name;
+
+        const status = document.createElement("span");
+        status.className = "candidate-status";
+        status.textContent = candidate.id === selectedMeterId
+            ? t("selected")
+            : t(candidate.status);
+
+        button.append(name, status);
+        button.addEventListener("click", () => selectMeter(candidate.id));
+        return button;
+    }
+
+    function renderAnalysisPanel() {
+        const stanzas = state.analysis ? state.analysis.stanzas : [];
+        const hasStanzas = stanzas.length > 0;
+
+        elements["empty-analysis"].hidden = hasStanzas;
+        elements["analysis-content"].hidden = !hasStanzas;
+        elements["previous-stanza"].disabled = !hasStanzas || state.activeStanzaIndex <= 0;
+        elements["next-stanza"].disabled = !hasStanzas ||
+            state.activeStanzaIndex >= stanzas.length - 1;
+
+        if (!hasStanzas) {
+            elements["analysis-title"].textContent = "—";
+            return;
+        }
+
+        const stanza = stanzas[state.activeStanzaIndex];
+        elements["analysis-title"].textContent = t("stanza", {
+            number: state.activeStanzaIndex + 1,
+            total: stanzas.length
+        });
+        elements["active-pattern"].textContent = stanza.patterns.join(" / ") || "—";
+
+        elements["candidate-list"].replaceChildren(
+            ...stanza.candidates.slice(0, 4)
+                .map((candidate) => candidateButton(candidate, stanza.selectedMeterId))
+        );
+
+        filterMeterOptions(elements["meter-search"].value);
+        elements["meter-select"].value = stanza.selectedMeterId;
+
+        const summary = elements["validation-summary"];
+        summary.classList.remove("has-errors");
+        if (!stanza.selectedMeter) {
+            summary.textContent = t("noMeterSelected");
+        } else if (stanza.violationCount === 0 && stanza.missingCount === 0) {
+            summary.textContent = t("validMeter", { meter: stanza.selectedMeter.name });
+        } else {
+            summary.textContent = t("validationIssues", {
+                meter: stanza.selectedMeter.name,
+                violations: stanza.violationCount,
+                missing: stanza.missingCount
+            });
+            summary.classList.add("has-errors");
+        }
+    }
+
+    function filterMeterOptions(query) {
+        const normalizedQuery = String(query || "").trim().toLocaleLowerCase();
+        const activeStanza = state.analysis &&
+            state.analysis.stanzas[state.activeStanzaIndex];
+        const selectedId = activeStanza ? activeStanza.selectedMeterId : "";
+
+        state.filteredMeters = state.meters.filter((meter) =>
+            !normalizedQuery || meter.name.toLocaleLowerCase().includes(normalizedQuery)
+        ).slice(0, 250);
+
+        const fragment = document.createDocumentFragment();
+        if (!state.filteredMeters.length) {
+            const empty = document.createElement("option");
+            empty.disabled = true;
+            empty.textContent = t("noResults");
+            fragment.append(empty);
+        } else {
+            for (const meter of state.filteredMeters) {
+                const option = document.createElement("option");
+                option.value = meter.id;
+                option.textContent = meter.name;
+                option.selected = meter.id === selectedId;
+                fragment.append(option);
+            }
+        }
+        elements["meter-select"].replaceChildren(fragment);
+    }
+
+    function selectMeter(meterId) {
+        if (!state.analysis || !state.analysis.stanzas[state.activeStanzaIndex]) {
+            return;
+        }
+        if (meterId) {
+            state.selections[state.activeStanzaIndex] = meterId;
+        } else {
+            delete state.selections[state.activeStanzaIndex];
+        }
+        runAnalysis();
+    }
+
+    function scheduleSave() {
+        window.clearTimeout(state.saveTimer);
+        elements["draft-state"].textContent = t("saving");
+        state.saveTimer = window.setTimeout(saveDraft, SAVE_DELAY_MS);
+    }
+
+    function saveDraft() {
+        const draft = {
+            version: 1,
+            text: elements.composition.value,
+            selections: state.selections,
+            language: state.language,
+            selectionStart: elements.composition.selectionStart,
+            selectionEnd: elements.composition.selectionEnd,
+            updatedAt: new Date().toISOString()
+        };
+
+        try {
+            localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+            elements["draft-state"].textContent = t("savedLocally");
+        } catch (error) {
+            elements["draft-state"].textContent = t("copyFailed");
+        }
+    }
+
+    function restoreDraft() {
+        try {
+            const raw = localStorage.getItem(DRAFT_KEY);
+            if (!raw) {
+                return;
+            }
+            const draft = JSON.parse(raw);
+            if (!draft || draft.version !== 1 || typeof draft.text !== "string") {
+                return;
+            }
+
+            elements.composition.value = draft.text;
+            state.selections = draft.selections && typeof draft.selections === "object"
+                ? draft.selections
+                : {};
+            if (draft.language && messages[draft.language]) {
+                state.language = draft.language;
+            }
+            requestAnimationFrame(() => {
+                const start = Math.min(draft.selectionStart || 0, draft.text.length);
+                const end = Math.min(draft.selectionEnd || start, draft.text.length);
+                elements.composition.setSelectionRange(start, end);
+            });
+            if (draft.text) {
+                showToast(t("restored"));
+            }
+        } catch (error) {
+            localStorage.removeItem(DRAFT_KEY);
+        }
+    }
+
+    function clearDraft() {
+        if (elements.composition.value && !window.confirm(t("clearConfirm"))) {
+            return;
+        }
+        window.clearTimeout(state.saveTimer);
+        localStorage.removeItem(DRAFT_KEY);
+        elements.composition.value = "";
+        state.selections = {};
+        state.analysis = null;
+        state.activeStanzaIndex = 0;
+        renderPlainOverlay();
+        renderAnalysisPanel();
+        elements["draft-state"].textContent = t("savedLocally");
+        elements.composition.focus();
+    }
+
+    async function copyText(text) {
+        try {
+            if (navigator.clipboard && window.isSecureContext) {
+                await navigator.clipboard.writeText(text);
+            } else {
+                const helper = document.createElement("textarea");
+                helper.value = text;
+                helper.style.position = "fixed";
+                helper.style.opacity = "0";
+                document.body.append(helper);
+                helper.select();
+                const successful = document.execCommand("copy");
+                helper.remove();
+                if (!successful) {
+                    throw new Error("Copy command failed");
+                }
+            }
+            showToast(t("copied"));
+            return true;
+        } catch (error) {
+            showToast(t("copyFailed"));
+            return false;
+        }
+    }
+
+    function shareText() {
+        let text = elements.composition.value;
+        if (elements["include-meter"].checked && state.analysis) {
+            const meterNames = Array.from(new Set(state.analysis.stanzas
+                .map((stanza) => stanza.selectedMeter && stanza.selectedMeter.name)
+                .filter(Boolean)));
+            if (meterNames.length) {
+                text += `\n\n— ${meterNames.join(", ")}`;
+            }
+        }
+        if (elements["include-link"].checked) {
+            text += "\nhttps://chandas.org";
+        }
+        return text;
+    }
+
+    async function systemShare() {
+        const text = shareText();
+        try {
+            if (window.AndroidShare && typeof window.AndroidShare.share === "function") {
+                window.AndroidShare.share(text);
+                showToast(t("shared"));
+            } else if (navigator.share) {
+                await navigator.share({ text });
+                showToast(t("shared"));
+            } else {
+                await copyText(text);
+                showToast(t("shareUnavailable"));
+            }
+        } catch (error) {
+            if (error && error.name !== "AbortError") {
+                await copyText(text);
+            }
+        }
+    }
+
+    function openTwitterShare() {
+        const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText())}`;
+        window.open(url, "_blank", "noopener,noreferrer");
+    }
+
+    async function openFacebookShare() {
+        await copyText(shareText());
+        showToast(t("facebookCopied"));
+        const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent("https://chandas.org")}`;
+        window.open(url, "_blank", "noopener,noreferrer");
+    }
+
+    function showToast(message) {
+        window.clearTimeout(state.toastTimer);
+        elements.toast.textContent = message;
+        elements.toast.classList.add("show");
+        state.toastTimer = window.setTimeout(() => {
+            elements.toast.classList.remove("show");
+        }, 2600);
+    }
+
+    async function loadCatalog() {
+        const response = await fetch("mishra.json", { cache: "force-cache" });
+        if (!response.ok) {
+            throw new Error(`Catalog request failed: ${response.status}`);
+        }
+        state.catalog = await response.json();
+        state.meters = Chandas.normalizeCatalog(state.catalog)
+            .sort((left, right) => left.name.localeCompare(right.name));
+        filterMeterOptions("");
+    }
+
+    function bindEvents() {
+        elements.composition.addEventListener("compositionstart", () => {
+            state.composing = true;
+        });
+        elements.composition.addEventListener("compositionend", () => {
+            state.composing = false;
+            scheduleAnalysis();
+        });
+        elements.composition.addEventListener("input", scheduleAnalysis);
+        elements.composition.addEventListener("scroll", syncScroll, { passive: true });
+        elements.composition.addEventListener("click", updateActiveFromCaret);
+        elements.composition.addEventListener("keyup", updateActiveFromCaret);
+        elements.composition.addEventListener("select", updateActiveFromCaret);
+
+        elements.language.addEventListener("change", () => {
+            state.language = elements.language.value;
+            localStorage.setItem(LANGUAGE_KEY, state.language);
+            updateLanguage();
+            scheduleSave();
+        });
+
+        elements["new-draft"].addEventListener("click", clearDraft);
+        elements.copy.addEventListener("click", () => copyText(elements.composition.value));
+        elements.share.addEventListener("click", () => elements["share-dialog"].showModal());
+        elements["dialog-copy"].addEventListener("click", () => copyText(shareText()));
+        elements["system-share"].addEventListener("click", systemShare);
+        elements["twitter-share"].addEventListener("click", openTwitterShare);
+        elements["facebook-share"].addEventListener("click", openFacebookShare);
+
+        elements["previous-stanza"].addEventListener("click", () =>
+            setActiveStanza(state.activeStanzaIndex - 1, true));
+        elements["next-stanza"].addEventListener("click", () =>
+            setActiveStanza(state.activeStanzaIndex + 1, true));
+
+        elements["meter-search"].addEventListener("input", () =>
+            filterMeterOptions(elements["meter-search"].value));
+        elements["meter-select"].addEventListener("change", () =>
+            selectMeter(elements["meter-select"].value));
+        elements["clear-meter"].addEventListener("click", () => selectMeter(""));
+        window.addEventListener("beforeunload", saveDraft);
+    }
+
+    async function initialize() {
+        cacheElements();
+        const preferredLanguage = localStorage.getItem(LANGUAGE_KEY);
+        if (preferredLanguage && messages[preferredLanguage]) {
+            state.language = preferredLanguage;
+        } else if (navigator.language && navigator.language.toLowerCase().startsWith("kn")) {
+            state.language = "kn";
+        }
+
+        bindEvents();
+        restoreDraft();
+        updateLanguage();
+        renderPlainOverlay();
+
+        try {
+            await loadCatalog();
+            runAnalysis();
+        } catch (error) {
+            console.error(error);
+            showToast(t("catalogError"));
+            state.catalog = { metres: [] };
+            runAnalysis();
+        }
+
+        if ("serviceWorker" in navigator &&
+            location.protocol !== "file:" &&
+            location.hostname !== "appassets.androidplatform.net") {
+            navigator.serviceWorker.register("service-worker.js").catch((error) => {
+                console.warn("Service worker registration failed", error);
+            });
+        }
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initialize, { once: true });
+    } else {
+        initialize();
+    }
+}());

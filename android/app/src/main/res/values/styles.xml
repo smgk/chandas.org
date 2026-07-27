@@ -1,0 +1,11 @@
+<resources>
+    <style name="Theme.Chandas" parent="android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:fontFamily">sans</item>
+        <item name="android:windowActionModeOverlay">true</item>
+        <item name="android:windowBackground">@color/chandas_paper</item>
+        <item name="android:colorAccent">@color/chandas_saffron</item>
+        <item name="android:navigationBarColor">@color/chandas_paper</item>
+        <item name="android:statusBarColor">@color/chandas_paper</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+</resources>

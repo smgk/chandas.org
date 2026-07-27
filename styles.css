@@ -477,6 +477,14 @@ textarea:focus-visible {
     overflow-wrap: anywhere;
 }
 
+.matra-output {
+    display: block;
+    margin-top: 0.45rem;
+    color: var(--muted);
+    font-size: 0.82rem;
+    font-variant-numeric: tabular-nums;
+}
+
 .selected-meter-reference {
     margin-top: 0.75rem;
     padding: 0.85rem 1rem;
@@ -541,10 +549,26 @@ textarea:focus-visible {
 }
 
 .candidate-name {
+    display: block;
     min-width: 0;
     overflow: hidden;
     font-family: Georgia, "Times New Roman", serif;
     font-size: 1rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.candidate-identity {
+    min-width: 0;
+}
+
+.candidate-detail {
+    display: block;
+    max-width: 18rem;
+    margin-top: 0.12rem;
+    overflow: hidden;
+    color: var(--muted);
+    font-size: 0.65rem;
     text-overflow: ellipsis;
     white-space: nowrap;
 }

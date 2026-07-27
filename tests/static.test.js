@@ -32,6 +32,7 @@ test("service worker pre-caches every core web asset", () => {
         "app.js",
         "meter_analysis.js",
         "mishra.json",
+        "structural_meters.json",
         "manifest.webmanifest",
         "icon.svg",
         "about.html",

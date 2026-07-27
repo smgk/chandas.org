@@ -16,3 +16,19 @@ license is available from:
 
 The catalog's attribution is retained in `mishra.json`. Chandas.org does not
 claim authorship of the catalog.
+
+## Structural and mātrā rule references
+
+`structural_meters.json` is an original, machine-readable rule catalog created
+for Chandas.org. Its initial pathyā Anuṣṭubh rule is documented against
+“A Study on the Sanskrit Meter: Anuṣṭubh”:
+
+<https://www.kci.go.kr/kciportal/ci/sereArticleSearch/ciSereArtiView.kci?sereArticleSearchBean.artiId=ART001963953>
+
+The initial Āryā-family mātrā-group totals are documented against DHARMA's
+Prosodic Patterns:
+
+<https://dharmalekha.info/prosody>
+
+These references are citations for prosodic facts and terminology; their page
+content is not bundled with the application.

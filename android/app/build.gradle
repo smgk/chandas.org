@@ -55,6 +55,7 @@ tasks.register("syncWebAssets", Copy) {
     include "app.js"
     include "meter_analysis.js"
     include "mishra.json"
+    include "structural_meters.json"
     include "manifest.webmanifest"
     include "icon.svg"
     include "service-worker.js"

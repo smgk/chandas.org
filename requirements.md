@@ -177,6 +177,11 @@ recommended, and optional behavior.
 9. Scholarly meter names containing diacritics MUST remain unchanged for
    display but MUST also be searchable using unaccented and common Roman
    spellings, including `sh` for `ś`/`ṣ` and `ri` for `ṛ`.
+10. Detection MUST support both fixed Guru/Laghu vṛttas and meters expressed
+    through pāda structure or mātrā-group totals.
+11. A pāda boundary MUST be recognized at a non-empty line break, danda,
+    double danda, single Roman bar, or double Roman bar. Other punctuation
+    remains metrically transparent and MUST NOT create a pāda.
 
 ### FR-5: Meter selection
 
@@ -201,8 +206,9 @@ recommended, and optional behavior.
    suggestion-only mode.
 9. When no meter has been selected for a stanza, approximate differences in
    that stanza MUST NOT be shown as errors.
-10. When a meter is selected, its name and complete Guru/Laghu signature MUST
-    remain visibly available for reference in the active stanza panel.
+10. When a meter is selected, its name and applicable signature—fixed
+    Guru/Laghu pattern, structural rule, or mātrā groups—MUST remain visibly
+    available for reference in the active stanza panel.
 
 ### FR-6: Selected-meter validation
 
@@ -339,6 +345,29 @@ analysis result.
 6. Diagnostics MAY be enabled in development but MUST NOT expose noisy console
    logs or user composition text in production telemetry.
 
+### 6.3 Structural and mātrā catalog
+
+1. `structural_meters.json` is the versioned extension catalog for meters that
+   cannot be represented faithfully as one fixed Guru/Laghu string.
+2. Each structural entry MUST have a stable identifier, display name, common
+   search aliases, meter kind, human-readable signature, machine-readable
+   pāda rules, rule-completeness label, and source reference.
+3. The initial structural release MUST include pathyā Anuṣṭubh as four
+   eight-syllable pādas with its odd/even cadence and forbidden-position rules.
+   Vipulā variations are explicitly deferred until an expert-reviewed rule set
+   and corpus are available.
+4. The initial mātrā release MUST include the core Āryā-family patterns:
+   Āryā, Gīti, Upagīti, Udgīti, Āryāgīti/Kanda, Sugīti, Anugīti, and Vallarī.
+5. Initial Āryā-family validation checks the published mātrā-group totals.
+   Additional gaṇa restrictions and regional variants MUST NOT be implied by
+   an exact label until they are added to the catalog and expert-reviewed.
+6. Laghu contributes one mātrā and Guru contributes two mātrās. The engine
+   MUST expose the observed total for each pāda and MUST mark the source
+   syllable that overruns a required group boundary.
+7. Fixed-pattern entries in `mishra.json` MUST remain unchanged. Structural
+   rules MUST be composed with them at runtime rather than rewriting the source
+   list.
+
 ## 7. User Experience and Accessibility
 
 1. The composition MUST remain the primary visual focus.
@@ -460,6 +489,11 @@ The MVP is acceptable when:
   diacritics while unaccented and common Roman spellings find them.
 - Include every supported meter, exact matches, near matches, ties, allowed
   variations, wrong line counts, extra/missing syllables, and ambiguous cases.
+- Include pathyā Anuṣṭubh fixtures using both one-pāda-per-line and
+  danda-delimited two-pāda lines, plus wrong cadence, forbidden positions,
+  missing pādas, and extra syllables.
+- Include each Āryā-family mātrā signature, exact group boundaries, a Guru that
+  crosses a four-mātrā boundary, incomplete pādas, and extra mātrās.
 - Use `mishra.json` as the initial meter inventory and create coverage proving
   that every entry and every alternate pattern can be loaded and matched.
 - Derive characterization fixtures from the intended Kannada/Devanagari
@@ -612,8 +646,11 @@ The MVP is acceptable when:
 9. The Android application must perform the full core workflow offline.
 10. An installable web application with an Android container is the first
     delivery approach to prototype; a native Android UI remains the fallback.
+11. Structural meters are maintained in a separate versioned catalog;
+    pathyā Anuṣṭubh and the initial Āryā-family group-total rules are the first
+    supported set.
 
-### Remaining before implementation
+### Remaining review and expansion work
 
 1. Confirm that blank-line-separated blocks are the intended definition of a
    stanza for selection and validation.
@@ -626,6 +663,10 @@ The MVP is acceptable when:
    and Android redistribution. Every listed meter remains part of the initial
    catalog.
 5. Choose the minimum Android version and supported browser window.
+6. Obtain expert approval for the pathyā Anuṣṭubh corpus and determine which
+   vipulā variations the next catalog version will accept.
+7. Add and review the remaining jāti/mātrā traditions and the full internal
+   gaṇa constraints for the initial Āryā-family entries.
 
 ## 13. Explicitly Out of Scope for MVP
 

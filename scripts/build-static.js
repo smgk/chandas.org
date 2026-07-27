@@ -11,6 +11,7 @@ const assets = [
     "app.js",
     "meter_analysis.js",
     "mishra.json",
+    "structural_meters.json",
     "manifest.webmanifest",
     "service-worker.js",
     "icon.svg",

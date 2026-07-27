@@ -361,6 +361,55 @@
         return stanzas;
     }
 
+    function parsePadas(stanza, lines) {
+        const padas = [];
+        const delimiter = /[।॥|]+/gu;
+
+        for (const line of lines) {
+            let chunkStart = line.start;
+            let match;
+
+            while ((match = delimiter.exec(line.text)) !== null) {
+                appendPada(chunkStart, line.start + match.index);
+                chunkStart = line.start + match.index + match[0].length;
+            }
+            appendPada(chunkStart, line.end);
+            delimiter.lastIndex = 0;
+        }
+
+        function appendPada(rawStart, rawEnd) {
+            let start = rawStart;
+            let end = rawEnd;
+            while (start < end && /\s/u.test(stanza.text[start - stanza.start])) {
+                start += 1;
+            }
+            while (end > start && /\s/u.test(stanza.text[end - stanza.start - 1])) {
+                end -= 1;
+            }
+
+            const syllables = lines.flatMap((line) => line.syllables)
+                .filter((syllable) => syllable.start >= start && syllable.end <= end);
+            if (!syllables.length) {
+                return;
+            }
+
+            padas.push({
+                index: padas.length,
+                start,
+                end,
+                text: stanza.text.slice(start - stanza.start, end - stanza.start),
+                syllables,
+                pattern: syllables.map((item) => item.classification).join(""),
+                matras: syllables.reduce(
+                    (total, item) => total + (item.classification === GURU ? 2 : 1),
+                    0
+                )
+            });
+        }
+
+        return padas;
+    }
+
     function sanitizePattern(pattern) {
         return String(pattern || "").toUpperCase().replace(/[^GL]/g, "");
     }
@@ -371,11 +420,7 @@
         }
 
         const rawEntries = Array.isArray(catalog) ? catalog : catalog.metres;
-        if (!Array.isArray(rawEntries)) {
-            return [];
-        }
-
-        return rawEntries
+        const fixedMeters = (Array.isArray(rawEntries) ? rawEntries : [])
             .filter((entry) => Array.isArray(entry) && entry.length >= 2)
             .map((entry, index) => {
                 const rawPatterns = Array.isArray(entry[1]) ? entry[1] : [entry[1]];
@@ -383,10 +428,32 @@
                     id: String(entry[0]),
                     name: String(entry[0]),
                     sourceIndex: index,
+                    kind: "fixed",
+                    aliases: [],
                     patterns: rawPatterns.map(sanitizePattern).filter(Boolean)
                 };
             })
             .filter((meter) => meter.patterns.length > 0);
+
+        const structuralEntries = !Array.isArray(catalog) &&
+            Array.isArray(catalog.structuralMeters)
+            ? catalog.structuralMeters
+            : [];
+        const structuralMeters = structuralEntries
+            .filter((entry) => entry && entry.id && entry.name &&
+                (entry.kind === "matra" || entry.kind === "syllable-structural"))
+            .map((entry, index) => ({
+                ...entry,
+                id: String(entry.id),
+                name: String(entry.name),
+                aliases: Array.isArray(entry.aliases) ? entry.aliases.map(String) : [],
+                sourceIndex: index,
+                patterns: Array.isArray(entry.signatureLines)
+                    ? entry.signatureLines.map(String)
+                    : []
+            }));
+
+        return fixedMeters.concat(structuralMeters);
     }
 
     function sanitizedEditDistance(left, right) {
@@ -490,9 +557,10 @@
 
     function rankMeters(linePatterns, meters, limit) {
         const statusRank = { exact: 0, compatible: 1, approximate: 2 };
-        const scored = meters.map((meter) => ({
+        const scored = meters.filter((meter) => meter.kind === "fixed").map((meter) => ({
             id: meter.id,
             name: meter.name,
+            kind: meter.kind,
             patterns: meter.patterns,
             ...scoreMeter(linePatterns, meter)
         }));
@@ -505,6 +573,224 @@
         );
 
         return scored.slice(0, limit || 8);
+    }
+
+    function setViolation(syllable, reason, expected, shouldMark) {
+        if (!shouldMark) {
+            return;
+        }
+        syllable.violation = true;
+        syllable.violationReason = reason;
+        if (expected) {
+            syllable.expected = expected;
+        }
+    }
+
+    function evaluateSyllableStructuralMeter(padas, meter, shouldMark) {
+        let ruleFailures = 0;
+        let missingCount = 0;
+        const expectedPadas = meter.padas || [];
+
+        for (let padaIndex = 0; padaIndex < Math.max(padas.length, expectedPadas.length);
+            padaIndex += 1) {
+            const pada = padas[padaIndex];
+            const rule = expectedPadas[padaIndex];
+            if (!rule) {
+                if (pada) {
+                    ruleFailures += pada.syllables.length;
+                    pada.syllables.forEach((syllable) =>
+                        setViolation(syllable, "extra-pada", "", shouldMark));
+                }
+                continue;
+            }
+            if (!pada) {
+                missingCount += rule.syllables;
+                continue;
+            }
+
+            if (pada.syllables.length > rule.syllables) {
+                const extras = pada.syllables.slice(rule.syllables);
+                ruleFailures += extras.length;
+                extras.forEach((syllable) =>
+                    setViolation(syllable, "extra-syllable", "", shouldMark));
+            } else {
+                missingCount += rule.syllables - pada.syllables.length;
+            }
+
+            if (rule.cadence) {
+                const cadenceStart = rule.cadence.start - 1;
+                for (let offset = 0; offset < rule.cadence.pattern.length; offset += 1) {
+                    const syllable = pada.syllables[cadenceStart + offset];
+                    const expected = rule.cadence.pattern[offset];
+                    if (syllable && syllable.classification !== expected) {
+                        ruleFailures += 1;
+                        setViolation(syllable, "weight-mismatch", expected, shouldMark);
+                    }
+                }
+            }
+
+            for (const forbidden of rule.forbidden || []) {
+                const sequenceStart = forbidden.start - 1;
+                const sequenceEnd = sequenceStart + forbidden.patterns[0].length;
+                if (pada.syllables.length < sequenceEnd) {
+                    continue;
+                }
+                const actual = pada.syllables.slice(sequenceStart, sequenceEnd)
+                    .map((syllable) => syllable.classification).join("");
+                if (forbidden.patterns.includes(actual)) {
+                    ruleFailures += 1;
+                    pada.syllables.slice(sequenceStart, sequenceEnd).forEach((syllable) =>
+                        setViolation(
+                            syllable,
+                            "forbidden-sequence",
+                            `not ${actual}`,
+                            shouldMark
+                        ));
+                }
+            }
+        }
+
+        const result = structuralScore(
+            padas,
+            expectedPadas.length,
+            ruleFailures,
+            missingCount,
+            expectedPadas.reduce((sum, rule) => sum + rule.syllables, 0)
+        );
+        return result;
+    }
+
+    function evaluateMatraMeter(padas, meter, shouldMark) {
+        let ruleFailures = 0;
+        let missingCount = 0;
+        const expectedPadas = meter.padaGroups || [];
+
+        for (let padaIndex = 0; padaIndex < Math.max(padas.length, expectedPadas.length);
+            padaIndex += 1) {
+            const pada = padas[padaIndex];
+            const groups = expectedPadas[padaIndex];
+            if (!groups) {
+                if (pada) {
+                    ruleFailures += pada.syllables.length;
+                    pada.syllables.forEach((syllable) =>
+                        setViolation(syllable, "extra-pada", "", shouldMark));
+                }
+                continue;
+            }
+
+            const target = groups.reduce((sum, value) => sum + value, 0);
+            if (!pada) {
+                missingCount += target;
+                continue;
+            }
+
+            const boundaries = new Set();
+            let boundary = 0;
+            groups.slice(0, -1).forEach((group) => {
+                boundary += group;
+                boundaries.add(boundary);
+            });
+
+            let running = 0;
+            let hasExcessFailure = false;
+            for (const syllable of pada.syllables) {
+                const previous = running;
+                running += syllable.classification === GURU ? 2 : 1;
+                const crossedBoundary = Array.from(boundaries)
+                    .find((value) => previous < value && running > value);
+                if (crossedBoundary !== undefined) {
+                    ruleFailures += 1;
+                    setViolation(
+                        syllable,
+                        "matra-group-overrun",
+                        `${crossedBoundary} mātrā boundary`,
+                        shouldMark
+                    );
+                } else if (previous >= target) {
+                    ruleFailures += 1;
+                    hasExcessFailure = true;
+                    setViolation(syllable, "extra-matra", `${target} mātrās`, shouldMark);
+                }
+            }
+
+            if (running < target) {
+                missingCount += target - running;
+            } else if (running > target && !hasExcessFailure) {
+                ruleFailures += 1;
+                const last = pada.syllables[pada.syllables.length - 1];
+                setViolation(last, "extra-matra", `${target} mātrās`, shouldMark);
+            }
+        }
+
+        const result = structuralScore(
+            padas,
+            expectedPadas.length,
+            ruleFailures,
+            missingCount,
+            expectedPadas.reduce(
+                (total, groups) => total + groups.reduce((sum, value) => sum + value, 0),
+                0
+            )
+        );
+        if (result.status === "exact" && meter.ruleCompleteness !== "complete") {
+            result.status = "compatible";
+        }
+        return result;
+    }
+
+    function structuralScore(
+        padas,
+        expectedPadaCount,
+        ruleFailures,
+        missingCount,
+        expectedUnits
+    ) {
+        const complete = padas.length === expectedPadaCount && missingCount === 0;
+        const status = ruleFailures === 0
+            ? complete ? "exact" : "compatible"
+            : "approximate";
+        const comparedLength = Math.max(
+            1,
+            padas.reduce((sum, pada) => sum + pada.syllables.length, 0)
+        );
+
+        return {
+            status,
+            distance: ruleFailures + missingCount,
+            score: (ruleFailures + (missingCount * 0.05)) /
+                Math.max(comparedLength, expectedUnits || 1),
+            missingCount,
+            violationCount: ruleFailures
+        };
+    }
+
+    function scoreStructuralMeter(padas, meter, shouldMark) {
+        if (meter.kind === "syllable-structural") {
+            return evaluateSyllableStructuralMeter(padas, meter, shouldMark);
+        }
+        return evaluateMatraMeter(padas, meter, shouldMark);
+    }
+
+    function rankStructuralMeters(padas, meters) {
+        return meters
+            .filter((meter) => meter.kind !== "fixed")
+            .map((meter) => ({
+                id: meter.id,
+                name: meter.name,
+                kind: meter.kind,
+                patterns: meter.patterns,
+                ...scoreStructuralMeter(padas, meter, false)
+            }));
+    }
+
+    function sortCandidates(candidates, limit) {
+        const statusRank = { exact: 0, compatible: 1, approximate: 2 };
+        return candidates.sort((left, right) =>
+            statusRank[left.status] - statusRank[right.status] ||
+            left.score - right.score ||
+            left.distance - right.distance ||
+            left.name.localeCompare(right.name)
+        ).slice(0, limit || 8);
     }
 
     function selectedMeterFor(index, selectedMeters) {
@@ -532,16 +818,19 @@
         const stanzas = parsedStanzas.map((stanza, stanzaIndex) => {
             const selectedMeterId = selectedMeterFor(stanzaIndex, selectedMeters);
             const selectedMeter = meterById.get(selectedMeterId) || null;
+            const selectedFixedMeter = selectedMeter && selectedMeter.kind === "fixed"
+                ? selectedMeter
+                : null;
             const lines = stanza.lines.map((line, lineIndex) => {
                 const segmented = segmentLine(line.text, line.start);
                 if (segmented.script !== "unknown") {
                     scripts.add(segmented.script);
                 }
 
-                const expectedPattern = expectedForLine(selectedMeter, lineIndex);
+                const expectedPattern = expectedForLine(selectedFixedMeter, lineIndex);
                 const syllables = segmented.syllables.map((syllable, syllableIndex) => {
                     const expected = expectedPattern[syllableIndex] || "";
-                    const violation = Boolean(selectedMeter) &&
+                    const violation = Boolean(selectedFixedMeter) &&
                         (!expected || expected !== syllable.classification);
                     const result = {
                         ...syllable,
@@ -565,7 +854,7 @@
                     syllables,
                     pattern: syllables.map((item) => item.classification).join(""),
                     expectedPattern,
-                    missingCount: selectedMeter
+                    missingCount: selectedFixedMeter
                         ? Math.max(0, expectedPattern.length - syllables.length)
                         : 0,
                     violationCount: syllables.filter((item) => item.violation).length
@@ -573,15 +862,32 @@
             });
 
             const linePatterns = lines.map((line) => line.pattern);
-            const candidates = rankMeters(linePatterns, meters, 8);
+            const padas = parsePadas(stanza, lines);
+            let structuralValidation = null;
+            if (selectedMeter && selectedMeter.kind !== "fixed") {
+                structuralValidation = scoreStructuralMeter(padas, selectedMeter, true);
+                lines.forEach((line) => {
+                    line.violationCount = line.syllables
+                        .filter((item) => item.violation).length;
+                    line.missingCount = 0;
+                });
+            }
+            const candidates = sortCandidates([
+                ...rankMeters(linePatterns, meters, meters.length),
+                ...rankStructuralMeters(padas, meters)
+            ], 8);
             const violationCount = lines.reduce((sum, line) => sum + line.violationCount, 0);
-            const missingCount = lines.reduce((sum, line) => sum + line.missingCount, 0);
+            const missingCount = structuralValidation
+                ? structuralValidation.missingCount
+                : lines.reduce((sum, line) => sum + line.missingCount, 0);
 
             return {
                 ...stanza,
                 index: stanzaIndex,
                 lines,
+                padas,
                 patterns: linePatterns,
+                matraPattern: padas.map((pada) => pada.matras),
                 scripts: Array.from(new Set(lines.map((line) => line.script)
                     .filter((script) => script !== "unknown"))),
                 candidates,
@@ -589,7 +895,9 @@
                 selectedMeter: selectedMeter ? {
                     id: selectedMeter.id,
                     name: selectedMeter.name,
-                    patterns: selectedMeter.patterns
+                    kind: selectedMeter.kind,
+                    patterns: selectedMeter.patterns,
+                    ruleCompleteness: selectedMeter.ruleCompleteness || "fixed"
                 } : null,
                 violationCount,
                 missingCount
@@ -598,6 +906,10 @@
 
         return {
             text: originalText,
+            analysisVersion: "2.0.0",
+            catalogVersion: catalog && catalog.structuralCatalogVersion
+                ? String(catalog.structuralCatalogVersion)
+                : "",
             stanzas,
             segments: allSegments.sort((a, b) => a.start - b.start),
             unsupported,
@@ -644,9 +956,12 @@
         detectScript,
         editDistance,
         normalizeCatalog,
+        parsePadas,
         parseStanzas,
         rankMeters,
+        rankStructuralMeters,
         sanitizePattern,
+        scoreStructuralMeter,
         segmentLine
     };
 }));

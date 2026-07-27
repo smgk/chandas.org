@@ -1,0 +1,130 @@
+{
+  "catalogVersion": "1.0.0",
+  "description": "Structural and mātrā meter rules that cannot be represented as one fixed Guru/Laghu string.",
+  "meters": [
+    {
+      "id": "structural:anushtubh-pathya",
+      "name": "anuṣṭubh (pathyā)",
+      "aliases": ["anuṣṭubh", "anushtubh", "anushtup", "anustubh", "anustup", "śloka", "shloka"],
+      "kind": "syllable-structural",
+      "signatureLines": [
+        "4 pādas × 8 syllables",
+        "odd pādas: positions 5–7 = LGG",
+        "even pādas: positions 5–7 = LGL"
+      ],
+      "ruleCompleteness": "pathyā",
+      "padas": [
+        {
+          "syllables": 8,
+          "cadence": { "start": 5, "pattern": "LGG" },
+          "forbidden": [{ "start": 2, "patterns": ["LLL", "LLG"] }]
+        },
+        {
+          "syllables": 8,
+          "cadence": { "start": 5, "pattern": "LGL" },
+          "forbidden": [{ "start": 2, "patterns": ["LLL", "LLG", "GLG"] }]
+        },
+        {
+          "syllables": 8,
+          "cadence": { "start": 5, "pattern": "LGG" },
+          "forbidden": [{ "start": 2, "patterns": ["LLL", "LLG"] }]
+        },
+        {
+          "syllables": 8,
+          "cadence": { "start": 5, "pattern": "LGL" },
+          "forbidden": [{ "start": 2, "patterns": ["LLL", "LLG", "GLG"] }]
+        }
+      ],
+      "notes": "This first rule set recognizes pathyā Anuṣṭubh. Vipulā variations are not yet accepted.",
+      "source": {
+        "title": "A Study on the Sanskrit Meter: Anuṣṭubh",
+        "url": "https://www.kci.go.kr/kciportal/ci/sereArticleSearch/ciSereArtiView.kci?sereArticleSearchBean.artiId=ART001963953"
+      }
+    },
+    {
+      "id": "structural:arya",
+      "name": "āryā",
+      "aliases": ["arya", "aarya"],
+      "kind": "matra",
+      "signatureLines": ["12 | 18 / 12 | 15 mātrās", "groups: 444 | 44442 / 444 | 44142"],
+      "ruleCompleteness": "group-totals",
+      "sourceRef": "matraSource",
+      "padaGroups": [[4, 4, 4], [4, 4, 4, 4, 2], [4, 4, 4], [4, 4, 1, 4, 2]]
+    },
+    {
+      "id": "structural:giti",
+      "name": "gīti",
+      "aliases": ["giti", "geeti"],
+      "kind": "matra",
+      "signatureLines": ["12 | 18 / 12 | 18 mātrās", "groups: 444 | 44442 / 444 | 44442"],
+      "ruleCompleteness": "group-totals",
+      "sourceRef": "matraSource",
+      "padaGroups": [[4, 4, 4], [4, 4, 4, 4, 2], [4, 4, 4], [4, 4, 4, 4, 2]]
+    },
+    {
+      "id": "structural:upagiti",
+      "name": "upagīti",
+      "aliases": ["upagiti", "upageeti"],
+      "kind": "matra",
+      "signatureLines": ["12 | 15 / 12 | 15 mātrās", "groups: 444 | 44142 / 444 | 44142"],
+      "ruleCompleteness": "group-totals",
+      "sourceRef": "matraSource",
+      "padaGroups": [[4, 4, 4], [4, 4, 1, 4, 2], [4, 4, 4], [4, 4, 1, 4, 2]]
+    },
+    {
+      "id": "structural:udgiti",
+      "name": "udgīti",
+      "aliases": ["udgiti", "udgeeti"],
+      "kind": "matra",
+      "signatureLines": ["12 | 15 / 12 | 18 mātrās", "groups: 444 | 44142 / 444 | 44442"],
+      "ruleCompleteness": "group-totals",
+      "sourceRef": "matraSource",
+      "padaGroups": [[4, 4, 4], [4, 4, 1, 4, 2], [4, 4, 4], [4, 4, 4, 4, 2]]
+    },
+    {
+      "id": "structural:aryagiti",
+      "name": "āryāgīti",
+      "aliases": ["aryagiti", "aaryaageeti", "kanda"],
+      "kind": "matra",
+      "signatureLines": ["12 | 20 / 12 | 20 mātrās", "groups: 444 | 44444 / 444 | 44444"],
+      "ruleCompleteness": "group-totals",
+      "sourceRef": "matraSource",
+      "padaGroups": [[4, 4, 4], [4, 4, 4, 4, 4], [4, 4, 4], [4, 4, 4, 4, 4]]
+    },
+    {
+      "id": "structural:sugiti",
+      "name": "sugīti",
+      "aliases": ["sugiti", "sugeeti"],
+      "kind": "matra",
+      "signatureLines": ["12 | 20 / 12 | 15 mātrās", "groups: 444 | 44444 / 444 | 44142"],
+      "ruleCompleteness": "group-totals",
+      "sourceRef": "matraSource",
+      "padaGroups": [[4, 4, 4], [4, 4, 4, 4, 4], [4, 4, 4], [4, 4, 1, 4, 2]]
+    },
+    {
+      "id": "structural:anugiti",
+      "name": "anugīti",
+      "aliases": ["anugiti", "anugeeti"],
+      "kind": "matra",
+      "signatureLines": ["12 | 15 / 12 | 20 mātrās", "groups: 444 | 44142 / 444 | 44444"],
+      "ruleCompleteness": "group-totals",
+      "sourceRef": "matraSource",
+      "padaGroups": [[4, 4, 4], [4, 4, 1, 4, 2], [4, 4, 4], [4, 4, 4, 4, 4]]
+    },
+    {
+      "id": "structural:vallari",
+      "name": "vallarī",
+      "aliases": ["vallari", "vallaree"],
+      "kind": "matra",
+      "signatureLines": ["12 | 20 / 12 | 18 mātrās", "groups: 444 | 44444 / 444 | 44442"],
+      "ruleCompleteness": "group-totals",
+      "sourceRef": "matraSource",
+      "padaGroups": [[4, 4, 4], [4, 4, 4, 4, 4], [4, 4, 4], [4, 4, 4, 4, 2]]
+    }
+  ],
+  "matraSource": {
+    "title": "DHARMA Prosodic Patterns",
+    "url": "https://dharmalekha.info/prosody",
+    "notes": "The initial Āryā-family entries encode the published mātrā-group totals. Additional gaṇa restrictions and regional variants require expert-reviewed catalog revisions."
+  }
+}

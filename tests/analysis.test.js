@@ -11,6 +11,18 @@ const catalog = JSON.parse(fs.readFileSync(
     path.join(__dirname, "..", "mishra.json"),
     "utf8"
 ));
+const structuralCatalog = JSON.parse(fs.readFileSync(
+    path.join(__dirname, "..", "structural_meters.json"),
+    "utf8"
+));
+const combinedCatalog = {
+    ...catalog,
+    structuralMeters: structuralCatalog.meters
+};
+
+function textForPattern(pattern) {
+    return Array.from(pattern, (weight) => weight === "G" ? "ಕಾ" : "ಕ").join(" ");
+}
 
 test("loads every meter and alternate pattern from mishra.json", () => {
     const meters = Chandas.normalizeCatalog(catalog);
@@ -125,6 +137,166 @@ test("supports multi-line meter patterns from catalog arrays", () => {
     assert.equal(ranked[0].status, "exact");
 });
 
+test("loads the versioned structural catalog without changing mishra entries", () => {
+    const meters = Chandas.normalizeCatalog(combinedCatalog);
+    const anushtubh = meters.find((meter) =>
+        meter.id === "structural:anushtubh-pathya");
+
+    assert.equal(meters.length, catalog.metres.length + structuralCatalog.meters.length);
+    assert.equal(anushtubh.name, "anuṣṭubh (pathyā)");
+    assert.ok(anushtubh.aliases.includes("anushtup"));
+    assert.equal(anushtubh.kind, "syllable-structural");
+});
+
+test("splits pādas at newlines, danda, double danda, and Roman bars", () => {
+    const text = [
+        `${textForPattern("LLLL")} । ${textForPattern("GGGG")} ॥`,
+        `${textForPattern("LGLG")} | ${textForPattern("GLGL")} ||`
+    ].join("\n");
+    const stanza = Chandas.analyzeComposition(text, combinedCatalog, {}).stanzas[0];
+
+    assert.equal(stanza.padas.length, 4);
+    assert.deepEqual(stanza.padas.map((pada) => pada.pattern), [
+        "LLLL", "GGGG", "LGLG", "GLGL"
+    ]);
+    stanza.padas.forEach((pada) => {
+        assert.equal(text.slice(pada.start, pada.end), pada.text);
+    });
+});
+
+test("detects and validates pathyā Anuṣṭubh across four pādas", () => {
+    const patterns = [
+        "GLGGLGGG",
+        "GLGGLGLG",
+        "GLGGLGGG",
+        "GLGGLGLG"
+    ];
+    const text = patterns.map(textForPattern).join("\n");
+    const result = Chandas.analyzeComposition(
+        text,
+        combinedCatalog,
+        "structural:anushtubh-pathya"
+    );
+    const stanza = result.stanzas[0];
+
+    assert.equal(stanza.padas.length, 4);
+    assert.equal(stanza.selectedMeter.name, "anuṣṭubh (pathyā)");
+    assert.equal(stanza.violationCount, 0);
+    assert.equal(stanza.missingCount, 0);
+    assert.equal(
+        stanza.candidates.find((candidate) =>
+            candidate.id === "structural:anushtubh-pathya").status,
+        "exact"
+    );
+});
+
+test("marks an Anuṣṭubh cadence violation at its original syllable", () => {
+    const patterns = [
+        "GLGGLGGG",
+        "GLGGLGGG",
+        "GLGGLGGG",
+        "GLGGLGLG"
+    ];
+    const text = patterns.map(textForPattern).join("\n");
+    const stanza = Chandas.analyzeComposition(
+        text,
+        combinedCatalog,
+        "structural:anushtubh-pathya"
+    ).stanzas[0];
+    const wrong = stanza.padas[1].syllables[6];
+
+    assert.equal(stanza.violationCount, 1);
+    assert.equal(wrong.violationReason, "weight-mismatch");
+    assert.equal(wrong.expected, "L");
+    assert.equal(text.slice(wrong.start, wrong.end), wrong.text);
+});
+
+test("keeps an incomplete structural meter compatible without red violations", () => {
+    const text = textForPattern("GLGGLG");
+    const result = Chandas.analyzeComposition(
+        text,
+        {
+            ...combinedCatalog,
+            structuralCatalogVersion: structuralCatalog.catalogVersion
+        },
+        "structural:anushtubh-pathya"
+    );
+    const stanza = result.stanzas[0];
+
+    assert.equal(stanza.violationCount, 0);
+    assert.ok(stanza.missingCount > 0);
+    assert.equal(result.analysisVersion, "2.0.0");
+    assert.equal(result.catalogVersion, structuralCatalog.catalogVersion);
+});
+
+test("detects Āryā using mātrā groups and exposes per-pāda totals", () => {
+    const patterns = [
+        "GGGGGG",
+        "GGGGGGGGG",
+        "GGGGGG",
+        "GGGGLGGG"
+    ];
+    const text = patterns.map(textForPattern).join("\n");
+    const stanza = Chandas.analyzeComposition(
+        text,
+        combinedCatalog,
+        "structural:arya"
+    ).stanzas[0];
+
+    assert.deepEqual(stanza.matraPattern, [12, 18, 12, 15]);
+    assert.equal(stanza.violationCount, 0);
+    assert.equal(stanza.missingCount, 0);
+    assert.equal(
+        stanza.candidates.find((candidate) => candidate.id === "structural:arya").status,
+        "compatible"
+    );
+});
+
+test("validates every initial Āryā-family mātrā signature", () => {
+    const matraMeters = structuralCatalog.meters.filter((meter) => meter.kind === "matra");
+
+    for (const meter of matraMeters) {
+        const text = meter.padaGroups.map((groups) =>
+            textForPattern(groups.map((group) => {
+                if (group === 4) {
+                    return "GG";
+                }
+                if (group === 2) {
+                    return "G";
+                }
+                return "L";
+            }).join(""))
+        ).join("\n");
+        const stanza = Chandas.analyzeComposition(text, combinedCatalog, meter.id).stanzas[0];
+
+        assert.equal(stanza.violationCount, 0, meter.name);
+        assert.equal(stanza.missingCount, 0, meter.name);
+        assert.deepEqual(
+            stanza.matraPattern,
+            meter.padaGroups.map((groups) =>
+                groups.reduce((sum, value) => sum + value, 0)),
+            meter.name
+        );
+    }
+});
+
+test("marks a syllable that crosses a required mātrā-group boundary", () => {
+    const text = [
+        textForPattern("GLG"),
+        textForPattern("GGGGGGGGG"),
+        textForPattern("GGGGGG"),
+        textForPattern("GGGGLGGG")
+    ].join("\n");
+    const stanza = Chandas.analyzeComposition(
+        text,
+        combinedCatalog,
+        "structural:arya"
+    ).stanzas[0];
+
+    assert.ok(stanza.violationCount > 0);
+    assert.equal(stanza.padas[0].syllables[2].violationReason, "matra-group-overrun");
+});
+
 test("validates different selected meters independently per stanza", () => {
     const tinyCatalog = {
         metres: [
@@ -168,7 +340,7 @@ test("legacy analyzeMeter API remains available", () => {
 test("analyzes a 2,000-character composition within the MVP budget", () => {
     const text = "ಕವಿ ".repeat(500).slice(0, 2000);
     const started = performance.now();
-    const result = Chandas.analyzeComposition(text, catalog, {});
+    const result = Chandas.analyzeComposition(text, combinedCatalog, {});
     const elapsed = performance.now() - started;
 
     assert.ok(result.segments.length > 0);

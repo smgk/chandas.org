@@ -75,6 +75,30 @@ test("finds scholarly meter names with common Roman spelling and shows the signa
         .toHaveText("GGGLLGLGLLLGGGLGGLG");
 });
 
+test("finds Anuṣṭubh as anushtup and shows structural and mātrā references", async ({ page }) => {
+    const pathya = [
+        "ಕಾ ಕ ಕಾ ಕಾ ಕ ಕಾ ಕಾ ಕಾ",
+        "ಕಾ ಕ ಕಾ ಕಾ ಕ ಕಾ ಕ ಕಾ",
+        "ಕಾ ಕ ಕಾ ಕಾ ಕ ಕಾ ಕಾ ಕಾ",
+        "ಕಾ ಕ ಕಾ ಕಾ ಕ ಕಾ ಕ ಕಾ"
+    ].join("\n");
+    await page.locator("#composition").fill(pathya);
+    await page.locator("#meter-picker summary").click();
+    await page.locator("#meter-search").fill("anushtup");
+
+    await expect(page.locator("#meter-select option")).toHaveText([
+        "anuṣṭubh (pathyā)"
+    ]);
+    await page.locator("#meter-select").selectOption("structural:anushtubh-pathya");
+
+    await expect(page.locator("#selected-meter-signature"))
+        .toContainText("4 pādas × 8 syllables");
+    await expect(page.locator("#active-matras"))
+        .toHaveText("Mātrās by pāda: 14 | 13 | 14 | 13");
+    await expect(page.locator("#validation-summary"))
+        .toHaveText("This stanza follows anuṣṭubh (pathyā).");
+});
+
 test("recovers the anonymous local draft and meter selection", async ({ page }) => {
     const composition = "ಕವಿ\n\nकाव्य";
     await page.locator("#composition").fill(composition);

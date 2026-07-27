@@ -31,6 +31,7 @@
             stanza: "Stanza {number} of {total}",
             analysisEmpty: "Your meter suggestions will appear here.",
             pattern: "Current pattern",
+            matras: "Mātrās by pāda",
             selectedMeterReference: "Selected meter",
             closestMeters: "Closest meters",
             suggestionNote: "Suggestions adjust while you type.",
@@ -45,6 +46,8 @@
             noMeterSelected: "Choose a meter to check this stanza.",
             validMeter: "This stanza follows {meter}.",
             validationIssues: "{violations} mismatched and {missing} missing syllables for {meter}.",
+            incompleteMeter: "{meter} is still possible; {missing} metrical units remain.",
+            supportedRulesValid: "This stanza follows the supported rules for {meter}.",
             privateTitle: "Your verse stays with you.",
             privateText: "Analysis and draft recovery happen on this device, including when Android is offline.",
             shareComposition: "Share composition",
@@ -86,6 +89,7 @@
             stanza: "ಪದ್ಯ {number} / {total}",
             analysisEmpty: "ಛಂದಸ್ಸಿನ ಸೂಚನೆಗಳು ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತವೆ.",
             pattern: "ಪ್ರಸ್ತುತ ಗಣ ವಿನ್ಯಾಸ",
+            matras: "ಪಾದದ ಮಾತ್ರೆಗಳು",
             selectedMeterReference: "ಆಯ್ದ ಛಂದಸ್ಸು",
             closestMeters: "ಸಮೀಪದ ಛಂದಸ್ಸುಗಳು",
             suggestionNote: "ಬರೆಯುತ್ತಿದ್ದಂತೆ ಸೂಚನೆಗಳು ಬದಲಾಗುತ್ತವೆ.",
@@ -100,6 +104,8 @@
             noMeterSelected: "ಈ ಪದ್ಯವನ್ನು ಪರೀಕ್ಷಿಸಲು ಛಂದಸ್ಸನ್ನು ಆರಿಸಿ.",
             validMeter: "ಈ ಪದ್ಯವು {meter} ಛಂದಸ್ಸಿಗೆ ಹೊಂದುತ್ತದೆ.",
             validationIssues: "{meter}: {violations} ವ್ಯತ್ಯಾಸ, {missing} ಕೊರತೆಯ ಅಕ್ಷರಗಳು.",
+            incompleteMeter: "{meter} ಇನ್ನೂ ಸಾಧ್ಯ; {missing} ಛಂದೋಘಟಕಗಳು ಬಾಕಿಯಿವೆ.",
+            supportedRulesValid: "ಈ ಪದ್ಯವು {meter}ಗಾಗಿ ಬೆಂಬಲಿತ ನಿಯಮಗಳಿಗೆ ಹೊಂದುತ್ತದೆ.",
             privateTitle: "ನಿಮ್ಮ ಪದ್ಯ ನಿಮ್ಮಲ್ಲೇ ಉಳಿಯುತ್ತದೆ.",
             privateText: "ವಿಶ್ಲೇಷಣೆ ಮತ್ತು ಕರಡು ಮರುಪಡೆಯುವಿಕೆ ಈ ಸಾಧನದಲ್ಲೇ ನಡೆಯುತ್ತದೆ; Android ಆಫ್‌ಲೈನ್‌ನಲ್ಲಿಯೂ ಕೆಲಸ ಮಾಡುತ್ತದೆ.",
             shareComposition: "ರಚನೆಯನ್ನು ಹಂಚಿಕೊಳ್ಳಿ",
@@ -138,7 +144,7 @@
             "composition", "highlight-layer", "editor-shell", "draft-state",
             "language", "new-draft", "copy", "share", "analysis-title",
             "previous-stanza", "next-stanza", "empty-analysis", "analysis-content",
-            "active-pattern", "selected-meter-reference", "selected-meter-name",
+            "active-pattern", "active-matras", "selected-meter-reference", "selected-meter-name",
             "selected-meter-signature", "candidate-list", "meter-picker",
             "meter-search", "meter-select", "clear-meter", "validation-summary", "share-dialog",
             "include-meter", "include-link", "system-share", "twitter-share",
@@ -384,9 +390,18 @@
         button.dataset.meterId = candidate.id;
         button.setAttribute("aria-pressed", candidate.id === selectedMeterId ? "true" : "false");
 
+        const identity = document.createElement("span");
+        identity.className = "candidate-identity";
         const name = document.createElement("span");
         name.className = "candidate-name";
         name.textContent = candidate.name;
+        identity.append(name);
+        if (candidate.kind !== "fixed" && candidate.patterns[0]) {
+            const detail = document.createElement("small");
+            detail.className = "candidate-detail";
+            detail.textContent = candidate.patterns[0];
+            identity.append(detail);
+        }
 
         const status = document.createElement("span");
         status.className = "candidate-status";
@@ -394,7 +409,7 @@
             ? t("selected")
             : t(candidate.status);
 
-        button.append(name, status);
+        button.append(identity, status);
         button.addEventListener("click", () => selectMeter(candidate.id));
         return button;
     }
@@ -421,6 +436,9 @@
             total: stanzas.length
         });
         elements["active-pattern"].textContent = stanza.patterns.join(" / ") || "—";
+        elements["active-matras"].textContent = stanza.matraPattern.length
+            ? `${t("matras")}: ${stanza.matraPattern.join(" | ")}`
+            : "";
 
         const selectedReference = elements["selected-meter-reference"];
         selectedReference.hidden = !stanza.selectedMeter;
@@ -453,7 +471,17 @@
         if (!stanza.selectedMeter) {
             summary.textContent = t("noMeterSelected");
         } else if (stanza.violationCount === 0 && stanza.missingCount === 0) {
-            summary.textContent = t("validMeter", { meter: stanza.selectedMeter.name });
+            summary.textContent = t(
+                stanza.selectedMeter.ruleCompleteness === "group-totals"
+                    ? "supportedRulesValid"
+                    : "validMeter",
+                { meter: stanza.selectedMeter.name }
+            );
+        } else if (stanza.violationCount === 0) {
+            summary.textContent = t("incompleteMeter", {
+                meter: stanza.selectedMeter.name,
+                missing: stanza.missingCount
+            });
         } else {
             summary.textContent = t("validationIssues", {
                 meter: stanza.selectedMeter.name,
@@ -660,15 +688,28 @@
     }
 
     async function loadCatalog() {
-        const response = await fetch("mishra.json", { cache: "force-cache" });
-        if (!response.ok) {
-            throw new Error(`Catalog request failed: ${response.status}`);
+        const [fixedResponse, structuralResponse] = await Promise.all([
+            fetch("mishra.json", { cache: "force-cache" }),
+            fetch("structural_meters.json", { cache: "force-cache" })
+        ]);
+        if (!fixedResponse.ok || !structuralResponse.ok) {
+            throw new Error(
+                `Catalog request failed: ${fixedResponse.status}/${structuralResponse.status}`
+            );
         }
-        state.catalog = await response.json();
+        const fixedCatalog = await fixedResponse.json();
+        const structuralCatalog = await structuralResponse.json();
+        state.catalog = {
+            ...fixedCatalog,
+            structuralMeters: structuralCatalog.meters,
+            structuralCatalogVersion: structuralCatalog.catalogVersion
+        };
         state.meters = Chandas.normalizeCatalog(state.catalog)
             .map((meter) => ({
                 ...meter,
-                searchText: meterSearchKeys(meter.name).join(" ")
+                searchText: meterSearchKeys(
+                    [meter.name, ...(meter.aliases || [])].join(" ")
+                ).join(" ")
             }))
             .sort((left, right) => left.name.localeCompare(right.name));
         filterMeterOptions("");

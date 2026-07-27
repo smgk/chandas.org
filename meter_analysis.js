@@ -44,6 +44,7 @@
     };
 
     const MARK_RE = /\p{Mark}/u;
+    const METRIC_BOUNDARY_RE = /^[\p{White_Space}\p{Punctuation}]+$/u;
 
     function codePoints(text, offset) {
         const points = [];
@@ -158,6 +159,36 @@
         return cursor;
     }
 
+    function beginsWithConjunct(text, config) {
+        const points = codePoints(text);
+        const afterPair = consumeConsonantViramaPair(points, 0, config);
+        return afterPair > 0 && isConsonant(points[afterPair], config);
+    }
+
+    function applyBoundaryConjunctRule(text, absoluteOffset, config, syllables) {
+        for (let index = 1; index < syllables.length; index += 1) {
+            const previous = syllables[index - 1];
+            const current = syllables[index];
+
+            if (previous.classification !== LAGHU ||
+                !beginsWithConjunct(current.text, config)) {
+                continue;
+            }
+
+            const gap = text.slice(
+                previous.end - absoluteOffset,
+                current.start - absoluteOffset
+            );
+            if (!gap || !METRIC_BOUNDARY_RE.test(gap)) {
+                continue;
+            }
+
+            previous.classification = GURU;
+            previous.actual = GURU;
+            previous.reasons.push("followed-by-conjunct");
+        }
+    }
+
     function segmentLine(text, absoluteOffset, forcedScript) {
         const script = forcedScript && SCRIPT_CONFIG[forcedScript]
             ? forcedScript
@@ -263,6 +294,11 @@
                 reasons: Array.from(state.reasons)
             });
         }
+
+        // Whitespace and punctuation are metrically transparent. A conjunct
+        // beginning the next written word therefore closes a preceding Laghu
+        // without expanding that syllable's highlight range.
+        applyBoundaryConjunctRule(text, absoluteOffset, config, syllables);
 
         return { script, syllables, unsupported };
     }

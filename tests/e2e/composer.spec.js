@@ -35,6 +35,15 @@ test("analyzes Kannada and Devanagari stanzas inline", async ({ page }) => {
     await expect(page.locator("#active-pattern")).toHaveText("LGG");
 });
 
+test("treats punctuation as transparent before a following conjunct", async ({ page }) => {
+    await page.locator("#composition").fill("ಕ, ಕ್ರ\n\nक। क्र");
+
+    await expect(page.locator("#active-pattern")).toHaveText("GL");
+    await page.locator("#previous-stanza").click();
+    await expect(page.locator("#active-pattern")).toHaveText("GL");
+    await expect(page.locator("#highlight-layer .guru")).toHaveCount(2);
+});
+
 test("selects and validates a meter for only the active stanza", async ({ page }) => {
     await page.locator("#composition").fill("ಕಾಂ ಕಾ\n\nಕವಿ");
     await page.locator("#previous-stanza").click();
@@ -48,6 +57,22 @@ test("selects and validates a meter for only the active stanza", async ({ page }
     await page.locator("#next-stanza").click();
     await expect(page.locator("#validation-summary")).not.toHaveClass(/has-errors/);
     await expect(page.locator("#validation-summary")).toContainText("Choose a meter");
+});
+
+test("finds scholarly meter names with common Roman spelling and shows the signature", async ({ page }) => {
+    await page.locator("#composition").fill("ಕವಿ");
+    await page.locator("#meter-picker summary").click();
+    await page.locator("#meter-search").fill("shardulavikriditam");
+
+    await expect(page.locator("#meter-select option")).toHaveText([
+        "śārdūlavikrīḍitam"
+    ]);
+    await page.locator("#meter-select").selectOption("śārdūlavikrīḍitam");
+
+    await expect(page.locator("#selected-meter-reference")).toBeVisible();
+    await expect(page.locator("#selected-meter-name")).toHaveText("śārdūlavikrīḍitam");
+    await expect(page.locator("#selected-meter-signature"))
+        .toHaveText("GGGLLGLGLLLGGGLGGLG");
 });
 
 test("recovers the anonymous local draft and meter selection", async ({ page }) => {
@@ -67,6 +92,7 @@ test("switches to the Kannada interface", async ({ page }) => {
     await page.locator("#language").selectOption("kn");
 
     await expect(page.locator("#page-title")).toHaveText("ಛಂದಸ್ - ಪದ್ಯದಲ್ಲಿ ಹೇಳಿ");
+    await expect(page.locator(".intro .eyebrow")).toHaveText("ಛಂದದ ಪದ್ಯದ ಸಂಗಾತಿ");
     await expect(page.locator("html")).toHaveAttribute("lang", "kn");
 });
 

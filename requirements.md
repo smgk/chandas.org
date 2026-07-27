@@ -132,12 +132,16 @@ recommended, and optional behavior.
    the source-text range used for inline presentation.
 6. Whitespace, punctuation, verse delimiters, digits, and unsupported
    characters MUST NOT shift highlights onto the wrong text.
-7. The UI MUST distinguish among:
+7. Whitespace and punctuation MUST be metrically transparent. Within a line, a
+   Laghu followed by any sequence of whitespace or punctuation and then an
+   akshara beginning with a conjunct MUST be classified as Guru; the
+   intervening characters MUST remain outside the highlighted source range.
+8. The UI MUST distinguish among:
    - valid analyzed input;
    - incomplete input still being composed;
    - unsupported script or character sequence; and
    - input the engine cannot classify with confidence.
-8. Empty and partially typed lines MUST NOT be reported as meter violations.
+9. Empty and partially typed lines MUST NOT be reported as meter violations.
 
 ### FR-3: Inline Guru/Laghu presentation
 
@@ -170,6 +174,9 @@ recommended, and optional behavior.
    as detected facts.
 8. Meter names SHOULD be available in the interface language and in a
    consistent scholarly/transliterated form where applicable.
+9. Scholarly meter names containing diacritics MUST remain unchanged for
+   display but MUST also be searchable using unaccented and common Roman
+   spellings, including `sh` for `ś`/`ṣ` and `ri` for `ṛ`.
 
 ### FR-5: Meter selection
 
@@ -194,6 +201,8 @@ recommended, and optional behavior.
    suggestion-only mode.
 9. When no meter has been selected for a stanza, approximate differences in
    that stanza MUST NOT be shown as errors.
+10. When a meter is selected, its name and complete Guru/Laghu signature MUST
+    remain visibly available for reference in the active stanza panel.
 
 ### FR-6: Selected-meter validation
 
@@ -445,6 +454,10 @@ The MVP is acceptable when:
   and dependent vowels, conjuncts, virāma/halant, anusvāra, visarga, avagraha,
   Vedic or extended marks if supported, punctuation, danda/double danda,
   whitespace, zero-width characters, and canonically equivalent Unicode.
+- Include cross-boundary fixtures where whitespace, commas, danda marks, and
+  other punctuation precede a conjunct in both Kannada and Devanagari.
+- Include search fixtures proving that scholarly names remain displayed with
+  diacritics while unaccented and common Roman spellings find them.
 - Include every supported meter, exact matches, near matches, ties, allowed
   variations, wrong line counts, extra/missing syllables, and ambiguous cases.
 - Use `mishra.json` as the initial meter inventory and create coverage proving

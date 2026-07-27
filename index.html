@@ -113,8 +113,14 @@
 
                 <div id="analysis-content" hidden>
                     <div class="pattern-block">
-                        <span class="mini-label" data-i18n="pattern">Pattern</span>
+                        <span class="mini-label" data-i18n="pattern">Current pattern</span>
                         <output id="active-pattern" class="pattern-output">—</output>
+                    </div>
+
+                    <div id="selected-meter-reference" class="selected-meter-reference" aria-live="polite" hidden>
+                        <span class="mini-label" data-i18n="selectedMeterReference">Selected meter</span>
+                        <strong id="selected-meter-name"></strong>
+                        <output id="selected-meter-signature" class="meter-signature"></output>
                     </div>
 
                     <div class="suggestion-heading">

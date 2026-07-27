@@ -25,6 +25,10 @@ const { chromium, devices } = require("@playwright/test");
             "ಕಾವ್ಯಂ ಮಧುರಂ ಮನೋಹರಮ್\nಛಂದೋಬದ್ಧಂ ಸುಶೋಭನಮ್\n\nकाव्यं मधुरं मनोहरम्\nछन्दोबद्धं सुशोभनम्"
         );
         await page.locator("#previous-stanza").click();
+        await page.locator("#meter-picker summary").click();
+        await page.locator("#meter-search").fill("shardulavikriditam");
+        await page.locator("#meter-select").selectOption("śārdūlavikrīḍitam");
+        await page.locator("#meter-picker summary").click();
         await page.screenshot({ path: scenario.path, fullPage: true });
         await context.close();
     }

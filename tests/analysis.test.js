@@ -65,6 +65,24 @@ test("a following conjunct closes the preceding syllable", () => {
     assert.ok(devanagari.syllables[0].reasons.includes("closed-by-conjunct"));
 });
 
+test("a conjunct after whitespace or punctuation makes the preceding Laghu Guru", () => {
+    const kannada = Chandas.segmentLine("ಕ,   ಕ್ರ", 0);
+    const devanagari = Chandas.segmentLine("क।   क्र", 0);
+    const ordinaryOnset = Chandas.segmentLine("ಕ,   ಕ", 0);
+
+    assert.deepEqual(
+        kannada.syllables.map((item) => item.classification),
+        ["G", "L"]
+    );
+    assert.deepEqual(
+        devanagari.syllables.map((item) => item.classification),
+        ["G", "L"]
+    );
+    assert.ok(kannada.syllables[0].reasons.includes("followed-by-conjunct"));
+    assert.ok(devanagari.syllables[0].reasons.includes("followed-by-conjunct"));
+    assert.equal(ordinaryOnset.syllables[0].classification, "L");
+});
+
 test("source ranges reconstruct the analyzed syllables without shifting punctuation", () => {
     const text = "  ಕಂ, ಕಾ!  ";
     const result = Chandas.analyzeComposition(text, catalog, {});

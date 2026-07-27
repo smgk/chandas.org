@@ -30,7 +30,8 @@
             activeStanza: "Active stanza",
             stanza: "Stanza {number} of {total}",
             analysisEmpty: "Your meter suggestions will appear here.",
-            pattern: "Pattern",
+            pattern: "Current pattern",
+            selectedMeterReference: "Selected meter",
             closestMeters: "Closest meters",
             suggestionNote: "Suggestions adjust while you type.",
             chooseAnother: "Choose any meter",
@@ -65,7 +66,7 @@
             brandTagline: "ಪದ್ಯದಲ್ಲಿ ಹೇಳಿ",
             language: "ತೆರೆಯ ಭಾಷೆ",
             newDraft: "ಹೊಸದು",
-            eyebrow: "ನೇರ ಛಂದಸ್ಸಿನ ಸಂಗಾತಿ",
+            eyebrow: "ಛಂದದ ಪದ್ಯದ ಸಂಗಾತಿ",
             title: "ಛಂದಸ್ - ಪದ್ಯದಲ್ಲಿ ಹೇಳಿ",
             intro: "ಕನ್ನಡ ಅಥವಾ ದೇವನಾಗರಿ ಪದ್ಯವನ್ನು ಬರೆಯಿರಿ. ಗುರು–ಲಘು ಅದೇ ಪಠ್ಯದಲ್ಲಿ ಕಾಣುತ್ತದೆ; ಸಮೀಪದ ಛಂದಸ್ಸುಗಳು ಪಕ್ಕದಲ್ಲಿರುತ್ತವೆ.",
             composition: "ರಚನೆ",
@@ -84,7 +85,8 @@
             activeStanza: "ಪ್ರಸ್ತುತ ಪದ್ಯ",
             stanza: "ಪದ್ಯ {number} / {total}",
             analysisEmpty: "ಛಂದಸ್ಸಿನ ಸೂಚನೆಗಳು ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತವೆ.",
-            pattern: "ಗಣ ವಿನ್ಯಾಸ",
+            pattern: "ಪ್ರಸ್ತುತ ಗಣ ವಿನ್ಯಾಸ",
+            selectedMeterReference: "ಆಯ್ದ ಛಂದಸ್ಸು",
             closestMeters: "ಸಮೀಪದ ಛಂದಸ್ಸುಗಳು",
             suggestionNote: "ಬರೆಯುತ್ತಿದ್ದಂತೆ ಸೂಚನೆಗಳು ಬದಲಾಗುತ್ತವೆ.",
             chooseAnother: "ಬೇರೆ ಛಂದಸ್ಸನ್ನು ಆರಿಸಿ",
@@ -136,8 +138,9 @@
             "composition", "highlight-layer", "editor-shell", "draft-state",
             "language", "new-draft", "copy", "share", "analysis-title",
             "previous-stanza", "next-stanza", "empty-analysis", "analysis-content",
-            "active-pattern", "candidate-list", "meter-picker", "meter-search",
-            "meter-select", "clear-meter", "validation-summary", "share-dialog",
+            "active-pattern", "selected-meter-reference", "selected-meter-name",
+            "selected-meter-signature", "candidate-list", "meter-picker",
+            "meter-search", "meter-select", "clear-meter", "validation-summary", "share-dialog",
             "include-meter", "include-link", "system-share", "twitter-share",
             "facebook-share", "dialog-copy", "toast"
         ].forEach((id) => {
@@ -176,6 +179,37 @@
             .replace(/</g, "&lt;")
             .replace(/>/g, "&gt;")
             .replace(/"/g, "&quot;");
+    }
+
+    function simpleRomanFold(value) {
+        return String(value || "")
+            .toLocaleLowerCase()
+            .normalize("NFD")
+            .replace(/\p{Mark}+/gu, "");
+    }
+
+    function commonRomanFold(value) {
+        const replacements = {
+            ā: "a", ī: "i", ū: "u",
+            ṛ: "ri", ṝ: "ri", ḷ: "li", ḹ: "li",
+            ṅ: "n", ñ: "n", ṇ: "n",
+            ṭ: "t", ḍ: "d",
+            ś: "sh", ṣ: "sh",
+            ṃ: "m", ṁ: "m", ḥ: "h"
+        };
+
+        return String(value || "")
+            .toLocaleLowerCase()
+            .replace(/[āīūṛṝḷḹṅñṇṭḍśṣṃṁḥ]/g, (character) => replacements[character])
+            .normalize("NFD")
+            .replace(/\p{Mark}+/gu, "");
+    }
+
+    function meterSearchKeys(value) {
+        return Array.from(new Set([
+            simpleRomanFold(value),
+            commonRomanFold(value)
+        ].map((item) => item.trim()).filter(Boolean)));
     }
 
     function renderPlainOverlay() {
@@ -377,6 +411,7 @@
 
         if (!hasStanzas) {
             elements["analysis-title"].textContent = "—";
+            elements["selected-meter-reference"].hidden = true;
             return;
         }
 
@@ -386,6 +421,24 @@
             total: stanzas.length
         });
         elements["active-pattern"].textContent = stanza.patterns.join(" / ") || "—";
+
+        const selectedReference = elements["selected-meter-reference"];
+        selectedReference.hidden = !stanza.selectedMeter;
+        if (stanza.selectedMeter) {
+            elements["selected-meter-name"].textContent = stanza.selectedMeter.name;
+            elements["selected-meter-signature"].replaceChildren(
+                ...stanza.selectedMeter.patterns.map((pattern, index, patterns) => {
+                    const line = document.createElement("span");
+                    line.textContent = patterns.length > 1
+                        ? `${index + 1}. ${pattern}`
+                        : pattern;
+                    return line;
+                })
+            );
+        } else {
+            elements["selected-meter-name"].textContent = "";
+            elements["selected-meter-signature"].replaceChildren();
+        }
 
         elements["candidate-list"].replaceChildren(
             ...stanza.candidates.slice(0, 4)
@@ -412,13 +465,14 @@
     }
 
     function filterMeterOptions(query) {
-        const normalizedQuery = String(query || "").trim().toLocaleLowerCase();
+        const queryKeys = meterSearchKeys(query);
         const activeStanza = state.analysis &&
             state.analysis.stanzas[state.activeStanzaIndex];
         const selectedId = activeStanza ? activeStanza.selectedMeterId : "";
 
         state.filteredMeters = state.meters.filter((meter) =>
-            !normalizedQuery || meter.name.toLocaleLowerCase().includes(normalizedQuery)
+            !queryKeys.length ||
+            queryKeys.some((key) => meter.searchText.includes(key))
         ).slice(0, 250);
 
         const fragment = document.createDocumentFragment();
@@ -612,6 +666,10 @@
         }
         state.catalog = await response.json();
         state.meters = Chandas.normalizeCatalog(state.catalog)
+            .map((meter) => ({
+                ...meter,
+                searchText: meterSearchKeys(meter.name).join(" ")
+            }))
             .sort((left, right) => left.name.localeCompare(right.name));
         filterMeterOptions("");
     }

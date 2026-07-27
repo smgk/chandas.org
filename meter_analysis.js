@@ -353,24 +353,49 @@
             .filter((meter) => meter.patterns.length > 0);
     }
 
-    function editDistance(left, right) {
-        const a = sanitizePattern(left);
-        const b = sanitizePattern(right);
-        const previous = Array.from({ length: b.length + 1 }, (_, index) => index);
-
-        for (let i = 1; i <= a.length; i += 1) {
-            const current = [i];
-            for (let j = 1; j <= b.length; j += 1) {
-                current[j] = Math.min(
-                    current[j - 1] + 1,
-                    previous[j] + 1,
-                    previous[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)
-                );
-            }
-            previous.splice(0, previous.length, ...current);
+    function sanitizedEditDistance(left, right) {
+        if (left === right) {
+            return 0;
         }
 
-        return previous[b.length];
+        let longer = left;
+        let shorter = right;
+        if (longer.length < shorter.length) {
+            longer = right;
+            shorter = left;
+        }
+        if (shorter.length === 0) {
+            return longer.length;
+        }
+
+        // Reuse one compact row instead of allocating an array for every
+        // character. Meter patterns are short, so keeping the shorter string
+        // on this axis also bounds memory during long in-progress lines.
+        const row = new Uint32Array(shorter.length + 1);
+        for (let index = 0; index <= shorter.length; index += 1) {
+            row[index] = index;
+        }
+
+        for (let i = 1; i <= longer.length; i += 1) {
+            let diagonal = row[0];
+            row[0] = i;
+
+            for (let j = 1; j <= shorter.length; j += 1) {
+                const above = row[j];
+                row[j] = Math.min(
+                    row[j - 1] + 1,
+                    above + 1,
+                    diagonal + (longer.charCodeAt(i - 1) === shorter.charCodeAt(j - 1) ? 0 : 1)
+                );
+                diagonal = above;
+            }
+        }
+
+        return row[shorter.length];
+    }
+
+    function editDistance(left, right) {
+        return sanitizedEditDistance(sanitizePattern(left), sanitizePattern(right));
     }
 
     function expectedForLine(meter, lineIndex) {
@@ -400,7 +425,8 @@
                 continue;
             }
 
-            distance += editDistance(actual, expected);
+            // Both values are already normalized to G/L-only strings.
+            distance += sanitizedEditDistance(actual, expected);
             comparedLength += Math.max(actual.length, expected.length, 1);
             prefixCompatible = prefixCompatible && expected.startsWith(actual);
             exactLines = exactLines && actual === expected;

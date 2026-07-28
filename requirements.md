@@ -168,8 +168,9 @@ recommended, and optional behavior.
    MUST NOT affect wrapping, source offsets, selection, analysis, copy, or
    sharing.
 7. The editor MUST show the syllable ordinal and accumulated mātrā count from
-   the beginning of the composition to the caret. Moving the caret without
-   editing MUST update these counts.
+   the beginning of the caret's logical line to the caret. The count MUST reset
+   after every explicit line break. Moving the caret without editing MUST
+   update these counts.
 
 ### FR-4: Meter detection and suggestions
 

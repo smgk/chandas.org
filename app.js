@@ -29,7 +29,7 @@
             syllableShort: "S",
             matraShort: "M",
             cursorMetrics: "Syllable {syllable} · Mātrās {matras}",
-            cursorMetricsLabel: "Counts from the beginning to the cursor",
+            cursorMetricsLabel: "Counts from the beginning of the line to the cursor",
             stanzaHelp: "Leave a blank line between stanzas.",
             activeStanza: "Active stanza",
             stanza: "Stanza {number} of {total}",
@@ -92,7 +92,7 @@
             syllableShort: "ಅ",
             matraShort: "ಮಾ",
             cursorMetrics: "ಅಕ್ಷರ {syllable} · ಮಾತ್ರೆ {matras}",
-            cursorMetricsLabel: "ಆರಂಭದಿಂದ ಕರ್ಸರ್‌ವರೆಗಿನ ಎಣಿಕೆ",
+            cursorMetricsLabel: "ಸಾಲಿನ ಆರಂಭದಿಂದ ಕರ್ಸರ್‌ವರೆಗಿನ ಎಣಿಕೆ",
             stanzaHelp: "ಪದ್ಯಗಳ ನಡುವೆ ಒಂದು ಖಾಲಿ ಸಾಲು ಬಿಡಿ.",
             activeStanza: "ಪ್ರಸ್ತುತ ಪದ್ಯ",
             stanza: "ಪದ್ಯ {number} / {total}",
@@ -357,15 +357,18 @@
             return;
         }
         const caret = elements.composition ? elements.composition.selectionStart : 0;
+        const text = elements.composition ? elements.composition.value : "";
+        const lineStart = caret > 0 ? text.lastIndexOf("\n", caret - 1) + 1 : 0;
         const segments = state.analysis ? state.analysis.segments : [];
         const preceding = segments.filter((segment) => segment.start < caret);
-        const matras = preceding.reduce(
+        const precedingOnLine = preceding.filter((segment) => segment.start >= lineStart);
+        const matras = precedingOnLine.reduce(
             (sum, segment) =>
                 sum + (segment.classification === Chandas.GURU ? 2 : 1),
             0
         );
         elements["cursor-metrics"].textContent = t("cursorMetrics", {
-            syllable: preceding.length,
+            syllable: precedingOnLine.length,
             matras
         });
     }

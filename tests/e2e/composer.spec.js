@@ -35,7 +35,7 @@ test("analyzes Kannada and Devanagari stanzas inline", async ({ page }) => {
     await expect(page.locator("#active-pattern")).toHaveText("LGG");
 });
 
-test("shows compact line totals and counts from the beginning at the cursor", async ({ page }) => {
+test("shows compact line totals and counts from the current line at the cursor", async ({ page }) => {
     await page.locator("#composition").fill("ಕ ಕಾ\nಕಂ");
 
     await expect(page.locator("#highlight-layer .line-metrics-badge")).toHaveText([
@@ -43,7 +43,7 @@ test("shows compact line totals and counts from the beginning at the cursor", as
         "S1 · M2"
     ]);
     await expect(page.locator("#cursor-metrics"))
-        .toHaveText("Syllable 3 · Mātrās 5");
+        .toHaveText("Syllable 1 · Mātrās 2");
 
     await page.locator("#composition").evaluate((editor) => {
         editor.focus();

@@ -1,6 +1,6 @@
 "use strict";
 
-const CACHE_NAME = "chandas-shell-v5";
+const CACHE_NAME = "chandas-shell-v6";
 const CORE_ASSETS = [
     "./",
     "./index.html",
@@ -11,6 +11,7 @@ const CORE_ASSETS = [
     "./structural_meters.json",
     "./manifest.webmanifest",
     "./icon.svg",
+    "./documentation.html",
     "./about.html",
     "./privacy.html",
     "./terms.html",

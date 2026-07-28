@@ -814,6 +814,16 @@ textarea:focus-visible {
     color: var(--saffron-dark);
 }
 
+.legal-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 2.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--line);
+    font-size: 0.82rem;
+}
+
 .share-dialog {
     width: min(440px, calc(100% - 2rem));
     border: 1px solid var(--line);

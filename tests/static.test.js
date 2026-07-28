@@ -35,6 +35,7 @@ test("service worker pre-caches every core web asset", () => {
         "structural_meters.json",
         "manifest.webmanifest",
         "icon.svg",
+        "documentation.html",
         "about.html",
         "privacy.html",
         "terms.html",
@@ -79,4 +80,15 @@ test("branding and public navigation use the compact approved copy", () => {
     assert.doesNotMatch(index, /Let the rhythm appear as you write/i);
     assert.doesNotMatch(publicPages, /github\.com\/smgk\/chandas\.org/);
     assert.match(about, /href="https:\/\/x\.com\/ganeshkrishna"[^>]*>@ganeshkrishna<\/a>/);
+});
+
+test("documentation is linked, concise, and available offline", () => {
+    const index = read("index.html");
+    const documentation = read("documentation.html");
+
+    assert.match(index, /href="documentation\.html">Documentation<\/a>/);
+    assert.match(documentation, /How to use Chandas/);
+    assert.match(documentation, /Show template/);
+    assert.match(documentation, /tea break/);
+    assert.doesNotMatch(documentation, /<script/i);
 });

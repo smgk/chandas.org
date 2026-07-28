@@ -15,6 +15,7 @@ const assets = [
     "manifest.webmanifest",
     "service-worker.js",
     "icon.svg",
+    "documentation.html",
     "about.html",
     "privacy.html",
     "terms.html",

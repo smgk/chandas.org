@@ -215,6 +215,16 @@ test("share options are explicit and default to composition only", async ({ page
     await expect(page.locator("#include-link")).not.toBeChecked();
 });
 
+test("opens the short documentation from the public links", async ({ page }) => {
+    await page.locator('a[href="documentation.html"]').click();
+
+    await expect(page).toHaveURL(/documentation\.html$/);
+    await expect(page.locator("h1")).toHaveText("How to use Chandas");
+    await expect(page.locator("main")).toContainText("tea break");
+    await page.getByText("Return to Chandas").click();
+    await expect(page.locator("#composition")).toBeVisible();
+});
+
 test("has no horizontal overflow at the target viewport", async ({ page }) => {
     await page.locator("#composition").fill("ಕಾವ್ಯ ".repeat(30));
     const dimensions = await page.evaluate(() => ({

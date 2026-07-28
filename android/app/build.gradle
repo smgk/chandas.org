@@ -59,6 +59,7 @@ tasks.register("syncWebAssets", Copy) {
     include "manifest.webmanifest"
     include "icon.svg"
     include "service-worker.js"
+    include "documentation.html"
     include "privacy.html"
     include "terms.html"
     include "notices.html"

@@ -30,6 +30,7 @@ const { chromium, devices } = require("@playwright/test");
         await page.locator("#meter-select").selectOption("śārdūlavikrīḍitam");
         await page.locator("#meter-picker summary").click();
         await page.locator("#show-template").check();
+        await page.locator("#template-mode-strong").check();
         await page.screenshot({ path: scenario.path, fullPage: true });
         await context.close();
     }

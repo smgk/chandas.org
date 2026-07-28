@@ -353,9 +353,9 @@ recommended, and optional behavior.
    composition. It is not required to let the user fill a later empty metrical
    position while earlier positions remain empty.
 
-#### FR-11.2: Strong template (later version)
+#### FR-11.2: Strong template (post-MVP)
 
-1. A later release MUST offer both **Ghost template** and **Strong template**
+1. A post-MVP release MUST offer both **Ghost template** and **Strong template**
    choices when guided composition is available.
 2. Strong template mode MUST provide structured, fillable metrical positions.
    The user MUST be able to populate arbitrary positions while any other
@@ -378,6 +378,10 @@ recommended, and optional behavior.
 9. Fixed, structural, and mātrā meters MAY use different strong-template slot
    representations, but each representation MUST expose only constraints
    actually supported by the versioned meter catalog.
+10. The first production Strong-template slice MUST be limited to fixed
+    vṛttas. Strong layouts for provisional structural, mātrā, and aṃśa
+    families MUST remain unavailable until that family has a reviewed rule
+    model and golden corpus.
 
 ### FR-12: Prosody reference
 
@@ -618,6 +622,10 @@ The MVP is acceptable when:
 12. Enabling or disabling the selected meter's ghost template leaves the
     original composition, analysis ranges, caret, copy output, and share output
     unchanged.
+13. For a fixed vṛtta, Strong mode permits out-of-order entry, restores filled
+    and empty positions after restart, marks a filled weight mismatch without
+    treating blank positions as violations, and copies or shares only authored
+    text.
 
 ## 10. Test Strategy
 
@@ -673,10 +681,11 @@ The MVP is acceptable when:
   violation; enable and disable a ghost template without changing the poem;
   recover a draft after restart; copy; and initiate sharing on representative
   viewports.
-- **Later strong-template tests:** Fill positions out of order, retain blank
-  positions, edit and clear filled slots, switch between ghost and strong
-  modes, restore a partially filled structured draft, and verify that copy and
-  sharing contain only authored text.
+- **Strong-template tests:** For fixed vṛttas, fill positions out of order,
+  retain blank positions, edit and clear filled slots, switch between ghost
+  and strong modes, restore a partially filled structured draft, and verify
+  that copy and sharing contain only authored text. Repeat the suite for each
+  structural, mātrā, or aṃśa presentation before enabling that family.
 - **Accessibility tests:** Automated checks plus manual keyboard,
   screen-reader, contrast, zoom, dynamic-type, and color-vision checks.
 - **Performance tests:** Record input latency and analysis duration for typical,

@@ -21,6 +21,7 @@ test("the web shell has no external runtime asset dependencies", () => {
     assert.deepEqual(externalAssets, []);
     assert.match(html, /manifest\.webmanifest/);
     assert.match(html, /meter_analysis\.js/);
+    assert.match(html, /strong_template\.js/);
     assert.match(html, /app\.js/);
 });
 
@@ -31,6 +32,7 @@ test("service worker pre-caches every core web asset", () => {
         "styles.css",
         "app.js",
         "meter_analysis.js",
+        "strong_template.js",
         "mishra.json",
         "structural_meters.json",
         "manifest.webmanifest",
@@ -58,6 +60,11 @@ test("the composition control and live regions have accessible labels", () => {
     assert.match(html, /id="toast"[^>]*role="status"[^>]*aria-live="polite"/);
     assert.match(html, /id="cursor-metrics"/);
     assert.match(html, /id="show-template"[^>]*type="checkbox"/);
+    assert.match(html, /id="template-mode-strong"[^>]*type="radio"/);
+    assert.match(
+        html,
+        /id="strong-template-editor"[^>]*aria-labelledby="strong-template-title"/
+    );
     assert.match(html, /id="whole-verse-template"[^>]*aria-label="Whole verse template"/);
 });
 

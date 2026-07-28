@@ -157,6 +157,75 @@ test("keeps clear and the ghost guide available outside the meter picker", async
     await expect(editor).toHaveValue("ಕ");
 });
 
+test("fills fixed-vritta strong-template positions out of order without copying blanks", async ({ page }) => {
+    await page.locator("#composition").fill("ಕ");
+    await page.locator("#meter-picker summary").click();
+    await page.locator("#meter-search").fill("madhu");
+    await page.locator("#meter-select").selectOption("madhu");
+    await page.locator("#show-template").check();
+
+    await expect(page.locator("#template-mode-strong")).toBeEnabled();
+    await page.locator("#template-mode-strong").check();
+    await expect(page.locator("#strong-template-editor")).toBeVisible();
+    await expect(page.locator("#editor-shell")).toBeHidden();
+    await expect(page.locator(".strong-template-line")).toHaveCount(4);
+    await expect(page.locator(".strong-template-slot")).toHaveCount(8);
+
+    const first = page.locator('.strong-template-slot[data-line-index="0"][data-slot-index="0"]');
+    const later = page.locator('.strong-template-slot[data-line-index="0"][data-slot-index="1"]');
+    const fourthLine = page.locator('.strong-template-slot[data-line-index="3"][data-slot-index="0"]');
+    await first.fill("");
+    await later.fill("ಕಾ");
+    await later.press("Control+z");
+    await expect(later).toHaveValue("");
+    await later.press("Control+y");
+    await expect(later).toHaveValue("ಕಾ");
+    await fourthLine.fill("द");
+
+    await expect(first).toHaveValue("");
+    await expect(later).toHaveClass(/is-mismatch/);
+    await expect(fourthLine).toHaveClass(/is-match/);
+    await expect(page.locator("#validation-summary")).toContainText("need attention");
+
+    await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
+    await page.locator("#copy").click();
+    await expect.poll(() => page.evaluate(() => navigator.clipboard.readText()))
+        .toBe("ಕಾ\nद");
+
+    await page.locator("#template-mode-ghost").check();
+    await expect(page.locator("#strong-template-editor")).toBeHidden();
+    await expect(page.locator("#editor-shell")).toBeVisible();
+    await expect(page.locator("#composition")).toHaveValue("ಕಾ\nद");
+    await page.locator("#composition").fill("ಕ\nद");
+
+    await page.locator("#template-mode-strong").check();
+    await expect(later).toHaveValue("ಕ");
+    await expect(fourthLine).toHaveValue("द");
+    await page.waitForTimeout(400);
+    await page.reload();
+    await expect(page.locator("#strong-template-editor")).toBeVisible();
+    await expect(later).toHaveValue("ಕ");
+    await expect(fourthLine).toHaveValue("द");
+    await page.context().setOffline(true);
+    await page.reload();
+    await expect(page.locator("#strong-template-editor")).toBeVisible();
+    await expect(later).toHaveValue("ಕ");
+    await expect(fourthLine).toHaveValue("द");
+});
+
+test("keeps strong mode unavailable for provisional structural meter guides", async ({ page }) => {
+    await page.locator("#composition").fill("ಕವಿ");
+    await page.locator("#meter-picker summary").click();
+    await page.locator("#meter-search").fill("kandapadya");
+    await page.locator("#meter-select").selectOption("structural:kanda-kannada");
+    await page.locator("#show-template").check();
+
+    await expect(page.locator("#template-mode-ghost")).toBeChecked();
+    await expect(page.locator("#template-mode-strong")).toBeDisabled();
+    await expect(page.locator("#strong-template-availability"))
+        .toContainText("rule review");
+});
+
 test("finds Anuṣṭubh as anushtup and shows structural and mātrā references", async ({ page }) => {
     const pathya = [
         "ಕಾ ಕ ಕಾ ಕಾ ಕ ಕಾ ಕಾ ಕಾ",
@@ -344,6 +413,26 @@ test("migrates a version-one local draft without template state", async ({ page 
     await expect(page.locator("#composition")).toHaveValue("ಕವಿ");
     await expect(page.locator("#selected-meter-name")).toHaveText("madhu");
     await expect(page.locator("#show-template")).not.toBeChecked();
+});
+
+test("migrates a version-two ghost draft into the template-mode model", async ({ page }) => {
+    await page.addInitScript((draft) => {
+        localStorage.setItem("chandas.draft.v1", JSON.stringify(draft));
+    }, {
+        version: 2,
+        text: "ಕವಿ",
+        selections: { 0: "madhu" },
+        templates: { 0: true },
+        language: "en",
+        selectionStart: 2,
+        selectionEnd: 2
+    });
+    await page.reload();
+
+    await expect(page.locator("#composition")).toHaveValue("ಕವಿ");
+    await expect(page.locator("#show-template")).toBeChecked();
+    await expect(page.locator("#template-mode-ghost")).toBeChecked();
+    await expect(page.locator("#strong-template-editor")).toBeHidden();
 });
 
 test("switches to the Kannada interface", async ({ page }) => {

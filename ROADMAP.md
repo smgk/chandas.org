@@ -1,7 +1,9 @@
 # Chandas.org Roadmap
 
 **Status:** Active post-MVP plan
-**Updated:** 2026-07-27  
+
+**Updated:** 2026-07-28
+
 **Baseline:** `mvp-baseline`
 
 This roadmap turns the post-MVP requirements into an implementation order. It
@@ -33,6 +35,8 @@ post-MVP track**, not a distant “more meters someday” item.
   forms.
 - Per-line syllable and mātrā totals, inline violations, meter ranking, and
   ghost templates.
+- Fixed-vṛtta Strong templates with arbitrary-position entry, local recovery,
+  authored-text-only copy/share, and Ghost/Strong switching.
 
 The UI must not label a result “exact Kanda,” “exact Ragale,” or “exact
 Ṣaṭpadi” until the relevant internal gaṇa, line-structure, and exception rules
@@ -231,23 +235,26 @@ Meter count is not a success metric; trustworthy results are.
 
 ### M6 — Strong templates for reviewed meters
 
+**Status:** In progress; fixed-vṛtta slice complete
+
 **Target:** Fixed-vṛtta prototype may begin after M1; native Kannada forms
 follow M2–M5
 
 **Estimate:** 3–5 weeks for the shared editor model, then approximately one
 week per meter-family presentation
 
-- Offer Ghost and Strong modes.
-- Allow content to be entered at arbitrary later positions while earlier
+- [x] Offer Ghost and Strong modes for fixed vṛttas.
+- [x] Allow content to be entered at arbitrary later positions while earlier
   positions remain blank.
-- Store authored spans separately from empty metrical positions.
-- Preserve Kannada and Devanagari IME input, selection, paste, undo, and redo.
-- Restore partially filled templates from anonymous local recovery.
-- Copy and share only authored text.
-- Use different presentations where the rules differ:
-  - fixed slots for fixed vṛttas;
+- [x] Store authored spans separately from empty metrical positions.
+- [x] Preserve Kannada and Devanagari IME input, selection, paste, keyboard
+  navigation, undo, and redo in the fixed-slot editor.
+- [x] Restore partially filled fixed templates from anonymous local recovery.
+- [x] Copy and share only authored text.
+- [ ] Add reviewed family-specific presentations:
   - mātrā-group capacity for Kanda and Ragale;
-  - six-line structural relationships for Ṣaṭpadi.
+  - six-line structural relationships for Ṣaṭpadi;
+  - reviewed slot semantics for syllable-structural and aṃśa meters.
 
 ### M7 — Complete existing structural families
 
@@ -339,11 +346,11 @@ or licensing for every bundled corpus.
 
 ## Recommended immediate work
 
-M4 and M5 now have provisional catalog entries, rule packets, source-range
-validation, whole-verse ghost guides, tests, web UI, and offline-compatible
-assets through catalog `3.0.0`. Scholarly review of rules and golden corpora
-remains the promotion gate.
+M6 now has its fixed-vṛtta Strong-template slice: arbitrary-position slots,
+IME-safe authored text, undo/redo, local recovery, Ghost/Strong switching, and
+authored-text-only copy/share. Web and bundled Android assets carry the same
+offline editor.
 
-Next, begin new M6 with a fixed-vṛtta strong-template prototype against the
-stable rule interface. Native Kannada strong templates should be enabled
-family by family only after their rule and corpus reviews.
+Next, complete the scholarly review gates for native Kannada families before
+enabling their family-specific Strong layouts. M7's Anuṣṭubh vipulā and
+Āryā-family rule completion can proceed while those reviews are underway.

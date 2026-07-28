@@ -45,6 +45,20 @@
             searchMeters: "Search meters…",
             clearSelection: "Clear selected meter",
             showTemplate: "Show template",
+            templateMode: "Template mode",
+            ghostTemplate: "Ghost",
+            strongTemplate: "Strong",
+            guidedComposition: "Guided composition",
+            strongTemplateHelp: "Fill any position. Empty positions stay empty and are never copied.",
+            strongTemplateAvailable: "Strong mode is available for fixed vṛttas.",
+            strongTemplateUnavailable: "Strong mode will follow rule review for this meter family.",
+            strongLine: "Line {number}",
+            strongSlot: "Line {line}, position {position}: expected {weight}",
+            strongOpen: "{missing} positions open.",
+            strongValid: "Every filled position follows {meter}; {missing} positions remain open.",
+            strongIssues: "{violations} filled positions need attention; {missing} positions remain open.",
+            expectedLaghu: "Laghu",
+            expectedGuru: "Guru",
             wholeVerseTemplate: "Whole verse template",
             repeatableTemplate: "Repeatable line template",
             templateLine: "Line {number}",
@@ -114,6 +128,20 @@
             searchMeters: "ಛಂದಸ್ಸು ಹುಡುಕಿ…",
             clearSelection: "ಆಯ್ದ ಛಂದಸ್ಸನ್ನು ತೆರವುಗೊಳಿಸಿ",
             showTemplate: "ಮಾದರಿಯನ್ನು ತೋರಿಸಿ",
+            templateMode: "ಮಾದರಿಯ ವಿಧ",
+            ghostTemplate: "ಮಂದ ಮಾದರಿ",
+            strongTemplate: "ದೃಢ ಮಾದರಿ",
+            guidedComposition: "ಮಾರ್ಗದರ್ಶಿತ ರಚನೆ",
+            strongTemplateHelp: "ಯಾವ ಸ್ಥಾನವನ್ನಾದರೂ ತುಂಬಿ. ಖಾಲಿ ಸ್ಥಾನಗಳು ನಕಲಾಗುವುದಿಲ್ಲ.",
+            strongTemplateAvailable: "ದೃಢ ಮಾದರಿ ವೃತ್ತಗಳಿಗೆ ಲಭ್ಯವಿದೆ.",
+            strongTemplateUnavailable: "ಈ ಛಂದದ ನಿಯಮ ಪರಿಶೀಲನೆಯ ನಂತರ ದೃಢ ಮಾದರಿ ಲಭ್ಯವಾಗುತ್ತದೆ.",
+            strongLine: "ಸಾಲು {number}",
+            strongSlot: "ಸಾಲು {line}, ಸ್ಥಾನ {position}: ನಿರೀಕ್ಷಿತ {weight}",
+            strongOpen: "{missing} ಸ್ಥಾನಗಳು ಖಾಲಿ.",
+            strongValid: "ತುಂಬಿದ ಸ್ಥಾನಗಳು {meter}ಗೆ ಹೊಂದುತ್ತವೆ; {missing} ಸ್ಥಾನಗಳು ಖಾಲಿ.",
+            strongIssues: "{violations} ಸ್ಥಾನಗಳನ್ನು ಸರಿಪಡಿಸಬೇಕು; {missing} ಸ್ಥಾನಗಳು ಖಾಲಿ.",
+            expectedLaghu: "ಲಘು",
+            expectedGuru: "ಗುರು",
             wholeVerseTemplate: "ಪೂರ್ಣ ಪದ್ಯದ ಮಾದರಿ",
             repeatableTemplate: "ಪುನರಾವರ್ತಿತ ಸಾಲಿನ ಮಾದರಿ",
             templateLine: "ಸಾಲು {number}",
@@ -154,9 +182,15 @@
         analysis: null,
         selections: {},
         templates: {},
+        templateModes: {},
+        strongDrafts: {},
+        strongHistory: {},
+        strongFuture: {},
         activeStanzaIndex: 0,
         language: "en",
         composing: false,
+        strongComposing: false,
+        strongCompositionSnapshot: null,
         saveTimer: null,
         renderTimer: null,
         toastTimer: null
@@ -170,7 +204,9 @@
             "active-pattern", "active-matras", "selected-meter-reference", "selected-meter-name",
             "selected-meter-signature", "candidate-list", "meter-picker",
             "meter-search", "meter-select", "clear-meter", "show-template",
-            "whole-verse-template",
+            "template-mode-picker", "template-mode-ghost", "template-mode-strong",
+            "strong-template-availability", "whole-verse-template",
+            "strong-template-editor", "strong-template-lines",
             "validation-summary", "share-dialog",
             "include-meter", "include-link", "system-share", "twitter-share",
             "facebook-share", "dialog-copy", "toast"
@@ -248,6 +284,115 @@
 
     function meterForId(meterId) {
         return state.meters.find((meter) => meter.id === meterId) || null;
+    }
+
+    function templateMode(stanzaIndex) {
+        if (state.templateModes[stanzaIndex]) {
+            return state.templateModes[stanzaIndex];
+        }
+        return state.templates[stanzaIndex] ? "ghost" : "off";
+    }
+
+    function setTemplateMode(stanzaIndex, mode) {
+        if (mode === "off") {
+            delete state.templateModes[stanzaIndex];
+            delete state.templates[stanzaIndex];
+            return;
+        }
+        state.templateModes[stanzaIndex] = mode;
+        state.templates[stanzaIndex] = true;
+    }
+
+    function supportsStrongTemplate(meter) {
+        return Boolean(
+            meter &&
+            meter.kind === "fixed" &&
+            meter.linePolicy &&
+            meter.linePolicy.type === "fixed"
+        );
+    }
+
+    function strongDraftKey(stanzaIndex, meterId) {
+        return `${stanzaIndex}|${meterId}`;
+    }
+
+    function activeStrongContext() {
+        const stanza = state.analysis &&
+            state.analysis.stanzas[state.activeStanzaIndex];
+        const meter = stanza ? meterForId(stanza.selectedMeterId) : null;
+        if (!stanza || !meter ||
+            templateMode(state.activeStanzaIndex) !== "strong" ||
+            !supportsStrongTemplate(meter)) {
+            return null;
+        }
+        return {
+            stanza,
+            meter,
+            key: strongDraftKey(state.activeStanzaIndex, meter.id)
+        };
+    }
+
+    function strongCatalogVersion() {
+        const structuralVersion = state.catalog &&
+            state.catalog.structuralCatalogVersion;
+        return `mishra-baseline+structural-${structuralVersion || "unknown"}`;
+    }
+
+    function strongDraftFor(stanza, meter, create) {
+        const key = strongDraftKey(stanza.index, meter.id);
+        const existing = state.strongDrafts[key];
+        if (ChandasStrongTemplate.isCompatibleDraft(existing, meter)) {
+            return existing;
+        }
+        if (!create) {
+            return null;
+        }
+        const draft = ChandasStrongTemplate.createFixedDraft(meter, stanza, {
+            catalogVersion: strongCatalogVersion(),
+            analysisVersion: state.analysis && state.analysis.analysisVersion
+        });
+        state.strongDrafts[key] = draft;
+        state.strongHistory[key] = [];
+        state.strongFuture[key] = [];
+        return draft;
+    }
+
+    function activeStrongDraft(create) {
+        const context = activeStrongContext();
+        return context
+            ? strongDraftFor(context.stanza, context.meter, create)
+            : null;
+    }
+
+    function authoredCompositionText() {
+        let text = elements.composition ? elements.composition.value : "";
+        if (!state.analysis || !state.analysis.stanzas.length) {
+            return text;
+        }
+
+        const replacements = [];
+        state.analysis.stanzas.forEach((stanza) => {
+            const meterId = state.selections[stanza.index];
+            if (templateMode(stanza.index) !== "strong" || !meterId) {
+                return;
+            }
+            const draft = state.strongDrafts[strongDraftKey(stanza.index, meterId)];
+            if (!draft) {
+                return;
+            }
+            replacements.push({
+                start: stanza.start,
+                end: stanza.end,
+                text: ChandasStrongTemplate.serializeDraft(draft)
+            });
+        });
+        replacements.sort((left, right) => right.start - left.start)
+            .forEach((replacement) => {
+                text = text.slice(0, replacement.start) +
+                    replacement.text +
+                    text.slice(replacement.end);
+            });
+        return text;
     }
 
     function weightSymbols(script) {
@@ -391,7 +536,7 @@
 
         const stanza = state.analysis &&
             state.analysis.stanzas[state.activeStanzaIndex];
-        const meter = stanza && state.templates[state.activeStanzaIndex]
+        const meter = stanza && templateMode(state.activeStanzaIndex) === "ghost"
             ? meterForId(stanza.selectedMeterId)
             : null;
         const lineCount = meterVerseLineCount(meter);
@@ -440,6 +585,189 @@
         container.hidden = false;
     }
 
+    function strongSlotWeightName(weight) {
+        return weight === Chandas.GURU ? t("expectedGuru") : t("expectedLaghu");
+    }
+
+    function renderStrongValidation(draft, meter) {
+        const inspection = ChandasStrongTemplate.inspectDraft(draft);
+        elements["active-pattern"].textContent = inspection.lines
+            .map((line) => line.pattern)
+            .join(" / ") || "—";
+        elements["active-matras"].textContent = `${t("matras")}: ${
+            inspection.lines.map((line) => line.matras).join(" | ")
+        }`;
+
+        const summary = elements["validation-summary"];
+        summary.classList.toggle("has-errors", inspection.violationCount > 0);
+        summary.textContent = inspection.violationCount > 0
+            ? t("strongIssues", {
+                violations: inspection.violationCount,
+                missing: inspection.missingCount
+            })
+            : t("strongValid", {
+                meter: meter.name,
+                missing: inspection.missingCount
+            });
+
+        const slotElements = elements["strong-template-lines"]
+            .querySelectorAll(".strong-template-slot");
+        slotElements.forEach((input) => {
+            const lineIndex = Number(input.dataset.lineIndex);
+            const slotIndex = Number(input.dataset.slotIndex);
+            const result = inspection.lines[lineIndex].slots[slotIndex];
+            input.classList.remove(
+                "is-empty", "is-match", "is-mismatch", "is-invalid"
+            );
+            input.classList.add(`is-${result.status}`);
+            input.setAttribute("aria-invalid",
+                ["mismatch", "invalid"].includes(result.status) ? "true" : "false");
+        });
+        elements["strong-template-lines"]
+            .querySelectorAll(".strong-template-line-metrics")
+            .forEach((output) => {
+                const lineIndex = Number(output.dataset.lineIndex);
+                const line = inspection.lines[lineIndex];
+                output.textContent =
+                    `${t("syllableShort")}${line.slots.reduce(
+                        (sum, slot) => sum + slot.syllableCount,
+                        0
+                    )} · ${t("matraShort")}${line.matras}`;
+            });
+        return inspection;
+    }
+
+    function renderStrongTemplate(focusPosition) {
+        const context = activeStrongContext();
+        const editor = elements["strong-template-editor"];
+        const normalEditor = elements["editor-shell"];
+        if (!context) {
+            editor.hidden = true;
+            normalEditor.hidden = false;
+            elements["strong-template-lines"].replaceChildren();
+            return;
+        }
+
+        const draft = strongDraftFor(context.stanza, context.meter, true);
+        const script = context.stanza.scripts[0] ||
+            (context.stanza.lines[0] && context.stanza.lines[0].script) ||
+            "unknown";
+        const symbols = weightSymbols(script);
+        const fragment = document.createDocumentFragment();
+
+        draft.lines.forEach((line, lineIndex) => {
+            const row = document.createElement("div");
+            row.className = "strong-template-line";
+
+            const lineReference = document.createElement("span");
+            lineReference.className = "strong-template-line-reference";
+            const label = document.createElement("span");
+            label.className = "strong-template-line-label";
+            label.textContent = t("strongLine", { number: lineIndex + 1 });
+            const metrics = document.createElement("output");
+            metrics.className = "strong-template-line-metrics";
+            metrics.dataset.lineIndex = String(lineIndex);
+            lineReference.append(label, metrics);
+
+            const slots = document.createElement("div");
+            slots.className = "strong-template-slots";
+            line.slots.forEach((value, slotIndex) => {
+                const slot = document.createElement("label");
+                slot.className = "strong-template-position";
+
+                const symbol = document.createElement("span");
+                symbol.className = "strong-template-symbol";
+                symbol.textContent = symbols[line.expected[slotIndex]];
+                symbol.setAttribute("aria-hidden", "true");
+
+                const input = document.createElement("input");
+                input.type = "text";
+                input.className = "strong-template-slot";
+                input.value = value;
+                input.autocomplete = "off";
+                input.spellcheck = false;
+                input.dataset.lineIndex = String(lineIndex);
+                input.dataset.slotIndex = String(slotIndex);
+                input.setAttribute("aria-label", t("strongSlot", {
+                    line: lineIndex + 1,
+                    position: slotIndex + 1,
+                    weight: strongSlotWeightName(line.expected[slotIndex])
+                }));
+                slot.append(symbol, input);
+                slots.append(slot);
+            });
+            row.append(lineReference, slots);
+            fragment.append(row);
+        });
+
+        elements["strong-template-lines"].replaceChildren(fragment);
+        normalEditor.hidden = true;
+        editor.hidden = false;
+        renderStrongValidation(draft, context.meter);
+
+        if (focusPosition) {
+            const target = elements["strong-template-lines"].querySelector(
+                `[data-line-index="${focusPosition.lineIndex}"]` +
+                `[data-slot-index="${focusPosition.slotIndex}"]`
+            );
+            if (target) {
+                target.focus();
+                target.setSelectionRange(target.value.length, target.value.length);
+            }
+        }
+    }
+
+    function pushStrongHistory(key, draft, snapshot) {
+        const history = state.strongHistory[key] || (state.strongHistory[key] = []);
+        const nextSnapshot = snapshot || ChandasStrongTemplate.cloneSlots(draft);
+        const previous = history.at(-1);
+        if (!previous ||
+            JSON.stringify(previous) !== JSON.stringify(nextSnapshot)) {
+            history.push(nextSnapshot);
+            if (history.length > 100) {
+                history.shift();
+            }
+        }
+        state.strongFuture[key] = [];
+    }
+
+    function stepStrongHistory(direction, focusPosition) {
+        const context = activeStrongContext();
+        const draft = activeStrongDraft(false);
+        if (!context || !draft) {
+            return;
+        }
+        const from = direction === "undo"
+            ? state.strongHistory[context.key] || []
+            : state.strongFuture[context.key] || [];
+        if (!from.length) {
+            return;
+        }
+        const to = direction === "undo"
+            ? state.strongFuture[context.key] || (state.strongFuture[context.key] = [])
+            : state.strongHistory[context.key] || (state.strongHistory[context.key] = []);
+        to.push(ChandasStrongTemplate.cloneSlots(draft));
+        const snapshot = from.pop();
+        if (ChandasStrongTemplate.restoreSlots(draft, snapshot)) {
+            renderStrongTemplate(focusPosition);
+            scheduleSave();
+        }
+    }
+
+    function commitStrongDraftToComposition(stanzaIndex, meterId) {
+        const stanza = state.analysis && state.analysis.stanzas[stanzaIndex];
+        const draft = state.strongDrafts[strongDraftKey(stanzaIndex, meterId)];
+        if (!stanza || !draft) {
+            return;
+        }
+        const authored = ChandasStrongTemplate.serializeDraft(draft);
+        const text = elements.composition.value;
+        elements.composition.value =
+            text.slice(0, stanza.start) + authored + text.slice(stanza.end);
+        const caret = stanza.start + authored.length;
+        elements.composition.setSelectionRange(caret, caret);
+    }
+
     function ghostGuideForLine(stanza, line, meter) {
         if (!meter) {
             return "";
@@ -469,7 +797,7 @@
         const byPosition = new Map();
 
         for (const stanza of state.analysis ? state.analysis.stanzas : []) {
-            const templateMeter = state.templates[stanza.index]
+            const templateMeter = templateMode(stanza.index) === "ghost"
                 ? meterForId(stanza.selectedMeterId)
                 : null;
 
@@ -640,21 +968,39 @@
 
         const oldSelections = { ...state.selections };
         const oldTemplates = { ...state.templates };
+        const oldModes = { ...state.templateModes };
+        const oldStrongDrafts = { ...state.strongDrafts };
         const nextSelections = {};
         const nextTemplates = {};
+        const nextModes = {};
+        const nextStrongDrafts = {};
         const usedOld = new Set();
+
+        function copyStanzaState(oldIndex, newIndex) {
+            if (oldSelections[oldIndex]) {
+                nextSelections[newIndex] = oldSelections[oldIndex];
+            }
+            if (oldTemplates[oldIndex]) {
+                nextTemplates[newIndex] = true;
+            }
+            if (oldModes[oldIndex]) {
+                nextModes[newIndex] = oldModes[oldIndex];
+            }
+            Object.entries(oldStrongDrafts).forEach(([key, draft]) => {
+                const separator = key.indexOf("|");
+                if (separator < 0 || Number(key.slice(0, separator)) !== oldIndex) {
+                    return;
+                }
+                nextStrongDrafts[`${newIndex}${key.slice(separator)}`] = draft;
+            });
+        }
 
         newStanzas.forEach((newStanza, newIndex) => {
             const exactIndex = oldStanzas.findIndex((oldStanza, oldIndex) =>
                 !usedOld.has(oldIndex) &&
                 oldStanza.text.trim() === newStanza.text.trim());
             if (exactIndex >= 0) {
-                if (oldSelections[exactIndex]) {
-                    nextSelections[newIndex] = oldSelections[exactIndex];
-                }
-                if (oldTemplates[exactIndex]) {
-                    nextTemplates[newIndex] = true;
-                }
+                copyStanzaState(exactIndex, newIndex);
                 usedOld.add(exactIndex);
             }
         });
@@ -662,14 +1008,15 @@
         const oldActive = stanzaAtOffset(oldStanzas, caretOffset);
         const newActive = stanzaAtOffset(newStanzas, caretOffset);
         if (!nextSelections[newActive] && oldSelections[oldActive]) {
-            nextSelections[newActive] = oldSelections[oldActive];
-        }
-        if (!nextTemplates[newActive] && oldTemplates[oldActive]) {
-            nextTemplates[newActive] = true;
+            copyStanzaState(oldActive, newActive);
         }
 
         state.selections = nextSelections;
         state.templates = nextTemplates;
+        state.templateModes = nextModes;
+        state.strongDrafts = nextStrongDrafts;
+        state.strongHistory = {};
+        state.strongFuture = {};
     }
 
     function scheduleAnalysis() {
@@ -781,7 +1128,9 @@
             elements["analysis-title"].textContent = "—";
             elements["selected-meter-reference"].hidden = true;
             elements["show-template"].checked = false;
+            elements["template-mode-picker"].hidden = true;
             renderWholeVerseTemplate();
+            renderStrongTemplate();
             return;
         }
 
@@ -797,7 +1146,23 @@
 
         const selectedReference = elements["selected-meter-reference"];
         selectedReference.hidden = !stanza.selectedMeter;
-        elements["show-template"].checked = Boolean(state.templates[state.activeStanzaIndex]);
+        let mode = templateMode(state.activeStanzaIndex);
+        const selectedMeter = meterForId(stanza.selectedMeterId);
+        if (mode === "strong" && !supportsStrongTemplate(selectedMeter)) {
+            setTemplateMode(state.activeStanzaIndex, "ghost");
+            mode = "ghost";
+        }
+        elements["show-template"].checked = mode !== "off";
+        elements["template-mode-picker"].hidden =
+            !stanza.selectedMeter || mode === "off";
+        elements["template-mode-ghost"].checked = mode === "ghost";
+        elements["template-mode-strong"].checked = mode === "strong";
+        elements["template-mode-strong"].disabled =
+            !supportsStrongTemplate(selectedMeter);
+        elements["strong-template-availability"].textContent =
+            supportsStrongTemplate(selectedMeter)
+                ? t("strongTemplateAvailable")
+                : t("strongTemplateUnavailable");
         if (stanza.selectedMeter) {
             elements["selected-meter-name"].textContent = stanza.selectedMeter.name;
             elements["selected-meter-signature"].replaceChildren(
@@ -813,6 +1178,7 @@
             elements["selected-meter-name"].textContent = "";
             elements["selected-meter-signature"].replaceChildren();
             elements["show-template"].checked = false;
+            elements["template-mode-picker"].hidden = true;
         }
 
         elements["candidate-list"].replaceChildren(
@@ -856,6 +1222,7 @@
             summary.classList.add("has-errors");
         }
         renderWholeVerseTemplate();
+        renderStrongTemplate();
     }
 
     function filterMeterOptions(query) {
@@ -891,11 +1258,18 @@
         if (!state.analysis || !state.analysis.stanzas[state.activeStanzaIndex]) {
             return;
         }
+        const currentMeterId = state.selections[state.activeStanzaIndex] || "";
+        if (templateMode(state.activeStanzaIndex) === "strong" &&
+            currentMeterId && currentMeterId !== meterId) {
+            commitStrongDraftToComposition(state.activeStanzaIndex, currentMeterId);
+            setTemplateMode(state.activeStanzaIndex, meterId ? "ghost" : "off");
+        }
         if (meterId) {
             state.selections[state.activeStanzaIndex] = meterId;
         } else {
             delete state.selections[state.activeStanzaIndex];
             delete state.templates[state.activeStanzaIndex];
+            delete state.templateModes[state.activeStanzaIndex];
         }
         runAnalysis();
     }
@@ -908,10 +1282,12 @@
 
     function saveDraft() {
         const draft = {
-            version: 2,
+            version: 3,
             text: elements.composition.value,
             selections: state.selections,
             templates: state.templates,
+            templateModes: state.templateModes,
+            strongDrafts: state.strongDrafts,
             language: state.language,
             selectionStart: elements.composition.selectionStart,
             selectionEnd: elements.composition.selectionEnd,
@@ -933,7 +1309,7 @@
                 return;
             }
             const draft = JSON.parse(raw);
-            if (!draft || ![1, 2].includes(draft.version) ||
+            if (!draft || ![1, 2, 3].includes(draft.version) ||
                 typeof draft.text !== "string") {
                 return;
             }
@@ -945,6 +1321,16 @@
             state.templates = draft.version >= 2 &&
                 draft.templates && typeof draft.templates === "object"
                 ? draft.templates
+                : {};
+            state.templateModes = draft.version >= 3 &&
+                draft.templateModes && typeof draft.templateModes === "object"
+                ? draft.templateModes
+                : Object.fromEntries(
+                    Object.keys(state.templates).map((key) => [key, "ghost"])
+                );
+            state.strongDrafts = draft.version >= 3 &&
+                draft.strongDrafts && typeof draft.strongDrafts === "object"
+                ? draft.strongDrafts
                 : {};
             if (draft.language && messages[draft.language]) {
                 state.language = draft.language;
@@ -963,7 +1349,7 @@
     }
 
     function clearDraft() {
-        if (elements.composition.value && !window.confirm(t("clearConfirm"))) {
+        if (authoredCompositionText() && !window.confirm(t("clearConfirm"))) {
             return;
         }
         window.clearTimeout(state.saveTimer);
@@ -971,6 +1357,10 @@
         elements.composition.value = "";
         state.selections = {};
         state.templates = {};
+        state.templateModes = {};
+        state.strongDrafts = {};
+        state.strongHistory = {};
+        state.strongFuture = {};
         state.analysis = null;
         state.activeStanzaIndex = 0;
         renderPlainOverlay();
@@ -1006,7 +1396,7 @@
     }
 
     function shareText() {
-        let text = elements.composition.value;
+        let text = authoredCompositionText();
         if (elements["include-meter"].checked && state.analysis) {
             const meterNames = Array.from(new Set(state.analysis.stanzas
                 .map((stanza) => stanza.selectedMeter && stanza.selectedMeter.name)
@@ -1090,6 +1480,152 @@
         filterMeterOptions("");
     }
 
+    function strongInputPosition(input) {
+        return {
+            lineIndex: Number(input.dataset.lineIndex),
+            slotIndex: Number(input.dataset.slotIndex)
+        };
+    }
+
+    function focusStrongSlot(lineIndex, slotIndex) {
+        const draft = activeStrongDraft(false);
+        if (!draft) {
+            return;
+        }
+        const boundedLine = Math.max(0, Math.min(lineIndex, draft.lines.length - 1));
+        const boundedSlot = Math.max(
+            0,
+            Math.min(slotIndex, draft.lines[boundedLine].slots.length - 1)
+        );
+        const target = elements["strong-template-lines"].querySelector(
+            `[data-line-index="${boundedLine}"]` +
+            `[data-slot-index="${boundedSlot}"]`
+        );
+        if (target) {
+            target.focus();
+            target.setSelectionRange(target.value.length, target.value.length);
+        }
+    }
+
+    function updateStrongInput(input) {
+        const context = activeStrongContext();
+        const draft = activeStrongDraft(false);
+        if (!context || !draft) {
+            return;
+        }
+        const position = strongInputPosition(input);
+        draft.lines[position.lineIndex].slots[position.slotIndex] = input.value;
+        if (!state.strongComposing) {
+            renderStrongValidation(draft, context.meter);
+            renderStrongCursorMetrics(input);
+            scheduleSave();
+        }
+    }
+
+    function renderStrongCursorMetrics(input) {
+        const draft = activeStrongDraft(false);
+        if (!draft || !input) {
+            return;
+        }
+        const position = strongInputPosition(input);
+        const line = draft.lines[position.lineIndex];
+        const caret = input.selectionStart === null
+            ? input.value.length
+            : input.selectionStart;
+        const textThroughCaret = line.slots
+            .slice(0, position.slotIndex)
+            .join("") + input.value.slice(0, caret);
+        const segmented = Chandas.segmentLine(textThroughCaret, 0);
+        const matras = segmented.syllables.reduce(
+            (sum, syllable) =>
+                sum + (syllable.classification === Chandas.GURU ? 2 : 1),
+            0
+        );
+        elements["cursor-metrics"].textContent = t("cursorMetrics", {
+            syllable: segmented.syllables.length,
+            matras
+        });
+    }
+
+    function handleStrongPaste(event, input) {
+        const context = activeStrongContext();
+        const draft = activeStrongDraft(false);
+        const text = event.clipboardData && event.clipboardData.getData("text");
+        if (!context || !draft || typeof text !== "string") {
+            return;
+        }
+        event.preventDefault();
+        pushStrongHistory(context.key, draft);
+        const position = strongInputPosition(input);
+        const finalPosition = ChandasStrongTemplate.distributeText(
+            draft,
+            position.lineIndex,
+            position.slotIndex,
+            text
+        );
+        renderStrongTemplate(finalPosition);
+        scheduleSave();
+    }
+
+    function handleStrongKeydown(event, input) {
+        const context = activeStrongContext();
+        const draft = activeStrongDraft(false);
+        if (!context || !draft) {
+            return;
+        }
+        const position = strongInputPosition(input);
+        const commandKey = event.ctrlKey || event.metaKey;
+        if (commandKey && !event.altKey && event.key.toLowerCase() === "z") {
+            event.preventDefault();
+            stepStrongHistory(event.shiftKey ? "redo" : "undo", position);
+            return;
+        }
+        if (commandKey && !event.altKey && event.key.toLowerCase() === "y") {
+            event.preventDefault();
+            stepStrongHistory("redo", position);
+            return;
+        }
+        if (event.altKey || commandKey) {
+            return;
+        }
+
+        const atStart = input.selectionStart === 0 && input.selectionEnd === 0;
+        const atEnd = input.selectionStart === input.value.length &&
+            input.selectionEnd === input.value.length;
+        if (event.key === "ArrowLeft" && atStart) {
+            event.preventDefault();
+            if (position.slotIndex > 0) {
+                focusStrongSlot(position.lineIndex, position.slotIndex - 1);
+            } else if (position.lineIndex > 0) {
+                focusStrongSlot(
+                    position.lineIndex - 1,
+                    draft.lines[position.lineIndex - 1].slots.length - 1
+                );
+            }
+        } else if (event.key === "ArrowRight" && atEnd) {
+            event.preventDefault();
+            if (position.slotIndex < draft.lines[position.lineIndex].slots.length - 1) {
+                focusStrongSlot(position.lineIndex, position.slotIndex + 1);
+            } else if (position.lineIndex < draft.lines.length - 1) {
+                focusStrongSlot(position.lineIndex + 1, 0);
+            }
+        } else if (event.key === "ArrowUp") {
+            event.preventDefault();
+            focusStrongSlot(position.lineIndex - 1, position.slotIndex);
+        } else if (event.key === "ArrowDown") {
+            event.preventDefault();
+            focusStrongSlot(position.lineIndex + 1, position.slotIndex);
+        } else if (event.key === "Enter") {
+            event.preventDefault();
+            focusStrongSlot(position.lineIndex + 1, position.slotIndex);
+        } else if (event.key === "Backspace" && atStart && !input.value) {
+            event.preventDefault();
+            if (position.slotIndex > 0) {
+                focusStrongSlot(position.lineIndex, position.slotIndex - 1);
+            }
+        }
+    }
+
     function bindEvents() {
         elements.composition.addEventListener("compositionstart", () => {
             state.composing = true;
@@ -1117,7 +1653,7 @@
         });
 
         elements["new-draft"].addEventListener("click", clearDraft);
-        elements.copy.addEventListener("click", () => copyText(elements.composition.value));
+        elements.copy.addEventListener("click", () => copyText(authoredCompositionText()));
         elements.share.addEventListener("click", () => elements["share-dialog"].showModal());
         elements["dialog-copy"].addEventListener("click", () => copyText(shareText()));
         elements["system-share"].addEventListener("click", systemShare);
@@ -1142,13 +1678,127 @@
                 return;
             }
             if (elements["show-template"].checked) {
-                state.templates[state.activeStanzaIndex] = true;
+                setTemplateMode(state.activeStanzaIndex, "ghost");
             } else {
-                delete state.templates[state.activeStanzaIndex];
+                if (templateMode(state.activeStanzaIndex) === "strong") {
+                    const meterId = state.selections[state.activeStanzaIndex];
+                    commitStrongDraftToComposition(state.activeStanzaIndex, meterId);
+                    setTemplateMode(state.activeStanzaIndex, "off");
+                    runAnalysis();
+                    return;
+                }
+                setTemplateMode(state.activeStanzaIndex, "off");
             }
             renderOverlay();
-            renderWholeVerseTemplate();
+            renderAnalysisPanel();
             scheduleSave();
+        });
+        elements["template-mode-ghost"].addEventListener("change", () => {
+            if (!elements["template-mode-ghost"].checked) {
+                return;
+            }
+            const meterId = state.selections[state.activeStanzaIndex];
+            if (templateMode(state.activeStanzaIndex) === "strong") {
+                commitStrongDraftToComposition(state.activeStanzaIndex, meterId);
+            }
+            setTemplateMode(state.activeStanzaIndex, "ghost");
+            runAnalysis();
+        });
+        elements["template-mode-strong"].addEventListener("change", () => {
+            if (!elements["template-mode-strong"].checked) {
+                return;
+            }
+            if (!state.analysis ||
+                state.analysis.text !== elements.composition.value) {
+                runAnalysis();
+            }
+            const stanza = state.analysis &&
+                state.analysis.stanzas[state.activeStanzaIndex];
+            const meter = stanza && meterForId(stanza.selectedMeterId);
+            if (!stanza || !supportsStrongTemplate(meter)) {
+                elements["template-mode-ghost"].checked = true;
+                return;
+            }
+            const existingDraft = strongDraftFor(stanza, meter, false);
+            if (existingDraft &&
+                ChandasStrongTemplate.serializeDraft(existingDraft) !== stanza.text) {
+                pushStrongHistory(
+                    strongDraftKey(stanza.index, meter.id),
+                    existingDraft
+                );
+                ChandasStrongTemplate.synchronizeFixedDraft(existingDraft, stanza);
+            }
+            setTemplateMode(state.activeStanzaIndex, "strong");
+            strongDraftFor(stanza, meter, true);
+            renderOverlay();
+            renderAnalysisPanel();
+            scheduleSave();
+            requestAnimationFrame(() => focusStrongSlot(0, 0));
+        });
+        elements["strong-template-lines"].addEventListener("beforeinput", (event) => {
+            const input = event.target.closest(".strong-template-slot");
+            const context = activeStrongContext();
+            const draft = activeStrongDraft(false);
+            if (!input || !context || !draft || state.strongComposing ||
+                event.inputType === "historyUndo" ||
+                event.inputType === "historyRedo") {
+                return;
+            }
+            pushStrongHistory(context.key, draft);
+        });
+        elements["strong-template-lines"].addEventListener("input", (event) => {
+            const input = event.target.closest(".strong-template-slot");
+            if (input) {
+                updateStrongInput(input);
+            }
+        });
+        elements["strong-template-lines"].addEventListener("compositionstart", () => {
+            const context = activeStrongContext();
+            const draft = activeStrongDraft(false);
+            if (context && draft) {
+                state.strongCompositionSnapshot =
+                    ChandasStrongTemplate.cloneSlots(draft);
+                state.strongComposing = true;
+            }
+        });
+        elements["strong-template-lines"].addEventListener("compositionend", (event) => {
+            const input = event.target.closest(".strong-template-slot");
+            const context = activeStrongContext();
+            const draft = activeStrongDraft(false);
+            state.strongComposing = false;
+            if (input && context && draft) {
+                pushStrongHistory(
+                    context.key,
+                    draft,
+                    state.strongCompositionSnapshot
+                );
+                state.strongCompositionSnapshot = null;
+                updateStrongInput(input);
+            }
+        });
+        elements["strong-template-lines"].addEventListener("paste", (event) => {
+            const input = event.target.closest(".strong-template-slot");
+            if (input) {
+                handleStrongPaste(event, input);
+            }
+        });
+        elements["strong-template-lines"].addEventListener("keydown", (event) => {
+            const input = event.target.closest(".strong-template-slot");
+            if (input) {
+                handleStrongKeydown(event, input);
+            }
+        });
+        elements["strong-template-lines"].addEventListener("focusin", (event) => {
+            const input = event.target.closest(".strong-template-slot");
+            if (input) {
+                renderStrongCursorMetrics(input);
+            }
+        });
+        elements["strong-template-lines"].addEventListener("keyup", (event) => {
+            const input = event.target.closest(".strong-template-slot");
+            if (input) {
+                renderStrongCursorMetrics(input);
+            }
         });
         window.addEventListener("beforeunload", saveDraft);
     }

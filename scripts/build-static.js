@@ -10,6 +10,7 @@ const assets = [
     "styles.css",
     "app.js",
     "meter_analysis.js",
+    "strong_template.js",
     "mishra.json",
     "structural_meters.json",
     "manifest.webmanifest",

@@ -11,6 +11,7 @@
     <link rel="icon" href="icon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="styles.css">
     <script src="meter_analysis.js" defer></script>
+    <script src="strong_template.js" defer></script>
     <script src="app.js" defer></script>
 </head>
 <body>
@@ -86,6 +87,25 @@
                     ></textarea>
                 </div>
                 <section
+                    id="strong-template-editor"
+                    class="strong-template-editor"
+                    aria-labelledby="strong-template-title"
+                    hidden
+                >
+                    <div class="strong-template-heading">
+                        <div>
+                            <span class="mini-label" data-i18n="strongTemplate">Strong template</span>
+                            <h2 id="strong-template-title" data-i18n="guidedComposition">
+                                Guided composition
+                            </h2>
+                        </div>
+                        <p id="strong-template-help" data-i18n="strongTemplateHelp">
+                            Fill any position. Empty positions stay empty and are never copied.
+                        </p>
+                    </div>
+                    <div id="strong-template-lines" class="strong-template-lines"></div>
+                </section>
+                <section
                     id="whole-verse-template"
                     class="whole-verse-template"
                     aria-label="Whole verse template"
@@ -144,6 +164,18 @@
                             <input id="show-template" type="checkbox">
                             <span data-i18n="showTemplate">Show template</span>
                         </label>
+                        <fieldset id="template-mode-picker" class="template-mode-picker" hidden>
+                            <legend data-i18n="templateMode">Template mode</legend>
+                            <label>
+                                <input id="template-mode-ghost" type="radio" name="template-mode" value="ghost">
+                                <span data-i18n="ghostTemplate">Ghost</span>
+                            </label>
+                            <label>
+                                <input id="template-mode-strong" type="radio" name="template-mode" value="strong">
+                                <span data-i18n="strongTemplate">Strong</span>
+                            </label>
+                            <small id="strong-template-availability"></small>
+                        </fieldset>
                     </div>
 
                     <div class="suggestion-heading">

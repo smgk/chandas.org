@@ -44,6 +44,8 @@
             searchMeters: "Search meters…",
             clearSelection: "Clear selected meter",
             showTemplate: "Show template",
+            wholeVerseTemplate: "Whole verse template",
+            templateLine: "Line {number}",
             exact: "Exact",
             compatible: "Possible",
             approximate: "Closest",
@@ -108,6 +110,8 @@
             searchMeters: "ಛಂದಸ್ಸು ಹುಡುಕಿ…",
             clearSelection: "ಆಯ್ದ ಛಂದಸ್ಸನ್ನು ತೆರವುಗೊಳಿಸಿ",
             showTemplate: "ಮಾದರಿಯನ್ನು ತೋರಿಸಿ",
+            wholeVerseTemplate: "ಪೂರ್ಣ ಪದ್ಯದ ಮಾದರಿ",
+            templateLine: "ಸಾಲು {number}",
             exact: "ಸರಿಯಾಗಿ",
             compatible: "ಸಾಧ್ಯ",
             approximate: "ಸಮೀಪ",
@@ -160,6 +164,7 @@
             "active-pattern", "active-matras", "selected-meter-reference", "selected-meter-name",
             "selected-meter-signature", "candidate-list", "meter-picker",
             "meter-search", "meter-select", "clear-meter", "show-template",
+            "whole-verse-template",
             "validation-summary", "share-dialog",
             "include-meter", "include-link", "system-share", "twitter-share",
             "facebook-share", "dialog-copy", "toast"
@@ -258,20 +263,20 @@
             .join("\u2009");
     }
 
-    function structuralPadaGuide(meter, pada, script) {
-        if (!pada) {
-            return "";
-        }
+    function structuralPadaGuide(meter, padaIndex, pada, script, wholeLine) {
         if (meter.kind === "matra") {
-            const groups = meter.padaGroups && meter.padaGroups[pada.index];
+            const groups = meter.padaGroups && meter.padaGroups[padaIndex];
             if (!groups) {
                 return "";
             }
             const target = groups.reduce((sum, value) => sum + value, 0);
-            return `${t("matraShort")} ${pada.matras}/${target} · ${groups.join("|")}`;
+            return wholeLine
+                ? `${t("matraShort")} ${target} · ${groups.join("|")}`
+                : `${t("matraShort")} ${pada ? pada.matras : 0}/${target} · ` +
+                    groups.join("|");
         }
 
-        const rule = meter.padas && meter.padas[pada.index];
+        const rule = meter.padas && meter.padas[padaIndex];
         if (!rule) {
             return "";
         }
@@ -284,8 +289,106 @@
         return formatWeightGuide(
             guide.map((item) => item === "?" ? "○" : item).join(""),
             script,
-            pada.syllables.length
+            wholeLine || !pada ? 0 : pada.syllables.length
         );
+    }
+
+    function meterVerseLineCount(meter) {
+        if (!meter) {
+            return 0;
+        }
+        if (meter.linePolicy && meter.linePolicy.type === "fixed") {
+            return meter.linePolicy.count;
+        }
+        if (meter.linePolicy && meter.linePolicy.type === "repeating") {
+            return meter.linePolicy.previewCount || meter.linePolicy.min || 1;
+        }
+        if (meter.kind === "fixed") {
+            return 4;
+        }
+        if (Array.isArray(meter.padas)) {
+            return meter.padas.length;
+        }
+        if (Array.isArray(meter.padaGroups)) {
+            return meter.padaGroups.length;
+        }
+        return 0;
+    }
+
+    function fixedVersePattern(meter, lineIndex) {
+        if (Array.isArray(meter.versePatterns)) {
+            return meter.versePatterns[lineIndex] || "";
+        }
+        const patterns = Chandas.expandFixedVersePatterns(
+            meter.patterns || [],
+            meterVerseLineCount(meter)
+        );
+        return patterns[lineIndex] || "";
+    }
+
+    function wholeVerseGuideLine(meter, stanza, lineIndex, script) {
+        if (meter.kind === "fixed") {
+            return formatWeightGuide(fixedVersePattern(meter, lineIndex), script, 0);
+        }
+        return structuralPadaGuide(
+            meter,
+            lineIndex,
+            stanza.padas[lineIndex] || null,
+            script,
+            true
+        );
+    }
+
+    function renderWholeVerseTemplate() {
+        const container = elements["whole-verse-template"];
+        if (!container) {
+            return;
+        }
+
+        const stanza = state.analysis &&
+            state.analysis.stanzas[state.activeStanzaIndex];
+        const meter = stanza && state.templates[state.activeStanzaIndex]
+            ? meterForId(stanza.selectedMeterId)
+            : null;
+        const lineCount = meterVerseLineCount(meter);
+        if (!stanza || !meter || !lineCount) {
+            container.hidden = true;
+            container.replaceChildren();
+            return;
+        }
+
+        const script = stanza.scripts[0] ||
+            (stanza.lines[0] && stanza.lines[0].script) ||
+            "unknown";
+        const heading = document.createElement("span");
+        heading.className = "whole-template-heading";
+        heading.textContent = t("wholeVerseTemplate");
+
+        const lines = document.createElement("span");
+        lines.className = "whole-template-lines";
+        for (let lineIndex = 0; lineIndex < lineCount; lineIndex += 1) {
+            const row = document.createElement("span");
+            row.className = "whole-template-line";
+
+            const label = document.createElement("span");
+            label.className = "whole-template-line-label";
+            label.textContent = t("templateLine", { number: lineIndex + 1 });
+
+            const guide = document.createElement("span");
+            guide.className = "whole-template-line-guide";
+            guide.textContent = wholeVerseGuideLine(
+                meter,
+                stanza,
+                lineIndex,
+                script
+            );
+            row.append(label, guide);
+            lines.append(row);
+        }
+
+        container.setAttribute("aria-label", t("wholeVerseTemplate"));
+        container.replaceChildren(heading, lines);
+        container.hidden = false;
     }
 
     function ghostGuideForLine(stanza, line, meter) {
@@ -301,7 +404,10 @@
 
         const padas = stanza.padas.filter((pada) =>
             pada.start >= line.start && pada.end <= line.end);
-        return structuralPadaGuide(meter, padas[padas.length - 1], line.script);
+        const pada = padas[padas.length - 1];
+        return pada
+            ? structuralPadaGuide(meter, pada.index, pada, line.script, false)
+            : "";
     }
 
     function buildOverlayAnnotations() {
@@ -620,6 +726,7 @@
             elements["analysis-title"].textContent = "—";
             elements["selected-meter-reference"].hidden = true;
             elements["show-template"].checked = false;
+            renderWholeVerseTemplate();
             return;
         }
 
@@ -693,6 +800,7 @@
             });
             summary.classList.add("has-errors");
         }
+        renderWholeVerseTemplate();
     }
 
     function filterMeterOptions(query) {
@@ -984,6 +1092,7 @@
                 delete state.templates[state.activeStanzaIndex];
             }
             renderOverlay();
+            renderWholeVerseTemplate();
             scheduleSave();
         });
         window.addEventListener("beforeunload", saveDraft);

@@ -16,6 +16,8 @@
         <p>
             Type a Kannada or Devanagari verse. Chandas counts the syllables,
             so you can save your arithmetic for less poetic occasions.
+            Looking for a pattern? Jump to the
+            <a href="#supported-meters">supported-meter field guide</a>.
         </p>
 
         <h2>Read the markings</h2>
@@ -53,9 +55,16 @@
         <h2>Use the ghost template</h2>
         <p>
             After selecting a meter, enable <em>Show template</em> for a faint
-            guide inside the editor. Fixed meters show the remaining
-            Laghu/Guru positions, Anuṣṭubh shows fixed and variable positions,
-            and mātrā meters show their group capacity and progress.
+            guide. It shows the whole logical verse even if you have typed only
+            one line: four lines for fixed vṛttas, Anuṣṭubh, and Kanda; six
+            lines for a Ṣaṭpadi; or the shape declared by another meter.
+            Existing lines also show their remaining inline hint.
+        </p>
+        <p>
+            Fixed meters show Laghu/Guru positions, Anuṣṭubh shows fixed and
+            variable positions, and mātrā meters show group capacity and
+            progress. A two-pattern vṛtta alternates its patterns across the
+            four lines rather than quietly forgetting lines three and four.
         </p>
         <p>
             The guide is only a guide: it never becomes part of your poem,
@@ -76,11 +85,61 @@
             traditions and optional rules not yet included in the catalog.
         </p>
 
+        <section class="meter-catalog" aria-labelledby="supported-meters">
+            <h2 id="supported-meters">Supported meters</h2>
+            <p>
+                Chandas currently recognizes
+                <strong id="meter-catalog-total">the meters in its catalogs</strong>:
+                <span id="meter-catalog-fixed-count">fixed vṛttas</span> and
+                <span id="meter-catalog-structural-count">structural or mātrā meters</span>.
+                In the signatures below, <strong>L</strong> is Laghu (one
+                mātrā) and <strong>G</strong> is Guru (two mātrās). A pāda is
+                one metrical line.
+            </p>
+            <p>
+                Open a meter to study all its lines. Fixed vṛttas include a
+                gaṇa reading; mātrā and structural meters explain their group
+                totals and recognized rules. This is a field guide, not a
+                substitute for a patient teacher—but it never objects when you
+                look up the same gaṇa for the eleventh time.
+            </p>
+
+            <div class="meter-catalog-controls">
+                <label>
+                    <span>Find a meter</span>
+                    <input
+                        id="meter-catalog-search"
+                        type="search"
+                        placeholder="Try anushtup, arya, kanda…"
+                        autocomplete="off"
+                    >
+                </label>
+                <label>
+                    <span>Meter family</span>
+                    <select id="meter-catalog-kind">
+                        <option value="all">All meters</option>
+                        <option value="fixed">Fixed vṛttas</option>
+                        <option value="syllable-structural">Structural syllabic</option>
+                        <option value="matra">Mātrā meters</option>
+                    </select>
+                </label>
+            </div>
+
+            <p id="meter-catalog-status" class="meter-catalog-status" aria-live="polite">
+                Loading the meter catalog…
+            </p>
+            <div id="meter-catalog-list" class="meter-catalog-list"></div>
+            <noscript>
+                <p>The searchable meter catalog needs JavaScript to unfold its scrolls.</p>
+            </noscript>
+        </section>
+
         <nav class="legal-links" aria-label="More information">
             <a href="about.html">About</a>
             <a href="privacy.html">Privacy</a>
             <a href="terms.html">Terms</a>
         </nav>
     </main>
+    <script src="documentation.js" defer></script>
 </body>
 </html>

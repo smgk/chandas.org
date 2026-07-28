@@ -418,6 +418,59 @@ textarea:focus-visible {
     text-overflow: clip;
 }
 
+.whole-verse-template {
+    display: grid;
+    gap: 0.42rem;
+    margin-top: 0.65rem;
+    padding: 0.62rem 0.78rem;
+    overflow-x: auto;
+    border: 1px dashed color-mix(in srgb, var(--green) 22%, var(--line));
+    border-radius: 0.72rem;
+    color: color-mix(in srgb, var(--green) 46%, transparent);
+    background: color-mix(in srgb, var(--green) 3%, #fffdf8);
+    scrollbar-width: thin;
+}
+
+.whole-template-heading {
+    color: color-mix(in srgb, var(--muted) 74%, transparent);
+    font-size: 0.62rem;
+    font-weight: 750;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+}
+
+.whole-template-lines,
+.whole-template-line {
+    display: grid;
+}
+
+.whole-template-lines {
+    gap: 0.2rem;
+    min-width: max-content;
+}
+
+.whole-template-line {
+    grid-template-columns: 3.5rem auto;
+    align-items: baseline;
+    gap: 0.6rem;
+}
+
+.whole-template-line-label {
+    color: color-mix(in srgb, var(--muted) 58%, transparent);
+    font-family: ui-sans-serif, system-ui, sans-serif;
+    font-size: 0.58rem;
+    font-weight: 650;
+    letter-spacing: 0.03em;
+}
+
+.whole-template-line-guide {
+    font-family: var(--editor-font);
+    font-size: 0.78rem;
+    font-weight: 550;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+}
+
 .editor-footer {
     display: flex;
     align-items: center;
@@ -841,6 +894,151 @@ textarea:focus-visible {
     font-size: 0.82rem;
 }
 
+.meter-catalog {
+    margin-top: 3rem;
+}
+
+.meter-catalog-controls {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(12rem, 0.8fr);
+    gap: 0.8rem;
+    margin: 1.4rem 0 0.7rem;
+}
+
+.meter-catalog-controls label {
+    display: grid;
+    gap: 0.35rem;
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 650;
+}
+
+.meter-catalog-controls input,
+.meter-catalog-controls select {
+    width: 100%;
+    min-height: 2.7rem;
+    border: 1px solid var(--line);
+    border-radius: 0.7rem;
+    padding: 0.55rem 0.7rem;
+    color: var(--ink);
+    background: #fffdf8;
+}
+
+.meter-catalog-status {
+    min-height: 1.5em;
+    color: var(--muted);
+    font-size: 0.82rem;
+}
+
+.meter-catalog-list {
+    display: grid;
+    gap: 0.45rem;
+}
+
+.meter-catalog-item {
+    overflow: clip;
+    border: 1px solid var(--line);
+    border-radius: 0.75rem;
+    background: rgba(255, 253, 248, 0.72);
+}
+
+.meter-catalog-item summary {
+    display: grid;
+    gap: 0.08rem;
+    padding: 0.72rem 0.85rem;
+    list-style-position: inside;
+}
+
+.meter-catalog-item summary::marker {
+    color: var(--saffron);
+}
+
+.meter-catalog-item[open] summary {
+    border-bottom: 1px solid var(--line);
+    background: var(--saffron-pale);
+}
+
+.meter-catalog-name {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.05rem;
+}
+
+.meter-catalog-meta {
+    padding-left: 1.05rem;
+    color: var(--muted);
+    font-size: 0.74rem;
+}
+
+.meter-catalog-body {
+    padding: 0.8rem 0.9rem 1rem;
+}
+
+.meter-catalog-explanation,
+.meter-note,
+.meter-warning {
+    margin: 0 0 0.75rem;
+    color: var(--muted);
+    font-size: 0.8rem;
+}
+
+.meter-warning {
+    color: var(--error);
+}
+
+.meter-pattern-lines {
+    display: grid;
+    gap: 0.65rem;
+}
+
+.meter-pattern-line {
+    min-width: 0;
+    padding-left: 0.75rem;
+    border-left: 2px solid var(--paper-deep);
+}
+
+.meter-pattern-line h4 {
+    margin: 0 0 0.15rem;
+    color: var(--muted);
+    font-size: 0.72rem;
+    font-weight: 650;
+}
+
+.meter-signature {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+    padding: 0.3rem 0;
+    color: var(--green);
+    background: none;
+    font-size: 0.92rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+}
+
+.gana-reading {
+    margin: 0.1rem 0 0;
+    color: var(--muted);
+    font-size: 0.74rem;
+}
+
+.meter-definitions {
+    display: grid;
+    grid-template-columns: minmax(7rem, auto) 1fr;
+    gap: 0.4rem 0.8rem;
+    margin: 0;
+    font-size: 0.82rem;
+}
+
+.meter-definitions dt {
+    color: var(--muted);
+    font-weight: 650;
+}
+
+.meter-definitions dd {
+    margin: 0;
+}
+
 .share-dialog {
     width: min(440px, calc(100% - 2rem));
     border: 1px solid var(--line);
@@ -1031,6 +1229,18 @@ textarea:focus-visible {
 
     .share-destinations .primary-button {
         grid-column: auto;
+    }
+
+    .meter-catalog-controls {
+        grid-template-columns: 1fr;
+    }
+
+    .meter-definitions {
+        grid-template-columns: 1fr;
+    }
+
+    .meter-definitions dd + dt {
+        margin-top: 0.35rem;
     }
 
     .site-footer {

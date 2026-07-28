@@ -414,6 +414,21 @@
         return String(pattern || "").toUpperCase().replace(/[^GL]/g, "");
     }
 
+    function expandFixedVersePatterns(patterns, lineCount) {
+        const count = Number.isInteger(lineCount) && lineCount > 0 ? lineCount : 4;
+        if (!patterns.length) {
+            return [];
+        }
+        if (patterns.length === count) {
+            return patterns.slice();
+        }
+        if (patterns.length === 2 && count === 4) {
+            return [patterns[0], patterns[1], patterns[0], patterns[1]];
+        }
+        return Array.from({ length: count }, (_, index) =>
+            patterns[index % patterns.length]);
+    }
+
     function normalizeCatalog(catalog) {
         if (!catalog) {
             return [];
@@ -424,13 +439,17 @@
             .filter((entry) => Array.isArray(entry) && entry.length >= 2)
             .map((entry, index) => {
                 const rawPatterns = Array.isArray(entry[1]) ? entry[1] : [entry[1]];
+                const patterns = rawPatterns.map(sanitizePattern).filter(Boolean);
+                const linePolicy = { type: "fixed", count: 4 };
                 return {
                     id: String(entry[0]),
                     name: String(entry[0]),
                     sourceIndex: index,
                     kind: "fixed",
                     aliases: [],
-                    patterns: rawPatterns.map(sanitizePattern).filter(Boolean)
+                    patterns,
+                    linePolicy,
+                    versePatterns: expandFixedVersePatterns(patterns, linePolicy.count)
                 };
             })
             .filter((meter) => meter.patterns.length > 0);
@@ -502,16 +521,20 @@
     }
 
     function expectedForLine(meter, lineIndex) {
-        if (!meter || meter.patterns.length === 0) {
+        if (!meter) {
             return "";
         }
-        if (meter.patterns.length === 1) {
-            return meter.patterns[0];
+        const versePatterns = meter.versePatterns ||
+            expandFixedVersePatterns(meter.patterns || [], 4);
+        if (lineIndex < 0 || lineIndex >= versePatterns.length) {
+            return "";
         }
-        return meter.patterns[lineIndex] || "";
+        return versePatterns[lineIndex] || "";
     }
 
     function scoreMeter(linePatterns, meter) {
+        const expectedLines = meter.versePatterns ||
+            expandFixedVersePatterns(meter.patterns || [], 4);
         let distance = 0;
         let comparedLength = 0;
         let prefixCompatible = linePatterns.length > 0;
@@ -535,13 +558,12 @@
             exactLines = exactLines && actual === expected;
         }
 
-        if (meter.patterns.length > 1 && linePatterns.length > meter.patterns.length) {
+        if (linePatterns.length > expectedLines.length) {
             prefixCompatible = false;
             exactLines = false;
         }
 
-        const hasExpectedLineCount = meter.patterns.length === 1 ||
-            linePatterns.length === meter.patterns.length;
+        const hasExpectedLineCount = linePatterns.length === expectedLines.length;
         const status = exactLines && hasExpectedLineCount
             ? "exact"
             : prefixCompatible
@@ -1043,7 +1065,11 @@
             const violationCount = lines.reduce((sum, line) => sum + line.violationCount, 0);
             const missingCount = structuralValidation
                 ? structuralValidation.missingCount
-                : lines.reduce((sum, line) => sum + line.missingCount, 0);
+                : lines.reduce((sum, line) => sum + line.missingCount, 0) +
+                    (selectedFixedMeter
+                        ? selectedFixedMeter.versePatterns.slice(lines.length)
+                            .reduce((sum, pattern) => sum + pattern.length, 0)
+                        : 0);
 
             return {
                 ...stanza,
@@ -1103,7 +1129,7 @@
                 violation: item.violation
             })),
             detectedScript: result.scripts[0] || "Unknown",
-            detectedmeter: firstCandidate && firstCandidate.status === "exact"
+            detectedmeter: firstCandidate && firstCandidate.status !== "approximate"
                 ? firstCandidate.name
                 : "Unknown",
             aproxmeters: firstStanza
@@ -1122,6 +1148,7 @@
         analyzeMeter,
         detectScript,
         editDistance,
+        expandFixedVersePatterns,
         normalizeCatalog,
         parsePadas,
         parseStanzas,

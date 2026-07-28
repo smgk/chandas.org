@@ -122,7 +122,10 @@ test("ranks exact patterns above compatible and approximate patterns", () => {
             ["different-meter", "GG"]
         ]
     };
-    const ranked = Chandas.rankMeters(["LG"], Chandas.normalizeCatalog(tinyCatalog));
+    const ranked = Chandas.rankMeters(
+        ["LG", "LG", "LG", "LG"],
+        Chandas.normalizeCatalog(tinyCatalog)
+    );
 
     assert.equal(ranked[0].name, "exact-meter");
     assert.equal(ranked[0].status, "exact");
@@ -130,20 +133,48 @@ test("ranks exact patterns above compatible and approximate patterns", () => {
     assert.equal(ranked[1].status, "compatible");
 });
 
-test("supports multi-line meter patterns from catalog arrays", () => {
+test("expands one, two, and four fixed-vṛtta patterns to four-line verses", () => {
     const tinyCatalog = {
         metres: [
             ["unequal", ["LG", "GL"]],
-            ["other", ["GG", "GG"]]
+            ["explicit", ["LL", "LG", "GL", "GG"]],
+            ["same", "GG"]
         ]
     };
+    const meters = Chandas.normalizeCatalog(tinyCatalog);
+    assert.deepEqual(
+        meters.find((meter) => meter.id === "unequal").versePatterns,
+        ["LG", "GL", "LG", "GL"]
+    );
+    assert.deepEqual(
+        meters.find((meter) => meter.id === "explicit").versePatterns,
+        ["LL", "LG", "GL", "GG"]
+    );
+    assert.deepEqual(
+        meters.find((meter) => meter.id === "same").versePatterns,
+        ["GG", "GG", "GG", "GG"]
+    );
+
     const ranked = Chandas.rankMeters(
-        ["LG", "GL"],
-        Chandas.normalizeCatalog(tinyCatalog)
+        ["LG", "GL", "LG", "GL"],
+        meters
     );
 
     assert.equal(ranked[0].name, "unequal");
     assert.equal(ranked[0].status, "exact");
+});
+
+test("counts untyped fixed-vṛtta lines as missing without marking red violations", () => {
+    const tinyCatalog = { metres: [["four-light-lines", "LL"]] };
+    const stanza = Chandas.analyzeComposition(
+        "ಕ ಕ",
+        tinyCatalog,
+        "four-light-lines"
+    ).stanzas[0];
+
+    assert.equal(stanza.violationCount, 0);
+    assert.equal(stanza.missingCount, 6);
+    assert.equal(stanza.candidates[0].status, "compatible");
 });
 
 test("loads the versioned structural catalog without changing mishra entries", () => {

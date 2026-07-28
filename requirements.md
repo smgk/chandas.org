@@ -323,20 +323,30 @@ recommended, and optional behavior.
 3. The guide MUST be presentation-only. Template symbols and empty positions
    MUST NOT become characters in the composition, be analyzed as authored
    syllables, alter source offsets, or appear in copy/share output.
-4. For a fixed Guru/Laghu meter, the guide MUST show its Laghu and Guru
+4. The guide MUST show the selected meter's complete logical verse shape even
+   when the user has typed only part of its first line. Existing authored
+   lines MAY also retain an inline remaining-pattern hint.
+5. A fixed vṛtta MUST show four logical lines. A single catalog pattern repeats
+   on all four lines; a two-pattern ardhasama entry alternates `A/B/A/B`; and
+   an explicit four-pattern entry uses all four patterns in order.
+6. A fixed-line structural meter MUST use its cataloged line count: four lines
+   for Anuṣṭubh and Kanda, six for a Ṣaṭpadi, and the declared count for future
+   forms. A variable-length form such as Ragale MUST use an explicit preview
+   policy and MUST NOT be presented as a fictitious fixed stanza.
+7. For a fixed Guru/Laghu meter, the guide MUST show its Laghu and Guru
    signature using symbols appropriate to the selected language or active
    composition script.
-5. For a structural meter, the guide MUST distinguish fixed positions from
+8. For a structural meter, the guide MUST distinguish fixed positions from
    variable or rule-constrained positions rather than inventing a single fixed
    Guru/Laghu sequence.
-6. For a mātrā meter, the guide MUST show mātrā-group capacities and progress
+9. For a mātrā meter, the guide MUST show mātrā-group capacities and progress
    rather than implying that the meter has one mandatory Guru/Laghu sequence.
-7. The guide MUST follow the stanza's selected meter and MUST update or close
+10. The guide MUST follow the stanza's selected meter and MUST update or close
    predictably when that selection changes or is cleared.
-8. Showing or hiding the guide MUST NOT move the caret, change wrapping,
+11. Showing or hiding the guide MUST NOT move the caret, change wrapping,
    corrupt IME composition, or interfere with selection, undo, redo, paste,
    highlighting, scrolling, or accessibility.
-9. The first-version ghost template MAY assume sequential free-text
+12. The first-version ghost template MAY assume sequential free-text
    composition. It is not required to let the user fill a later empty metrical
    position while earlier positions remain empty.
 
@@ -365,6 +375,24 @@ recommended, and optional behavior.
 9. Fixed, structural, and mātrā meters MAY use different strong-template slot
    representations, but each representation MUST expose only constraints
    actually supported by the versioned meter catalog.
+
+### FR-12: Prosody reference
+
+1. The documentation MUST list every meter recognized by the currently shipped
+   fixed and structural meter catalogs.
+2. The list MUST be searchable with both the displayed scholarly
+   transliteration and ordinary Roman spelling without diacritics.
+3. A fixed vṛtta entry MUST show the complete four-pāda signature, including
+   repeated or alternating patterns, and a traditional three-syllable gaṇa
+   reading.
+4. A structural or mātrā entry MUST show its line count, signature, group
+   totals or syllable constraints, recognition level, and known unchecked
+   rules.
+5. The reference MUST explain Laghu, Guru, mātrā, pāda, and gaṇa notation in
+   concise language suitable for a learner.
+6. The reference MUST be generated from the same catalog assets used by the
+   analyzer, remain available offline, and avoid claiming support for rules
+   that the catalog marks provisional, partial, or unchecked.
 
 ## 6. Analysis Engine Requirements
 

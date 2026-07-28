@@ -117,6 +117,10 @@ test("keeps clear and the ghost guide available outside the meter picker", async
     await expect(page.locator("#clear-meter")).toBeVisible();
     await page.locator("#show-template").check();
     await expect(page.locator("#highlight-layer .ghost-template")).toHaveText("ಲ");
+    await expect(page.locator("#whole-verse-template")).toBeVisible();
+    await expect(page.locator("#whole-verse-template .whole-template-line")).toHaveCount(4);
+    await expect(page.locator("#whole-verse-template .whole-template-line-guide"))
+        .toHaveText(["ಲ ಲ", "ಲ ಲ", "ಲ ಲ", "ಲ ಲ"]);
     await expect(editor).toHaveValue("ಕ");
     await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
     await page.locator("#copy").click();
@@ -129,16 +133,27 @@ test("keeps clear and the ghost guide available outside the meter picker", async
     await expect(page.locator("#show-template")).toBeChecked();
     await expect(page.locator("#highlight-layer .ghost-template")).toContainText("○");
     await expect(page.locator("#highlight-layer .ghost-template")).toContainText("ಗಾ");
+    await expect(page.locator("#whole-verse-template .whole-template-line")).toHaveCount(4);
+    await expect(page.locator("#whole-verse-template .whole-template-line-guide").first())
+        .toContainText("ಲ");
 
     await page.locator("#meter-search").fill("arya");
     await page.locator("#meter-select").selectOption("structural:arya");
     await expect(page.locator("#highlight-layer .ghost-template"))
         .toHaveText("M 1/12 · 4|4|4");
+    await expect(page.locator("#whole-verse-template .whole-template-line-guide"))
+        .toHaveText([
+            "M 12 · 4|4|4",
+            "M 18 · 4|4|4|4|2",
+            "M 12 · 4|4|4",
+            "M 15 · 4|4|1|4|2"
+        ]);
 
     await page.locator("#meter-picker summary").click();
     await page.locator("#clear-meter").click();
     await expect(page.locator("#selected-meter-reference")).toBeHidden();
     await expect(page.locator("#highlight-layer .ghost-template")).toHaveCount(0);
+    await expect(page.locator("#whole-verse-template")).toBeHidden();
     await expect(editor).toHaveValue("ಕ");
 });
 
@@ -181,6 +196,7 @@ test("finds and validates provisional Kannada Kanda independently", async ({ pag
     ]);
     await page.locator("#meter-search").fill("kandapadya");
     await page.locator("#meter-select").selectOption("structural:kanda-kannada");
+    await page.locator("#show-template").check();
 
     await expect(page.locator("#selected-meter-signature"))
         .toContainText("12 | 20 | 12 | 20 mātrās");
@@ -190,6 +206,13 @@ test("finds and validates provisional Kannada Kanda independently", async ({ pag
         .toContainText("prāsa is not checked yet");
     await expect(page.locator("#validation-summary")).not.toHaveClass(/has-errors/);
     await expect(page.locator("#highlight-layer .violation")).toHaveCount(0);
+    await expect(page.locator("#whole-verse-template .whole-template-line-guide"))
+        .toHaveText([
+            "M 12 · 4|4|4",
+            "M 20 · 4|4|4|4|4",
+            "M 12 · 4|4|4",
+            "M 20 · 4|4|4|4|4"
+        ]);
 });
 
 test("recovers the anonymous local draft and meter selection", async ({ page }) => {
@@ -242,12 +265,23 @@ test("share options are explicit and default to composition only", async ({ page
     await expect(page.locator("#include-link")).not.toBeChecked();
 });
 
-test("opens the short documentation from the public links", async ({ page }) => {
+test("opens documentation and searches the complete prosody catalog", async ({ page }) => {
     await page.locator('a[href="documentation.html"]').click();
 
     await expect(page).toHaveURL(/documentation\.html$/);
     await expect(page.locator("h1")).toHaveText("How to use Chandas");
     await expect(page.locator("main")).toContainText("tea break");
+    await expect(page.locator("#meter-catalog-status"))
+        .toHaveText("1,358 of 1,358 supported meters shown.");
+
+    await page.locator("#meter-catalog-search").fill("anushtup");
+    await expect(page.locator(".meter-catalog-item")).toHaveCount(1);
+    await expect(page.locator(".meter-catalog-name")).toHaveText("anuṣṭubh (pathyā)");
+    await page.locator(".meter-catalog-item summary").click();
+    await expect(page.locator(".meter-definitions")).toContainText("Pāda 4: 8 syllables");
+
+    await page.locator("#meter-catalog-search").fill("madhumalli");
+    await expect(page.locator(".meter-catalog-name")).toContainText(["madhumallī"]);
     await page.getByText("Return to Chandas").click();
     await expect(page.locator("#composition")).toBeVisible();
 });

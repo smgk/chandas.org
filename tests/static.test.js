@@ -36,6 +36,7 @@ test("service worker pre-caches every core web asset", () => {
         "manifest.webmanifest",
         "icon.svg",
         "documentation.html",
+        "documentation.js",
         "about.html",
         "privacy.html",
         "terms.html",
@@ -57,6 +58,7 @@ test("the composition control and live regions have accessible labels", () => {
     assert.match(html, /id="toast"[^>]*role="status"[^>]*aria-live="polite"/);
     assert.match(html, /id="cursor-metrics"/);
     assert.match(html, /id="show-template"[^>]*type="checkbox"/);
+    assert.match(html, /id="whole-verse-template"[^>]*aria-label="Whole verse template"/);
 });
 
 test("selected-meter actions remain outside the full meter picker", () => {
@@ -83,7 +85,7 @@ test("branding and public navigation use the compact approved copy", () => {
     assert.match(about, /href="https:\/\/x\.com\/ganeshkrishna"[^>]*>@ganeshkrishna<\/a>/);
 });
 
-test("documentation is linked, concise, and available offline", () => {
+test("documentation includes the searchable, offline meter catalog", () => {
     const index = read("index.html");
     const documentation = read("documentation.html");
 
@@ -92,7 +94,9 @@ test("documentation is linked, concise, and available offline", () => {
     assert.match(documentation, /Show template/);
     assert.match(documentation, /Kannada Kanda/);
     assert.match(documentation, /tea break/);
-    assert.doesNotMatch(documentation, /<script/i);
+    assert.match(documentation, /id="meter-catalog-total"/);
+    assert.match(documentation, /id="meter-catalog-search"/);
+    assert.match(documentation, /src="documentation\.js"/);
 });
 
 test("the provisional Kanda rule packet and attribution are retained", () => {

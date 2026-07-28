@@ -15,6 +15,7 @@ const required = [
     "service-worker.js",
     "icon.svg",
     "documentation.html",
+    "documentation.js",
     "about.html",
     "privacy.html",
     "terms.html",

@@ -253,6 +253,7 @@ test("switches to the Kannada interface", async ({ page }) => {
 
     await expect(page.locator("#page-title")).toHaveText("ಛಂದಸ್ - ಪದ್ಯದಲ್ಲಿ ಹೇಳಿ");
     await expect(page.locator(".intro .eyebrow")).toHaveText("ಛಂದದ ಪದ್ಯದ ಸಂಗಾತಿ");
+    await expect(page.locator(".header-link")).toHaveText("ಕಲಿಯಿರಿ");
     await expect(page.locator("html")).toHaveAttribute("lang", "kn");
 });
 
@@ -266,7 +267,10 @@ test("share options are explicit and default to composition only", async ({ page
 });
 
 test("opens documentation and searches the complete prosody catalog", async ({ page }) => {
-    await page.locator('a[href="documentation.html"]').click();
+    const learnLink = page.locator(".header-link");
+    await expect(learnLink).toBeVisible();
+    await expect(learnLink).toHaveText("Learn");
+    await learnLink.click();
 
     await expect(page).toHaveURL(/documentation\.html$/);
     await expect(page.locator("h1")).toHaveText("How to use Chandas");

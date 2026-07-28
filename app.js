@@ -9,6 +9,7 @@
         en: {
             skip: "Skip to composition",
             brandTagline: "say it in-verse",
+            learn: "Learn",
             language: "Interface language",
             newDraft: "New",
             eyebrow: "A live prosody companion",
@@ -75,6 +76,7 @@
         kn: {
             skip: "ರಚನೆಗೆ ಹೋಗಿ",
             brandTagline: "ಪದ್ಯದಲ್ಲಿ ಹೇಳಿ",
+            learn: "ಕಲಿಯಿರಿ",
             language: "ತೆರೆಯ ಭಾಷೆ",
             newDraft: "ಹೊಸದು",
             eyebrow: "ಛಂದದ ಪದ್ಯದ ಸಂಗಾತಿ",

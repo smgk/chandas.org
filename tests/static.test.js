@@ -89,7 +89,11 @@ test("documentation includes the searchable, offline meter catalog", () => {
     const index = read("index.html");
     const documentation = read("documentation.html");
 
-    assert.match(index, /href="documentation\.html">Documentation<\/a>/);
+    assert.match(
+        index,
+        /class="header-link" href="documentation\.html" data-i18n="learn">Learn<\/a>/
+    );
+    assert.doesNotMatch(index, /<footer[\s\S]*href="documentation\.html"/);
     assert.match(documentation, /How to use Chandas/);
     assert.match(documentation, /Show template/);
     assert.match(documentation, /Kannada Kanda/);

@@ -149,6 +149,26 @@ textarea:focus-visible {
     gap: 0.55rem;
 }
 
+.header-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.45rem;
+    padding: 0.48rem 0.75rem;
+    border: 1px solid color-mix(in srgb, var(--saffron) 35%, var(--line));
+    border-radius: 999px;
+    color: var(--saffron-dark);
+    background: var(--saffron-pale);
+    font-size: 0.85rem;
+    font-weight: 700;
+    line-height: 1.35;
+    text-decoration: none;
+}
+
+.header-link:hover {
+    border-color: var(--saffron);
+    background: #f8d7c3;
+}
+
 .language-control select,
 .quiet-button,
 .icon-button,
@@ -1159,6 +1179,8 @@ textarea:focus-visible {
     }
 
     .site-header {
+        flex-wrap: wrap;
+        gap: 0.65rem;
         padding-top: max(0.75rem, env(safe-area-inset-top));
     }
 

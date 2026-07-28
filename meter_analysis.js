@@ -370,14 +370,14 @@
             let match;
 
             while ((match = delimiter.exec(line.text)) !== null) {
-                appendPada(chunkStart, line.start + match.index);
+                appendPada(chunkStart, line.start + match.index, line);
                 chunkStart = line.start + match.index + match[0].length;
             }
-            appendPada(chunkStart, line.end);
+            appendPada(chunkStart, line.end, line);
             delimiter.lastIndex = 0;
         }
 
-        function appendPada(rawStart, rawEnd) {
+        function appendPada(rawStart, rawEnd, sourceLine) {
             let start = rawStart;
             let end = rawEnd;
             while (start < end && /\s/u.test(stanza.text[start - stanza.start])) {
@@ -395,6 +395,10 @@
 
             padas.push({
                 index: padas.length,
+                lineIndex: sourceLine.index,
+                sourceLineStart: sourceLine.start,
+                sourceLineEnd: sourceLine.end,
+                sourceLineText: sourceLine.text,
                 start,
                 end,
                 text: stanza.text.slice(start - stanza.start, end - stanza.start),
@@ -691,16 +695,23 @@
             const forbidden = Array.isArray(rule.forbiddenPatterns)
                 ? rule.forbiddenPatterns
                 : [];
+            const forbiddenPrefixes = Array.isArray(rule.forbiddenPrefixes)
+                ? rule.forbiddenPrefixes
+                : [];
             const violatesAllowed = allowed.length > 0 && !allowed.includes(group.pattern);
             const violatesForbidden = forbidden.includes(group.pattern);
-            if (!violatesAllowed && !violatesForbidden) {
+            const forbiddenPrefix = forbiddenPrefixes.find((prefix) =>
+                group.pattern.startsWith(prefix));
+            if (!violatesAllowed && !violatesForbidden && !forbiddenPrefix) {
                 continue;
             }
 
             failures += 1;
             const expected = violatesAllowed
                 ? allowed.join(" or ")
-                : `not ${group.pattern}`;
+                : forbiddenPrefix
+                    ? `not beginning ${forbiddenPrefix}`
+                    : `not ${group.pattern}`;
             markGroupRuleViolation(
                 group,
                 rule.violationReason,
@@ -742,6 +753,163 @@
         }
 
         return failures;
+    }
+
+    function repeatingLinePolicy(meter) {
+        return meter.linePolicy &&
+            (meter.linePolicy.type === "repeating" ||
+                meter.linePolicy.type === "variable");
+    }
+
+    function indexedRule(rules, index, meter) {
+        if (!Array.isArray(rules) || rules.length === 0) {
+            return null;
+        }
+        if (repeatingLinePolicy(meter)) {
+            return rules[index % rules.length];
+        }
+        return rules[index] || null;
+    }
+
+    function matraGroupOptions(meter, padaIndex) {
+        const configured = indexedRule(meter.padaGroupOptions, padaIndex, meter);
+        if (Array.isArray(configured) && configured.length > 0) {
+            return configured;
+        }
+        const groups = indexedRule(meter.padaGroups, padaIndex, meter);
+        return Array.isArray(groups) ? [groups] : [];
+    }
+
+    function evaluateMatraPada(pada, groups, globalGroupOffset, padaIndex, meter, shouldMark) {
+        let ruleFailures = 0;
+        let missingCount = 0;
+        const target = groups.reduce((sum, value) => sum + value, 0);
+        const boundaries = new Set();
+        let boundary = 0;
+        groups.slice(0, -1).forEach((group) => {
+            boundary += group;
+            boundaries.add(boundary);
+        });
+
+        let running = 0;
+        let hasExcessFailure = false;
+        for (const syllable of pada.syllables) {
+            const previous = running;
+            running += matraValue(syllable);
+            const crossedBoundary = Array.from(boundaries)
+                .find((value) => previous < value && running > value);
+            if (crossedBoundary !== undefined) {
+                ruleFailures += 1;
+                setViolation(
+                    syllable,
+                    "matra-group-overrun",
+                    `${crossedBoundary} mātrā boundary`,
+                    shouldMark
+                );
+            } else if (previous >= target) {
+                ruleFailures += 1;
+                hasExcessFailure = true;
+                setViolation(syllable, "extra-matra", `${target} mātrās`, shouldMark);
+            }
+        }
+
+        if (running < target) {
+            missingCount += target - running;
+        } else if (running > target && !hasExcessFailure) {
+            ruleFailures += 1;
+            const last = pada.syllables[pada.syllables.length - 1];
+            setViolation(last, "extra-matra", `${target} mātrās`, shouldMark);
+        }
+
+        const collectedGroups = collectMatraGroups(pada, groups, globalGroupOffset);
+        for (const group of collectedGroups) {
+            ruleFailures += evaluateMatraGroupRules(
+                group,
+                pada,
+                padaIndex,
+                meter,
+                shouldMark
+            );
+        }
+
+        return {
+            groups,
+            target,
+            ruleFailures,
+            missingCount
+        };
+    }
+
+    function rhymeKeyForPada(pada) {
+        const syllable = pada && pada.syllables[pada.syllables.length - 1];
+        const config = syllable && SCRIPT_CONFIG[syllable.script];
+        if (!syllable || !config) {
+            return null;
+        }
+        const consonants = codePoints(syllable.text)
+            .filter((point) => inRange(point.cp, config.consonant))
+            .map((point) => point.char)
+            .join("");
+        return consonants ? { key: consonants, syllable } : null;
+    }
+
+    function evaluateLineRelations(padas, meter, shouldMark) {
+        let failures = 0;
+        for (const relation of meter.lineRelations || []) {
+            if (relation.type !== "pairwise-antya-prasa") {
+                continue;
+            }
+            const pairSize = Number.isInteger(relation.pairSize) && relation.pairSize > 1
+                ? relation.pairSize
+                : 2;
+            for (let start = 0; start + pairSize <= padas.length; start += pairSize) {
+                const reference = rhymeKeyForPada(padas[start]);
+                if (!reference) {
+                    continue;
+                }
+                for (let offset = 1; offset < pairSize; offset += 1) {
+                    const current = rhymeKeyForPada(padas[start + offset]);
+                    if (!current || current.syllable.script !== reference.syllable.script ||
+                        current.key === reference.key) {
+                        continue;
+                    }
+                    failures += 1;
+                    setViolation(
+                        current.syllable,
+                        relation.violationReason || "antya-prasa-mismatch",
+                        `ending consonant ${reference.key}`,
+                        shouldMark
+                    );
+                }
+            }
+        }
+        return failures;
+    }
+
+    function mergePadasByLine(padas) {
+        const lines = [];
+        for (const pada of padas) {
+            const previous = lines[lines.length - 1];
+            if (!previous || previous.lineIndex !== pada.lineIndex) {
+                lines.push({
+                    ...pada,
+                    index: lines.length,
+                    start: pada.sourceLineStart,
+                    end: pada.sourceLineEnd,
+                    text: pada.sourceLineText,
+                    syllables: pada.syllables.slice()
+                });
+                continue;
+            }
+            previous.syllables.push(...pada.syllables);
+            previous.pattern = previous.syllables
+                .map((syllable) => syllable.classification).join("");
+            previous.matras = previous.syllables.reduce(
+                (sum, syllable) => sum + matraValue(syllable),
+                0
+            );
+        }
+        return lines;
     }
 
     function evaluateSyllableStructuralMeter(padas, meter, shouldMark) {
@@ -822,13 +990,23 @@
         let ruleFailures = 0;
         let missingCount = 0;
         const expectedPadas = meter.padaGroups || [];
+        const isRepeating = repeatingLinePolicy(meter);
+        const minimumLines = isRepeating
+            ? Math.max(1, Number(meter.linePolicy.min) || 1)
+            : expectedPadas.length;
+        const maximumLines = isRepeating && Number.isInteger(meter.linePolicy.max)
+            ? meter.linePolicy.max
+            : Infinity;
+        const evaluatedLineCount = isRepeating
+            ? Math.max(padas.length, minimumLines)
+            : Math.max(padas.length, expectedPadas.length);
         let globalGroupOffset = 0;
+        let expectedUnits = 0;
 
-        for (let padaIndex = 0; padaIndex < Math.max(padas.length, expectedPadas.length);
-            padaIndex += 1) {
+        for (let padaIndex = 0; padaIndex < evaluatedLineCount; padaIndex += 1) {
             const pada = padas[padaIndex];
-            const groups = expectedPadas[padaIndex];
-            if (!groups) {
+            const options = matraGroupOptions(meter, padaIndex);
+            if (!options.length || padaIndex >= maximumLines) {
                 if (pada) {
                     ruleFailures += pada.syllables.length;
                     pada.syllables.forEach((syllable) =>
@@ -837,72 +1015,55 @@
                 continue;
             }
 
-            const target = groups.reduce((sum, value) => sum + value, 0);
+            const primaryGroups = options[0];
+            const target = primaryGroups.reduce((sum, value) => sum + value, 0);
+            expectedUnits += target;
             if (!pada) {
                 missingCount += target;
-                globalGroupOffset += groups.length;
+                globalGroupOffset += primaryGroups.length;
                 continue;
             }
 
-            const boundaries = new Set();
-            let boundary = 0;
-            groups.slice(0, -1).forEach((group) => {
-                boundary += group;
-                boundaries.add(boundary);
-            });
-
-            let running = 0;
-            let hasExcessFailure = false;
-            for (const syllable of pada.syllables) {
-                const previous = running;
-                running += matraValue(syllable);
-                const crossedBoundary = Array.from(boundaries)
-                    .find((value) => previous < value && running > value);
-                if (crossedBoundary !== undefined) {
-                    ruleFailures += 1;
-                    setViolation(
-                        syllable,
-                        "matra-group-overrun",
-                        `${crossedBoundary} mātrā boundary`,
-                        shouldMark
-                    );
-                } else if (previous >= target) {
-                    ruleFailures += 1;
-                    hasExcessFailure = true;
-                    setViolation(syllable, "extra-matra", `${target} mātrās`, shouldMark);
-                }
-            }
-
-            if (running < target) {
-                missingCount += target - running;
-            } else if (running > target && !hasExcessFailure) {
-                ruleFailures += 1;
-                const last = pada.syllables[pada.syllables.length - 1];
-                setViolation(last, "extra-matra", `${target} mātrās`, shouldMark);
-            }
-
-            const collectedGroups = collectMatraGroups(pada, groups, globalGroupOffset);
-            for (const group of collectedGroups) {
-                ruleFailures += evaluateMatraGroupRules(
-                    group,
+            const candidates = options.map((groups, optionIndex) => ({
+                optionIndex,
+                ...evaluateMatraPada(
                     pada,
+                    groups,
+                    globalGroupOffset,
                     padaIndex,
                     meter,
-                    shouldMark
-                );
-            }
-            globalGroupOffset += groups.length;
+                    false
+                )
+            })).sort((left, right) =>
+                left.ruleFailures - right.ruleFailures ||
+                left.missingCount - right.missingCount ||
+                left.optionIndex - right.optionIndex);
+            const selected = shouldMark
+                ? evaluateMatraPada(
+                    pada,
+                    candidates[0].groups,
+                    globalGroupOffset,
+                    padaIndex,
+                    meter,
+                    true
+                )
+                : candidates[0];
+            ruleFailures += selected.ruleFailures;
+            missingCount += selected.missingCount;
+            globalGroupOffset += selected.groups.length;
         }
 
+        ruleFailures += evaluateLineRelations(padas, meter, shouldMark);
+        const lineCountComplete = isRepeating
+            ? padas.length >= minimumLines && padas.length <= maximumLines
+            : padas.length === expectedPadas.length;
         const result = structuralScore(
             padas,
-            expectedPadas.length,
+            isRepeating ? padas.length : expectedPadas.length,
             ruleFailures,
             missingCount,
-            expectedPadas.reduce(
-                (total, groups) => total + groups.reduce((sum, value) => sum + value, 0),
-                0
-            )
+            expectedUnits,
+            lineCountComplete
         );
         if (result.status === "exact" && meter.ruleCompleteness !== "complete") {
             result.status = "compatible";
@@ -915,9 +1076,12 @@
         expectedPadaCount,
         ruleFailures,
         missingCount,
-        expectedUnits
+        expectedUnits,
+        lineCountComplete
     ) {
-        const complete = padas.length === expectedPadaCount && missingCount === 0;
+        const complete = (lineCountComplete === undefined
+            ? padas.length === expectedPadaCount
+            : lineCountComplete) && missingCount === 0;
         const status = ruleFailures === 0
             ? complete ? "exact" : "compatible"
             : "approximate";
@@ -937,10 +1101,13 @@
     }
 
     function scoreStructuralMeter(padas, meter, shouldMark) {
+        const metricUnits = meter.linePolicy && meter.linePolicy.unit === "line"
+            ? mergePadasByLine(padas)
+            : padas;
         if (meter.kind === "syllable-structural") {
-            return evaluateSyllableStructuralMeter(padas, meter, shouldMark);
+            return evaluateSyllableStructuralMeter(metricUnits, meter, shouldMark);
         }
-        return evaluateMatraMeter(padas, meter, shouldMark);
+        return evaluateMatraMeter(metricUnits, meter, shouldMark);
     }
 
     function rankStructuralMeters(padas, meters) {
@@ -1049,6 +1216,11 @@
 
             const linePatterns = lines.map((line) => line.pattern);
             const padas = parsePadas(stanza, lines);
+            const displayedPadas = selectedMeter &&
+                selectedMeter.linePolicy &&
+                selectedMeter.linePolicy.unit === "line"
+                ? mergePadasByLine(padas)
+                : padas;
             let structuralValidation = null;
             if (selectedMeter && selectedMeter.kind !== "fixed") {
                 structuralValidation = scoreStructuralMeter(padas, selectedMeter, true);
@@ -1077,7 +1249,7 @@
                 lines,
                 padas,
                 patterns: linePatterns,
-                matraPattern: padas.map((pada) => pada.matras),
+                matraPattern: displayedPadas.map((pada) => pada.matras),
                 scripts: Array.from(new Set(lines.map((line) => line.script)
                     .filter((script) => script !== "unknown"))),
                 candidates,
@@ -1099,7 +1271,7 @@
 
         return {
             text: originalText,
-            analysisVersion: "2.2.0",
+            analysisVersion: "2.3.0",
             catalogVersion: catalog && catalog.structuralCatalogVersion
                 ? String(catalog.structuralCatalogVersion)
                 : "",
@@ -1154,6 +1326,8 @@
         parseStanzas,
         rankMeters,
         rankStructuralMeters,
+        rhymeKeyForPada,
+        mergePadasByLine,
         sanitizePattern,
         scoreStructuralMeter,
         segmentLine

@@ -1023,7 +1023,7 @@ textarea:focus-visible {
     font-weight: 650;
 }
 
-.meter-signature {
+.meter-pattern-line .meter-signature {
     display: block;
     max-width: 100%;
     overflow-x: auto;

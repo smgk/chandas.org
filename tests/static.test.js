@@ -108,10 +108,24 @@ test("the provisional Kanda rule packet and attribution are retained", () => {
     const kanda = catalog.meters.find((meter) =>
         meter.id === "structural:kanda-kannada");
 
-    assert.equal(catalog.catalogVersion, "2.0.0");
+    assert.equal(catalog.catalogVersion, "2.1.0");
     assert.equal(kanda.ruleCompleteness, "provisional-rhythm");
     assert.deepEqual(kanda.uncheckedRules, ["prāsa"]);
     assert.ok(fs.existsSync(path.join(root, "docs", "rules", "kanda.md")));
     assert.match(read("THIRD_PARTY_NOTICES.md"), /Chanda Nikasha/);
     assert.match(read("notices.html"), /Kannada Kanda/);
+});
+
+test("the provisional Ragale rule packet and references are retained", () => {
+    const catalog = JSON.parse(read("structural_meters.json"));
+    const ragale = catalog.meters.filter((meter) => meter.id.endsWith("-ragale"));
+
+    assert.equal(ragale.length, 3);
+    assert.deepEqual(
+        ragale.map((meter) => meter.linePolicy.type),
+        ["repeating", "repeating", "repeating"]
+    );
+    assert.ok(fs.existsSync(path.join(root, "docs", "rules", "ragale.md")));
+    assert.match(read("THIRD_PARTY_NOTICES.md"), /Mandānila/);
+    assert.match(read("notices.html"), /Kannada Ragale/);
 });

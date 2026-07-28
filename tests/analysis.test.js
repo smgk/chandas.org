@@ -265,7 +265,7 @@ test("keeps an incomplete structural meter compatible without red violations", (
 
     assert.equal(stanza.violationCount, 0);
     assert.ok(stanza.missingCount > 0);
-    assert.equal(result.analysisVersion, "2.2.0");
+    assert.equal(result.analysisVersion, "2.3.0");
     assert.equal(result.catalogVersion, structuralCatalog.catalogVersion);
 });
 
@@ -360,8 +360,142 @@ test("recognizes the provisional Kannada Kanda characterization fixture", () => 
     );
     assert.equal(stanza.selectedMeter.ruleCompleteness, "provisional-rhythm");
     assert.deepEqual(stanza.selectedMeter.uncheckedRules, ["prāsa"]);
-    assert.equal(result.analysisVersion, "2.2.0");
-    assert.equal(result.catalogVersion, "2.0.0");
+    assert.equal(result.analysisVersion, "2.3.0");
+    assert.equal(result.catalogVersion, "2.1.0");
+});
+
+test("loads all three Ragale forms with repeating line policies", () => {
+    const meters = Chandas.normalizeCatalog(combinedCatalog);
+    const ragale = meters.filter((meter) => meter.id.endsWith("-ragale"));
+
+    assert.deepEqual(ragale.map((meter) => meter.name), [
+        "mandānila ragaḷe",
+        "utsāha ragaḷe",
+        "lalita ragaḷe"
+    ]);
+    ragale.forEach((meter) => {
+        assert.equal(meter.linePolicy.type, "repeating");
+        assert.equal(meter.linePolicy.min, 1);
+        assert.ok(meter.aliases.some((alias) => /ರಗಳೆ/u.test(alias)));
+    });
+});
+
+test("validates unbounded Utsāha Ragale without inventing future lines", () => {
+    const line = textForPattern("GLGLGLGL");
+
+    for (const lineCount of [1, 2, 4, 6]) {
+        const stanza = Chandas.analyzeComposition(
+            Array(lineCount).fill(line).join("\n"),
+            combinedCatalog,
+            "structural:utsaha-ragale"
+        ).stanzas[0];
+        const candidate = stanza.candidates.find((item) =>
+            item.id === "structural:utsaha-ragale");
+
+        assert.equal(stanza.violationCount, 0, `${lineCount} lines`);
+        assert.equal(stanza.missingCount, 0, `${lineCount} lines`);
+        assert.equal(candidate.status, "compatible", `${lineCount} lines`);
+    }
+});
+
+test("keeps Ragale missing units local to the unfinished current line", () => {
+    const stanza = Chandas.analyzeComposition(
+        textForPattern("GLGL"),
+        combinedCatalog,
+        "structural:utsaha-ragale"
+    ).stanzas[0];
+
+    assert.equal(stanza.violationCount, 0);
+    assert.equal(stanza.missingCount, 6);
+    assert.equal(stanza.padas.length, 1);
+});
+
+test("treats danda as transparent inside a repeating Ragale line", () => {
+    const half = textForPattern("GLGL");
+    const text = `${half} । ${half}\n${half} ॥ ${half}`;
+    const stanza = Chandas.analyzeComposition(
+        text,
+        combinedCatalog,
+        "structural:utsaha-ragale"
+    ).stanzas[0];
+
+    assert.equal(stanza.padas.length, 4);
+    assert.equal(stanza.violationCount, 0);
+    assert.equal(stanza.missingCount, 0);
+});
+
+test("accepts both Mandānila group layouts and enforces lagam-varjya", () => {
+    const regular = textForPattern("GLLGLLGLLGLL");
+    const alternate = textForPattern("GLGGLGLGGL");
+
+    for (const line of [regular, alternate]) {
+        const stanza = Chandas.analyzeComposition(
+            `${line}\n${line}`,
+            combinedCatalog,
+            "structural:mandanila-ragale"
+        ).stanzas[0];
+        assert.equal(stanza.violationCount, 0, line);
+        assert.equal(stanza.missingCount, 0, line);
+    }
+
+    const forbidden = textForPattern("LGLGGGGGG");
+    const stanza = Chandas.analyzeComposition(
+        `${forbidden}\n${forbidden}`,
+        combinedCatalog,
+        "structural:mandanila-ragale"
+    ).stanzas[0];
+    const reasons = stanza.padas.flatMap((pada) => pada.syllables)
+        .filter((syllable) => syllable.violation)
+        .map((syllable) => syllable.violationReason);
+
+    assert.equal(
+        reasons.filter((reason) => reason === "forbidden-lagam-opening").length,
+        2
+    );
+});
+
+test("validates Lalita Ragale and marks pairwise antya-prāsa at its source", () => {
+    const line = textForPattern("GGLGGLGGLGGL");
+    const matching = Chandas.analyzeComposition(
+        `${line}\n${line}`,
+        combinedCatalog,
+        "structural:lalita-ragale"
+    ).stanzas[0];
+    assert.deepEqual(matching.matraPattern, [20, 20]);
+    assert.equal(matching.violationCount, 0);
+
+    const mismatchingLine = `${line.slice(0, -1)}ತ`;
+    const text = `${line}\n${mismatchingLine}`;
+    const mismatching = Chandas.analyzeComposition(
+        text,
+        combinedCatalog,
+        "structural:lalita-ragale"
+    ).stanzas[0];
+    const violation = mismatching.padas[1].syllables.at(-1);
+
+    assert.equal(mismatching.violationCount, 1);
+    assert.equal(violation.violationReason, "antya-prasa-mismatch");
+    assert.equal(text.slice(violation.start, violation.end), "ತ");
+});
+
+test("applies repeating Ragale rules in Devanagari and marks line excess", () => {
+    const line = devanagariTextForPattern("GLGLGLGL");
+    const valid = Chandas.analyzeComposition(
+        `${line}\n${line}`,
+        combinedCatalog,
+        "structural:utsaha-ragale"
+    ).stanzas[0];
+    assert.deepEqual(valid.scripts, ["devanagari"]);
+    assert.equal(valid.violationCount, 0);
+    assert.equal(valid.missingCount, 0);
+
+    const excessive = Chandas.analyzeComposition(
+        devanagariTextForPattern("GLGLGLGLG"),
+        combinedCatalog,
+        "structural:utsaha-ragale"
+    ).stanzas[0];
+    assert.ok(excessive.violationCount > 0);
+    assert.equal(excessive.padas[0].syllables.at(-1).violationReason, "extra-matra");
 });
 
 test("enforces Kannada Kanda gaṇa and ending rules at original ranges", () => {

@@ -68,11 +68,50 @@ for (const meter of structuralCatalog.meters) {
         meter.linePolicy.count !== rules.length) {
         throw new Error(`${meter.id} fixed line count does not match its pāda rules`);
     }
+    if (meter.linePolicy &&
+        !["fixed", "repeating", "variable"].includes(meter.linePolicy.type)) {
+        throw new Error(`${meter.id} has an unknown line policy`);
+    }
+    if (meter.linePolicy &&
+        ["repeating", "variable"].includes(meter.linePolicy.type)) {
+        const minimum = meter.linePolicy.min;
+        const maximum = meter.linePolicy.max;
+        if (!Number.isInteger(minimum) || minimum < 1 ||
+            !["line", "pada"].includes(meter.linePolicy.unit || "pada") ||
+            (maximum !== undefined &&
+                (!Number.isInteger(maximum) || maximum < minimum)) ||
+            (meter.linePolicy.previewCount !== undefined &&
+                (!Number.isInteger(meter.linePolicy.previewCount) ||
+                    meter.linePolicy.previewCount < 1))) {
+            throw new Error(`${meter.id} has an invalid repeating-line policy`);
+        }
+    }
     if (meter.kind !== "matra") {
         continue;
     }
 
     const capacities = meter.padaGroups.flat();
+    if (meter.padaGroupOptions !== undefined) {
+        if (!Array.isArray(meter.padaGroupOptions) ||
+            meter.padaGroupOptions.length !== meter.padaGroups.length) {
+            throw new Error(`${meter.id} mātrā-group options must match its line rules`);
+        }
+        meter.padaGroupOptions.forEach((options, lineIndex) => {
+            const primary = meter.padaGroups[lineIndex];
+            const primaryTotal = primary.reduce((sum, value) => sum + value, 0);
+            if (!Array.isArray(options) || options.length < 2) {
+                throw new Error(`${meter.id} line ${lineIndex + 1} needs multiple options`);
+            }
+            options.forEach((option) => {
+                if (!Array.isArray(option) ||
+                    option.length !== primary.length ||
+                    option.reduce((sum, value) => sum + value, 0) !== primaryTotal ||
+                    option.some((value) => !Number.isInteger(value) || value < 1)) {
+                    throw new Error(`${meter.id} has an incompatible mātrā-group option`);
+                }
+            });
+        });
+    }
     for (const [ruleType, groupRules] of [
         ["group", meter.groupRules || []],
         ["boundary", meter.boundaryRules || []]
@@ -110,10 +149,23 @@ for (const meter of structuralCatalog.meters) {
                     }
                 }
             }
+            for (const prefix of rule.forbiddenPrefixes || []) {
+                if (!/^[GL]+$/.test(prefix)) {
+                    throw new Error(`${meter.id} has invalid forbidden prefix ${prefix}`);
+                }
+            }
             if (ruleType === "boundary" &&
                 (!Number.isInteger(rule.afterSyllable) || rule.afterSyllable < 1)) {
                 throw new Error(`${meter.id} boundary rule needs afterSyllable`);
             }
+        }
+    }
+    for (const relation of meter.lineRelations || []) {
+        if (relation.type !== "pairwise-antya-prasa" ||
+            !Number.isInteger(relation.pairSize) ||
+            relation.pairSize < 2 ||
+            !relation.violationReason) {
+            throw new Error(`${meter.id} has an invalid line relationship`);
         }
     }
 }

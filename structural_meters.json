@@ -1,5 +1,5 @@
 {
-  "catalogVersion": "2.0.0",
+  "catalogVersion": "2.1.0",
   "description": "Structural and mātrā meter rules that cannot be represented as one fixed Guru/Laghu string.",
   "meters": [
     {
@@ -141,6 +141,105 @@
       "notes": "Implements the rhythmic and yati rules in the cited rule packet. Prāsa is not yet checked, and the entry remains provisional until the golden corpus is approved."
     },
     {
+      "id": "structural:mandanila-ragale",
+      "name": "mandānila ragaḷe",
+      "aliases": [
+        "mandanila ragale",
+        "mandaanila ragale",
+        "mandanila ragaḷe",
+        "ಮಂದಾನಿಲ ರಗಳೆ",
+        "ಮಂದಾನಿಲರಗಳೆ"
+      ],
+      "kind": "matra",
+      "signatureLines": [
+        "unbounded lines; 4 gaṇas per line",
+        "4+4+4+4 = 16 mātrās; 3+5+3+5 is also accepted",
+        "a gaṇa may not begin LG; adjacent lines use antya-prāsa"
+      ],
+      "ruleCompleteness": "provisional-rhythm",
+      "uncheckedRules": ["śithila-dvitva", "historical variants"],
+      "sourceRef": "ragaleSource",
+      "linePolicy": { "type": "repeating", "unit": "line", "min": 1, "previewCount": 1 },
+      "padaGroups": [[4, 4, 4, 4]],
+      "padaGroupOptions": [
+        [[4, 4, 4, 4], [3, 5, 3, 5]]
+      ],
+      "groupRules": [
+        {
+          "everyGroup": true,
+          "forbiddenPrefixes": ["LG"],
+          "violationReason": "forbidden-lagam-opening"
+        }
+      ],
+      "lineRelations": [
+        {
+          "type": "pairwise-antya-prasa",
+          "pairSize": 2,
+          "violationReason": "antya-prasa-mismatch"
+        }
+      ],
+      "notes": "Checks repeatable line rhythm, the documented 3+5 alternative, lagam restriction, and pairwise end-rhyme. The entry remains provisional pending expert review."
+    },
+    {
+      "id": "structural:utsaha-ragale",
+      "name": "utsāha ragaḷe",
+      "aliases": [
+        "utsaha ragale",
+        "utsaaha ragale",
+        "ಉತ್ಸಾಹ ರಗಳೆ",
+        "ಉತ್ಸಾಹರಗಳೆ"
+      ],
+      "kind": "matra",
+      "signatureLines": [
+        "unbounded lines; 4 gaṇas per line",
+        "3+3+3+3 = 12 mātrās",
+        "adjacent lines use antya-prāsa"
+      ],
+      "ruleCompleteness": "provisional-rhythm",
+      "uncheckedRules": ["śithila-dvitva", "historical variants"],
+      "sourceRef": "ragaleSource",
+      "linePolicy": { "type": "repeating", "unit": "line", "min": 1, "previewCount": 1 },
+      "padaGroups": [[3, 3, 3, 3]],
+      "lineRelations": [
+        {
+          "type": "pairwise-antya-prasa",
+          "pairSize": 2,
+          "violationReason": "antya-prasa-mismatch"
+        }
+      ],
+      "notes": "Checks four three-mātrā gaṇas on every written line and pairwise end-rhyme. The entry remains provisional pending expert review."
+    },
+    {
+      "id": "structural:lalita-ragale",
+      "name": "lalita ragaḷe",
+      "aliases": [
+        "lalita ragale",
+        "lalitha ragale",
+        "ಲಲಿತ ರಗಳೆ",
+        "ಲಲಿತಾ ರಗಳೆ",
+        "ಲಲಿತರಗಳೆ"
+      ],
+      "kind": "matra",
+      "signatureLines": [
+        "unbounded lines; 4 gaṇas per line",
+        "5+5+5+5 = 20 mātrās",
+        "adjacent lines use antya-prāsa"
+      ],
+      "ruleCompleteness": "provisional-rhythm",
+      "uncheckedRules": ["śithila-dvitva", "historical variants"],
+      "sourceRef": "ragaleSource",
+      "linePolicy": { "type": "repeating", "unit": "line", "min": 1, "previewCount": 1 },
+      "padaGroups": [[5, 5, 5, 5]],
+      "lineRelations": [
+        {
+          "type": "pairwise-antya-prasa",
+          "pairSize": 2,
+          "violationReason": "antya-prasa-mismatch"
+        }
+      ],
+      "notes": "Checks four five-mātrā gaṇas on every written line and pairwise end-rhyme. The entry remains provisional pending expert review."
+    },
+    {
       "id": "structural:sugiti",
       "name": "sugīti",
       "aliases": ["sugiti", "sugeeti"],
@@ -193,5 +292,27 @@
       }
     ],
     "notes": "The formal rule encoding is documented in docs/rules/kanda.md. Expert approval remains pending."
+  },
+  "ragaleSource": {
+    "title": "Kannada Ragale rule packet",
+    "references": [
+      {
+        "title": "Ragale, Classical Kannada",
+        "url": "https://shastriyakannada.org/database/english/literature/RAGALE%20%20HTML.htm"
+      },
+      {
+        "title": "Chanda Nikasha: Verification and Identification of meters in Kannada Prosody",
+        "url": "https://kannadakali.com/crav/dev/docs/ChandaNikasha-English.pdf"
+      },
+      {
+        "title": "Ragaḷĕ meter in Harihara's Ragaḷĕgaḷu",
+        "url": "https://etd.library.emory.edu/downloads/k3569460z?locale=e"
+      },
+      {
+        "title": "Ragale rules and examples, Kannada Kanaja",
+        "url": "https://kannadakanaja-vyakarana.blogspot.com/2018/02/blog-post_26.html"
+      }
+    ],
+    "notes": "The formal rule encoding is documented in docs/rules/ragale.md. Expert approval remains pending."
   }
 }

@@ -103,6 +103,8 @@
     function structuralMeter(entry) {
         const aliases = Array.isArray(entry.aliases) ? entry.aliases : [];
         const isMatra = entry.kind === "matra";
+        const repeating = entry.linePolicy &&
+            ["repeating", "variable"].includes(entry.linePolicy.type);
         return {
             ...entry,
             kindLabel: isMatra ? "Mātrā meter" : "Structural syllabic meter",
@@ -114,7 +116,9 @@
                 entry.notes || ""
             ].join(" ")),
             summary: isMatra
-                ? `${entry.padaGroups.length} lines · mātrā groups`
+                ? repeating
+                    ? "repeatable lines · mātrā groups"
+                    : `${entry.padaGroups.length} lines · mātrā groups`
                 : `${entry.padas.length} lines · syllable rules`
         };
     }
@@ -185,9 +189,17 @@
         });
 
         if (meter.kind === "matra") {
-            const lines = meter.padaGroups.map((groups, index) =>
-                `Line ${index + 1}: ${groups.join(" + ")} = ` +
-                `${groups.reduce((sum, value) => sum + value, 0)} mātrās`);
+            const repeating = meter.linePolicy &&
+                ["repeating", "variable"].includes(meter.linePolicy.type);
+            const lines = meter.padaGroups.map((groups, index) => {
+                const options = meter.padaGroupOptions &&
+                    meter.padaGroupOptions[index];
+                const patterns = Array.isArray(options)
+                    ? options.map((option) => option.join(" + ")).join(" or ")
+                    : groups.join(" + ");
+                return `${repeating ? "Each line" : `Line ${index + 1}`}: ` +
+                    `${patterns} = ${groups.reduce((sum, value) => sum + value, 0)} mātrās`;
+            });
             addDefinition(document, definitions, "Line-by-line", lines.join(" · "));
         } else {
             const lines = meter.padas.map((pada, index) => {
@@ -207,7 +219,9 @@
         (meter.groupRules || []).forEach((rule) => {
             const condition = Array.isArray(rule.allowedPatterns)
                 ? `must be ${rule.allowedPatterns.join(" or ")}`
-                : `cannot be ${(rule.forbiddenPatterns || []).join(" or ")}`;
+                : Array.isArray(rule.forbiddenPrefixes)
+                    ? `cannot begin ${(rule.forbiddenPrefixes || []).join(" or ")}`
+                    : `cannot be ${(rule.forbiddenPatterns || []).join(" or ")}`;
             addDefinition(document, definitions, ruleSelector(rule), condition);
         });
         (meter.boundaryRules || []).forEach((rule) => {
@@ -218,6 +232,16 @@
                 `when ${(rule.whenPatterns || []).join(" or ")}, place yati after ` +
                     `syllable ${rule.afterSyllable}`
             );
+        });
+        (meter.lineRelations || []).forEach((relation) => {
+            if (relation.type === "pairwise-antya-prasa") {
+                addDefinition(
+                    document,
+                    definitions,
+                    "Line relationship",
+                    `Each group of ${relation.pairSize} adjacent lines shares its ending consonant`
+                );
+            }
         });
 
         body.append(definitions);

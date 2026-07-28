@@ -46,7 +46,9 @@
             clearSelection: "Clear selected meter",
             showTemplate: "Show template",
             wholeVerseTemplate: "Whole verse template",
+            repeatableTemplate: "Repeatable line template",
             templateLine: "Line {number}",
+            repeatableLine: "Each line",
             exact: "Exact",
             compatible: "Possible",
             approximate: "Closest",
@@ -113,7 +115,9 @@
             clearSelection: "ಆಯ್ದ ಛಂದಸ್ಸನ್ನು ತೆರವುಗೊಳಿಸಿ",
             showTemplate: "ಮಾದರಿಯನ್ನು ತೋರಿಸಿ",
             wholeVerseTemplate: "ಪೂರ್ಣ ಪದ್ಯದ ಮಾದರಿ",
+            repeatableTemplate: "ಪುನರಾವರ್ತಿತ ಸಾಲಿನ ಮಾದರಿ",
             templateLine: "ಸಾಲು {number}",
+            repeatableLine: "ಪ್ರತಿ ಸಾಲು",
             exact: "ಸರಿಯಾಗಿ",
             compatible: "ಸಾಧ್ಯ",
             approximate: "ಸಮೀಪ",
@@ -267,15 +271,25 @@
 
     function structuralPadaGuide(meter, padaIndex, pada, script, wholeLine) {
         if (meter.kind === "matra") {
-            const groups = meter.padaGroups && meter.padaGroups[padaIndex];
+            const repeating = meter.linePolicy &&
+                ["repeating", "variable"].includes(meter.linePolicy.type);
+            const ruleIndex = repeating && meter.padaGroups && meter.padaGroups.length
+                ? padaIndex % meter.padaGroups.length
+                : padaIndex;
+            const groups = meter.padaGroups && meter.padaGroups[ruleIndex];
             if (!groups) {
                 return "";
             }
             const target = groups.reduce((sum, value) => sum + value, 0);
+            const options = meter.padaGroupOptions &&
+                meter.padaGroupOptions[ruleIndex];
+            const groupGuide = Array.isArray(options) && options.length
+                ? options.map((option) => option.join("|")).join(" or ")
+                : groups.join("|");
             return wholeLine
-                ? `${t("matraShort")} ${target} · ${groups.join("|")}`
+                ? `${t("matraShort")} ${target} · ${groupGuide}`
                 : `${t("matraShort")} ${pada ? pada.matras : 0}/${target} · ` +
-                    groups.join("|");
+                    groupGuide;
         }
 
         const rule = meter.padas && meter.padas[padaIndex];
@@ -364,7 +378,10 @@
             "unknown";
         const heading = document.createElement("span");
         heading.className = "whole-template-heading";
-        heading.textContent = t("wholeVerseTemplate");
+        const repeating = meter.linePolicy &&
+            ["repeating", "variable"].includes(meter.linePolicy.type);
+        const templateLabel = repeating ? "repeatableTemplate" : "wholeVerseTemplate";
+        heading.textContent = t(templateLabel);
 
         const lines = document.createElement("span");
         lines.className = "whole-template-lines";
@@ -374,7 +391,9 @@
 
             const label = document.createElement("span");
             label.className = "whole-template-line-label";
-            label.textContent = t("templateLine", { number: lineIndex + 1 });
+            label.textContent = repeating
+                ? t("repeatableLine")
+                : t("templateLine", { number: lineIndex + 1 });
 
             const guide = document.createElement("span");
             guide.className = "whole-template-line-guide";
@@ -388,7 +407,7 @@
             lines.append(row);
         }
 
-        container.setAttribute("aria-label", t("wholeVerseTemplate"));
+        container.setAttribute("aria-label", t(templateLabel));
         container.replaceChildren(heading, lines);
         container.hidden = false;
     }
@@ -406,7 +425,13 @@
 
         const padas = stanza.padas.filter((pada) =>
             pada.start >= line.start && pada.end <= line.end);
-        const pada = padas[padas.length - 1];
+        const pada = meter.linePolicy && meter.linePolicy.unit === "line"
+            ? {
+                index: line.index,
+                syllables: padas.flatMap((item) => item.syllables),
+                matras: padas.reduce((sum, item) => sum + item.matras, 0)
+            }
+            : padas[padas.length - 1];
         return pada
             ? structuralPadaGuide(meter, pada.index, pada, line.script, false)
             : "";

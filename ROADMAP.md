@@ -23,9 +23,10 @@ post-MVP track**, not a distant “more meters someday” item.
 - Fixed Guru/Laghu vṛttas from `mishra.json`.
 - Pathyā Anuṣṭubh, without vipulā variants.
 - Initial Āryā-family detection using published mātrā-group totals.
-- Kanda is currently searchable as an alias of Āryāgīti
-  (`12 | 20 / 12 | 20`), but this is only a group-total approximation. It is
-  not yet full Kannada Kanda validation.
+- First-class provisional Kannada Kanda validation, kept separate from
+  Āryāgīti.
+- Provisional Utsāha, Mandānila, and Lalita Ragaḷe detection with repeatable
+  lines, pairwise antya-prāsa, and no invented future lines.
 - Per-line syllable and mātrā totals, inline violations, meter ranking, and
   ghost templates.
 
@@ -74,8 +75,9 @@ time for scholarly review. They are planning ranges, not release promises.
 
 ### M1 — Generalized Kannada prosody rules
 
-**Status:** In progress; catalog 2.0 group and boundary primitives shipped
-**Target:** Complete repeating/variable-line policies for Ragale
+**Status:** Repeating/variable mātrā-line policies complete in catalog 2.1;
+broader aṃśa and mixed-gaṇa primitives continue with later families
+**Target:** Extend the framework for Ṣaṭpadi line relationships
 **Estimate:** 1–2 weeks
 
 Extend the structural catalog and evaluator so a rule can express:
@@ -130,6 +132,7 @@ silently change the baseline Guru/Laghu classification for every composition.
 
 ### M3 — Ragale family
 
+**Status:** Engineering complete; expert rule/corpus approval pending
 **Target:** After Kanda  
 **Estimate:** 2–3 weeks plus review
 
@@ -314,14 +317,15 @@ or licensing for every bundled corpus.
 
 ## Recommended immediate work
 
-Kanda's first-class catalog entry, gaṇa rules, conditional yati, tests, source
-packet, web UI, and offline Android bundle are implemented in catalog `2.0.0`.
-It remains provisional until the corpus gate receives expert approval.
+Kanda and the three classical Ragaḷe forms now have first-class provisional
+catalog entries, rule packets, source-range validation, ghost guides, tests,
+web UI, and offline-compatible assets through catalog `2.1.0`. Both families
+remain provisional until their corpus gates receive expert approval.
 
-Next, complete M1's repeating/variable-line policy and prepare the Mandānila
-Ragale rule packet. Then implement Mandānila, the other Ragale forms, Bhāminī,
-and the remaining Ṣaṭpadi forms.
+Next, implement M4's six-line relationship model and prepare the Bhāminī
+Ṣaṭpadi rule packet. Then add Bhāminī before proceeding to the remaining five
+Ṣaṭpadi forms.
 
-This puts useful Kannada mātrā/structural detection ahead of synonyms,
-accounts, and cloud synchronization while still allowing the fixed-vṛtta
-strong-template prototype to proceed against stable rule interfaces.
+The fixed-vṛtta strong-template prototype may proceed in parallel against the
+stable rule interfaces, but Kannada strong templates should continue to wait
+for expert-reviewed family rules.

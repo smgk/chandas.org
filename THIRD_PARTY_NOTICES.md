@@ -42,3 +42,18 @@ The provisional Kannada Kanda rhythm rules are documented in
 
 These references are citations for prosodic facts and terminology; their page
 content is not bundled with the application.
+
+The provisional Utsāha, Mandānila, and Lalita Ragaḷe rules are documented in
+`docs/rules/ragale.md` against:
+
+- *Ragale*, Classical Kannada:
+  <https://shastriyakannada.org/database/english/literature/RAGALE%20%20HTML.htm>
+- Vishweshwar V. Dixit's *Chanda Nikasha (Naga-Pingala)*:
+  <https://kannadakali.com/crav/dev/docs/ChandaNikasha-English.pdf>
+- Gil Ben-Herut's discussion of the Ragaḷe meter in Harihara's work:
+  <https://etd.library.emory.edu/downloads/k3569460z?locale=e>
+- *ರಗಳೆ*, Kannada Kanaja:
+  <https://kannadakanaja-vyakarana.blogspot.com/2018/02/blog-post_26.html>
+
+These references supply rule facts and terminology. Their examples and page
+content are not bundled with the application.

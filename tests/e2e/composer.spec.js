@@ -215,6 +215,48 @@ test("finds and validates provisional Kannada Kanda independently", async ({ pag
         ]);
 });
 
+test("finds, guides, and validates all three repeatable Ragale forms", async ({ page }) => {
+    const utsahaLine = "ಕಾ ಕ ಕಾ ಕ ಕಾ ಕ ಕಾ ಕ";
+    const editor = page.locator("#composition");
+    await editor.fill(`${utsahaLine}\n${utsahaLine}`);
+    await page.locator("#meter-picker summary").click();
+    await page.locator("#meter-search").fill("ಉತ್ಸಾಹ ರಗಳೆ");
+    await expect(page.locator("#meter-select option")).toHaveText([
+        "utsāha ragaḷe"
+    ]);
+    await page.locator("#meter-search").fill("utsaha ragale");
+    await page.locator("#meter-select").selectOption("structural:utsaha-ragale");
+    await page.locator("#show-template").check();
+
+    await expect(page.locator("#active-matras"))
+        .toHaveText("Mātrās by pāda: 12 | 12");
+    await expect(page.locator("#validation-summary")).not.toHaveClass(/has-errors/);
+    await expect(page.locator("#whole-verse-template .whole-template-heading"))
+        .toHaveText("Repeatable line template");
+    await expect(page.locator("#whole-verse-template .whole-template-line")).toHaveCount(1);
+    await expect(page.locator("#whole-verse-template .whole-template-line-label"))
+        .toHaveText("Each line");
+    await expect(page.locator("#whole-verse-template .whole-template-line-guide"))
+        .toHaveText("M 12 · 3|3|3|3");
+
+    await editor.fill(`${utsahaLine}\n${utsahaLine.slice(0, -1)}ತ`);
+    await expect(page.locator("#highlight-layer .violation")).toHaveCount(1);
+    await expect(page.locator("#validation-summary")).toHaveClass(/has-errors/);
+
+    const mandanilaAlternate = "ಕಾ ಕ ಕಾ ಕಾ ಕ ಕಾ ಕ ಕಾ ಕಾ ಕ";
+    await editor.fill(`${mandanilaAlternate}\n${mandanilaAlternate}`);
+    await page.locator("#meter-search").fill("mandanila ragale");
+    await page.locator("#meter-select").selectOption("structural:mandanila-ragale");
+    await expect(page.locator("#validation-summary")).not.toHaveClass(/has-errors/);
+    await expect(page.locator("#whole-verse-template .whole-template-line-guide"))
+        .toHaveText("M 16 · 4|4|4|4 or 3|5|3|5");
+
+    await page.locator("#meter-search").fill("lalita ragale");
+    await expect(page.locator("#meter-select option")).toHaveText([
+        "lalita ragaḷe"
+    ]);
+});
+
 test("recovers the anonymous local draft and meter selection", async ({ page }) => {
     const composition = "ಕವಿ\n\nकाव्य";
     await page.locator("#composition").fill(composition);
@@ -276,7 +318,7 @@ test("opens documentation and searches the complete prosody catalog", async ({ p
     await expect(page.locator("h1")).toHaveText("How to use Chandas");
     await expect(page.locator("main")).toContainText("tea break");
     await expect(page.locator("#meter-catalog-status"))
-        .toHaveText("1,358 of 1,358 supported meters shown.");
+        .toHaveText("1,361 of 1,361 supported meters shown.");
 
     await page.locator("#meter-catalog-search").fill("anushtup");
     await expect(page.locator(".meter-catalog-item")).toHaveCount(1);
@@ -286,6 +328,14 @@ test("opens documentation and searches the complete prosody catalog", async ({ p
 
     await page.locator("#meter-catalog-search").fill("madhumalli");
     await expect(page.locator(".meter-catalog-name")).toContainText(["madhumallī"]);
+
+    await page.locator("#meter-catalog-search").fill("mandanila ragale");
+    await expect(page.locator(".meter-catalog-item")).toHaveCount(1);
+    await page.locator(".meter-catalog-item summary").click();
+    await expect(page.locator(".meter-definitions"))
+        .toContainText("4 + 4 + 4 + 4 or 3 + 5 + 3 + 5 = 16 mātrās");
+    await expect(page.locator(".meter-definitions"))
+        .toContainText("Each group of 2 adjacent lines shares its ending consonant");
     await page.getByText("Return to Chandas").click();
     await expect(page.locator("#composition")).toBeVisible();
 });

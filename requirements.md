@@ -469,10 +469,22 @@ analysis result.
 7. Kannada Kanda MUST remain visibly provisional rather than exact until its
    rule packet and golden corpus receive subject-matter approval. Prāsa MUST
    be identified as unchecked until it is implemented.
-8. Laghu contributes one mātrā and Guru contributes two mātrās. The engine
+8. The catalog MUST support repeating or variable line policies with minimum,
+   optional maximum, and guide-preview counts. Such policies MUST validate
+   every written line without inventing missing future lines.
+9. The initial Kannada Ragaḷe release MUST include Utsāha as four three-mātrā
+   gaṇas, Mandānila as four four-mātrā gaṇas, and Lalita as four five-mātrā
+   gaṇas on every repeatable line.
+10. Mandānila MUST also accept the reviewed `3+5+3+5` alternative and MUST
+    reject a gaṇa beginning `LG` under the encoded lagam-varjya rule.
+11. Ragaḷe validation MUST check pairwise antya-prāsa independently from
+    rhythmic matching and attach a mismatch to the ending syllable's original
+    source range. The three forms MUST remain visibly provisional until their
+    rule packet and golden corpus receive subject-matter approval.
+12. Laghu contributes one mātrā and Guru contributes two mātrās. The engine
    MUST expose the observed total for each pāda and MUST mark the source
    syllable that overruns a required group boundary.
-9. Fixed-pattern entries in `mishra.json` MUST remain unchanged. Structural
+13. Fixed-pattern entries in `mishra.json` MUST remain unchanged. Structural
    rules MUST be composed with them at runtime rather than rewriting the source
    list.
 
@@ -773,6 +785,10 @@ The MVP is acceptable when:
 13. Kannada Kanda is cataloged separately from Āryāgīti. Its first engineering
     release checks the sourced rhythm and yati rules, reports prāsa as
     unchecked, and remains provisional pending expert corpus approval.
+14. Utsāha, Mandānila, and Lalita Ragaḷe use an unbounded repeating-line
+    policy. Their first engineering release checks mātrā groups, Mandānila
+    alternatives and lagam, and pairwise end-rhyme while remaining provisional
+    pending expert corpus approval.
 
 ### Remaining review and expansion work
 

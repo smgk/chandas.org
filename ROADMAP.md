@@ -27,6 +27,10 @@ post-MVP track**, not a distant “more meters someday” item.
   Āryāgīti.
 - Provisional Utsāha, Mandānila, and Lalita Ragaḷe detection with repeatable
   lines, pairwise antya-prāsa, and no invented future lines.
+- All six quantitative Ṣaṭpadi forms with complete six-line templates and
+  short/extended-line validation.
+- Provisional aṃśa-frame detection for Tripadi, Sāṅgatya, and all five Akkara
+  forms.
 - Per-line syllable and mātrā totals, inline violations, meter ranking, and
   ghost templates.
 
@@ -165,7 +169,10 @@ For every form:
 
 ### M4 — Ṣaṭpadi family
 
-**Target:** After Ragale  
+**Status:** Engineering complete; expert rule/corpus approval pending
+
+**Target:** Promote from provisional after the corpus gate
+
 **Estimate:** 3–5 weeks plus review
 
 First implement six-line stanza parsing and relationships among lines. Then add:
@@ -192,14 +199,41 @@ The implementation must:
 - keep prāsa and optional literary constraints explainable;
 - provide a structural ghost guide before adding a strong template.
 
-Bhāminī comes first because it is widely represented and already has a useful
-specification candidate. The other five forms ship only as reviewed corpora
-and rules become available.
+The catalog now checks all six forms as full verses and provides six-line
+ghost guides. Their quantitative frames and lagam restriction are encoded;
+ādi-prāsa, historical exceptions, and the golden corpora still require expert
+approval.
 
-### M5 — Strong templates for reviewed meters
+### M5 — Further Kannada meters
+
+**Status:** Core aṃśa frames engineering-complete; expert rule/corpus approval
+pending
+
+**Target:** Promote families individually after their corpus gates
+
+**Estimate:** 3–5 weeks plus review
+
+Initial priority:
+
+- Tripadi
+- Sāṅgatya
+- Piriyakkara, Doreyakkara, Naḍuvaṇakkara, Eḍeyakkara, and Kiriyakkara
+
+The shared evaluator represents Brahma, Viṣṇu, and Rudra aṃśa-gaṇas, gaṇa
+alternatives, required Tripadi positions, yati boundaries, and fixed family
+frames. It deliberately labels melodic substitutions, prāsa, sung repetition,
+and sparsely attested variants as unchecked until reviewed examples settle
+their accepted scope.
+
+Other mātrā, aṃśa, mixed, and regional traditions stay in the backlog and
+follow the same source, corpus, expert-review, versioning, and test gates.
+Meter count is not a success metric; trustworthy results are.
+
+### M6 — Strong templates for reviewed meters
 
 **Target:** Fixed-vṛtta prototype may begin after M1; native Kannada forms
-follow M2–M4  
+follow M2–M5
+
 **Estimate:** 3–5 weeks for the shared editor model, then approximately one
 week per meter-family presentation
 
@@ -215,7 +249,7 @@ week per meter-family presentation
   - mātrā-group capacity for Kanda and Ragale;
   - six-line structural relationships for Ṣaṭpadi.
 
-### M6 — Complete existing structural families
+### M7 — Complete existing structural families
 
 **Estimate:** 2–4 weeks plus review
 
@@ -224,18 +258,6 @@ week per meter-family presentation
   Āryā family.
 - Revisit compatibility scoring between Sanskrit/Prakrit-derived forms and
   Kannada adaptations without merging independently governed traditions.
-
-### M7 — Further Kannada meters
-
-Prioritize from beta feedback and corpus availability:
-
-- Tripadi
-- Sāṅgatya
-- Akkara forms
-- other mātrā, aṃśa, mixed, and regional traditions
-
-Each addition follows the same source, corpus, expert-review, versioning, and
-test gates. Meter count is not a success metric; trustworthy results are.
 
 ### M8 — Synonyms and script expansion
 
@@ -317,15 +339,11 @@ or licensing for every bundled corpus.
 
 ## Recommended immediate work
 
-Kanda and the three classical Ragaḷe forms now have first-class provisional
-catalog entries, rule packets, source-range validation, ghost guides, tests,
-web UI, and offline-compatible assets through catalog `2.1.0`. Both families
-remain provisional until their corpus gates receive expert approval.
+M4 and M5 now have provisional catalog entries, rule packets, source-range
+validation, whole-verse ghost guides, tests, web UI, and offline-compatible
+assets through catalog `3.0.0`. Scholarly review of rules and golden corpora
+remains the promotion gate.
 
-Next, implement M4's six-line relationship model and prepare the Bhāminī
-Ṣaṭpadi rule packet. Then add Bhāminī before proceeding to the remaining five
-Ṣaṭpadi forms.
-
-The fixed-vṛtta strong-template prototype may proceed in parallel against the
-stable rule interfaces, but Kannada strong templates should continue to wait
-for expert-reviewed family rules.
+Next, begin new M6 with a fixed-vṛtta strong-template prototype against the
+stable rule interface. Native Kannada strong templates should be enabled
+family by family only after their rule and corpus reviews.

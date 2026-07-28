@@ -21,6 +21,16 @@ test("documentation search accepts ordinary Roman spellings", () => {
         padaGroups: [[4, 4, 4]]
     });
     assert.match(meter.searchText, /arya/);
+
+    const amsha = structuralMeter({
+        name: "naḍuvaṇakkara",
+        aliases: ["naduvanakkara"],
+        kind: "amsha",
+        signatureLines: ["BVVVR"],
+        amshaGroups: [["B", "V", "V", "V", "R"]]
+    });
+    assert.match(amsha.searchText, /naduvanakkara/);
+    assert.equal(amsha.kindLabel, "Aṃśa meter");
 });
 
 test("documentation expands fixed signatures to the whole four-pāda verse", () => {

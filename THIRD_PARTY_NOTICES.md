@@ -57,3 +57,19 @@ The provisional Utsāha, Mandānila, and Lalita Ragaḷe rules are documented in
 
 These references supply rule facts and terminology. Their examples and page
 content are not bundled with the application.
+
+The provisional six-form Ṣaṭpadi and aṃśa-family rules are documented in
+`docs/rules/shatpadi.md` and `docs/rules/amsha-meters.md` against:
+
+- Nāgavarma's *Canarese Prosody*, Ferdinand Kittel edition:
+  <https://archive.org/details/nagavarmascanare00nagarich>
+- University of Mysore Encyclopaedia, *Kannada Prosody*:
+  <https://kn.wikisource.org/wiki/ಮೈಸೂರು_ವಿಶ್ವವಿದ್ಯಾನಿಲಯ_ವಿಶ್ವಕೋಶ/ಕನ್ನಡ_ಛಂದಸ್ಸು>
+- *Ṣaṭpadi*, Classical Kannada:
+  <https://shastriyakannada.org/database/english/literature/SHATPADI%20HTML.htm>
+- Vishweshwar V. Dixit's *Chanda Nikasha (Naga-Pingala)*:
+  <https://kannadakali.com/crav/dev/docs/ChandaNikasha-English.pdf>
+
+These public references supply prosodic facts, terminology, and catalog
+frames. Their scans, articles, and examples are not bundled with the
+application.

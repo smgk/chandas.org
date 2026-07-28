@@ -265,7 +265,7 @@ test("keeps an incomplete structural meter compatible without red violations", (
 
     assert.equal(stanza.violationCount, 0);
     assert.ok(stanza.missingCount > 0);
-    assert.equal(result.analysisVersion, "2.3.0");
+    assert.equal(result.analysisVersion, "2.4.0");
     assert.equal(result.catalogVersion, structuralCatalog.catalogVersion);
 });
 
@@ -360,8 +360,176 @@ test("recognizes the provisional Kannada Kanda characterization fixture", () => 
     );
     assert.equal(stanza.selectedMeter.ruleCompleteness, "provisional-rhythm");
     assert.deepEqual(stanza.selectedMeter.uncheckedRules, ["prāsa"]);
-    assert.equal(result.analysisVersion, "2.3.0");
-    assert.equal(result.catalogVersion, "2.1.0");
+    assert.equal(result.analysisVersion, "2.4.0");
+    assert.equal(result.catalogVersion, "3.0.0");
+});
+
+test("loads and validates all six quantitative Ṣaṭpadi forms as six-line verses", () => {
+    const meters = Chandas.normalizeCatalog(combinedCatalog);
+    const shatpadis = meters.filter((meter) => meter.id.endsWith("-shatpadi"));
+    const patternForCapacity = {
+        2: "G",
+        3: "GL",
+        4: "GG",
+        5: "GGL"
+    };
+
+    assert.deepEqual(shatpadis.map((meter) => meter.name), [
+        "śara ṣaṭpadi",
+        "kusuma ṣaṭpadi",
+        "bhoga ṣaṭpadi",
+        "bhāminī ṣaṭpadi",
+        "parivardhinī ṣaṭpadi",
+        "vārdhaka ṣaṭpadi"
+    ]);
+    for (const meter of shatpadis) {
+        assert.equal(meter.linePolicy.count, 6, meter.name);
+        const text = meter.padaGroups.map((groups) =>
+            textForPattern(groups.map((capacity) =>
+                patternForCapacity[capacity]).join(""))).join("\n");
+        const stanza = Chandas.analyzeComposition(
+            text,
+            combinedCatalog,
+            meter.id
+        ).stanzas[0];
+        const candidate = stanza.candidates.find((item) => item.id === meter.id);
+
+        assert.equal(stanza.padas.length, 6, meter.name);
+        assert.equal(stanza.violationCount, 0, meter.name);
+        assert.equal(stanza.missingCount, 0, meter.name);
+        assert.equal(candidate.status, "compatible", meter.name);
+        assert.deepEqual(
+            stanza.matraPattern,
+            meter.padaGroups.map((groups) =>
+                groups.reduce((sum, value) => sum + value, 0)),
+            meter.name
+        );
+    }
+});
+
+test("keeps an unfinished Ṣaṭpadi compatible and marks a written line overrun", () => {
+    const partial = Chandas.analyzeComposition(
+        textForPattern("GLGGG"),
+        combinedCatalog,
+        "structural:bhamini-shatpadi"
+    ).stanzas[0];
+    assert.equal(partial.violationCount, 0);
+    assert.ok(partial.missingCount > 0);
+
+    const lines = [
+        textForPattern("GLGGGLGGG"),
+        textForPattern("GLGGGLGG"),
+        textForPattern("GLGGGLGGGLGGG"),
+        textForPattern("GLGGGLGG"),
+        textForPattern("GLGGGLGG"),
+        textForPattern("GLGGGLGGGLGGG")
+    ];
+    const text = lines.join("\n");
+    const excessive = Chandas.analyzeComposition(
+        text,
+        combinedCatalog,
+        "structural:bhamini-shatpadi"
+    ).stanzas[0];
+
+    assert.ok(excessive.violationCount > 0);
+    assert.equal(excessive.padas[0].syllables.at(-1).violationReason, "extra-matra");
+    assert.equal(
+        text.slice(
+            excessive.padas[0].syllables.at(-1).start,
+            excessive.padas[0].syllables.at(-1).end
+        ),
+        excessive.padas[0].syllables.at(-1).text
+    );
+});
+
+test("loads the Tripadi, Sāṅgatya, and five Akkara aṃśa families", () => {
+    const meters = Chandas.normalizeCatalog(combinedCatalog);
+    const amshaMeters = meters.filter((meter) => meter.kind === "amsha");
+
+    assert.deepEqual(amshaMeters.map((meter) => meter.id), [
+        "structural:tripadi-kannada",
+        "structural:sangatya",
+        "structural:piriyakkara",
+        "structural:doreyakkara",
+        "structural:naduvanakkara",
+        "structural:edeyakkara",
+        "structural:kiriyakkara"
+    ]);
+    amshaMeters.forEach((meter) => {
+        assert.equal(meter.linePolicy.count, meter.amshaGroups.length);
+        assert.ok(meter.aliases.some((alias) => /[\u0c80-\u0cff]/u.test(alias)));
+    });
+});
+
+test("validates canonical aṃśa frames and cataloged Piriyakkara alternatives", () => {
+    const classPattern = { B: "GG", V: "GGG", R: "GGGG" };
+    const amshaMeters = structuralCatalog.meters.filter((meter) =>
+        meter.kind === "amsha" && meter.id !== "structural:tripadi-kannada");
+
+    for (const meter of amshaMeters) {
+        const text = meter.amshaGroups.map((slots) =>
+            textForPattern(slots.map((slot) =>
+                classPattern[Array.isArray(slot) ? slot[0] : slot]).join(""))
+        ).join("\n");
+        const stanza = Chandas.analyzeComposition(text, combinedCatalog, meter.id).stanzas[0];
+
+        assert.equal(stanza.violationCount, 0, meter.name);
+        assert.equal(stanza.missingCount, 0, meter.name);
+        assert.equal(
+            stanza.candidates.find((candidate) => candidate.id === meter.id).status,
+            "compatible",
+            meter.name
+        );
+    }
+
+    const piri = structuralCatalog.meters.find((meter) =>
+        meter.id === "structural:piriyakkara");
+    const alternative = piri.amshaGroups.map((slots) =>
+        textForPattern(slots.map((slot) =>
+            classPattern[Array.isArray(slot) ? slot[1] : slot]).join(""))
+    ).join("\n");
+    const stanza = Chandas.analyzeComposition(
+        alternative,
+        combinedCatalog,
+        piri.id
+    ).stanzas[0];
+    assert.equal(stanza.violationCount, 0);
+    assert.equal(stanza.missingCount, 0);
+});
+
+test("enforces the core Tripadi aṃśa positions at original source ranges", () => {
+    const validPatterns = [
+        "GGG".repeat(4),
+        `GGG${"GG"}${"LLGG"}${"GGG"}`,
+        `GGG${"GG"}${"LLGG"}`
+    ];
+    const valid = Chandas.analyzeComposition(
+        validPatterns.map(textForPattern).join("\n"),
+        combinedCatalog,
+        "structural:tripadi-kannada"
+    ).stanzas[0];
+
+    assert.equal(valid.violationCount, 0);
+    assert.equal(valid.missingCount, 0);
+
+    const text = [
+        "GGG".repeat(4),
+        `GGG${"GG"}${"GGG"}${"GGG"}`,
+        `GGG${"GG"}${"GGG"}`
+    ].map(textForPattern).join("\n");
+    const invalid = Chandas.analyzeComposition(
+        text,
+        combinedCatalog,
+        "structural:tripadi-kannada"
+    ).stanzas[0];
+    const violations = invalid.padas.flatMap((pada) => pada.syllables)
+        .filter((syllable) =>
+            syllable.violationReason === "required-double-laghu-opening");
+
+    assert.equal(violations.length, 2);
+    violations.forEach((syllable) => {
+        assert.equal(text.slice(syllable.start, syllable.end), syllable.text);
+    });
 });
 
 test("loads all three Ragale forms with repeating line policies", () => {

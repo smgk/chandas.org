@@ -341,12 +341,15 @@ recommended, and optional behavior.
    Guru/Laghu sequence.
 9. For a mātrā meter, the guide MUST show mātrā-group capacities and progress
    rather than implying that the meter has one mandatory Guru/Laghu sequence.
-10. The guide MUST follow the stanza's selected meter and MUST update or close
+10. For an aṃśa meter, the guide MUST show its Brahma/Viṣṇu/Rudra gaṇa frame
+    and accepted cataloged alternatives rather than inventing fixed syllable
+    weights.
+11. The guide MUST follow the stanza's selected meter and MUST update or close
    predictably when that selection changes or is cleared.
-11. Showing or hiding the guide MUST NOT move the caret, change wrapping,
+12. Showing or hiding the guide MUST NOT move the caret, change wrapping,
    corrupt IME composition, or interfere with selection, undo, redo, paste,
    highlighting, scrolling, or accessibility.
-12. The first-version ghost template MAY assume sequential free-text
+13. The first-version ghost template MAY assume sequential free-text
    composition. It is not required to let the user fill a later empty metrical
    position while earlier positions remain empty.
 
@@ -385,7 +388,7 @@ recommended, and optional behavior.
 3. A fixed vṛtta entry MUST show the complete four-pāda signature, including
    repeated or alternating patterns, and a traditional three-syllable gaṇa
    reading.
-4. A structural or mātrā entry MUST show its line count, signature, group
+4. A structural, mātrā, or aṃśa entry MUST show its line count, signature, group
    totals or syllable constraints, recognition level, and known unchecked
    rules.
 5. The reference MUST explain Laghu, Guru, mātrā, pāda, and gaṇa notation in
@@ -445,7 +448,7 @@ analysis result.
 6. Diagnostics MAY be enabled in development but MUST NOT expose noisy console
    logs or user composition text in production telemetry.
 
-### 6.3 Structural and mātrā catalog
+### 6.3 Structural, mātrā, and aṃśa catalog
 
 1. `structural_meters.json` is the versioned extension catalog for meters that
    cannot be represented faithfully as one fixed Guru/Laghu string.
@@ -487,6 +490,26 @@ analysis result.
 13. Fixed-pattern entries in `mishra.json` MUST remain unchanged. Structural
    rules MUST be composed with them at runtime rather than rewriting the source
    list.
+14. The quantitative Ṣaṭpadi release MUST include Śara, Kusuma, Bhoga,
+    Bhāminī, Parivardhinī, and Vārdhaka as six-line entries. Lines 1, 2, 4,
+    and 5 MUST use each form's short frame; lines 3 and 6 MUST use its extended
+    frame and final two-mātrā cadence.
+15. Selecting a Ṣaṭpadi MUST validate and guide the complete six-line verse.
+    Six lines without the cataloged internal gaṇas MUST NOT be labeled an exact
+    match. Ādi-prāsa and historical variants MUST remain visibly unchecked
+    until reviewed.
+16. The catalog and evaluator MUST represent Brahma, Viṣṇu, and Rudra
+    aṃśa-gaṇas independently from simple mātrā totals, including alternative
+    gaṇa classes in a position.
+17. The initial aṃśa release MUST include the core frames for Kannada Tripadi,
+    Sāṅgatya, Piriyakkara, Doreyakkara, Naḍuvaṇakkara, Eḍeyakkara, and
+    Kiriyakkara. Tripadi MUST encode its 4/4/3 gaṇa line shape, Brahma gaṇas at
+    positions 6 and 10, the documented yati boundaries, and the double-Laghu
+    openings at positions 7 and 11.
+18. Melodic elongation, folk variation, sung repetition, prāsa, and
+    historically documented substitute gaṇas MUST be named as unchecked where
+    the shipped corpus does not yet justify a deterministic validation rule.
+    Such entries MUST remain provisional pending expert approval.
 
 ## 7. User Experience and Accessibility
 

@@ -1,6 +1,6 @@
 {
-  "catalogVersion": "2.1.0",
-  "description": "Structural and mātrā meter rules that cannot be represented as one fixed Guru/Laghu string.",
+  "catalogVersion": "3.0.0",
+  "description": "Structural, mātrā, and aṃśa meter rules that cannot be represented as one fixed Guru/Laghu string.",
   "meters": [
     {
       "id": "structural:anushtubh-pathya",
@@ -139,6 +139,336 @@
         }
       ],
       "notes": "Implements the rhythmic and yati rules in the cited rule packet. Prāsa is not yet checked, and the entry remains provisional until the golden corpus is approved."
+    },
+    {
+      "id": "structural:shara-shatpadi",
+      "name": "śara ṣaṭpadi",
+      "aliases": ["shara shatpadi", "sara shatpadi", "shara satpadi", "ಶರ ಷಟ್ಪದಿ", "ಶರಷಟ್ಪದಿ"],
+      "kind": "matra",
+      "signatureLines": [
+        "8 | 8 | 14 / 8 | 8 | 14 mātrās",
+        "44 | 44 | 444+G / 44 | 44 | 444+G"
+      ],
+      "ruleCompleteness": "provisional-rhythm",
+      "uncheckedRules": ["ādi-prāsa", "historical and sung variants"],
+      "sourceRef": "shatpadiSource",
+      "linePolicy": { "type": "fixed", "unit": "line", "count": 6 },
+      "padaGroups": [
+        [4, 4],
+        [4, 4],
+        [4, 4, 4, 2],
+        [4, 4],
+        [4, 4],
+        [4, 4, 4, 2]
+      ],
+      "groupRules": [
+        {
+          "everyGroup": true,
+          "forbiddenPrefixes": ["LG"],
+          "violationReason": "forbidden-lagam-opening"
+        }
+      ],
+      "notes": "Checks all six quantitative lines and their short/extended relationship. The final two-mātrā cadence may be a Guru or resolved Laghu pair. Literary constraints remain provisional."
+    },
+    {
+      "id": "structural:kusuma-shatpadi",
+      "name": "kusuma ṣaṭpadi",
+      "aliases": ["kusuma shatpadi", "kusuma satpadi", "ಕುಸುಮ ಷಟ್ಪದಿ", "ಕುಸುಮಷಟ್ಪದಿ"],
+      "kind": "matra",
+      "signatureLines": [
+        "10 | 10 | 17 / 10 | 10 | 17 mātrās",
+        "55 | 55 | 555+G / 55 | 55 | 555+G"
+      ],
+      "ruleCompleteness": "provisional-rhythm",
+      "uncheckedRules": ["ādi-prāsa", "historical and sung variants"],
+      "sourceRef": "shatpadiSource",
+      "linePolicy": { "type": "fixed", "unit": "line", "count": 6 },
+      "padaGroups": [
+        [5, 5],
+        [5, 5],
+        [5, 5, 5, 2],
+        [5, 5],
+        [5, 5],
+        [5, 5, 5, 2]
+      ],
+      "groupRules": [
+        {
+          "everyGroup": true,
+          "forbiddenPrefixes": ["LG"],
+          "violationReason": "forbidden-lagam-opening"
+        }
+      ],
+      "notes": "Checks all six quantitative lines and their short/extended relationship. The final two-mātrā cadence may be a Guru or resolved Laghu pair. Literary constraints remain provisional."
+    },
+    {
+      "id": "structural:bhoga-shatpadi",
+      "name": "bhoga ṣaṭpadi",
+      "aliases": ["bhoga shatpadi", "bhoga satpadi", "ಭೋಗ ಷಟ್ಪದಿ", "ಭೋಗಷಟ್ಪದಿ"],
+      "kind": "matra",
+      "signatureLines": [
+        "12 | 12 | 20 / 12 | 12 | 20 mātrās",
+        "3333 | 3333 | 333333+G (repeated)"
+      ],
+      "ruleCompleteness": "provisional-rhythm",
+      "uncheckedRules": ["ādi-prāsa", "historical and sung variants"],
+      "sourceRef": "shatpadiSource",
+      "linePolicy": { "type": "fixed", "unit": "line", "count": 6 },
+      "padaGroups": [
+        [3, 3, 3, 3],
+        [3, 3, 3, 3],
+        [3, 3, 3, 3, 3, 3, 2],
+        [3, 3, 3, 3],
+        [3, 3, 3, 3],
+        [3, 3, 3, 3, 3, 3, 2]
+      ],
+      "groupRules": [
+        {
+          "everyGroup": true,
+          "forbiddenPrefixes": ["LG"],
+          "violationReason": "forbidden-lagam-opening"
+        }
+      ],
+      "notes": "Checks all six quantitative lines and their short/extended relationship. The final two-mātrā cadence may be a Guru or resolved Laghu pair. Literary constraints remain provisional."
+    },
+    {
+      "id": "structural:bhamini-shatpadi",
+      "name": "bhāminī ṣaṭpadi",
+      "aliases": ["bhamini shatpadi", "bhaamini shatpadi", "bhamini satpadi", "ಭಾಮಿನೀ ಷಟ್ಪದಿ", "ಭಾಮಿನಿ ಷಟ್ಪದಿ", "ಭಾಮಿನೀಷಟ್ಪದಿ"],
+      "kind": "matra",
+      "signatureLines": [
+        "14 | 14 | 23 / 14 | 14 | 23 mātrās",
+        "3434 | 3434 | 343434+G (repeated)"
+      ],
+      "ruleCompleteness": "provisional-rhythm",
+      "uncheckedRules": ["ādi-prāsa", "historical and sung variants"],
+      "sourceRef": "shatpadiSource",
+      "linePolicy": { "type": "fixed", "unit": "line", "count": 6 },
+      "padaGroups": [
+        [3, 4, 3, 4],
+        [3, 4, 3, 4],
+        [3, 4, 3, 4, 3, 4, 2],
+        [3, 4, 3, 4],
+        [3, 4, 3, 4],
+        [3, 4, 3, 4, 3, 4, 2]
+      ],
+      "groupRules": [
+        {
+          "everyGroup": true,
+          "forbiddenPrefixes": ["LG"],
+          "violationReason": "forbidden-lagam-opening"
+        }
+      ],
+      "notes": "Checks the alternating three/four-mātrā gaṇas across the complete six-line verse. Literary constraints remain provisional pending expert corpus review."
+    },
+    {
+      "id": "structural:parivardhini-shatpadi",
+      "name": "parivardhinī ṣaṭpadi",
+      "aliases": ["parivardhini shatpadi", "parivardhinee shatpadi", "parivardhini satpadi", "ಪರಿವರ್ಧಿನೀ ಷಟ್ಪದಿ", "ಪರಿವರ್ಧಿನಿ ಷಟ್ಪದಿ", "ಪರಿವರ್ಧಿನೀಷಟ್ಪದಿ"],
+      "kind": "matra",
+      "signatureLines": [
+        "16 | 16 | 26 / 16 | 16 | 26 mātrās",
+        "4444 | 4444 | 444444+G (repeated)"
+      ],
+      "ruleCompleteness": "provisional-rhythm",
+      "uncheckedRules": ["ādi-prāsa", "historical and sung variants"],
+      "sourceRef": "shatpadiSource",
+      "linePolicy": { "type": "fixed", "unit": "line", "count": 6 },
+      "padaGroups": [
+        [4, 4, 4, 4],
+        [4, 4, 4, 4],
+        [4, 4, 4, 4, 4, 4, 2],
+        [4, 4, 4, 4],
+        [4, 4, 4, 4],
+        [4, 4, 4, 4, 4, 4, 2]
+      ],
+      "groupRules": [
+        {
+          "everyGroup": true,
+          "forbiddenPrefixes": ["LG"],
+          "violationReason": "forbidden-lagam-opening"
+        }
+      ],
+      "notes": "Checks all six quantitative lines, including the extended third and sixth lines. Literary constraints remain provisional pending expert corpus review."
+    },
+    {
+      "id": "structural:vardhaka-shatpadi",
+      "name": "vārdhaka ṣaṭpadi",
+      "aliases": ["vardhaka shatpadi", "vaardhaka shatpadi", "vardhika shatpadi", "vartika shatpadi", "ವಾರ್ಧಕ ಷಟ್ಪದಿ", "ವಾರ್ಧಕಷಟ್ಪದಿ"],
+      "kind": "matra",
+      "signatureLines": [
+        "20 | 20 | 32 / 20 | 20 | 32 mātrās",
+        "5555 | 5555 | 555555+G (repeated)"
+      ],
+      "ruleCompleteness": "provisional-rhythm",
+      "uncheckedRules": ["ādi-prāsa", "historical and sung variants"],
+      "sourceRef": "shatpadiSource",
+      "linePolicy": { "type": "fixed", "unit": "line", "count": 6 },
+      "padaGroups": [
+        [5, 5, 5, 5],
+        [5, 5, 5, 5],
+        [5, 5, 5, 5, 5, 5, 2],
+        [5, 5, 5, 5],
+        [5, 5, 5, 5],
+        [5, 5, 5, 5, 5, 5, 2]
+      ],
+      "groupRules": [
+        {
+          "everyGroup": true,
+          "forbiddenPrefixes": ["LG"],
+          "violationReason": "forbidden-lagam-opening"
+        }
+      ],
+      "notes": "Checks four five-mātrā gaṇas in the short lines and six plus the final cadence in lines three and six. Literary constraints remain provisional."
+    },
+    {
+      "id": "structural:tripadi-kannada",
+      "name": "tripadi (Kannada)",
+      "aliases": ["tripadi", "tripadhi", "tivadi", "trivadi", "ತ್ರಿಪದಿ", "ತಿವದಿ", "ತ್ರಿವಳಿ"],
+      "kind": "amsha",
+      "signatureLines": [
+        "3 lines · 4 | 4 | 3 aṃśa-gaṇas",
+        "VVVV | VBVV | VBV; gaṇas 6 and 10 are Brahma"
+      ],
+      "ruleCompleteness": "provisional-rhythm",
+      "uncheckedRules": ["dvitīyākṣara-prāsa", "sung repetition", "rare gaṇa substitutions"],
+      "sourceRef": "amshaSource",
+      "linePolicy": { "type": "fixed", "unit": "line", "count": 3 },
+      "amshaGroups": [
+        ["V", "V", "V", "V"],
+        ["V", "B", "V", "V"],
+        ["V", "B", "V"]
+      ],
+      "groupRules": [
+        {
+          "globalGroups": [7, 11],
+          "allowedPrefixes": ["LL"],
+          "violationReason": "required-double-laghu-opening"
+        }
+      ],
+      "lineBoundaryRules": [
+        {
+          "padas": [1],
+          "afterGroup": 2,
+          "violationReason": "required-yati"
+        },
+        {
+          "padas": [2],
+          "afterGroup": 3,
+          "violationReason": "required-yati"
+        }
+      ],
+      "notes": "Checks the core aṃśa frame and required Brahma positions. Tripadi has flexible sung and folk realizations, so substitutions and prāsa remain explicitly unchecked."
+    },
+    {
+      "id": "structural:sangatya",
+      "name": "sāṅgatya",
+      "aliases": ["sangatya", "saangatya", "sangathya", "ಸಾಂಗತ್ಯ"],
+      "kind": "amsha",
+      "signatureLines": [
+        "4 lines · paired half-verses",
+        "VVVV | VVB / VVVV | VVB"
+      ],
+      "ruleCompleteness": "provisional-rhythm",
+      "uncheckedRules": ["prāsa", "melodic elongation", "documented substitute gaṇas"],
+      "sourceRef": "amshaSource",
+      "linePolicy": { "type": "fixed", "unit": "line", "count": 4 },
+      "amshaGroups": [
+        ["V", "V", "V", "V"],
+        ["V", "V", "B"],
+        ["V", "V", "V", "V"],
+        ["V", "V", "B"]
+      ],
+      "notes": "Checks the common Sāṅgatya aṃśa frame. Melodic substitutions are historically normal and remain compatible rather than being silently rejected as a complete rule."
+    },
+    {
+      "id": "structural:piriyakkara",
+      "name": "piriyakkara",
+      "aliases": ["piri akkara", "piriyakkara", "mahakshara", "mahākṣara", "ಪಿರಿಯಕ್ಕರ", "ಪಿರಿಯ ಅಕ್ಕರ"],
+      "kind": "amsha",
+      "signatureLines": ["4 lines · 7 aṃśa-gaṇas each", "B(V/B)V(V/B)VVR"],
+      "ruleCompleteness": "provisional-rhythm",
+      "uncheckedRules": ["prāsa", "sung substitutions beyond gaṇas 2 and 4"],
+      "sourceRef": "amshaSource",
+      "linePolicy": { "type": "fixed", "unit": "line", "count": 4 },
+      "amshaGroups": [
+        ["B", ["V", "B"], "V", ["V", "B"], "V", "V", "R"],
+        ["B", ["V", "B"], "V", ["V", "B"], "V", "V", "R"],
+        ["B", ["V", "B"], "V", ["V", "B"], "V", "V", "R"],
+        ["B", ["V", "B"], "V", ["V", "B"], "V", "V", "R"]
+      ],
+      "notes": "Checks the classical seven-gaṇa frame and the specifically documented Brahma alternatives in positions two and four. Broader sung substitutions remain unchecked."
+    },
+    {
+      "id": "structural:doreyakkara",
+      "name": "doreyakkara",
+      "aliases": ["dore akkara", "doreyakkara", "samanakshara", "samānākṣara", "ದೊರೆಯಕ್ಕರ", "ದೊರೆ ಅಕ್ಕರ"],
+      "kind": "amsha",
+      "signatureLines": ["4 lines · 6 aṃśa-gaṇas each", "VVBVVB"],
+      "ruleCompleteness": "provisional-rhythm",
+      "uncheckedRules": ["prāsa", "documented substitute gaṇas"],
+      "sourceRef": "amshaSource",
+      "linePolicy": { "type": "fixed", "unit": "line", "count": 4 },
+      "amshaGroups": [
+        ["V", "V", "B", "V", "V", "B"],
+        ["V", "V", "B", "V", "V", "B"],
+        ["V", "V", "B", "V", "V", "B"],
+        ["V", "V", "B", "V", "V", "B"]
+      ],
+      "notes": "Checks the classical six-gaṇa frame. The source records broad optional substitutions, which await an expert-reviewed corpus."
+    },
+    {
+      "id": "structural:naduvanakkara",
+      "name": "naḍuvaṇakkara",
+      "aliases": ["naduvanakkara", "nadu akkara", "madhyakshara", "madhyākṣara", "ನಡುವಣಕ್ಕರ", "ನಡುವಕ್ಕರ", "ನಡು ಅಕ್ಕರ"],
+      "kind": "amsha",
+      "signatureLines": ["4 lines · 5 aṃśa-gaṇas each", "BVVVR"],
+      "ruleCompleteness": "provisional-rhythm",
+      "uncheckedRules": ["prāsa", "documented substitute gaṇas"],
+      "sourceRef": "amshaSource",
+      "linePolicy": { "type": "fixed", "unit": "line", "count": 4 },
+      "amshaGroups": [
+        ["B", "V", "V", "V", "R"],
+        ["B", "V", "V", "V", "R"],
+        ["B", "V", "V", "V", "R"],
+        ["B", "V", "V", "V", "R"]
+      ],
+      "notes": "Checks the classical five-gaṇa frame. Optional sung substitutions remain explicitly provisional."
+    },
+    {
+      "id": "structural:edeyakkara",
+      "name": "eḍeyakkara",
+      "aliases": ["edeyakkara", "ede akkara", "antarakshara", "antarākṣara", "ಎಡೆಯಕ್ಕರ", "ಎಡೆ ಅಕ್ಕರ"],
+      "kind": "amsha",
+      "signatureLines": ["4 lines · 4 aṃśa-gaṇas each", "BVVR"],
+      "ruleCompleteness": "provisional-rhythm",
+      "uncheckedRules": ["prāsa", "documented substitute gaṇas"],
+      "sourceRef": "amshaSource",
+      "linePolicy": { "type": "fixed", "unit": "line", "count": 4 },
+      "amshaGroups": [
+        ["B", "V", "V", "R"],
+        ["B", "V", "V", "R"],
+        ["B", "V", "V", "R"],
+        ["B", "V", "V", "R"]
+      ],
+      "notes": "Checks the classical four-gaṇa frame. Optional sung substitutions remain explicitly provisional."
+    },
+    {
+      "id": "structural:kiriyakkara",
+      "name": "kiriyakkara",
+      "aliases": ["kiri akkara", "kiriyakkara", "alpakshara", "alpākṣara", "ಕಿರಿಯಕ್ಕರ", "ಕಿರಿ ಅಕ್ಕರ"],
+      "kind": "amsha",
+      "signatureLines": ["4 lines · 3 aṃśa-gaṇas each", "VVR"],
+      "ruleCompleteness": "provisional-rhythm",
+      "uncheckedRules": ["prāsa", "documented substitute gaṇas"],
+      "sourceRef": "amshaSource",
+      "linePolicy": { "type": "fixed", "unit": "line", "count": 4 },
+      "amshaGroups": [
+        ["V", "V", "R"],
+        ["V", "V", "R"],
+        ["V", "V", "R"],
+        ["V", "V", "R"]
+      ],
+      "notes": "Checks the classical three-gaṇa frame. Optional sung substitutions remain explicitly provisional."
     },
     {
       "id": "structural:mandanila-ragale",
@@ -314,5 +644,45 @@
       }
     ],
     "notes": "The formal rule encoding is documented in docs/rules/ragale.md. Expert approval remains pending."
+  },
+  "shatpadiSource": {
+    "title": "Kannada Ṣaṭpadi rule packet",
+    "references": [
+      {
+        "title": "Nāgavarma's Canarese Prosody, Kittel edition, rules 288–313",
+        "url": "https://archive.org/details/nagavarmascanare00nagarich"
+      },
+      {
+        "title": "Kannada Prosody, University of Mysore Encyclopaedia",
+        "url": "https://kn.wikisource.org/wiki/ಮೈಸೂರು_ವಿಶ್ವವಿದ್ಯಾನಿಲಯ_ವಿಶ್ವಕೋಶ/ಕನ್ನಡ_ಛಂದಸ್ಸು"
+      },
+      {
+        "title": "Ṣaṭpadi, Classical Kannada",
+        "url": "https://shastriyakannada.org/database/english/literature/SHATPADI%20HTML.htm"
+      },
+      {
+        "title": "Chanda Nikasha: Verification and Identification of meters in Kannada Prosody",
+        "url": "https://kannadakali.com/crav/dev/docs/ChandaNikasha-English.pdf"
+      }
+    ],
+    "notes": "The formal encoding is documented in docs/rules/shatpadi.md. Ādi-prāsa and historical variants await expert review."
+  },
+  "amshaSource": {
+    "title": "Kannada aṃśa-meter rule packet",
+    "references": [
+      {
+        "title": "Nāgavarma's Canarese Prosody, Kittel edition, rules 271–281",
+        "url": "https://archive.org/details/nagavarmascanare00nagarich"
+      },
+      {
+        "title": "Kannada Prosody, University of Mysore Encyclopaedia",
+        "url": "https://kn.wikisource.org/wiki/ಮೈಸೂರು_ವಿಶ್ವವಿದ್ಯಾನಿಲಯ_ವಿಶ್ವಕೋಶ/ಕನ್ನಡ_ಛಂದಸ್ಸು"
+      },
+      {
+        "title": "Chanda Nikasha: Verification and Identification of meters in Kannada Prosody",
+        "url": "https://kannadakali.com/crav/dev/docs/ChandaNikasha-English.pdf"
+      }
+    ],
+    "notes": "The aṃśa class patterns and family frames are documented in docs/rules/amsha-meters.md. Flexible sung substitutions and prāsa await expert review."
   }
 }

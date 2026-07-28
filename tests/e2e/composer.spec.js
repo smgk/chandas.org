@@ -257,6 +257,62 @@ test("finds, guides, and validates all three repeatable Ragale forms", async ({ 
     ]);
 });
 
+test("shows complete Ṣaṭpadi and aṃśa ghost frames", async ({ page }) => {
+    const textForPattern = (pattern) =>
+        Array.from(pattern, (weight) => weight === "G" ? "ಕಾ" : "ಕ").join(" ");
+    const short = textForPattern("GLGGGLGG");
+    const extended = textForPattern("GLGGGLGGGLGGG");
+    await page.locator("#composition").fill([
+        short,
+        short,
+        extended,
+        short,
+        short,
+        extended
+    ].join("\n"));
+    await page.locator("#meter-picker summary").click();
+    await page.locator("#meter-search").fill("bhamini shatpadi");
+    await expect(page.locator("#meter-select option")).toHaveText([
+        "bhāminī ṣaṭpadi"
+    ]);
+    await page.locator("#meter-select").selectOption("structural:bhamini-shatpadi");
+    await page.locator("#show-template").check();
+
+    await expect(page.locator("#selected-meter-signature"))
+        .toContainText("14 | 14 | 23 / 14 | 14 | 23 mātrās");
+    await expect(page.locator("#validation-summary")).not.toHaveClass(/has-errors/);
+    await expect(page.locator("#whole-verse-template .whole-template-line")).toHaveCount(6);
+    await expect(page.locator("#whole-verse-template .whole-template-line-guide"))
+        .toHaveText([
+            "M 14 · 3|4|3|4",
+            "M 14 · 3|4|3|4",
+            "M 23 · 3|4|3|4|3|4|2",
+            "M 14 · 3|4|3|4",
+            "M 14 · 3|4|3|4",
+            "M 23 · 3|4|3|4|3|4|2"
+        ]);
+
+    const longAmshaLine = Array(12).fill("ಕಾ").join(" ");
+    const shortAmshaLine = Array(8).fill("ಕಾ").join(" ");
+    await page.locator("#composition").fill([
+        longAmshaLine,
+        shortAmshaLine,
+        longAmshaLine,
+        shortAmshaLine
+    ].join("\n"));
+    await page.locator("#meter-search").fill("sangatya");
+    await page.locator("#meter-select").selectOption("structural:sangatya");
+
+    await expect(page.locator("#validation-summary")).not.toHaveClass(/has-errors/);
+    await expect(page.locator("#whole-verse-template .whole-template-line-guide"))
+        .toHaveText([
+            "aṃśa · ವಿ|ವಿ|ವಿ|ವಿ",
+            "aṃśa · ವಿ|ವಿ|ಬ್ರ",
+            "aṃśa · ವಿ|ವಿ|ವಿ|ವಿ",
+            "aṃśa · ವಿ|ವಿ|ಬ್ರ"
+        ]);
+});
+
 test("recovers the anonymous local draft and meter selection", async ({ page }) => {
     const composition = "ಕವಿ\n\nकाव्य";
     await page.locator("#composition").fill(composition);
@@ -318,7 +374,7 @@ test("opens documentation and searches the complete prosody catalog", async ({ p
     await expect(page.locator("h1")).toHaveText("How to use Chandas");
     await expect(page.locator("main")).toContainText("tea break");
     await expect(page.locator("#meter-catalog-status"))
-        .toHaveText("1,361 of 1,361 supported meters shown.");
+        .toHaveText("1,374 of 1,374 supported meters shown.");
 
     await page.locator("#meter-catalog-search").fill("anushtup");
     await expect(page.locator(".meter-catalog-item")).toHaveCount(1);

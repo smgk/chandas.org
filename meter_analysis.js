@@ -15,6 +15,19 @@
 
     const LAGHU = "L";
     const GURU = "G";
+    const AMSHA_PATTERNS = Object.freeze({
+        B: Object.freeze(["GG", "LLG", "GL", "LLL"]),
+        V: Object.freeze([
+            "GGG", "LLGG", "GLG", "LLLG",
+            "GGL", "LLGL", "GLL", "LLLL"
+        ]),
+        R: Object.freeze([
+            "GGGG", "LLGGG", "GLGG", "LLLGG",
+            "GGLG", "LLGLG", "GLLG", "LLLLG",
+            "GGGL", "LLGGL", "GLGL", "LLLGL",
+            "GGLL", "LLGLL", "GLLL", "LLLLL"
+        ])
+    });
 
     const SCRIPT_CONFIG = {
         devanagari: {
@@ -464,7 +477,8 @@
             : [];
         const structuralMeters = structuralEntries
             .filter((entry) => entry && entry.id && entry.name &&
-                (entry.kind === "matra" || entry.kind === "syllable-structural"))
+                (entry.kind === "matra" || entry.kind === "amsha" ||
+                    entry.kind === "syllable-structural"))
             .map((entry, index) => ({
                 ...entry,
                 id: String(entry.id),
@@ -698,17 +712,25 @@
             const forbiddenPrefixes = Array.isArray(rule.forbiddenPrefixes)
                 ? rule.forbiddenPrefixes
                 : [];
+            const allowedPrefixes = Array.isArray(rule.allowedPrefixes)
+                ? rule.allowedPrefixes
+                : [];
             const violatesAllowed = allowed.length > 0 && !allowed.includes(group.pattern);
             const violatesForbidden = forbidden.includes(group.pattern);
             const forbiddenPrefix = forbiddenPrefixes.find((prefix) =>
                 group.pattern.startsWith(prefix));
-            if (!violatesAllowed && !violatesForbidden && !forbiddenPrefix) {
+            const violatesAllowedPrefix = allowedPrefixes.length > 0 &&
+                !allowedPrefixes.some((prefix) => group.pattern.startsWith(prefix));
+            if (!violatesAllowed && !violatesForbidden && !forbiddenPrefix &&
+                !violatesAllowedPrefix) {
                 continue;
             }
 
             failures += 1;
             const expected = violatesAllowed
                 ? allowed.join(" or ")
+                : violatesAllowedPrefix
+                    ? `beginning ${allowedPrefixes.join(" or ")}`
                 : forbiddenPrefix
                     ? `not beginning ${forbiddenPrefix}`
                     : `not ${group.pattern}`;
@@ -753,6 +775,243 @@
         }
 
         return failures;
+    }
+
+    function amshaSlotClasses(slot) {
+        const classes = Array.isArray(slot) ? slot : [slot];
+        return classes.map((item) => String(item || "").toUpperCase())
+            .filter((item) => AMSHA_PATTERNS[item]);
+    }
+
+    function amshaSlotPatterns(slot) {
+        return Array.from(new Set(amshaSlotClasses(slot)
+            .flatMap((item) => AMSHA_PATTERNS[item])));
+    }
+
+    function amshaGroupLabel(slot) {
+        return amshaSlotClasses(slot).join("/") || "?";
+    }
+
+    function matchAmshaPada(pada, slots, globalGroupOffset) {
+        const actual = pada.pattern;
+        let states = [{
+            position: 0,
+            groups: []
+        }];
+        const completedLevels = [states];
+
+        for (let slotIndex = 0; slotIndex < slots.length; slotIndex += 1) {
+            const patterns = amshaSlotPatterns(slots[slotIndex]);
+            const nextByPosition = new Map();
+            for (const state of states) {
+                for (const pattern of patterns) {
+                    if (!actual.startsWith(pattern, state.position)) {
+                        continue;
+                    }
+                    const end = state.position + pattern.length;
+                    const candidate = {
+                        position: end,
+                        groups: state.groups.concat({
+                            localIndex: slotIndex + 1,
+                            globalIndex: globalGroupOffset + slotIndex + 1,
+                            expectedClass: amshaGroupLabel(slots[slotIndex]),
+                            pattern,
+                            complete: true,
+                            overrun: false,
+                            syllables: pada.syllables.slice(state.position, end)
+                        })
+                    };
+                    if (!nextByPosition.has(end)) {
+                        nextByPosition.set(end, candidate);
+                    }
+                }
+            }
+            states = Array.from(nextByPosition.values());
+            completedLevels.push(states);
+            if (!states.length) {
+                break;
+            }
+        }
+
+        const exact = states.find((state) =>
+            state.groups.length === slots.length && state.position === actual.length);
+        if (exact) {
+            return {
+                groups: exact.groups,
+                ruleFailures: 0,
+                missingCount: 0,
+                invalidIndex: -1,
+                extraStart: -1
+            };
+        }
+
+        const completeWithExtra = states
+            .filter((state) => state.groups.length === slots.length)
+            .sort((left, right) => right.position - left.position)[0];
+        if (completeWithExtra && completeWithExtra.position < actual.length) {
+            return {
+                groups: completeWithExtra.groups,
+                ruleFailures: actual.length - completeWithExtra.position,
+                missingCount: 0,
+                invalidIndex: -1,
+                extraStart: completeWithExtra.position
+            };
+        }
+
+        let bestPartial = null;
+        for (let level = 0; level < completedLevels.length; level += 1) {
+            for (const state of completedLevels[level]) {
+                if (state.position > actual.length) {
+                    continue;
+                }
+                const remaining = actual.slice(state.position);
+                const nextSlot = slots[state.groups.length];
+                const isPrefix = remaining.length === 0 ||
+                    (nextSlot && amshaSlotPatterns(nextSlot)
+                        .some((pattern) => pattern.startsWith(remaining)));
+                if (!isPrefix) {
+                    continue;
+                }
+                if (!bestPartial || state.position > bestPartial.position ||
+                    (state.position === bestPartial.position &&
+                        state.groups.length > bestPartial.groups.length)) {
+                    bestPartial = state;
+                }
+            }
+        }
+        if (bestPartial && (bestPartial.position === actual.length ||
+            amshaSlotPatterns(slots[bestPartial.groups.length] || [])
+                .some((pattern) => pattern.startsWith(
+                    actual.slice(bestPartial.position))))) {
+            return {
+                groups: bestPartial.groups,
+                ruleFailures: 0,
+                missingCount: Math.max(1, slots.length - bestPartial.groups.length),
+                invalidIndex: -1,
+                extraStart: -1
+            };
+        }
+
+        const allStates = completedLevels.flat();
+        const best = allStates.sort((left, right) =>
+            right.position - left.position ||
+            right.groups.length - left.groups.length)[0] || {
+            position: 0,
+            groups: []
+        };
+        return {
+            groups: best.groups,
+            ruleFailures: 1,
+            missingCount: Math.max(0, slots.length - best.groups.length - 1),
+            invalidIndex: Math.min(best.position, Math.max(0, actual.length - 1)),
+            extraStart: -1
+        };
+    }
+
+    function evaluateLineBoundaryRules(pada, groups, padaIndex, meter, shouldMark) {
+        let failures = 0;
+        for (const rule of meter.lineBoundaryRules || []) {
+            if (Array.isArray(rule.padas) && !rule.padas.includes(padaIndex + 1)) {
+                continue;
+            }
+            const boundaryIndex = Number(rule.afterGroup);
+            const beforeGroup = groups[boundaryIndex - 1];
+            const afterGroup = groups[boundaryIndex];
+            const before = beforeGroup && beforeGroup.syllables.at(-1);
+            const after = afterGroup && afterGroup.syllables[0];
+            if (!before || !after) {
+                continue;
+            }
+            const gap = pada.text.slice(
+                before.end - pada.start,
+                after.start - pada.start
+            );
+            if (gap && METRIC_BOUNDARY_RE.test(gap)) {
+                continue;
+            }
+            failures += 1;
+            setViolation(
+                after,
+                rule.violationReason || "required-yati",
+                `boundary after gaṇa ${boundaryIndex}`,
+                shouldMark
+            );
+        }
+        return failures;
+    }
+
+    function evaluateAmshaMeter(padas, meter, shouldMark) {
+        let ruleFailures = 0;
+        let missingCount = 0;
+        let expectedUnits = 0;
+        let globalGroupOffset = 0;
+        const expectedPadas = meter.amshaGroups || [];
+        const lineCount = Math.max(padas.length, expectedPadas.length);
+
+        for (let padaIndex = 0; padaIndex < lineCount; padaIndex += 1) {
+            const pada = padas[padaIndex];
+            const slots = expectedPadas[padaIndex];
+            if (!slots) {
+                if (pada) {
+                    ruleFailures += pada.syllables.length;
+                    pada.syllables.forEach((syllable) =>
+                        setViolation(syllable, "extra-pada", "", shouldMark));
+                }
+                continue;
+            }
+            expectedUnits += slots.length;
+            if (!pada) {
+                missingCount += slots.length;
+                globalGroupOffset += slots.length;
+                continue;
+            }
+
+            const matched = matchAmshaPada(pada, slots, globalGroupOffset);
+            ruleFailures += matched.ruleFailures;
+            missingCount += matched.missingCount;
+            if (shouldMark && matched.extraStart >= 0) {
+                pada.syllables.slice(matched.extraStart).forEach((syllable) =>
+                    setViolation(syllable, "extra-amsha", "", true));
+            } else if (shouldMark && matched.invalidIndex >= 0) {
+                const syllable = pada.syllables[matched.invalidIndex];
+                setViolation(
+                    syllable,
+                    "invalid-amsha-gana",
+                    amshaGroupLabel(slots[matched.groups.length]),
+                    true
+                );
+            }
+            for (const group of matched.groups) {
+                ruleFailures += evaluateMatraGroupRules(
+                    group,
+                    pada,
+                    padaIndex,
+                    meter,
+                    shouldMark
+                );
+            }
+            ruleFailures += evaluateLineBoundaryRules(
+                pada,
+                matched.groups,
+                padaIndex,
+                meter,
+                shouldMark
+            );
+            globalGroupOffset += slots.length;
+        }
+
+        ruleFailures += evaluateLineRelations(padas, meter, shouldMark);
+        const result = structuralScore(
+            padas,
+            expectedPadas.length,
+            ruleFailures,
+            missingCount,
+            expectedUnits
+        );
+        if (result.status === "exact" && meter.ruleCompleteness !== "complete") {
+            result.status = "compatible";
+        }
+        return result;
     }
 
     function repeatingLinePolicy(meter) {
@@ -1107,6 +1366,9 @@
         if (meter.kind === "syllable-structural") {
             return evaluateSyllableStructuralMeter(metricUnits, meter, shouldMark);
         }
+        if (meter.kind === "amsha") {
+            return evaluateAmshaMeter(metricUnits, meter, shouldMark);
+        }
         return evaluateMatraMeter(metricUnits, meter, shouldMark);
     }
 
@@ -1271,7 +1533,7 @@
 
         return {
             text: originalText,
-            analysisVersion: "2.3.0",
+            analysisVersion: "2.4.0",
             catalogVersion: catalog && catalog.structuralCatalogVersion
                 ? String(catalog.structuralCatalogVersion)
                 : "",
@@ -1315,6 +1577,7 @@
     return {
         GURU,
         LAGHU,
+        AMSHA_PATTERNS,
         SCRIPT_CONFIG,
         analyzeComposition,
         analyzeMeter,

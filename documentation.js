@@ -103,11 +103,16 @@
     function structuralMeter(entry) {
         const aliases = Array.isArray(entry.aliases) ? entry.aliases : [];
         const isMatra = entry.kind === "matra";
+        const isAmsha = entry.kind === "amsha";
         const repeating = entry.linePolicy &&
             ["repeating", "variable"].includes(entry.linePolicy.type);
         return {
             ...entry,
-            kindLabel: isMatra ? "Mātrā meter" : "Structural syllabic meter",
+            kindLabel: isMatra
+                ? "Mātrā meter"
+                : isAmsha
+                    ? "Aṃśa meter"
+                    : "Structural syllabic meter",
             searchText: foldSearch([
                 entry.name,
                 ...aliases,
@@ -119,6 +124,8 @@
                 ? repeating
                     ? "repeatable lines · mātrā groups"
                     : `${entry.padaGroups.length} lines · mātrā groups`
+                : isAmsha
+                    ? `${entry.amshaGroups.length} lines · aṃśa-gaṇas`
                 : `${entry.padas.length} lines · syllable rules`
         };
     }
@@ -201,6 +208,17 @@
                     `${patterns} = ${groups.reduce((sum, value) => sum + value, 0)} mātrās`;
             });
             addDefinition(document, definitions, "Line-by-line", lines.join(" · "));
+        } else if (meter.kind === "amsha") {
+            const lines = meter.amshaGroups.map((groups, index) =>
+                `Line ${index + 1}: ${groups.map((slot) =>
+                    (Array.isArray(slot) ? slot.join("/") : slot)).join(" · ")}`);
+            addDefinition(document, definitions, "Line-by-line", lines.join(" · "));
+            addDefinition(
+                document,
+                definitions,
+                "Aṃśa key",
+                "B = Brahma, V = Viṣṇu, R = Rudra; a slash marks an accepted alternative"
+            );
         } else {
             const lines = meter.padas.map((pada, index) => {
                 const cadence = pada.cadence
@@ -219,6 +237,8 @@
         (meter.groupRules || []).forEach((rule) => {
             const condition = Array.isArray(rule.allowedPatterns)
                 ? `must be ${rule.allowedPatterns.join(" or ")}`
+                : Array.isArray(rule.allowedPrefixes)
+                    ? `must begin ${rule.allowedPrefixes.join(" or ")}`
                 : Array.isArray(rule.forbiddenPrefixes)
                     ? `cannot begin ${(rule.forbiddenPrefixes || []).join(" or ")}`
                     : `cannot be ${(rule.forbiddenPatterns || []).join(" or ")}`;
@@ -231,6 +251,14 @@
                 ruleSelector(rule),
                 `when ${(rule.whenPatterns || []).join(" or ")}, place yati after ` +
                     `syllable ${rule.afterSyllable}`
+            );
+        });
+        (meter.lineBoundaryRules || []).forEach((rule) => {
+            addDefinition(
+                document,
+                definitions,
+                `Lines ${(rule.padas || []).join(", ")}`,
+                `place yati after gaṇa ${rule.afterGroup}`
             );
         });
         (meter.lineRelations || []).forEach((relation) => {

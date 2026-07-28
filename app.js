@@ -269,6 +269,22 @@
             .join("\u2009");
     }
 
+    function amshaSymbols(script) {
+        if (script === "kannada") {
+            return { B: "ಬ್ರ", V: "ವಿ", R: "ರು" };
+        }
+        if (script === "devanagari") {
+            return { B: "ब्र", V: "वि", R: "रु" };
+        }
+        return { B: "B", V: "V", R: "R" };
+    }
+
+    function formatAmshaSlot(slot, script) {
+        const symbols = amshaSymbols(script);
+        const options = Array.isArray(slot) ? slot : [slot];
+        return options.map((item) => symbols[item] || item).join("/");
+    }
+
     function structuralPadaGuide(meter, padaIndex, pada, script, wholeLine) {
         if (meter.kind === "matra") {
             const repeating = meter.linePolicy &&
@@ -290,6 +306,15 @@
                 ? `${t("matraShort")} ${target} · ${groupGuide}`
                 : `${t("matraShort")} ${pada ? pada.matras : 0}/${target} · ` +
                     groupGuide;
+        }
+
+        if (meter.kind === "amsha") {
+            const groups = meter.amshaGroups && meter.amshaGroups[padaIndex];
+            if (!groups) {
+                return "";
+            }
+            return `aṃśa · ${groups.map((slot) =>
+                formatAmshaSlot(slot, script)).join("|")}`;
         }
 
         const rule = meter.padas && meter.padas[padaIndex];
@@ -327,6 +352,9 @@
         }
         if (Array.isArray(meter.padaGroups)) {
             return meter.padaGroups.length;
+        }
+        if (Array.isArray(meter.amshaGroups)) {
+            return meter.amshaGroups.length;
         }
         return 0;
     }

@@ -60,7 +60,14 @@ for (const meter of structuralCatalog.meters) {
     if (meter.sourceRef && !structuralCatalog[meter.sourceRef]) {
         throw new Error(`Unknown source reference for ${meter.id}: ${meter.sourceRef}`);
     }
-    const rules = meter.kind === "matra" ? meter.padaGroups : meter.padas;
+    if (!["matra", "amsha", "syllable-structural"].includes(meter.kind)) {
+        throw new Error(`${meter.id} has an unknown structural kind`);
+    }
+    const rules = meter.kind === "matra"
+        ? meter.padaGroups
+        : meter.kind === "amsha"
+            ? meter.amshaGroups
+            : meter.padas;
     if (!Array.isArray(rules) || rules.length === 0) {
         throw new Error(`${meter.id} must define at least one pāda`);
     }
@@ -85,6 +92,32 @@ for (const meter of structuralCatalog.meters) {
                     meter.linePolicy.previewCount < 1))) {
             throw new Error(`${meter.id} has an invalid repeating-line policy`);
         }
+    }
+    if (meter.kind === "amsha") {
+        for (const line of meter.amshaGroups) {
+            if (!Array.isArray(line) || !line.length) {
+                throw new Error(`${meter.id} has an empty aṃśa line`);
+            }
+            for (const slot of line) {
+                const options = Array.isArray(slot) ? slot : [slot];
+                if (!options.length || options.some((item) => !["B", "V", "R"].includes(item))) {
+                    throw new Error(`${meter.id} has an invalid aṃśa slot`);
+                }
+            }
+        }
+        for (const rule of meter.groupRules || []) {
+            if (!Array.isArray(rule.globalGroups) ||
+                !(rule.allowedPrefixes || []).every((prefix) => /^[GL]+$/.test(prefix))) {
+                throw new Error(`${meter.id} has an invalid aṃśa group rule`);
+            }
+        }
+        for (const rule of meter.lineBoundaryRules || []) {
+            if (!Array.isArray(rule.padas) ||
+                !Number.isInteger(rule.afterGroup) || rule.afterGroup < 1) {
+                throw new Error(`${meter.id} has an invalid line boundary rule`);
+            }
+        }
+        continue;
     }
     if (meter.kind !== "matra") {
         continue;
@@ -149,9 +182,12 @@ for (const meter of structuralCatalog.meters) {
                     }
                 }
             }
-            for (const prefix of rule.forbiddenPrefixes || []) {
+            for (const prefix of [
+                ...(rule.forbiddenPrefixes || []),
+                ...(rule.allowedPrefixes || [])
+            ]) {
                 if (!/^[GL]+$/.test(prefix)) {
-                    throw new Error(`${meter.id} has invalid forbidden prefix ${prefix}`);
+                    throw new Error(`${meter.id} has invalid group prefix ${prefix}`);
                 }
             }
             if (ruleType === "boundary" &&

@@ -49,6 +49,9 @@ test("service worker pre-caches every core web asset", () => {
         assert.match(worker, new RegExp(asset.replace(".", "\\.")));
         assert.ok(fs.existsSync(path.join(root, asset)), `${asset} is missing`);
     });
+    assert.match(worker, /event\.request\.mode === "navigate"/);
+    assert.match(worker, /cache\.put\(cacheRequest, copy\)/);
+    assert.doesNotMatch(worker, /cache\.put\(event\.request, copy\)/);
 });
 
 test("the composition control and live regions have accessible labels", () => {
@@ -65,7 +68,7 @@ test("the composition control and live regions have accessible labels", () => {
         html,
         /id="strong-template-editor"[^>]*aria-labelledby="strong-template-title"/
     );
-    assert.match(html, /id="whole-verse-template"[^>]*aria-label="Whole verse template"/);
+    assert.match(html, /id="whole-verse-template"[^>]*aria-label="Meter template"/);
 });
 
 test("selected-meter actions remain outside the full meter picker", () => {
@@ -103,6 +106,9 @@ test("documentation includes the searchable, offline meter catalog", () => {
     assert.doesNotMatch(index, /<footer[\s\S]*href="documentation\.html"/);
     assert.match(documentation, /How to use Chandas/);
     assert.match(documentation, /Show template/);
+    assert.match(documentation, /Open a verse from a link/);
+    assert.match(documentation, /\?verse=&lt;verse&gt;&amp;meter=madhu/);
+    assert.match(documentation, /hosting request logs/);
     assert.match(documentation, /Kannada Kanda/);
     assert.match(documentation, /tea break/);
     assert.match(documentation, /id="meter-catalog-total"/);

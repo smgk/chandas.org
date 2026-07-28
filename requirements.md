@@ -124,6 +124,28 @@ recommended, and optional behavior.
 7. The default composition font SHOULD favor fitting a useful poetic line
    without wrapping while remaining at least 16 CSS pixels on mobile and fully
    legible for Kannada and Devanagari combining marks.
+8. The website MUST accept a URL-encoded verse as the raw query string in the
+   form `chandas.org?<verse>`.
+9. The website MUST also accept `verse` (with `text` as an alias), `meter`, and
+   `template` query parameters. `template` MUST accept `ghost` and `strong`.
+10. If a non-empty anonymous draft is recovered, a URL-imported verse MUST be
+    appended as a new padya separated by a blank line rather than replacing the
+    existing draft.
+11. A URL meter value MUST resolve exact catalog IDs, displayed names, aliases,
+    and common Roman spellings without diacritics. It MUST apply independently
+    to each stanza imported by that URL.
+12. A URL template choice MUST show the requested guide. A requested Strong
+    guide MUST fall back to Ghost when Strong mode is unavailable for that
+    meter family.
+13. After a recognized URL import is applied, the consumed query MUST be
+    removed from the visible URL without reloading the page. Refreshing MUST
+    NOT append the same imported verse again.
+14. Offline navigation caching MUST normalize verse-bearing navigation
+    requests to the application shell and MUST NOT retain the full
+    query-bearing URL as a separate cache key.
+15. User documentation MUST warn that placing verse in a URL can expose it to
+    browser history, messaging systems, and hosting request logs even though
+    analysis remains local.
 
 ### FR-2: Live analysis
 
@@ -675,7 +697,8 @@ The MVP is acceptable when:
   handling, per-stanza selected-meter persistence, the always-available clear
   action, anonymous local draft recovery/clearing, ghost-template toggling and
   alignment, proof that ghost symbols never enter source text, copy, share
-  fallback, and synonym-dropdown placeholder behavior where present.
+  fallback, URL-import parsing and one-shot appending, URL meter/template
+  choices, and synonym-dropdown placeholder behavior where present.
 - **End-to-end tests:** Type with simulated IME events; paste; undo/redo; select
   different meters in multiple stanzas; split and merge stanzas; repair a
   violation; enable and disable a ghost template without changing the poem;
@@ -686,6 +709,11 @@ The MVP is acceptable when:
   and strong modes, restore a partially filled structured draft, and verify
   that copy and sharing contain only authored text. Repeat the suite for each
   structural, mātrā, or aṃśa presentation before enabling that family.
+- **URL-import tests:** Cover raw and named query forms, Kannada and
+  Devanagari line breaks, appending to recovered drafts, multiple imported
+  stanzas, catalog IDs and common Roman meter names, Ghost/Strong choices,
+  unsupported-Strong fallback, query removal, refresh, offline reload, and
+  query-free navigation cache keys.
 - **Accessibility tests:** Automated checks plus manual keyboard,
   screen-reader, contrast, zoom, dynamic-type, and color-vision checks.
 - **Performance tests:** Record input latency and analysis duration for typical,

@@ -59,8 +59,7 @@
             strongIssues: "{violations} filled positions need attention; {missing} positions remain open.",
             expectedLaghu: "Laghu",
             expectedGuru: "Guru",
-            wholeVerseTemplate: "Whole verse template",
-            repeatableTemplate: "Repeatable line template",
+            meterTemplate: "{meter} template",
             templateLine: "Line {number}",
             repeatableLine: "Each line",
             exact: "Exact",
@@ -87,7 +86,10 @@
             catalogError: "The meter catalog could not be loaded.",
             noResults: "No matching meters",
             previousStanza: "Previous stanza",
-            nextStanza: "Next stanza"
+            nextStanza: "Next stanza",
+            urlImported: "Verse added from the link",
+            urlMeterMissing: "The meter in this link was not found.",
+            urlStrongFallback: "This meter currently supports Ghost guidance only."
         },
         kn: {
             skip: "ರಚನೆಗೆ ಹೋಗಿ",
@@ -142,8 +144,7 @@
             strongIssues: "{violations} ಸ್ಥಾನಗಳನ್ನು ಸರಿಪಡಿಸಬೇಕು; {missing} ಸ್ಥಾನಗಳು ಖಾಲಿ.",
             expectedLaghu: "ಲಘು",
             expectedGuru: "ಗುರು",
-            wholeVerseTemplate: "ಪೂರ್ಣ ಪದ್ಯದ ಮಾದರಿ",
-            repeatableTemplate: "ಪುನರಾವರ್ತಿತ ಸಾಲಿನ ಮಾದರಿ",
+            meterTemplate: "{meter} ಮಾದರಿ",
             templateLine: "ಸಾಲು {number}",
             repeatableLine: "ಪ್ರತಿ ಸಾಲು",
             exact: "ಸರಿಯಾಗಿ",
@@ -170,7 +171,10 @@
             catalogError: "ಛಂದಸ್ಸಿನ ಪಟ್ಟಿ ತೆರೆಯಲಾಗಲಿಲ್ಲ.",
             noResults: "ಹೊಂದುವ ಛಂದಸ್ಸುಗಳಿಲ್ಲ",
             previousStanza: "ಹಿಂದಿನ ಪದ್ಯ",
-            nextStanza: "ಮುಂದಿನ ಪದ್ಯ"
+            nextStanza: "ಮುಂದಿನ ಪದ್ಯ",
+            urlImported: "ಕೊಂಡಿಯಿಂದ ಪದ್ಯವನ್ನು ಸೇರಿಸಲಾಗಿದೆ",
+            urlMeterMissing: "ಈ ಕೊಂಡಿಯಲ್ಲಿರುವ ಛಂದಸ್ಸು ದೊರೆಯಲಿಲ್ಲ.",
+            urlStrongFallback: "ಈ ಛಂದಸ್ಸಿಗೆ ಈಗ ಮಂದ ಮಾದರಿ ಮಾತ್ರ ಲಭ್ಯ."
         }
     };
 
@@ -191,6 +195,7 @@
         composing: false,
         strongComposing: false,
         strongCompositionSnapshot: null,
+        restoreSelectionFrame: null,
         saveTimer: null,
         renderTimer: null,
         toastTimer: null
@@ -284,6 +289,191 @@
 
     function meterForId(meterId) {
         return state.meters.find((meter) => meter.id === meterId) || null;
+    }
+
+    function decodeQueryPart(value) {
+        try {
+            return decodeURIComponent(String(value || "").replace(/\+/g, " "));
+        } catch (error) {
+            return "";
+        }
+    }
+
+    function parseUrlImport() {
+        const raw = window.location.search.replace(/^\?/, "");
+        if (!raw) {
+            return null;
+        }
+        const params = new URLSearchParams(raw);
+        let verse = params.has("verse")
+            ? params.get("verse")
+            : params.has("text")
+                ? params.get("text")
+                : null;
+        if (verse === null) {
+            const firstPart = raw.split("&", 1)[0];
+            if (firstPart && !firstPart.includes("=")) {
+                verse = decodeQueryPart(firstPart);
+            }
+        }
+
+        const meter = params.has("meter")
+            ? params.get("meter")
+            : params.has("chandas")
+                ? params.get("chandas")
+                : null;
+        const hasTemplate = params.has("template") ||
+            params.has("showTemplate");
+        const rawTemplate = params.has("template")
+            ? params.get("template")
+            : params.has("showTemplate")
+                ? params.get("showTemplate") || "ghost"
+                : null;
+        const normalizedTemplate = String(rawTemplate || "")
+            .trim()
+            .toLocaleLowerCase();
+        let guideMode = null;
+        if (hasTemplate) {
+            guideMode = normalizedTemplate === "strong"
+                ? "strong"
+                : ["off", "false", "0", "none", "hide"].includes(normalizedTemplate)
+                    ? "off"
+                    : "ghost";
+        }
+
+        const consumed = verse !== null || meter !== null || hasTemplate;
+        return consumed ? { verse, meter, guideMode } : null;
+    }
+
+    function stripOuterLineBreaks(value) {
+        return String(value || "")
+            .replace(/^(?:\r?\n)+/, "")
+            .replace(/(?:\r?\n)+$/, "");
+    }
+
+    function appendAsPadya(existing, incoming) {
+        if (!existing) {
+            return { text: incoming, insertionStart: 0 };
+        }
+        let separator = "\n\n";
+        if (/\n[^\S\n]*\n[^\S\n]*$/.test(existing)) {
+            separator = "";
+        } else if (/\n[^\S\n]*$/.test(existing)) {
+            separator = "\n";
+        }
+        return {
+            text: `${existing}${separator}${incoming}`,
+            insertionStart: existing.length + separator.length
+        };
+    }
+
+    function meterFromUrlToken(token) {
+        const source = String(token || "").trim();
+        if (!source) {
+            return null;
+        }
+        const idMatch = state.meters.find((meter) =>
+            meter.id.toLocaleLowerCase() === source.toLocaleLowerCase());
+        if (idMatch) {
+            return idMatch;
+        }
+        const tokenKeys = meterSearchKeys(source);
+        return state.meters.find((meter) => {
+            const identityKeys = [
+                meter.name,
+                ...(meter.aliases || [])
+            ].flatMap(meterSearchKeys);
+            return tokenKeys.some((key) => identityKeys.includes(key));
+        }) || null;
+    }
+
+    function clearConsumedUrlQuery() {
+        try {
+            window.history.replaceState(
+                window.history.state,
+                "",
+                `${window.location.pathname}${window.location.hash}`
+            );
+        } catch (error) {
+            // The import still succeeds if a restrictive container keeps the URL.
+        }
+    }
+
+    function importFromUrl() {
+        const payload = parseUrlImport();
+        if (!payload) {
+            return;
+        }
+        if (state.restoreSelectionFrame !== null) {
+            window.cancelAnimationFrame(state.restoreSelectionFrame);
+            state.restoreSelectionFrame = null;
+        }
+
+        let insertionStart = null;
+        const incoming = stripOuterLineBreaks(payload.verse);
+        let importMessage = incoming ? t("urlImported") : "";
+        if (incoming) {
+            const appended = appendAsPadya(authoredCompositionText(), incoming);
+            insertionStart = appended.insertionStart;
+            elements.composition.value = appended.text;
+            elements.composition.setSelectionRange(
+                appended.text.length,
+                appended.text.length
+            );
+            runAnalysis();
+        }
+
+        const targetIndices = state.analysis
+            ? state.analysis.stanzas
+                .filter((stanza) =>
+                    insertionStart === null
+                        ? stanza.index === state.activeStanzaIndex
+                        : stanza.start >= insertionStart)
+                .map((stanza) => stanza.index)
+            : [];
+        const meter = payload.meter ? meterFromUrlToken(payload.meter) : null;
+        if (payload.meter && !meter) {
+            importMessage = t("urlMeterMissing");
+        }
+
+        if (meter) {
+            targetIndices.forEach((stanzaIndex) => {
+                state.selections[stanzaIndex] = meter.id;
+            });
+            runAnalysis();
+        }
+
+        if (payload.guideMode !== null && (!payload.meter || meter)) {
+            let fellBack = false;
+            targetIndices.forEach((stanzaIndex) => {
+                const selected = meter ||
+                    meterForId(state.selections[stanzaIndex]);
+                let mode = selected ? payload.guideMode : "off";
+                if (mode === "strong" && !supportsStrongTemplate(selected)) {
+                    mode = "ghost";
+                    fellBack = true;
+                }
+                setTemplateMode(stanzaIndex, mode);
+            });
+            if (fellBack) {
+                importMessage = t("urlStrongFallback");
+            }
+            renderOverlay();
+            renderAnalysisPanel();
+        }
+
+        if (targetIndices.length) {
+            if (incoming) {
+                const end = elements.composition.value.length;
+                elements.composition.setSelectionRange(end, end);
+            }
+            setActiveStanza(targetIndices.at(-1), false);
+        }
+        clearConsumedUrlQuery();
+        if (importMessage) {
+            showToast(importMessage);
+        }
+        scheduleSave();
     }
 
     function templateMode(stanzaIndex) {
@@ -553,8 +743,8 @@
         heading.className = "whole-template-heading";
         const repeating = meter.linePolicy &&
             ["repeating", "variable"].includes(meter.linePolicy.type);
-        const templateLabel = repeating ? "repeatableTemplate" : "wholeVerseTemplate";
-        heading.textContent = t(templateLabel);
+        const templateLabel = t("meterTemplate", { meter: meter.name });
+        heading.textContent = templateLabel;
 
         const lines = document.createElement("span");
         lines.className = "whole-template-lines";
@@ -580,7 +770,7 @@
             lines.append(row);
         }
 
-        container.setAttribute("aria-label", t(templateLabel));
+        container.setAttribute("aria-label", templateLabel);
         container.replaceChildren(heading, lines);
         container.hidden = false;
     }
@@ -1335,10 +1525,11 @@
             if (draft.language && messages[draft.language]) {
                 state.language = draft.language;
             }
-            requestAnimationFrame(() => {
+            state.restoreSelectionFrame = requestAnimationFrame(() => {
                 const start = Math.min(draft.selectionStart || 0, draft.text.length);
                 const end = Math.min(draft.selectionEnd || start, draft.text.length);
                 elements.composition.setSelectionRange(start, end);
+                state.restoreSelectionFrame = null;
             });
             if (draft.text) {
                 showToast(t("restored"));
@@ -1826,6 +2017,7 @@
             state.catalog = { metres: [] };
             runAnalysis();
         }
+        importFromUrl();
 
         if ("serviceWorker" in navigator &&
             location.protocol !== "file:" &&

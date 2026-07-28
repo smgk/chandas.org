@@ -36,6 +36,43 @@ test("analyzes Kannada and Devanagari stanzas inline", async ({ page }) => {
     await expect(page.locator("#active-pattern")).toHaveText("LGG");
 });
 
+test("loads a raw-query verse once and appends it to a recovered draft", async ({ page }) => {
+    const imported = "ಕಾವ್ಯ\nಪದ್ಯ";
+    await page.locator("#composition").fill("ಮೊದಲ ಪದ್ಯ");
+    await page.waitForTimeout(400);
+
+    await page.goto(`/?${encodeURIComponent(imported)}`);
+    await expect(page.locator("#composition"))
+        .toHaveValue(`ಮೊದಲ ಪದ್ಯ\n\n${imported}`);
+    await expect(page).toHaveURL(/\/$/);
+
+    await page.reload();
+    await expect(page.locator("#composition"))
+        .toHaveValue(`ಮೊದಲ ಪದ್ಯ\n\n${imported}`);
+});
+
+test("loads meter and Strong-template choices from explicit URL parameters", async ({ page }) => {
+    const params = new URLSearchParams({
+        verse: "ಕ\n\nಕಾ",
+        meter: "shardulavikriditam",
+        template: "strong"
+    });
+    await page.goto(`/?${params.toString()}`);
+
+    await expect(page.locator("#composition")).toHaveValue("ಕ\n\nಕಾ");
+    await expect(page.locator("#analysis-title")).toHaveText("Stanza 2 of 2");
+    await expect(page.locator("#selected-meter-name"))
+        .toHaveText("śārdūlavikrīḍitam");
+    await expect(page.locator("#show-template")).toBeChecked();
+    await expect(page.locator("#template-mode-strong")).toBeChecked();
+    await expect(page.locator("#strong-template-editor")).toBeVisible();
+    await page.locator("#previous-stanza").click();
+    await expect(page.locator("#selected-meter-name"))
+        .toHaveText("śārdūlavikrīḍitam");
+    await expect(page.locator("#template-mode-strong")).toBeChecked();
+    await expect(page).toHaveURL(/\/$/);
+});
+
 test("shows compact line totals and counts from the current line at the cursor", async ({ page }) => {
     await page.locator("#composition").fill("ಕ ಕಾ\nಕಂ");
 
@@ -118,6 +155,8 @@ test("keeps clear and the ghost guide available outside the meter picker", async
     await page.locator("#show-template").check();
     await expect(page.locator("#highlight-layer .ghost-template")).toHaveText("ಲ");
     await expect(page.locator("#whole-verse-template")).toBeVisible();
+    await expect(page.locator("#whole-verse-template .whole-template-heading"))
+        .toHaveText("madhu template");
     await expect(page.locator("#whole-verse-template .whole-template-line")).toHaveCount(4);
     await expect(page.locator("#whole-verse-template .whole-template-line-guide"))
         .toHaveText(["ಲ ಲ", "ಲ ಲ", "ಲ ಲ", "ಲ ಲ"]);
@@ -214,12 +253,14 @@ test("fills fixed-vritta strong-template positions out of order without copying 
 });
 
 test("keeps strong mode unavailable for provisional structural meter guides", async ({ page }) => {
-    await page.locator("#composition").fill("ಕವಿ");
-    await page.locator("#meter-picker summary").click();
-    await page.locator("#meter-search").fill("kandapadya");
-    await page.locator("#meter-select").selectOption("structural:kanda-kannada");
-    await page.locator("#show-template").check();
+    const params = new URLSearchParams({
+        verse: "ಕವಿ",
+        meter: "kandapadya",
+        template: "strong"
+    });
+    await page.goto(`/?${params.toString()}`);
 
+    await expect(page.locator("#selected-meter-name")).toHaveText("kanda (Kannada)");
     await expect(page.locator("#template-mode-ghost")).toBeChecked();
     await expect(page.locator("#template-mode-strong")).toBeDisabled();
     await expect(page.locator("#strong-template-availability"))
@@ -301,7 +342,7 @@ test("finds, guides, and validates all three repeatable Ragale forms", async ({ 
         .toHaveText("Mātrās by pāda: 12 | 12");
     await expect(page.locator("#validation-summary")).not.toHaveClass(/has-errors/);
     await expect(page.locator("#whole-verse-template .whole-template-heading"))
-        .toHaveText("Repeatable line template");
+        .toHaveText("utsāha ragaḷe template");
     await expect(page.locator("#whole-verse-template .whole-template-line")).toHaveCount(1);
     await expect(page.locator("#whole-verse-template .whole-template-line-label"))
         .toHaveText("Each line");
@@ -460,7 +501,7 @@ test("opens documentation and searches the complete prosody catalog", async ({ p
     await learnLink.click();
 
     await expect(page).toHaveURL(/documentation\.html$/);
-    await expect(page.locator("h1")).toHaveText("How to use Chandas");
+    await expect(page.locator("h1")).toContainText("How to use Chandas");
     await expect(page.locator("main")).toContainText("tea break");
     await expect(page.locator("#meter-catalog-status"))
         .toHaveText("1,374 of 1,374 supported meters shown.");

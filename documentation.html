@@ -74,6 +74,32 @@
             substitutions and prāsa visibly provisional.
         </p>
 
+        <h2>Open a verse from a link</h2>
+        <p>
+            Put a URL-encoded verse directly after the question mark:
+            <code>https://chandas.org?&lt;verse&gt;</code>. For links that also
+            choose guidance, use
+            <code>?verse=&lt;verse&gt;&amp;meter=madhu&amp;template=strong</code>.
+            <code>text</code> is accepted as an alias for <code>verse</code>,
+            and <code>template</code> may be <code>ghost</code> or
+            <code>strong</code>. Meter IDs, displayed names, and ordinary Roman
+            spellings without diacritics are accepted.
+        </p>
+        <p>
+            If a local draft already exists, the linked verse is appended as a
+            new padya rather than evicting the resident poet. The query is
+            removed after import, so Reload does not develop an enthusiasm for
+            adding the same verse repeatedly. Strong guidance falls back to
+            Ghost when that meter family has not completed Strong-template
+            review.
+        </p>
+        <p>
+            A verse in a URL may be recorded in browser history, messages, or
+            hosting request logs before Chandas opens it. Use link import only
+            for text you are comfortable placing in a link; ordinary editor
+            drafts continue to stay on the device.
+        </p>
+
         <h2>Choose Ghost or Strong guidance</h2>
         <p>
             After selecting a meter, enable <em>Show template</em> for a faint

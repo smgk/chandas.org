@@ -1,6 +1,6 @@
 "use strict";
 
-const CACHE_NAME = "chandas-shell-v13";
+const CACHE_NAME = "chandas-shell-v14";
 const CORE_ASSETS = [
     "./",
     "./index.html",
@@ -43,8 +43,16 @@ self.addEventListener("fetch", (event) => {
         return;
     }
 
+    const requestUrl = new URL(event.request.url);
+    const isAppQueryNavigation = event.request.mode === "navigate" &&
+        Boolean(requestUrl.search) &&
+        (requestUrl.pathname.endsWith("/") ||
+            requestUrl.pathname.endsWith("/index.html"));
+    const cacheRequest = isAppQueryNavigation
+        ? "./index.html"
+        : event.request;
     event.respondWith(
-        caches.match(event.request).then((cached) => {
+        caches.match(cacheRequest).then((cached) => {
             if (cached) {
                 return cached;
             }
@@ -53,7 +61,7 @@ self.addEventListener("fetch", (event) => {
                     return response;
                 }
                 const copy = response.clone();
-                caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+                caches.open(CACHE_NAME).then((cache) => cache.put(cacheRequest, copy));
                 return response;
             }).catch(() => {
                 if (event.request.mode === "navigate") {

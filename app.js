@@ -53,6 +53,7 @@
             validationIssues: "{violations} mismatched and {missing} missing syllables for {meter}.",
             incompleteMeter: "{meter} is still possible; {missing} metrical units remain.",
             supportedRulesValid: "This stanza follows the supported rules for {meter}.",
+            uncheckedRulesValid: "This stanza follows the encoded rhythm for {meter}; {rules} is not checked yet.",
             privateTitle: "Your verse stays with you.",
             privateText: "Analysis and draft recovery happen on this device, including when Android is offline.",
             shareComposition: "Share composition",
@@ -116,6 +117,7 @@
             validationIssues: "{meter}: {violations} ವ್ಯತ್ಯಾಸ, {missing} ಕೊರತೆಯ ಅಕ್ಷರಗಳು.",
             incompleteMeter: "{meter} ಇನ್ನೂ ಸಾಧ್ಯ; {missing} ಛಂದೋಘಟಕಗಳು ಬಾಕಿಯಿವೆ.",
             supportedRulesValid: "ಈ ಪದ್ಯವು {meter}ಗಾಗಿ ಬೆಂಬಲಿತ ನಿಯಮಗಳಿಗೆ ಹೊಂದುತ್ತದೆ.",
+            uncheckedRulesValid: "ಈ ಪದ್ಯವು {meter}ಯ ಲಯದ ನಿಯಮಗಳಿಗೆ ಹೊಂದುತ್ತದೆ; {rules} ಇನ್ನೂ ಪರಿಶೀಲಿಸಿಲ್ಲ.",
             privateTitle: "ನಿಮ್ಮ ಪದ್ಯ ನಿಮ್ಮಲ್ಲೇ ಉಳಿಯುತ್ತದೆ.",
             privateText: "ವಿಶ್ಲೇಷಣೆ ಮತ್ತು ಕರಡು ಮರುಪಡೆಯುವಿಕೆ ಈ ಸಾಧನದಲ್ಲೇ ನಡೆಯುತ್ತದೆ; Android ಆಫ್‌ಲೈನ್‌ನಲ್ಲಿಯೂ ಕೆಲಸ ಮಾಡುತ್ತದೆ.",
             shareComposition: "ರಚನೆಯನ್ನು ಹಂಚಿಕೊಳ್ಳಿ",
@@ -664,12 +666,20 @@
         if (!stanza.selectedMeter) {
             summary.textContent = t("noMeterSelected");
         } else if (stanza.violationCount === 0 && stanza.missingCount === 0) {
-            summary.textContent = t(
-                stanza.selectedMeter.ruleCompleteness === "group-totals"
-                    ? "supportedRulesValid"
-                    : "validMeter",
-                { meter: stanza.selectedMeter.name }
-            );
+            const uncheckedRules = stanza.selectedMeter.uncheckedRules || [];
+            if (uncheckedRules.length) {
+                summary.textContent = t("uncheckedRulesValid", {
+                    meter: stanza.selectedMeter.name,
+                    rules: uncheckedRules.join(", ")
+                });
+            } else {
+                summary.textContent = t(
+                    stanza.selectedMeter.ruleCompleteness === "group-totals"
+                        ? "supportedRulesValid"
+                        : "validMeter",
+                    { meter: stanza.selectedMeter.name }
+                );
+            }
         } else if (stanza.violationCount === 0) {
             summary.textContent = t("incompleteMeter", {
                 meter: stanza.selectedMeter.name,

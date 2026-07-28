@@ -586,6 +586,142 @@
         }
     }
 
+    function matraValue(syllable) {
+        return syllable.classification === GURU ? 2 : 1;
+    }
+
+    function collectMatraGroups(pada, capacities, globalOffset) {
+        const groups = [];
+        let syllableIndex = 0;
+
+        for (let localIndex = 0; localIndex < capacities.length; localIndex += 1) {
+            const capacity = capacities[localIndex];
+            const syllables = [];
+            let matras = 0;
+
+            while (syllableIndex < pada.syllables.length && matras < capacity) {
+                const syllable = pada.syllables[syllableIndex];
+                syllables.push(syllable);
+                matras += matraValue(syllable);
+                syllableIndex += 1;
+            }
+
+            groups.push({
+                globalIndex: globalOffset + localIndex + 1,
+                localIndex: localIndex + 1,
+                capacity,
+                matras,
+                complete: matras === capacity,
+                overrun: matras > capacity,
+                syllables,
+                pattern: syllables.map((syllable) => syllable.classification).join("")
+            });
+        }
+
+        return groups;
+    }
+
+    function ruleTargetsGroup(rule, group, padaIndex) {
+        const hasSelector = Boolean(
+            rule.everyGroup ||
+            Array.isArray(rule.globalGroups) ||
+            Array.isArray(rule.padas) ||
+            Array.isArray(rule.localGroups)
+        );
+        if (!hasSelector) {
+            return false;
+        }
+        if (Array.isArray(rule.globalGroups) &&
+            !rule.globalGroups.includes(group.globalIndex)) {
+            return false;
+        }
+        if (Array.isArray(rule.padas) && !rule.padas.includes(padaIndex + 1)) {
+            return false;
+        }
+        if (Array.isArray(rule.localGroups) &&
+            !rule.localGroups.includes(group.localIndex)) {
+            return false;
+        }
+        return true;
+    }
+
+    function markGroupRuleViolation(group, reason, expected, shouldMark) {
+        const syllable = group.syllables[group.syllables.length - 1];
+        if (syllable) {
+            setViolation(syllable, reason || "invalid-matra-gana", expected, shouldMark);
+        }
+    }
+
+    function evaluateMatraGroupRules(group, pada, padaIndex, meter, shouldMark) {
+        if (!group.complete || group.overrun) {
+            return 0;
+        }
+
+        let failures = 0;
+        for (const rule of meter.groupRules || []) {
+            if (!ruleTargetsGroup(rule, group, padaIndex)) {
+                continue;
+            }
+
+            const allowed = Array.isArray(rule.allowedPatterns)
+                ? rule.allowedPatterns
+                : [];
+            const forbidden = Array.isArray(rule.forbiddenPatterns)
+                ? rule.forbiddenPatterns
+                : [];
+            const violatesAllowed = allowed.length > 0 && !allowed.includes(group.pattern);
+            const violatesForbidden = forbidden.includes(group.pattern);
+            if (!violatesAllowed && !violatesForbidden) {
+                continue;
+            }
+
+            failures += 1;
+            const expected = violatesAllowed
+                ? allowed.join(" or ")
+                : `not ${group.pattern}`;
+            markGroupRuleViolation(
+                group,
+                rule.violationReason,
+                expected,
+                shouldMark
+            );
+        }
+
+        for (const rule of meter.boundaryRules || []) {
+            if (!ruleTargetsGroup(rule, group, padaIndex)) {
+                continue;
+            }
+            if (Array.isArray(rule.whenPatterns) &&
+                !rule.whenPatterns.includes(group.pattern)) {
+                continue;
+            }
+
+            const boundaryIndex = Number(rule.afterSyllable);
+            const before = group.syllables[boundaryIndex - 1];
+            const after = group.syllables[boundaryIndex];
+            if (!before || !after) {
+                continue;
+            }
+            const gap = pada.text.slice(
+                before.end - pada.start,
+                after.start - pada.start
+            );
+            if (gap && METRIC_BOUNDARY_RE.test(gap)) {
+                continue;
+            }
+
+            failures += 1;
+            setViolation(
+                after,
+                rule.violationReason || "required-boundary",
+                `boundary after syllable ${boundaryIndex}`,
+                shouldMark
+            );
+        }
+
+        return failures;
+    }
+
     function evaluateSyllableStructuralMeter(padas, meter, shouldMark) {
         let ruleFailures = 0;
         let missingCount = 0;
@@ -664,6 +800,7 @@
         let ruleFailures = 0;
         let missingCount = 0;
         const expectedPadas = meter.padaGroups || [];
+        let globalGroupOffset = 0;
 
         for (let padaIndex = 0; padaIndex < Math.max(padas.length, expectedPadas.length);
             padaIndex += 1) {
@@ -681,6 +818,7 @@
             const target = groups.reduce((sum, value) => sum + value, 0);
             if (!pada) {
                 missingCount += target;
+                globalGroupOffset += groups.length;
                 continue;
             }
 
@@ -695,7 +833,7 @@
             let hasExcessFailure = false;
             for (const syllable of pada.syllables) {
                 const previous = running;
-                running += syllable.classification === GURU ? 2 : 1;
+                running += matraValue(syllable);
                 const crossedBoundary = Array.from(boundaries)
                     .find((value) => previous < value && running > value);
                 if (crossedBoundary !== undefined) {
@@ -720,6 +858,18 @@
                 const last = pada.syllables[pada.syllables.length - 1];
                 setViolation(last, "extra-matra", `${target} mātrās`, shouldMark);
             }
+
+            const collectedGroups = collectMatraGroups(pada, groups, globalGroupOffset);
+            for (const group of collectedGroups) {
+                ruleFailures += evaluateMatraGroupRules(
+                    group,
+                    pada,
+                    padaIndex,
+                    meter,
+                    shouldMark
+                );
+            }
+            globalGroupOffset += groups.length;
         }
 
         const result = structuralScore(
@@ -779,14 +929,23 @@
                 name: meter.name,
                 kind: meter.kind,
                 patterns: meter.patterns,
+                ruleCompleteness: meter.ruleCompleteness || "",
                 ...scoreStructuralMeter(padas, meter, false)
             }));
     }
 
     function sortCandidates(candidates, limit) {
         const statusRank = { exact: 0, compatible: 1, approximate: 2 };
+        const completenessRank = {
+            complete: 0,
+            pathyā: 0,
+            "provisional-rhythm": 1,
+            "group-totals": 2
+        };
         return candidates.sort((left, right) =>
             statusRank[left.status] - statusRank[right.status] ||
+            (completenessRank[left.ruleCompleteness] ?? 1) -
+                (completenessRank[right.ruleCompleteness] ?? 1) ||
             left.score - right.score ||
             left.distance - right.distance ||
             left.name.localeCompare(right.name)
@@ -902,7 +1061,10 @@
                     name: selectedMeter.name,
                     kind: selectedMeter.kind,
                     patterns: selectedMeter.patterns,
-                    ruleCompleteness: selectedMeter.ruleCompleteness || "fixed"
+                    ruleCompleteness: selectedMeter.ruleCompleteness || "fixed",
+                    uncheckedRules: Array.isArray(selectedMeter.uncheckedRules)
+                        ? selectedMeter.uncheckedRules
+                        : []
                 } : null,
                 violationCount,
                 missingCount
@@ -911,7 +1073,7 @@
 
         return {
             text: originalText,
-            analysisVersion: "2.1.0",
+            analysisVersion: "2.2.0",
             catalogVersion: catalog && catalog.structuralCatalogVersion
                 ? String(catalog.structuralCatalogVersion)
                 : "",

@@ -166,6 +166,32 @@ test("finds Anuṣṭubh as anushtup and shows structural and mātrā references
         .toHaveText("This stanza follows anuṣṭubh (pathyā).");
 });
 
+test("finds and validates provisional Kannada Kanda independently", async ({ page }) => {
+    const kanda = [
+        "ಕಾವೇರಿಯಿಂದ ಮಾಗೋ",
+        "ದಾವರಿವರ ಮಿರ್ಪ ನಾಡದಾ ಕನ್ನಡದೊಳ್",
+        "ಭಾವಿಸಿದ ಜನಪದಂ ವಸು",
+        "ಧಾವಳಯ ವಿಲೀನ ವಿಶದ ವಿಷಯ ವಿಶೇಷಂ"
+    ].join("\n");
+    await page.locator("#composition").fill(kanda);
+    await page.locator("#meter-picker summary").click();
+    await page.locator("#meter-search").fill("ಕಂದಪದ್ಯ");
+    await expect(page.locator("#meter-select option")).toHaveText([
+        "kanda (Kannada)"
+    ]);
+    await page.locator("#meter-search").fill("kandapadya");
+    await page.locator("#meter-select").selectOption("structural:kanda-kannada");
+
+    await expect(page.locator("#selected-meter-signature"))
+        .toContainText("12 | 20 | 12 | 20 mātrās");
+    await expect(page.locator("#active-matras"))
+        .toHaveText("Mātrās by pāda: 12 | 20 | 12 | 20");
+    await expect(page.locator("#validation-summary"))
+        .toContainText("prāsa is not checked yet");
+    await expect(page.locator("#validation-summary")).not.toHaveClass(/has-errors/);
+    await expect(page.locator("#highlight-layer .violation")).toHaveCount(0);
+});
+
 test("recovers the anonymous local draft and meter selection", async ({ page }) => {
     const composition = "ಕವಿ\n\nकाव्य";
     await page.locator("#composition").fill(composition);

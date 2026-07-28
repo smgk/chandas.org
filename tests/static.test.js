@@ -90,6 +90,20 @@ test("documentation is linked, concise, and available offline", () => {
     assert.match(index, /href="documentation\.html">Documentation<\/a>/);
     assert.match(documentation, /How to use Chandas/);
     assert.match(documentation, /Show template/);
+    assert.match(documentation, /Kannada Kanda/);
     assert.match(documentation, /tea break/);
     assert.doesNotMatch(documentation, /<script/i);
+});
+
+test("the provisional Kanda rule packet and attribution are retained", () => {
+    const catalog = JSON.parse(read("structural_meters.json"));
+    const kanda = catalog.meters.find((meter) =>
+        meter.id === "structural:kanda-kannada");
+
+    assert.equal(catalog.catalogVersion, "2.0.0");
+    assert.equal(kanda.ruleCompleteness, "provisional-rhythm");
+    assert.deepEqual(kanda.uncheckedRules, ["prāsa"]);
+    assert.ok(fs.existsSync(path.join(root, "docs", "rules", "kanda.md")));
+    assert.match(read("THIRD_PARTY_NOTICES.md"), /Chanda Nikasha/);
+    assert.match(read("notices.html"), /Kannada Kanda/);
 });

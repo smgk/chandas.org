@@ -30,5 +30,15 @@ Prosodic Patterns:
 
 <https://dharmalekha.info/prosody>
 
+The provisional Kannada Kanda rhythm rules are documented in
+`docs/rules/kanda.md` against:
+
+- Vishweshwar V. Dixit's *Chanda Nikasha (Naga-Pingala)*:
+  <https://kannadakali.com/crav/dev/docs/ChandaNikasha-English.pdf>
+- *Kandapadya*, Kannada Chandassu:
+  <https://chandassu.onrender.com/chandassu/kandapadya>
+- *Kanda Padya*, Classical Kannada:
+  <https://shastriyakannada.org/database/english/literature/KANDA%20PADYA%20HTML.htm>
+
 These references are citations for prosodic facts and terminology; their page
 content is not bundled with the application.

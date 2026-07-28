@@ -15,6 +15,10 @@ const structuralCatalog = JSON.parse(fs.readFileSync(
     path.join(__dirname, "..", "structural_meters.json"),
     "utf8"
 ));
+const kandaFixture = JSON.parse(fs.readFileSync(
+    path.join(__dirname, "fixtures", "kanda.json"),
+    "utf8"
+));
 const combinedCatalog = {
     ...catalog,
     structuralMeters: structuralCatalog.meters
@@ -22,6 +26,10 @@ const combinedCatalog = {
 
 function textForPattern(pattern) {
     return Array.from(pattern, (weight) => weight === "G" ? "ಕಾ" : "ಕ").join(" ");
+}
+
+function devanagariTextForPattern(pattern) {
+    return Array.from(pattern, (weight) => weight === "G" ? "का" : "क").join(" ");
 }
 
 test("loads every meter and alternate pattern from mishra.json", () => {
@@ -226,7 +234,7 @@ test("keeps an incomplete structural meter compatible without red violations", (
 
     assert.equal(stanza.violationCount, 0);
     assert.ok(stanza.missingCount > 0);
-    assert.equal(result.analysisVersion, "2.1.0");
+    assert.equal(result.analysisVersion, "2.2.0");
     assert.equal(result.catalogVersion, structuralCatalog.catalogVersion);
 });
 
@@ -254,7 +262,8 @@ test("detects Āryā using mātrā groups and exposes per-pāda totals", () => {
 });
 
 test("validates every initial Āryā-family mātrā signature", () => {
-    const matraMeters = structuralCatalog.meters.filter((meter) => meter.kind === "matra");
+    const matraMeters = structuralCatalog.meters.filter((meter) =>
+        meter.kind === "matra" && meter.ruleCompleteness === "group-totals");
 
     for (const meter of matraMeters) {
         const text = meter.padaGroups.map((groups) =>
@@ -279,6 +288,147 @@ test("validates every initial Āryā-family mātrā signature", () => {
             meter.name
         );
     }
+});
+
+test("loads Kannada Kanda independently from Āryāgīti", () => {
+    const meters = Chandas.normalizeCatalog(combinedCatalog);
+    const kanda = meters.find((meter) => meter.id === "structural:kanda-kannada");
+    const aryagiti = meters.find((meter) => meter.id === "structural:aryagiti");
+
+    assert.equal(kanda.name, "kanda (Kannada)");
+    assert.ok(kanda.aliases.includes("ಕಂದಪದ್ಯ"));
+    assert.ok(kanda.aliases.includes("kandapadya"));
+    assert.ok(!aryagiti.aliases.includes("kanda"));
+    assert.deepEqual(kanda.padaGroups.map((groups) => groups.length), [3, 5, 3, 5]);
+});
+
+test("recognizes the provisional Kannada Kanda characterization fixture", () => {
+    const result = Chandas.analyzeComposition(
+        kandaFixture.text,
+        {
+            ...combinedCatalog,
+            structuralCatalogVersion: structuralCatalog.catalogVersion
+        },
+        "structural:kanda-kannada"
+    );
+    const stanza = result.stanzas[0];
+    const kandaCandidate = stanza.candidates.find((candidate) =>
+        candidate.id === "structural:kanda-kannada");
+    const aryagitiCandidate = stanza.candidates.find((candidate) =>
+        candidate.id === "structural:aryagiti");
+
+    assert.deepEqual(stanza.patterns, kandaFixture.patterns);
+    assert.deepEqual(stanza.matraPattern, kandaFixture.matras);
+    assert.equal(stanza.violationCount, 0);
+    assert.equal(stanza.missingCount, 0);
+    assert.equal(kandaCandidate.status, "compatible");
+    assert.equal(aryagitiCandidate.status, "compatible");
+    assert.ok(
+        stanza.candidates.indexOf(kandaCandidate) <
+        stanza.candidates.indexOf(aryagitiCandidate)
+    );
+    assert.equal(stanza.selectedMeter.ruleCompleteness, "provisional-rhythm");
+    assert.deepEqual(stanza.selectedMeter.uncheckedRules, ["prāsa"]);
+    assert.equal(result.analysisVersion, "2.2.0");
+    assert.equal(result.catalogVersion, "2.0.0");
+});
+
+test("enforces Kannada Kanda gaṇa and ending rules at original ranges", () => {
+    const invalidGroups = [
+        ["LGL", "GG", "GG"],
+        ["GG", "GG", "GG", "GG", "GLL"],
+        ["GG", "GG", "GG"],
+        ["GG", "GG", "LGL", "GG", "GLL"]
+    ];
+    const text = invalidGroups.map((groups) =>
+        textForPattern(groups.join(""))).join("\n");
+    const stanza = Chandas.analyzeComposition(
+        text,
+        combinedCatalog,
+        "structural:kanda-kannada"
+    ).stanzas[0];
+    const reasons = stanza.padas.flatMap((pada) =>
+        pada.syllables.filter((syllable) => syllable.violation)
+            .map((syllable) => syllable.violationReason));
+
+    assert.ok(reasons.includes("forbidden-jagana"));
+    assert.ok(reasons.includes("required-jagana-or-all-laghu"));
+    assert.equal(
+        reasons.filter((reason) => reason === "required-final-guru").length,
+        2
+    );
+    stanza.padas.flatMap((pada) => pada.syllables)
+        .filter((syllable) => syllable.violation)
+        .forEach((syllable) => {
+            assert.equal(text.slice(syllable.start, syllable.end), syllable.text);
+        });
+});
+
+test("requires yati after the first Laghu in an all-Laghu special Kanda gaṇa", () => {
+    const lines = [
+        textForPattern("GGGGGG"),
+        [
+            textForPattern("GG"),
+            textForPattern("GG"),
+            "ಕಕಕಕ",
+            textForPattern("GG"),
+            textForPattern("GG")
+        ].join(" "),
+        textForPattern("GGGGGG"),
+        [
+            textForPattern("GG"),
+            textForPattern("GG"),
+            "ಕ ಕಕಕ",
+            textForPattern("GG"),
+            textForPattern("GG")
+        ].join(" ")
+    ];
+    const stanza = Chandas.analyzeComposition(
+        lines.join("\n"),
+        combinedCatalog,
+        "structural:kanda-kannada"
+    ).stanzas[0];
+    const yatiViolations = stanza.padas.flatMap((pada) => pada.syllables)
+        .filter((syllable) => syllable.violationReason === "required-yati");
+
+    assert.equal(yatiViolations.length, 1);
+    assert.equal(yatiViolations[0].text, "ಕ");
+});
+
+test("keeps an incomplete Kannada Kanda stanza possible without red violations", () => {
+    const stanza = Chandas.analyzeComposition(
+        textForPattern("GGL"),
+        combinedCatalog,
+        "structural:kanda-kannada"
+    ).stanzas[0];
+
+    assert.equal(stanza.violationCount, 0);
+    assert.ok(stanza.missingCount > 0);
+    assert.equal(
+        stanza.candidates.find((candidate) =>
+            candidate.id === "structural:kanda-kannada").status,
+        "compatible"
+    );
+});
+
+test("applies Kannada Kanda rhythm rules to Devanagari-script text", () => {
+    const validGroups = [
+        ["GG", "GG", "GG"],
+        ["GG", "GG", "LGL", "GG", "GG"],
+        ["GG", "GG", "GG"],
+        ["GG", "GG", "LGL", "GG", "GG"]
+    ];
+    const text = validGroups.map((groups) =>
+        devanagariTextForPattern(groups.join(""))).join("\n");
+    const stanza = Chandas.analyzeComposition(
+        text,
+        combinedCatalog,
+        "structural:kanda-kannada"
+    ).stanzas[0];
+
+    assert.deepEqual(stanza.scripts, ["devanagari"]);
+    assert.equal(stanza.violationCount, 0);
+    assert.equal(stanza.missingCount, 0);
 });
 
 test("marks a syllable that crosses a required mātrā-group boundary", () => {

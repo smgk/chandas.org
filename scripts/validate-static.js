@@ -60,8 +60,60 @@ for (const meter of structuralCatalog.meters) {
         throw new Error(`Unknown source reference for ${meter.id}: ${meter.sourceRef}`);
     }
     const rules = meter.kind === "matra" ? meter.padaGroups : meter.padas;
-    if (!Array.isArray(rules) || rules.length !== 4) {
-        throw new Error(`${meter.id} must define four pādas`);
+    if (!Array.isArray(rules) || rules.length === 0) {
+        throw new Error(`${meter.id} must define at least one pāda`);
+    }
+    if (meter.linePolicy && meter.linePolicy.type === "fixed" &&
+        meter.linePolicy.count !== rules.length) {
+        throw new Error(`${meter.id} fixed line count does not match its pāda rules`);
+    }
+    if (meter.kind !== "matra") {
+        continue;
+    }
+
+    const capacities = meter.padaGroups.flat();
+    for (const [ruleType, groupRules] of [
+        ["group", meter.groupRules || []],
+        ["boundary", meter.boundaryRules || []]
+    ]) {
+        if (!Array.isArray(groupRules)) {
+            throw new Error(`${meter.id} ${ruleType} rules must be an array`);
+        }
+        for (const rule of groupRules) {
+            if (!rule.everyGroup &&
+                !Array.isArray(rule.globalGroups) &&
+                !Array.isArray(rule.padas) &&
+                !Array.isArray(rule.localGroups)) {
+                throw new Error(`${meter.id} ${ruleType} rule has no group selector`);
+            }
+            for (const groupNumber of rule.globalGroups || []) {
+                if (!Number.isInteger(groupNumber) ||
+                    groupNumber < 1 || groupNumber > capacities.length) {
+                    throw new Error(
+                        `${meter.id} ${ruleType} rule has invalid group ${groupNumber}`
+                    );
+                }
+                for (const pattern of [
+                    ...(rule.allowedPatterns || []),
+                    ...(rule.forbiddenPatterns || []),
+                    ...(rule.whenPatterns || [])
+                ]) {
+                    const matras = Array.from(pattern).reduce(
+                        (sum, weight) => sum + (weight === "G" ? 2 : weight === "L" ? 1 : 0),
+                        0
+                    );
+                    if (!/^[GL]+$/.test(pattern) || matras !== capacities[groupNumber - 1]) {
+                        throw new Error(
+                            `${meter.id} pattern ${pattern} does not fit group ${groupNumber}`
+                        );
+                    }
+                }
+            }
+            if (ruleType === "boundary" &&
+                (!Number.isInteger(rule.afterSyllable) || rule.afterSyllable < 1)) {
+                throw new Error(`${meter.id} boundary rule needs afterSyllable`);
+            }
+        }
     }
 }
 

@@ -429,14 +429,22 @@ analysis result.
    Vipulā variations are explicitly deferred until an expert-reviewed rule set
    and corpus are available.
 4. The initial mātrā release MUST include the core Āryā-family patterns:
-   Āryā, Gīti, Upagīti, Udgīti, Āryāgīti/Kanda, Sugīti, Anugīti, and Vallarī.
+   Āryā, Gīti, Upagīti, Udgīti, Āryāgīti, Sugīti, Anugīti, and Vallarī.
 5. Initial Āryā-family validation checks the published mātrā-group totals.
    Additional gaṇa restrictions and regional variants MUST NOT be implied by
    an exact label until they are added to the catalog and expert-reviewed.
-6. Laghu contributes one mātrā and Guru contributes two mātrās. The engine
+6. Kannada Kanda MUST be a first-class entry independent of Āryāgīti. Its
+   encoded rules MUST include the `12 | 20 | 12 | 20` line totals, sixteen
+   four-mātrā gaṇas, forbidden jagaṇa at odd gaṇa positions, the special
+   sixth and fourteenth gaṇas, Guru endings at gaṇas eight and sixteen, and
+   conditional yati for an all-Laghu special gaṇa.
+7. Kannada Kanda MUST remain visibly provisional rather than exact until its
+   rule packet and golden corpus receive subject-matter approval. Prāsa MUST
+   be identified as unchecked until it is implemented.
+8. Laghu contributes one mātrā and Guru contributes two mātrās. The engine
    MUST expose the observed total for each pāda and MUST mark the source
    syllable that overruns a required group boundary.
-7. Fixed-pattern entries in `mishra.json` MUST remain unchanged. Structural
+9. Fixed-pattern entries in `mishra.json` MUST remain unchanged. Structural
    rules MUST be composed with them at runtime rather than rewriting the source
    list.
 
@@ -734,6 +742,9 @@ The MVP is acceptable when:
 12. The first template release uses a non-destructive ghost guide. A later
     release offers both ghost and strong templates, with the strong template
     supporting arbitrary out-of-order position filling.
+13. Kannada Kanda is cataloged separately from Āryāgīti. Its first engineering
+    release checks the sourced rhythm and yati rules, reports prāsa as
+    unchecked, and remains provisional pending expert corpus approval.
 
 ### Remaining review and expansion work
 
@@ -750,7 +761,9 @@ The MVP is acceptable when:
 5. Choose the minimum Android version and supported browser window.
 6. Obtain expert approval for the pathyā Anuṣṭubh corpus and determine which
    vipulā variations the next catalog version will accept.
-7. Add and review the remaining jāti/mātrā traditions and the full internal
+7. Obtain expert approval for the Kannada Kanda rule packet and golden corpus,
+   then add prāsa validation before promoting it from provisional.
+8. Add and review the remaining jāti/mātrā traditions and the full internal
    gaṇa constraints for the initial Āryā-family entries.
 
 ## 13. Explicitly Out of Scope for MVP

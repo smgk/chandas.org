@@ -1,5 +1,5 @@
 {
-  "catalogVersion": "1.0.0",
+  "catalogVersion": "2.0.0",
   "description": "Structural and mātrā meter rules that cannot be represented as one fixed Guru/Laghu string.",
   "meters": [
     {
@@ -84,12 +84,61 @@
     {
       "id": "structural:aryagiti",
       "name": "āryāgīti",
-      "aliases": ["aryagiti", "aaryaageeti", "kanda"],
+      "aliases": ["aryagiti", "aaryaageeti"],
       "kind": "matra",
       "signatureLines": ["12 | 20 / 12 | 20 mātrās", "groups: 444 | 44444 / 444 | 44444"],
       "ruleCompleteness": "group-totals",
       "sourceRef": "matraSource",
       "padaGroups": [[4, 4, 4], [4, 4, 4, 4, 4], [4, 4, 4], [4, 4, 4, 4, 4]]
+    },
+    {
+      "id": "structural:kanda-kannada",
+      "name": "kanda (Kannada)",
+      "aliases": [
+        "kanda",
+        "kandapadya",
+        "kanda padya",
+        "ಕಂದ",
+        "ಕಂದಪದ್ಯ",
+        "ಕಂದ ಪದ್ಯ"
+      ],
+      "kind": "matra",
+      "signatureLines": [
+        "12 | 20 | 12 | 20 mātrās",
+        "groups: 444 | 44444 | 444 | 44444",
+        "gaṇas 6 & 14: LGL or LLLL; 8 & 16 end G"
+      ],
+      "ruleCompleteness": "provisional-rhythm",
+      "uncheckedRules": ["prāsa"],
+      "sourceRef": "kandaSource",
+      "linePolicy": { "type": "fixed", "count": 4 },
+      "padaGroups": [[4, 4, 4], [4, 4, 4, 4, 4], [4, 4, 4], [4, 4, 4, 4, 4]],
+      "groupRules": [
+        {
+          "globalGroups": [1, 3, 5, 7, 9, 11, 13, 15],
+          "forbiddenPatterns": ["LGL"],
+          "violationReason": "forbidden-jagana"
+        },
+        {
+          "globalGroups": [6, 14],
+          "allowedPatterns": ["LGL", "LLLL"],
+          "violationReason": "required-jagana-or-all-laghu"
+        },
+        {
+          "globalGroups": [8, 16],
+          "allowedPatterns": ["LLG", "GG"],
+          "violationReason": "required-final-guru"
+        }
+      ],
+      "boundaryRules": [
+        {
+          "globalGroups": [6, 14],
+          "whenPatterns": ["LLLL"],
+          "afterSyllable": 1,
+          "violationReason": "required-yati"
+        }
+      ],
+      "notes": "Implements the rhythmic and yati rules in the cited rule packet. Prāsa is not yet checked, and the entry remains provisional until the golden corpus is approved."
     },
     {
       "id": "structural:sugiti",
@@ -126,5 +175,23 @@
     "title": "DHARMA Prosodic Patterns",
     "url": "https://dharmalekha.info/prosody",
     "notes": "The initial Āryā-family entries encode the published mātrā-group totals. Additional gaṇa restrictions and regional variants require expert-reviewed catalog revisions."
+  },
+  "kandaSource": {
+    "title": "Kannada Kanda rule packet",
+    "references": [
+      {
+        "title": "Chanda Nikasha: Verification and Identification of meters in Kannada Prosody",
+        "url": "https://kannadakali.com/crav/dev/docs/ChandaNikasha-English.pdf"
+      },
+      {
+        "title": "Kanda Padya, Classical Kannada",
+        "url": "https://shastriyakannada.org/database/english/literature/KANDA%20PADYA%20HTML.htm"
+      },
+      {
+        "title": "Kandapadya, Kannada Chandassu",
+        "url": "https://chandassu.onrender.com/chandassu/kandapadya"
+      }
+    ],
+    "notes": "The formal rule encoding is documented in docs/rules/kanda.md. Expert approval remains pending."
   }
 }

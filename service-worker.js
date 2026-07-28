@@ -1,6 +1,6 @@
 "use strict";
 
-const CACHE_NAME = "chandas-shell-v7";
+const CACHE_NAME = "chandas-shell-v8";
 const CORE_ASSETS = [
     "./",
     "./index.html",

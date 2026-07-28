@@ -1,6 +1,6 @@
 # Chandas.org Roadmap
 
-**Status:** Proposed post-MVP plan  
+**Status:** Active post-MVP plan
 **Updated:** 2026-07-27  
 **Baseline:** `mvp-baseline`
 
@@ -74,7 +74,8 @@ time for scholarly review. They are planning ranges, not release promises.
 
 ### M1 — Generalized Kannada prosody rules
 
-**Target:** Next  
+**Status:** In progress; catalog 2.0 group and boundary primitives shipped
+**Target:** Complete repeating/variable-line policies for Ragale
 **Estimate:** 1–2 weeks
 
 Extend the structural catalog and evaluator so a rule can express:
@@ -105,7 +106,8 @@ silently change the baseline Guru/Laghu classification for every composition.
 
 ### M2 — First-class Kannada Kanda
 
-**Target:** Immediately after M1  
+**Status:** Engineering complete; expert rule/corpus approval pending
+**Target:** Promote from provisional after the corpus gate
 **Estimate:** 1–2 weeks plus review
 
 - Replace the current `kanda` alias approximation with a first-class,
@@ -312,9 +314,13 @@ or licensing for every bundled corpus.
 
 ## Recommended immediate work
 
-Start **M1 and the Kanda rule packet now**. Once the generalized schema is
-stable, implement first-class Kanda detection. Mandānila Ragale follows next,
-then the other Ragale forms, then Bhāminī and the remaining Ṣaṭpadi forms.
+Kanda's first-class catalog entry, gaṇa rules, conditional yati, tests, source
+packet, web UI, and offline Android bundle are implemented in catalog `2.0.0`.
+It remains provisional until the corpus gate receives expert approval.
+
+Next, complete M1's repeating/variable-line policy and prepare the Mandānila
+Ragale rule packet. Then implement Mandānila, the other Ragale forms, Bhāminī,
+and the remaining Ṣaṭpadi forms.
 
 This puts useful Kannada mātrā/structural detection ahead of synonyms,
 accounts, and cloud synchronization while still allowing the fixed-vṛtta

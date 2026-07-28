@@ -1,0 +1,18 @@
+{
+  "reviewStatus": "provisional",
+  "source": "https://chandassu.onrender.com/chandassu/kandapadya",
+  "text": "ಕಾವೇರಿಯಿಂದ ಮಾಗೋ\nದಾವರಿವರ ಮಿರ್ಪ ನಾಡದಾ ಕನ್ನಡದೊಳ್\nಭಾವಿಸಿದ ಜನಪದಂ ವಸು\nಧಾವಳಯ ವಿಲೀನ ವಿಶದ ವಿಷಯ ವಿಶೇಷಂ",
+  "patterns": [
+    "GGLGLGG",
+    "GLLLLGLGLGGLLG",
+    "GLLLLLLGLL",
+    "GLLLLGLLLLLLLLGG"
+  ],
+  "matras": [12, 20, 12, 20],
+  "groups": [
+    ["GG", "LGL", "GG"],
+    ["GLL", "LLG", "LGL", "GG", "LLG"],
+    ["GLL", "LLLL", "GLL"],
+    ["GLL", "LLG", "LLLL", "LLLL", "GG"]
+  ]
+}

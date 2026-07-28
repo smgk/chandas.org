@@ -114,6 +114,23 @@ textarea:focus-visible {
     letter-spacing: 0.03em;
 }
 
+.brand-name {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+}
+
+.release-badge {
+    padding: 0.13rem 0.34rem;
+    border: 1px solid color-mix(in srgb, var(--saffron) 35%, var(--line));
+    border-radius: 999px;
+    color: var(--saffron-dark);
+    background: var(--saffron-pale);
+    font-size: 0.52rem;
+    font-weight: 750;
+    letter-spacing: 0.08em;
+}
+
 .brand small {
     display: block;
     margin-top: 0.05rem;

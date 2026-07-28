@@ -21,6 +21,7 @@ test.afterEach(async ({ page }) => {
 });
 
 test("analyzes Kannada and Devanagari stanzas inline", async ({ page }) => {
+    await expect(page.locator(".release-badge")).toHaveText("PRE-BETA");
     await page.locator("#composition").fill("ಕ ಕಾ ಕಂ\n\nक का कं");
 
     await expect(page.locator("#analysis-title")).toHaveText("Stanza 2 of 2");

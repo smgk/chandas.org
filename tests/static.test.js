@@ -77,6 +77,7 @@ test("branding and public navigation use the compact approved copy", () => {
     const publicPages = [index, read("privacy.html"), read("terms.html")].join("\n");
 
     assert.match(index, /say it in-verse/);
+    assert.match(index, /class="release-badge">PRE-BETA<\/span>/);
     assert.doesNotMatch(index, /Let the rhythm appear as you write/i);
     assert.doesNotMatch(publicPages, /github\.com\/smgk\/chandas\.org/);
     assert.match(about, /href="https:\/\/x\.com\/ganeshkrishna"[^>]*>@ganeshkrishna<\/a>/);

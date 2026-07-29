@@ -1082,6 +1082,17 @@ textarea:focus-visible {
     color: var(--saffron-dark);
 }
 
+.public-roadmap {
+    display: grid;
+    gap: 0.8rem;
+    margin: 2rem 0;
+    padding-left: 1.4rem;
+}
+
+.public-roadmap li {
+    padding-left: 0.25rem;
+}
+
 .legal-links {
     display: flex;
     flex-wrap: wrap;

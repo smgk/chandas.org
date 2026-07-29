@@ -40,6 +40,7 @@ test("service worker pre-caches every core web asset", () => {
         "documentation.html",
         "documentation.js",
         "about.html",
+        "roadmap.html",
         "privacy.html",
         "terms.html",
         "notices.html"
@@ -105,6 +106,25 @@ test("branding and public navigation use the compact approved copy", () => {
     assert.doesNotMatch(index, /Let the rhythm appear as you write/i);
     assert.doesNotMatch(publicPages, /github\.com\/smgk\/chandas\.org/);
     assert.match(about, /href="https:\/\/x\.com\/ganeshkrishna"[^>]*>@ganeshkrishna<\/a>/);
+    assert.match(
+        index,
+        /href="about\.html">About<\/a>\s*<a href="roadmap\.html">Roadmap<\/a>/
+    );
+});
+
+test("the public roadmap is concise, forward-looking, and available offline", () => {
+    const roadmap = read("roadmap.html");
+    const items = roadmap.match(/<li>/g) || [];
+
+    assert.equal(items.length, 9);
+    assert.match(roadmap, /Review Kannada meter rules/);
+    assert.match(roadmap, /Stronger guided composition/);
+    assert.match(roadmap, /Android distribution/);
+    assert.match(roadmap, /Synonym suggestions/);
+    assert.match(roadmap, /Short analysis links/);
+    assert.match(roadmap, /Optional accounts and sync/);
+    assert.match(roadmap, /Anonymous composition/);
+    assert.doesNotMatch(roadmap, /Estimate:|weeks|Target:/);
 });
 
 test("documentation includes the searchable, offline meter catalog", () => {

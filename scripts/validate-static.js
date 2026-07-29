@@ -18,6 +18,7 @@ const required = [
     "documentation.html",
     "documentation.js",
     "about.html",
+    "roadmap.html",
     "privacy.html",
     "terms.html",
     "notices.html"

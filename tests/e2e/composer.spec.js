@@ -216,6 +216,7 @@ test("keeps clear and the ghost guide available outside the meter picker", async
 
 test("fills fixed-vritta strong-template positions out of order without copying blanks", async ({ page }) => {
     await page.locator("#composition").fill("ಕ");
+    await expect(page.locator("#active-pattern")).toHaveText("L");
     await page.locator("#meter-picker summary").click();
     await page.locator("#meter-search").fill("madhu");
     await page.locator("#meter-select").selectOption("madhu");
@@ -232,11 +233,13 @@ test("fills fixed-vritta strong-template positions out of order without copying 
     const later = page.locator('.strong-template-slot[data-line-index="0"][data-slot-index="1"]');
     const fourthLine = page.locator('.strong-template-slot[data-line-index="3"][data-slot-index="0"]');
     await first.fill("");
+    await expect(first).toHaveValue("");
     await later.fill("ಕಾ");
     await later.press("Control+z");
     await expect(later).toHaveValue("");
     await later.press("Control+y");
     await expect(later).toHaveValue("ಕಾ");
+    await expect(first).toHaveValue("");
     await fourthLine.fill("द");
 
     await expect(first).toHaveValue("");
@@ -604,6 +607,26 @@ test("opens documentation and searches the complete prosody catalog", async ({ p
         .toContainText("Each group of 2 adjacent lines shares its ending consonant");
     await page.getByText("Return to Chandas").click();
     await expect(page.locator("#composition")).toBeVisible();
+});
+
+test("opens the concise public roadmap from the footer and keeps it offline", async ({
+    page,
+    context
+}) => {
+    const roadmapLink = page.locator(".site-footer").getByRole("link", {
+        name: "Roadmap"
+    });
+    await expect(roadmapLink).toBeVisible();
+    await roadmapLink.click();
+
+    await expect(page).toHaveURL(/roadmap\.html$/);
+    await expect(page.locator("h1")).toHaveText("Roadmap");
+    await expect(page.locator(".public-roadmap li")).toHaveCount(9);
+    await expect(page.locator("main")).toContainText("Anonymous composition");
+
+    await context.setOffline(true);
+    await page.reload();
+    await expect(page.locator(".public-roadmap li")).toHaveCount(9);
 });
 
 test("has no horizontal overflow at the target viewport", async ({ page }) => {

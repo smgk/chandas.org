@@ -198,6 +198,7 @@ test("documentation includes the searchable, offline meter catalog", () => {
     assert.match(documentation, /\?verse=&lt;verse&gt;&amp;meter=madhu/);
     assert.match(documentation, /hosting request logs/);
     assert.match(documentation, /Kannada Kanda/);
+    assert.match(documentation, /Pañcamātrā Chaupadi/);
     assert.match(documentation, /tea break/);
     assert.match(documentation, /id="meter-catalog-total"/);
     assert.match(documentation, /id="meter-catalog-search"/);
@@ -209,12 +210,37 @@ test("the provisional Kanda rule packet and attribution are retained", () => {
     const kanda = catalog.meters.find((meter) =>
         meter.id === "structural:kanda-kannada");
 
-    assert.equal(catalog.catalogVersion, "3.0.0");
+    assert.equal(catalog.catalogVersion, "3.1.0");
     assert.equal(kanda.ruleCompleteness, "provisional-rhythm");
     assert.deepEqual(kanda.uncheckedRules, ["prāsa"]);
     assert.ok(fs.existsSync(path.join(root, "docs", "rules", "kanda.md")));
     assert.match(read("THIRD_PARTY_NOTICES.md"), /Chanda Nikasha/);
     assert.match(read("notices.html"), /Kannada Kanda/);
+});
+
+test("the provisional Kagga-form Chaupadi packet and references are retained", () => {
+    const catalog = JSON.parse(read("structural_meters.json"));
+    const chaupadi = catalog.meters.find((meter) =>
+        meter.id === "structural:panchamatra-chaupadi-kagga");
+
+    assert.equal(catalog.catalogVersion, "3.1.0");
+    assert.equal(chaupadi.ruleCompleteness, "provisional-rhythm");
+    assert.deepEqual(chaupadi.padaGroups, [
+        [5, 5, 5, 5],
+        [5, 5, 5, 3],
+        [5, 5, 5, 5],
+        [5, 5, 5, 1]
+    ]);
+    assert.ok(chaupadi.aliases.includes("panchamatra chowpadi"));
+    assert.ok(chaupadi.aliases.includes("ಕಗ್ಗ"));
+    assert.ok(fs.existsSync(path.join(
+        root,
+        "docs",
+        "rules",
+        "panchamatra-chaupadi.md"
+    )));
+    assert.match(read("THIRD_PARTY_NOTICES.md"), /Pañcamātrā Chaupadi/);
+    assert.match(read("notices.html"), /Mankuthimmana Kagga/);
 });
 
 test("the provisional Ragale rule packet and references are retained", () => {
@@ -237,7 +263,7 @@ test("the Ṣaṭpadi and aṃśa milestones retain their catalogs and rule pack
         meter.id.endsWith("-shatpadi"));
     const amsha = catalog.meters.filter((meter) => meter.kind === "amsha");
 
-    assert.equal(catalog.catalogVersion, "3.0.0");
+    assert.equal(catalog.catalogVersion, "3.1.0");
     assert.equal(shatpadis.length, 6);
     assert.equal(amsha.length, 7);
     shatpadis.forEach((meter) => {

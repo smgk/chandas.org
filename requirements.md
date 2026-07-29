@@ -557,6 +557,14 @@ analysis result.
     historically documented substitute gaṇas MUST be named as unchecked where
     the shipped corpus does not yet justify a deterministic validation rule.
     Such entries MUST remain provisional pending expert approval.
+19. Pañcamātrā Chaupadi MUST initially be scoped to the familiar written-text
+    form used by D. V. Gundappa's *Mankuthimmana Kagga*, with four lines
+    encoded as `5555 / 5553 / 5555 / 5551`, or
+    `20 | 18 | 20 | 16` observed mātrās.
+20. The Kagga-form entry MUST remain visibly provisional. Pādānta
+    lengthening, śithila-dvitva, prāsa, and broader historical Chaupadi
+    variants MUST be named as unchecked rather than silently accepted or
+    rejected until an expert-reviewed corpus establishes their rules.
 
 ## 7. User Experience and Accessibility
 
@@ -878,6 +886,9 @@ The MVP is acceptable when:
     policy. Their first engineering release checks mātrā groups, Mandānila
     alternatives and lagam, and pairwise end-rhyme while remaining provisional
     pending expert corpus approval.
+15. Pañcamātrā Chaupadi initially means the modal written-text Kagga form,
+    encoded as `5555 / 5553 / 5555 / 5551`. It remains provisional and does
+    not imply that every historical Chaupadi shares that frame.
 
 ### Remaining review and expansion work
 
@@ -898,6 +909,9 @@ The MVP is acceptable when:
    then add prāsa validation before promoting it from provisional.
 8. Add and review the remaining jāti/mātrā traditions and the full internal
    gaṇa constraints for the initial Āryā-family entries.
+9. Obtain expert approval for the Kagga-form Pañcamātrā Chaupadi corpus,
+   including pādānta lengthening and śithila-dvitva, before broadening it to
+   other Chaupadi traditions.
 
 ## 13. Explicitly Out of Scope for MVP
 

@@ -1,5 +1,5 @@
 {
-  "catalogVersion": "3.0.0",
+  "catalogVersion": "3.1.0",
   "copyright": "Copyright © 2025–2026 Ganesh Krishna Shankarathota",
   "license": "GPL-3.0-only",
   "description": "Structural, mātrā, and aṃśa meter rules that cannot be represented as one fixed Guru/Laghu string.",
@@ -141,6 +141,46 @@
         }
       ],
       "notes": "Implements the rhythmic and yati rules in the cited rule packet. Prāsa is not yet checked, and the entry remains provisional until the golden corpus is approved."
+    },
+    {
+      "id": "structural:panchamatra-chaupadi-kagga",
+      "name": "pañcamātrā chaupadi (Kagga form)",
+      "aliases": [
+        "panchamatra chaupadi",
+        "panchamatra choupadi",
+        "panchamatra chowpadi",
+        "pancamatra caupadi",
+        "kagga",
+        "mankuthimmana kagga",
+        "mankutimma",
+        "ಪಂಚಮಾತ್ರಾ ಚೌಪದಿ",
+        "ಪಂಚಮಾತ್ರೆಯ ಚೌಪದಿ",
+        "ಚೌಪದಿ",
+        "ಕಗ್ಗ",
+        "ಮಂಕುತಿಮ್ಮನ ಕಗ್ಗ"
+      ],
+      "kind": "matra",
+      "signatureLines": [
+        "Kagga form: 4 lines; 20 | 18 | 20 | 16 written mātrās",
+        "groups: 5555 | 5553 | 5555 | 5551",
+        "the final written Laghu may lengthen at the line ending"
+      ],
+      "ruleCompleteness": "provisional-rhythm",
+      "uncheckedRules": [
+        "pādānta lengthening",
+        "śithila-dvitva",
+        "prāsa",
+        "historical chaupadi variants"
+      ],
+      "sourceRef": "chaupadiSource",
+      "linePolicy": { "type": "fixed", "unit": "line", "count": 4 },
+      "padaGroups": [
+        [5, 5, 5, 5],
+        [5, 5, 5, 3],
+        [5, 5, 5, 5],
+        [5, 5, 5, 1]
+      ],
+      "notes": "Recognizes the modal written-text frame used by D. V. Gundappa's Mankuthimmana Kagga. It is intentionally narrower than the broader historical mātrā-chaupadi family. Recitational lengthening, śithila-dvitva, prāsa, and less common variants await an expert-reviewed corpus."
     },
     {
       "id": "structural:shara-shatpadi",
@@ -624,6 +664,24 @@
       }
     ],
     "notes": "The formal rule encoding is documented in docs/rules/kanda.md. Expert approval remains pending."
+  },
+  "chaupadiSource": {
+    "title": "Pañcamātrā Chaupadi (Kagga form) rule packet",
+    "references": [
+      {
+        "title": "Kannada Prosody, University of Mysore Encyclopaedia",
+        "url": "https://kn.wikisource.org/wiki/ಮೈಸೂರು_ವಿಶ್ವವಿದ್ಯಾನಿಲಯ_ವಿಶ್ವಕೋಶ/ಕನ್ನಡ_ಛಂದಸ್ಸು"
+      },
+      {
+        "title": "Kannada meter overview and Kagga example, Shrikaanth K.",
+        "url": "https://threadreaderapp.com/thread/1262155137545654273.html"
+      },
+      {
+        "title": "Music and Prosody, Prekshaa",
+        "url": "https://www.prekshaa.in/Music-Prosody-Chandas-Sangita"
+      }
+    ],
+    "notes": "The scoped Kagga-form encoding and its distinction from broader historical mātrā-chaupadi are documented in docs/rules/panchamatra-chaupadi.md. Recitational rules and variants await expert review."
   },
   "ragaleSource": {
     "title": "Kannada Ragale rule packet",

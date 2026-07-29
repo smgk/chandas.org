@@ -411,7 +411,66 @@ test("recognizes the provisional Kannada Kanda characterization fixture", () => 
     assert.equal(stanza.selectedMeter.ruleCompleteness, "provisional-rhythm");
     assert.deepEqual(stanza.selectedMeter.uncheckedRules, ["prāsa"]);
     assert.equal(result.analysisVersion, "2.4.0");
-    assert.equal(result.catalogVersion, "3.0.0");
+    assert.equal(result.catalogVersion, "3.1.0");
+});
+
+test("loads and validates the Pañcamātrā Chaupadi Kagga form", () => {
+    const meter = Chandas.normalizeCatalog(combinedCatalog).find((entry) =>
+        entry.id === "structural:panchamatra-chaupadi-kagga");
+    const fiveMatras = "GGL";
+    const text = [
+        fiveMatras.repeat(4),
+        `${fiveMatras.repeat(3)}GL`,
+        fiveMatras.repeat(4),
+        `${fiveMatras.repeat(3)}L`
+    ].map(textForPattern).join("\n");
+    const stanza = Chandas.analyzeComposition(
+        text,
+        combinedCatalog,
+        meter.id
+    ).stanzas[0];
+    const candidate = stanza.candidates.find((entry) => entry.id === meter.id);
+
+    assert.equal(meter.name, "pañcamātrā chaupadi (Kagga form)");
+    assert.ok(meter.aliases.includes("panchamatra choupadi"));
+    assert.ok(meter.aliases.includes("ಮಂಕುತಿಮ್ಮನ ಕಗ್ಗ"));
+    assert.deepEqual(meter.padaGroups, [
+        [5, 5, 5, 5],
+        [5, 5, 5, 3],
+        [5, 5, 5, 5],
+        [5, 5, 5, 1]
+    ]);
+    assert.deepEqual(stanza.matraPattern, [20, 18, 20, 16]);
+    assert.equal(stanza.violationCount, 0);
+    assert.equal(stanza.missingCount, 0);
+    assert.equal(candidate.status, "compatible");
+    assert.deepEqual(stanza.selectedMeter.uncheckedRules, [
+        "pādānta lengthening",
+        "śithila-dvitva",
+        "prāsa",
+        "historical chaupadi variants"
+    ]);
+});
+
+test("marks a written mātrā beyond the Kagga-form fourth-line cadence", () => {
+    const fiveMatras = "GGL";
+    const text = [
+        fiveMatras.repeat(4),
+        `${fiveMatras.repeat(3)}GL`,
+        fiveMatras.repeat(4),
+        `${fiveMatras.repeat(3)}LL`
+    ].map(textForPattern).join("\n");
+    const stanza = Chandas.analyzeComposition(
+        text,
+        combinedCatalog,
+        "structural:panchamatra-chaupadi-kagga"
+    ).stanzas[0];
+    const violations = stanza.padas[3].syllables.filter((syllable) =>
+        syllable.violationReason === "extra-matra");
+
+    assert.equal(stanza.missingCount, 0);
+    assert.equal(violations.length, 1);
+    assert.equal(text.slice(violations[0].start, violations[0].end), "ಕ");
 });
 
 test("loads and validates all six quantitative Ṣaṭpadi forms as six-line verses", () => {

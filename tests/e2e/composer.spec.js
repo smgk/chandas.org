@@ -351,6 +351,49 @@ test("finds and validates provisional Kannada Kanda independently", async ({ pag
         ]);
 });
 
+test("finds, guides, and validates Pañcamātrā Chaupadi in the Kagga form", async ({
+    page
+}) => {
+    const textForPattern = (pattern) =>
+        Array.from(pattern, (weight) => weight === "G" ? "ಕಾ" : "ಕ").join(" ");
+    const fiveMatras = "GGL";
+    const kaggaFrame = [
+        fiveMatras.repeat(4),
+        `${fiveMatras.repeat(3)}GL`,
+        fiveMatras.repeat(4),
+        `${fiveMatras.repeat(3)}L`
+    ].map(textForPattern).join("\n");
+
+    await page.locator("#composition").fill(kaggaFrame);
+    await page.locator("#meter-picker summary").click();
+    await page.locator("#meter-search").fill("panchamatra choupadi");
+    await expect(page.locator("#meter-select option")).toHaveText([
+        "pañcamātrā chaupadi (Kagga form)"
+    ]);
+    await page.locator("#meter-search").fill("ಕಗ್ಗ");
+    await page.locator("#meter-select")
+        .selectOption("structural:panchamatra-chaupadi-kagga");
+    await page.locator("#show-template").check();
+
+    await expect(page.locator("#selected-meter-signature"))
+        .toContainText("20 | 18 | 20 | 16 written mātrās");
+    await expect(page.locator("#active-matras"))
+        .toHaveText("Mātrās by pāda: 20 | 18 | 20 | 16");
+    await expect(page.locator("#validation-summary"))
+        .toContainText(
+            "pādānta lengthening, śithila-dvitva, prāsa, " +
+            "historical chaupadi variants are not checked yet"
+        );
+    await expect(page.locator("#validation-summary")).not.toHaveClass(/has-errors/);
+    await expect(page.locator("#whole-verse-template .whole-template-line-guide"))
+        .toHaveText([
+            "M 20 · 5|5|5|5",
+            "M 18 · 5|5|5|3",
+            "M 20 · 5|5|5|5",
+            "M 16 · 5|5|5|1"
+        ]);
+});
+
 test("finds, guides, and validates all three repeatable Ragale forms", async ({ page }) => {
     const utsahaLine = "ಕಾ ಕ ಕಾ ಕ ಕಾ ಕ ಕಾ ಕ";
     const editor = page.locator("#composition");
@@ -592,7 +635,7 @@ test("opens documentation and searches the complete prosody catalog", async ({ p
     await expect(page.locator("h1")).toContainText("How to use Chandas");
     await expect(page.locator("main")).toContainText("tea break");
     await expect(page.locator("#meter-catalog-status"))
-        .toHaveText("1,374 of 1,374 supported meters shown.");
+        .toHaveText("1,375 of 1,375 supported meters shown.");
 
     await page.locator("#meter-catalog-search").fill("anushtup");
     await expect(page.locator(".meter-catalog-item")).toHaveCount(1);
@@ -610,6 +653,13 @@ test("opens documentation and searches the complete prosody catalog", async ({ p
         .toContainText("4 + 4 + 4 + 4 or 3 + 5 + 3 + 5 = 16 mātrās");
     await expect(page.locator(".meter-definitions"))
         .toContainText("Each group of 2 adjacent lines shares its ending consonant");
+
+    await page.locator("#meter-catalog-search").fill("panchamatra choupadi");
+    await expect(page.locator(".meter-catalog-item")).toHaveCount(1);
+    await page.locator(".meter-catalog-item summary").click();
+    await expect(page.locator(".meter-definitions"))
+        .toContainText("Line 4: 5 + 5 + 5 + 1 = 16 mātrās");
+
     await page.getByText("Return to Chandas").click();
     await expect(page.locator("#composition")).toBeVisible();
 });

@@ -30,6 +30,19 @@ Prosodic Patterns:
 
 <https://dharmalekha.info/prosody>
 
+The provisional Pañcamātrā Chaupadi (Kagga form) rule is documented in
+`docs/rules/panchamatra-chaupadi.md` against:
+
+- University of Mysore Encyclopaedia, *Kannada Prosody*:
+  <https://kn.wikisource.org/wiki/ಮೈಸೂರು_ವಿಶ್ವವಿದ್ಯಾನಿಲಯ_ವಿಶ್ವಕೋಶ/ಕನ್ನಡ_ಛಂದಸ್ಸು>
+- Shrikaanth K.'s Kannada meter overview and Kagga example:
+  <https://threadreaderapp.com/thread/1262155137545654273.html>
+- *Music and Prosody*, Prekshaa:
+  <https://www.prekshaa.in/Music-Prosody-Chandas-Sangita>
+
+These references establish the Chaupadi family, five-mātrā gait, and Kagga
+usage. Their examples and page content are not bundled with the application.
+
 The provisional Kannada Kanda rhythm rules are documented in
 `docs/rules/kanda.md` against:
 

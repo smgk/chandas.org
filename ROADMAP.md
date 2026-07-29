@@ -54,7 +54,8 @@ This is the next core-analysis track. Its order is:
 2. Kanda
 3. Ragale: Mandānila, Utsāha, and Lalita
 4. Ṣaṭpadi: Bhāminī first, followed by the remaining forms
-5. Additional Kannada traditions such as Tripadi, Sāṅgatya, and Akkara
+5. Pañcamātrā Chaupadi: the Kagga-form written frame first
+6. Additional Kannada traditions such as Tripadi, Sāṅgatya, and Akkara
 
 ### Track B — Strong template
 
@@ -221,9 +222,15 @@ pending
 
 Initial priority:
 
+- Pañcamātrā Chaupadi (Kagga form)
 - Tripadi
 - Sāṅgatya
 - Piriyakkara, Doreyakkara, Naḍuvaṇakkara, Eḍeyakkara, and Kiriyakkara
+
+The Kagga-form engineering slice now recognizes the modal written frame
+`5555 / 5553 / 5555 / 5551` and provides a four-line ghost guide. It remains
+provisional: pādānta lengthening, śithila-dvitva, prāsa, and the broader
+historical Chaupadi family still need expert-reviewed corpora.
 
 The shared evaluator represents Brahma, Viṣṇu, and Rudra aṃśa-gaṇas, gaṇa
 alternatives, required Tripadi positions, yati boundaries, and fixed family

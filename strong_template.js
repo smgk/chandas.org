@@ -177,7 +177,8 @@
         }
         for (let lineIndex = 0; lineIndex < draft.lines.length; lineIndex += 1) {
             if (!Array.isArray(snapshot[lineIndex]) ||
-                snapshot[lineIndex].length !== draft.lines[lineIndex].slots.length) {
+                snapshot[lineIndex].length !== draft.lines[lineIndex].slots.length ||
+                snapshot[lineIndex].some((value) => typeof value !== "string")) {
                 return false;
             }
         }

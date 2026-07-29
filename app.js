@@ -79,6 +79,8 @@
             includeLink: "Include chandas.org link",
             deviceShare: "Device share",
             copyText: "Copy text",
+            copyAnalysisLink: "Copy analysis link",
+            analysisLinkCopied: "Analysis link copied",
             shared: "Share sheet opened",
             facebookCopied: "Text copied; paste it into your Facebook post.",
             shareUnavailable: "Sharing is unavailable; the text was copied instead.",
@@ -164,6 +166,8 @@
             includeLink: "chandas.org ಕೊಂಡಿ ಸೇರಿಸಿ",
             deviceShare: "ಸಾಧನದ ಮೂಲಕ",
             copyText: "ಪಠ್ಯ ನಕಲಿಸಿ",
+            copyAnalysisLink: "ವಿಶ್ಲೇಷಣೆಯ ಕೊಂಡಿ ನಕಲಿಸಿ",
+            analysisLinkCopied: "ವಿಶ್ಲೇಷಣೆಯ ಕೊಂಡಿ ನಕಲಾಗಿದೆ",
             shared: "ಹಂಚಿಕೆ ತೆರೆಯಲಾಗಿದೆ",
             facebookCopied: "ಪಠ್ಯ ನಕಲಾಗಿದೆ; Facebook ಪೋಸ್ಟ್‌ಗೆ ಅಂಟಿಸಿ.",
             shareUnavailable: "ಹಂಚಿಕೆ ಲಭ್ಯವಿಲ್ಲ; ಪಠ್ಯವನ್ನು ನಕಲಿಸಲಾಗಿದೆ.",
@@ -214,7 +218,7 @@
             "strong-template-editor", "strong-template-lines",
             "validation-summary", "share-dialog",
             "include-meter", "include-link", "system-share", "twitter-share",
-            "facebook-share", "dialog-copy", "toast"
+            "facebook-share", "dialog-copy", "copy-analysis-url", "toast"
         ].forEach((id) => {
             elements[id] = document.getElementById(id);
         });
@@ -299,6 +303,19 @@
         }
     }
 
+    function guideModeFromUrl(value) {
+        const normalized = String(value || "")
+            .trim()
+            .toLocaleLowerCase();
+        if (normalized === "strong") {
+            return "strong";
+        }
+        if (["off", "false", "0", "none", "hide"].includes(normalized)) {
+            return "off";
+        }
+        return "ghost";
+    }
+
     function parseUrlImport() {
         const raw = window.location.search.replace(/^\?/, "");
         if (!raw) {
@@ -329,20 +346,43 @@
             : params.has("showTemplate")
                 ? params.get("showTemplate") || "ghost"
                 : null;
-        const normalizedTemplate = String(rawTemplate || "")
-            .trim()
-            .toLocaleLowerCase();
-        let guideMode = null;
-        if (hasTemplate) {
-            guideMode = normalizedTemplate === "strong"
-                ? "strong"
-                : ["off", "false", "0", "none", "hide"].includes(normalizedTemplate)
-                    ? "off"
-                    : "ghost";
+        const guideMode = hasTemplate
+            ? guideModeFromUrl(rawTemplate)
+            : null;
+        const stanzaOptions = {};
+        for (const [key, value] of params.entries()) {
+            const match = /^(meter|template|slots)[._-]?(\d+)$/i.exec(key);
+            if (!match) {
+                continue;
+            }
+            const stanzaIndex = Number(match[2]) - 1;
+            if (!Number.isInteger(stanzaIndex) || stanzaIndex < 0) {
+                continue;
+            }
+            const option = stanzaOptions[stanzaIndex] ||
+                (stanzaOptions[stanzaIndex] = {});
+            const optionType = match[1].toLocaleLowerCase();
+            if (optionType === "meter") {
+                option.meter = value;
+            } else if (optionType === "template") {
+                option.guideMode = guideModeFromUrl(value);
+            } else {
+                try {
+                    const slots = JSON.parse(value);
+                    if (Array.isArray(slots)) {
+                        option.strongSlots = slots;
+                    }
+                } catch (error) {
+                    // Ignore malformed optional slot state; authored text still loads.
+                }
+            }
         }
 
-        const consumed = verse !== null || meter !== null || hasTemplate;
-        return consumed ? { verse, meter, guideMode } : null;
+        const consumed = verse !== null || meter !== null || hasTemplate ||
+            Object.keys(stanzaOptions).length > 0;
+        return consumed
+            ? { verse, meter, guideMode, stanzaOptions }
+            : null;
     }
 
     function stripOuterLineBreaks(value) {
@@ -431,34 +471,75 @@
                         : stanza.start >= insertionStart)
                 .map((stanza) => stanza.index)
             : [];
-        const meter = payload.meter ? meterFromUrlToken(payload.meter) : null;
-        if (payload.meter && !meter) {
+        let selectionChanged = false;
+        let missingMeter = false;
+        targetIndices.forEach((stanzaIndex, relativeIndex) => {
+            const option = payload.stanzaOptions[relativeIndex] || {};
+            const meterToken = Object.hasOwn(option, "meter")
+                ? option.meter
+                : payload.meter;
+            if (meterToken === null || meterToken === undefined) {
+                return;
+            }
+            const meter = meterFromUrlToken(meterToken);
+            if (!meter) {
+                missingMeter = true;
+                return;
+            }
+            state.selections[stanzaIndex] = meter.id;
+            selectionChanged = true;
+        });
+        if (missingMeter) {
             importMessage = t("urlMeterMissing");
         }
-
-        if (meter) {
-            targetIndices.forEach((stanzaIndex) => {
-                state.selections[stanzaIndex] = meter.id;
-            });
+        if (selectionChanged) {
             runAnalysis();
         }
 
-        if (payload.guideMode !== null && (!payload.meter || meter)) {
-            let fellBack = false;
-            targetIndices.forEach((stanzaIndex) => {
-                const selected = meter ||
-                    meterForId(state.selections[stanzaIndex]);
-                let mode = selected ? payload.guideMode : "off";
-                if (mode === "strong" && !supportsStrongTemplate(selected)) {
-                    mode = "ghost";
-                    fellBack = true;
-                }
-                setTemplateMode(stanzaIndex, mode);
-            });
-            if (fellBack) {
-                importMessage = t("urlStrongFallback");
+        let fellBack = false;
+        let templateChanged = false;
+        targetIndices.forEach((stanzaIndex, relativeIndex) => {
+            const option = payload.stanzaOptions[relativeIndex] || {};
+            const requestedMode = Object.hasOwn(option, "guideMode")
+                ? option.guideMode
+                : payload.guideMode;
+            if (requestedMode === null || requestedMode === undefined) {
+                return;
             }
+            const selected = meterForId(state.selections[stanzaIndex]);
+            let mode = selected ? requestedMode : "off";
+            if (mode === "strong" && !supportsStrongTemplate(selected)) {
+                mode = "ghost";
+                fellBack = true;
+            }
+            setTemplateMode(stanzaIndex, mode);
+            templateChanged = true;
+        });
+        if (fellBack) {
+            importMessage = t("urlStrongFallback");
+        }
+        if (templateChanged) {
             renderOverlay();
+            renderAnalysisPanel();
+        }
+        let restoredStrongSlots = false;
+        targetIndices.forEach((stanzaIndex, relativeIndex) => {
+            const option = payload.stanzaOptions[relativeIndex] || {};
+            if (!Array.isArray(option.strongSlots) ||
+                templateMode(stanzaIndex) !== "strong") {
+                return;
+            }
+            const stanza = state.analysis && state.analysis.stanzas[stanzaIndex];
+            const meter = stanza && meterForId(state.selections[stanzaIndex]);
+            if (!stanza || !supportsStrongTemplate(meter)) {
+                return;
+            }
+            const draft = strongDraftFor(stanza, meter, true);
+            if (ChandasStrongTemplate.restoreSlots(draft, option.strongSlots)) {
+                restoredStrongSlots = true;
+            }
+        });
+        if (restoredStrongSlots) {
             renderAnalysisPanel();
         }
 
@@ -1561,7 +1642,37 @@
         elements.composition.focus();
     }
 
-    async function copyText(text) {
+    function analysisUrl() {
+        const url = new URL("https://chandas.org/");
+        url.searchParams.set("v", "1");
+        url.searchParams.set("verse", authoredCompositionText());
+        const stanzas = state.analysis ? state.analysis.stanzas : [];
+        stanzas.forEach((stanza, index) => {
+            const meterId = state.selections[stanza.index] ||
+                stanza.selectedMeterId;
+            if (meterId) {
+                url.searchParams.set(`meter${index + 1}`, meterId);
+            }
+            const mode = templateMode(stanza.index);
+            if (mode !== "off") {
+                url.searchParams.set(`template${index + 1}`, mode);
+            }
+            if (mode === "strong" && meterId) {
+                const draft = state.strongDrafts[
+                    strongDraftKey(stanza.index, meterId)
+                ];
+                if (draft) {
+                    url.searchParams.set(
+                        `slots${index + 1}`,
+                        JSON.stringify(ChandasStrongTemplate.cloneSlots(draft))
+                    );
+                }
+            }
+        });
+        return url.toString();
+    }
+
+    async function copyText(text, successMessage) {
         try {
             if (navigator.clipboard && window.isSecureContext) {
                 await navigator.clipboard.writeText(text);
@@ -1578,7 +1689,7 @@
                     throw new Error("Copy command failed");
                 }
             }
-            showToast(t("copied"));
+            showToast(t(successMessage || "copied"));
             return true;
         } catch (error) {
             showToast(t("copyFailed"));
@@ -1847,6 +1958,8 @@
         elements.copy.addEventListener("click", () => copyText(authoredCompositionText()));
         elements.share.addEventListener("click", () => elements["share-dialog"].showModal());
         elements["dialog-copy"].addEventListener("click", () => copyText(shareText()));
+        elements["copy-analysis-url"].addEventListener("click", () =>
+            copyText(analysisUrl(), "analysisLinkCopied"));
         elements["system-share"].addEventListener("click", systemShare);
         elements["twitter-share"].addEventListener("click", openTwitterShare);
         elements["facebook-share"].addEventListener("click", openFacebookShare);

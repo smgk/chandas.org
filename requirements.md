@@ -287,6 +287,22 @@ recommended, and optional behavior.
 8. The user MAY explicitly choose to add the applicable selected meter name or
    names and a `chandas.org` link. Optional additions MUST NOT unexpectedly
    replace or truncate the composition.
+9. The Share dialog MUST provide a **Copy analysis link** action with clear
+   success or failure feedback.
+10. A copied analysis link MUST use the canonical `https://chandas.org/`
+    origin and include a versioned, URL-encoded authored composition.
+11. The link MUST preserve each stanza's selected meter and Ghost/Strong mode
+    independently using stable, one-based stanza parameters. For Strong mode,
+    it MUST also preserve filled and unfilled slot structure without treating
+    empty slots as authored characters. Unselected meters and hidden guides MAY
+    be omitted.
+12. Loading a copied analysis link into a clean editor MUST reconstruct the
+    authored composition, per-stanza selections, supported template modes, and
+    Strong slot associations. Empty Strong positions and guide symbols MUST NOT
+    become authored text.
+13. Plain analysis-link creation MUST remain local and available offline.
+    Short-link creation that requires storage or a network service is deferred
+    to its roadmap milestone.
 
 ### FR-8: Anonymous local draft recovery
 
@@ -648,6 +664,9 @@ The MVP is acceptable when:
     and empty positions after restart, marks a filled weight mismatch without
     treating blank positions as violations, and copies or shares only authored
     text.
+14. **Copy analysis link** produces a canonical URL that round-trips the
+    authored text and each stanza's selected meter and supported template mode
+    in desktop, mobile, and offline browser tests.
 
 ## 10. Test Strategy
 
@@ -712,6 +731,7 @@ The MVP is acceptable when:
 - **URL-import tests:** Cover raw and named query forms, Kannada and
   Devanagari line breaks, appending to recovered drafts, multiple imported
   stanzas, catalog IDs and common Roman meter names, Ghost/Strong choices,
+  out-of-order Strong slot restoration, malformed optional slot state,
   unsupported-Strong fallback, query removal, refresh, offline reload, and
   query-free navigation cache keys.
 - **Accessibility tests:** Automated checks plus manual keyboard,

@@ -277,7 +277,24 @@ week per meter-family presentation
 - Treat transliteration as a separate, optional layer, never as a replacement
   for preserving the original text.
 
-### M9 — Accounts and synchronization
+### M9 — Privacy-preserving short analysis links
+
+**Prerequisite:** Plain, versioned analysis links remain the permanent
+offline fallback
+
+- Benchmark compressed URL fragments on the Kannada and Sanskrit corpus.
+- Decide whether short links expire and whether users can delete them.
+- Prefer a Chandas-controlled short-code service over a product dependency on
+  a third-party shortener.
+- Evaluate client-side compression and encryption, with any decryption key
+  retained in the URL fragment rather than sent to storage.
+- Define payload limits, rate limiting, abuse controls, retention, monitoring,
+  DNS, backup, and service-failure behavior before launch.
+- Preserve the versioned verse, per-stanza meter choices, and template modes
+  without storing analysis markup as authored text.
+- Keep **Copy analysis link** working when the short-link service is offline.
+
+### M10 — Accounts and synchronization
 
 Before implementation, approve:
 

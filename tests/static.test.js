@@ -64,6 +64,7 @@ test("the composition control and live regions have accessible labels", () => {
     assert.match(html, /id="cursor-metrics"/);
     assert.match(html, /id="show-template"[^>]*type="checkbox"/);
     assert.match(html, /id="template-mode-strong"[^>]*type="radio"/);
+    assert.match(html, /id="copy-analysis-url"[^>]*type="button"/);
     assert.match(
         html,
         /id="strong-template-editor"[^>]*aria-labelledby="strong-template-title"/
@@ -107,6 +108,7 @@ test("documentation includes the searchable, offline meter catalog", () => {
     assert.match(documentation, /How to use Chandas/);
     assert.match(documentation, /Show template/);
     assert.match(documentation, /Open a verse from a link/);
+    assert.match(documentation, /Copy analysis link/);
     assert.match(documentation, /\?verse=&lt;verse&gt;&amp;meter=madhu/);
     assert.match(documentation, /hosting request logs/);
     assert.match(documentation, /Kannada Kanda/);

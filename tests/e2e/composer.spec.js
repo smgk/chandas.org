@@ -494,6 +494,68 @@ test("share options are explicit and default to composition only", async ({ page
     await expect(page.locator("#include-link")).not.toBeChecked();
 });
 
+test("copies and round-trips a per-stanza analysis link", async ({ page, browser }) => {
+    const composition = "ಕ\n\nಕಾ";
+    await page.locator("#composition").fill(composition);
+    await page.locator("#previous-stanza").click();
+    await page.locator("#meter-picker summary").click();
+    await page.locator("#meter-search").fill("madhu");
+    await page.locator("#meter-select").selectOption("madhu");
+    await page.locator("#show-template").check();
+
+    await page.locator("#next-stanza").click();
+    await page.locator("#meter-select").selectOption("madhu");
+    await page.locator("#show-template").check();
+    await page.locator("#template-mode-strong").check();
+    const firstStrongSlot =
+        page.locator('.strong-template-slot[data-line-index="0"][data-slot-index="0"]');
+    const laterStrongSlot =
+        page.locator('.strong-template-slot[data-line-index="0"][data-slot-index="1"]');
+    await firstStrongSlot.fill("");
+    await laterStrongSlot.fill("ಕಾ");
+
+    await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
+    await page.locator("#share").click();
+    await expect(page.locator("#copy-analysis-url")).toBeVisible();
+    await page.locator("#copy-analysis-url").click();
+    await expect(page.locator("#toast")).toHaveText("Analysis link copied");
+    const copied = new URL(await page.evaluate(() => navigator.clipboard.readText()));
+
+    expect(copied.origin).toBe("https://chandas.org");
+    expect(copied.searchParams.get("v")).toBe("1");
+    expect(copied.searchParams.get("verse")).toBe(composition);
+    expect(copied.searchParams.get("meter1")).toBe("madhu");
+    expect(copied.searchParams.get("template1")).toBe("ghost");
+    expect(copied.searchParams.get("meter2")).toBe("madhu");
+    expect(copied.searchParams.get("template2")).toBe("strong");
+    const copiedSlots = JSON.parse(copied.searchParams.get("slots2"));
+    expect(copiedSlots[0]).toEqual(["", "ಕಾ"]);
+
+    const importedContext = await browser.newContext();
+    const importedPage = await importedContext.newPage();
+    const runtimeErrors = [];
+    importedPage.on("pageerror", (error) => runtimeErrors.push(error.message));
+    const localUrl = new URL("/", page.url());
+    localUrl.search = copied.search;
+    await importedPage.goto(localUrl.toString());
+
+    await expect(importedPage.locator("#composition")).toHaveValue(composition);
+    await expect(importedPage.locator("#analysis-title")).toHaveText("Stanza 2 of 2");
+    await expect(importedPage.locator("#selected-meter-name")).toHaveText("madhu");
+    await expect(importedPage.locator("#template-mode-strong")).toBeChecked();
+    await expect(importedPage.locator(
+        '.strong-template-slot[data-line-index="0"][data-slot-index="0"]'
+    )).toHaveValue("");
+    await expect(importedPage.locator(
+        '.strong-template-slot[data-line-index="0"][data-slot-index="1"]'
+    )).toHaveValue("ಕಾ");
+    await importedPage.locator("#previous-stanza").click();
+    await expect(importedPage.locator("#selected-meter-name")).toHaveText("madhu");
+    await expect(importedPage.locator("#template-mode-ghost")).toBeChecked();
+    expect(runtimeErrors).toEqual([]);
+    await importedContext.close();
+});
+
 test("opens documentation and searches the complete prosody catalog", async ({ page }) => {
     const learnLink = page.locator(".header-link");
     await expect(learnLink).toBeVisible();
@@ -537,6 +599,7 @@ test("has no horizontal overflow at the target viewport", async ({ page }) => {
 
 test("reloads the core workflow while offline", async ({ page, context }) => {
     await page.locator("#composition").fill("ಕ ಕಾ");
+    await context.grantPermissions(["clipboard-read", "clipboard-write"]);
     await page.waitForTimeout(400);
     await page.reload();
     await expect(page.locator("#active-pattern")).toHaveText("LG");
@@ -545,4 +608,10 @@ test("reloads the core workflow while offline", async ({ page, context }) => {
     await page.reload();
     await expect(page.locator("#composition")).toHaveValue("ಕ ಕಾ");
     await expect(page.locator("#active-pattern")).toHaveText("LG");
+    await page.locator("#share").click();
+    await page.locator("#copy-analysis-url").click();
+    await expect.poll(async () => {
+        const copied = new URL(await page.evaluate(() => navigator.clipboard.readText()));
+        return copied.searchParams.get("verse");
+    }).toBe("ಕ ಕಾ");
 });

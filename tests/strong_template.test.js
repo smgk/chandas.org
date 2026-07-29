@@ -113,6 +113,9 @@ test("distributes multiline paste from the selected slot and supports snapshots"
     assert.equal(draft.lines[1].slots[0], "");
     assert.equal(draft.lines[1].slots[1], "ಕ ಕಾ");
     assert.deepEqual(draft.lines[2].slots, ["क ", "का"]);
+    const malformed = before.map((slots) => slots.slice());
+    malformed[0][0] = { not: "authored text" };
+    assert.equal(StrongTemplate.restoreSlots(draft, malformed), false);
     assert.ok(StrongTemplate.restoreSlots(draft, before));
     assert.equal(StrongTemplate.serializeDraft(draft), "");
 });

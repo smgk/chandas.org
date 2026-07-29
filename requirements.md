@@ -193,6 +193,11 @@ recommended, and optional behavior.
    the beginning of the caret's logical line to the caret. The count MUST reset
    after every explicit line break. Moving the caret without editing MUST
    update these counts.
+8. Inline styling MUST NOT divide a Kannada or Devanagari conjunct shaping
+   cluster. When a metrical syllable boundary falls inside a visible conjunct,
+   the analysis offsets MUST remain unchanged while the display boundary is
+   moved to a shaping-safe position. An explicit ZWNJ MUST continue to prevent
+   joined shaping.
 
 ### FR-4: Meter detection and suggestions
 
@@ -713,11 +718,13 @@ The MVP is acceptable when:
   results across web and Android.
 - **Component tests:** Editor/highlight alignment, meter dropdown behavior,
   line-end syllable/mātrā counters, caret-position counting, stanza boundary
-  handling, per-stanza selected-meter persistence, the always-available clear
-  action, anonymous local draft recovery/clearing, ghost-template toggling and
-  alignment, proof that ghost symbols never enter source text, copy, share
-  fallback, URL-import parsing and one-shot appending, URL meter/template
-  choices, and synonym-dropdown placeholder behavior where present.
+  handling, shaping-safe Kannada and Devanagari conjunct highlighting,
+  preservation of explicit ZWNJ breaks, per-stanza selected-meter persistence,
+  the always-available clear action, anonymous local draft recovery/clearing,
+  ghost-template toggling and alignment, proof that ghost symbols never enter
+  source text, copy, share fallback, URL-import parsing and one-shot appending,
+  URL meter/template choices, and synonym-dropdown placeholder behavior where
+  present.
 - **End-to-end tests:** Type with simulated IME events; paste; undo/redo; select
   different meters in multiple stanzas; split and merge stanzas; repair a
   violation; enable and disable a ghost template without changing the poem;
@@ -748,7 +755,9 @@ The MVP is acceptable when:
 - Test physical Android keyboards/IMEs for Kannada and Devanagari, because
   synthetic browser events do not fully reproduce composition behavior.
 - Test current supported browsers and a representative set of phone sizes,
-  orientations, fonts, zoom levels, and low/offline network states.
+  orientations, fonts, zoom levels, and low/offline network states. Include
+  Kannada and Devanagari conjuncts whose metrical boundary falls between a
+  virāma and consonant on physical macOS Safari and iPhone Safari.
 - On a physical Android device, install the release candidate, enable airplane
   mode, restart the app, and complete the full edit/analyze/select/validate/copy
   and local-recovery workflow.

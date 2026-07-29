@@ -1148,7 +1148,7 @@
             return;
         }
 
-        const ranges = [
+        const ranges = Chandas.projectHighlightRanges(text, [
             ...state.analysis.segments.map((segment) => ({
                 start: segment.start,
                 end: segment.end,
@@ -1163,7 +1163,7 @@
                 end: range.end,
                 className: "uncertain"
             }))
-        ].sort((left, right) => left.start - right.start || left.end - right.end);
+        ]).sort((left, right) => left.start - right.start || left.end - right.end);
         const annotations = buildOverlayAnnotations();
 
         let cursor = 0;

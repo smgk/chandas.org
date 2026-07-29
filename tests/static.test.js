@@ -84,6 +84,17 @@ test("selected-meter actions remain outside the full meter picker", () => {
     assert.match(read("styles.css"), /font-size:\s*clamp\(1\.05rem,\s*1\.8vw,\s*1\.3rem\)/);
 });
 
+test("editor styling preserves Indic shaping across highlight states", () => {
+    const styles = read("styles.css");
+    const violationRule = styles.match(
+        /\.highlight-layer \.violation\s*\{([^}]*)\}/
+    );
+
+    assert.match(styles, /letter-spacing:\s*normal/);
+    assert.ok(violationRule);
+    assert.doesNotMatch(violationRule[1], /font-weight/);
+});
+
 test("branding and public navigation use the compact approved copy", () => {
     const index = read("index.html");
     const about = read("about.html");

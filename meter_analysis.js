@@ -109,6 +109,77 @@
         return sorted[0][1] > 0 ? sorted[0][0] : "unknown";
     }
 
+    function configForConsonantAt(text, index) {
+        if (index < 0 || index >= text.length) {
+            return null;
+        }
+
+        const cp = text.codePointAt(index);
+        return Object.values(SCRIPT_CONFIG).find((config) =>
+            inRange(cp, config.consonant)) || null;
+    }
+
+    function shapingSafeBoundary(text, offset) {
+        const boundedOffset = Math.max(0, Math.min(text.length, offset));
+        const config = configForConsonantAt(text, boundedOffset);
+        if (!config) {
+            return boundedOffset;
+        }
+
+        let clusterStart = boundedOffset;
+
+        while (clusterStart > 0) {
+            let cursor = clusterStart - 1;
+            const joiner = text.codePointAt(cursor);
+
+            // ZWJ requests joined shaping and belongs to the conjunct. ZWNJ
+            // deliberately prevents joining, so a boundary after it is safe.
+            if (joiner === 0x200d) {
+                cursor -= 1;
+            } else if (joiner === 0x200c) {
+                break;
+            }
+
+            if (cursor < 0 || text.codePointAt(cursor) !== config.virama) {
+                break;
+            }
+            cursor -= 1;
+
+            while (cursor >= 0 &&
+                config.ignoredMarks.has(text.codePointAt(cursor))) {
+                cursor -= 1;
+            }
+            if (cursor < 0 ||
+                !inRange(text.codePointAt(cursor), config.consonant)) {
+                break;
+            }
+
+            clusterStart = cursor;
+        }
+
+        return clusterStart;
+    }
+
+    function projectHighlightRanges(text, ranges) {
+        const source = String(text || "");
+        if (!Array.isArray(ranges)) {
+            return [];
+        }
+
+        return ranges.map((range) => {
+            const rawStart = Number.isFinite(range.start) ? range.start : 0;
+            const rawEnd = Number.isFinite(range.end) ? range.end : rawStart;
+            const start = shapingSafeBoundary(source, rawStart);
+            const end = shapingSafeBoundary(source, rawEnd);
+
+            return {
+                ...range,
+                start,
+                end: Math.max(start, end)
+            };
+        }).filter((range) => range.end > range.start);
+    }
+
     function consumeMarks(points, index, config, state) {
         let cursor = index;
 
@@ -1587,6 +1658,7 @@
         normalizeCatalog,
         parsePadas,
         parseStanzas,
+        projectHighlightRanges,
         rankMeters,
         rankStructuralMeters,
         rhymeKeyForPada,

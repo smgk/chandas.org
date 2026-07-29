@@ -337,7 +337,7 @@ textarea:focus-visible {
     font-size: clamp(1.05rem, 1.8vw, 1.3rem);
     font-weight: 450;
     line-height: 2rem;
-    letter-spacing: 0.012em;
+    letter-spacing: normal;
 }
 
 .highlight-layer {
@@ -388,7 +388,6 @@ textarea:focus-visible {
 
 .highlight-layer .violation {
     color: var(--error);
-    font-weight: 620;
     text-decoration-line: underline;
     text-decoration-style: wavy;
     text-decoration-color: var(--error);

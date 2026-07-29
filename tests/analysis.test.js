@@ -85,6 +85,51 @@ test("a following conjunct closes the preceding syllable", () => {
     assert.ok(devanagari.syllables[0].reasons.includes("closed-by-conjunct"));
 });
 
+test("projects highlight spans away from Kannada and Devanagari conjuncts", () => {
+    for (const text of ["ನಿಶ್ಚಲ", "निश्चल"]) {
+        const segmented = Chandas.segmentLine(text, 0);
+        const logicalRanges = segmented.syllables.map((syllable) => ({
+            start: syllable.start,
+            end: syllable.end,
+            className: syllable.classification
+        }));
+        const displayRanges = Chandas.projectHighlightRanges(text, logicalRanges);
+
+        assert.deepEqual(
+            segmented.syllables.map((syllable) => syllable.text),
+            text === "ನಿಶ್ಚಲ" ? ["ನಿಶ್", "ಚ", "ಲ"] : ["निश्", "च", "ल"]
+        );
+        assert.deepEqual(
+            displayRanges.map((range) => text.slice(range.start, range.end)),
+            text === "ನಿಶ್ಚಲ" ? ["ನಿ", "ಶ್ಚ", "ಲ"] : ["नि", "श्च", "ल"]
+        );
+        assert.deepEqual(
+            displayRanges.map((range) => range.className),
+            ["G", "L", "L"]
+        );
+    }
+});
+
+test("preserves explicit ZWNJ breaks but protects ZWJ conjunct shaping", () => {
+    const joined = "ನಿಶ್‍ಚಲ";
+    const separated = "ನಿಶ್‌ಚಲ";
+    const joinedBoundary = joined.indexOf("ಚ");
+    const separatedBoundary = separated.indexOf("ಚ");
+
+    const [joinedRange] = Chandas.projectHighlightRanges(joined, [{
+        start: joinedBoundary,
+        end: joinedBoundary + 1
+    }]);
+    const [separatedRange] = Chandas.projectHighlightRanges(separated, [{
+        start: separatedBoundary,
+        end: separatedBoundary + 1
+    }]);
+
+    assert.equal(joined.slice(joinedRange.start, joinedRange.end), "ಶ್‍ಚ");
+    assert.equal(separatedRange.start, separatedBoundary);
+    assert.equal(separated.slice(separatedRange.start, separatedRange.end), "ಚ");
+});
+
 test("a conjunct after whitespace or punctuation makes the preceding Laghu Guru", () => {
     const kannada = Chandas.segmentLine("ಕ,   ಕ್ರ", 0);
     const devanagari = Chandas.segmentLine("क।   क्र", 0);

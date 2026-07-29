@@ -36,6 +36,24 @@ test("analyzes Kannada and Devanagari stanzas inline", async ({ page }) => {
     await expect(page.locator("#active-pattern")).toHaveText("LGG");
 });
 
+test("keeps Kannada and Devanagari conjuncts joined across highlight changes", async ({
+    page
+}) => {
+    await page.locator("#composition").fill("ನಿಶ್ಚಲ\n\nनिश्चल");
+
+    await expect(page.locator("#highlight-layer .guru")).toHaveText(["ನಿ", "नि"]);
+    await expect(page.locator("#highlight-layer .laghu")).toHaveText([
+        "ಶ್ಚ",
+        "ಲ",
+        "श्च",
+        "ल"
+    ]);
+
+    const editorTracking = await page.locator("#composition").evaluate((editor) =>
+        getComputedStyle(editor).letterSpacing);
+    expect(editorTracking).toBe("normal");
+});
+
 test("loads a raw-query verse once and appends it to a recovered draft", async ({ page }) => {
     const imported = "ಕಾವ್ಯ\nಪದ್ಯ";
     await page.locator("#composition").fill("ಮೊದಲ ಪದ್ಯ");

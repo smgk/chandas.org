@@ -1,3 +1,8 @@
+/*
+ * Copyright © 2025–2026 Ganesh Krishna Shankarathota
+ * SPDX-License-Identifier: GPL-3.0-only
+ */
+
 (function chandasModule(globalScope, factory) {
     const api = factory();
 

@@ -1,3 +1,8 @@
+/*
+ * Copyright © 2025–2026 Ganesh Krishna Shankarathota
+ * SPDX-License-Identifier: GPL-3.0-only
+ */
+
 plugins {
     id "com.android.application"
 }
@@ -10,8 +15,8 @@ android {
         applicationId "org.chandas.app"
         minSdk 24
         targetSdk 36
-        versionCode 12
-        versionName "1.7.2"
+        versionCode 13
+        versionName "1.7.3"
     }
 
     buildFeatures {
@@ -66,6 +71,10 @@ tasks.register("syncWebAssets", Copy) {
     include "terms.html"
     include "notices.html"
     include "about.html"
+    include "roadmap.html"
+    include "COPYRIGHT.md"
+    include "LICENSE.md"
+    include "THIRD_PARTY_NOTICES.md"
     into(generatedWebAssets)
 }
 

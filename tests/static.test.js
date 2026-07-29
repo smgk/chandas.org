@@ -1,3 +1,8 @@
+/*
+ * Copyright © 2025–2026 Ganesh Krishna Shankarathota
+ * SPDX-License-Identifier: GPL-3.0-only
+ */
+
 "use strict";
 
 const assert = require("node:assert/strict");
@@ -25,6 +30,50 @@ test("the web shell has no external runtime asset dependencies", () => {
     assert.match(html, /app\.js/);
 });
 
+test("original source declares Ganesh Krishna Shankarathota under GPLv3 only", () => {
+    const copyrightLine =
+        "Copyright © 2025–2026 Ganesh Krishna Shankarathota";
+    const sourceFiles = [
+        "app.js",
+        "meter_analysis.js",
+        "strong_template.js",
+        "documentation.js",
+        "service-worker.js",
+        "styles.css",
+        "index.html",
+        "about.html",
+        "documentation.html",
+        "roadmap.html",
+        "privacy.html",
+        "terms.html",
+        "notices.html",
+        "icon.svg",
+        "scripts/build-static.js",
+        "scripts/static-server.js",
+        "scripts/validate-static.js",
+        "android/app/src/main/java/org/chandas/app/MainActivity.java"
+    ];
+
+    sourceFiles.forEach((file) => {
+        const contents = read(file);
+        assert.match(contents, new RegExp(copyrightLine), file);
+        assert.match(contents, /SPDX-License-Identifier: GPL-3\.0-only/, file);
+    });
+
+    const packageMetadata = JSON.parse(read("package.json"));
+    const originalCatalog = JSON.parse(read("structural_meters.json"));
+    const copyrightNotice = read("COPYRIGHT.md");
+
+    assert.equal(packageMetadata.author, "Ganesh Krishna Shankarathota");
+    assert.equal(packageMetadata.license, "GPL-3.0-only");
+    assert.equal(originalCatalog.copyright, copyrightLine);
+    assert.equal(originalCatalog.license, "GPL-3.0-only");
+    assert.match(copyrightNotice, /GNU General Public License, version 3\s+only/);
+    assert.match(copyrightNotice, /No “or any later version” option is granted/);
+    assert.match(copyrightNotice, /mishra\.json/);
+    assert.doesNotMatch(read("mishra.json"), /Ganesh Krishna Shankarathota/);
+});
+
 test("service worker pre-caches every core web asset", () => {
     const worker = read("service-worker.js");
     const expectedAssets = [
@@ -43,7 +92,10 @@ test("service worker pre-caches every core web asset", () => {
         "roadmap.html",
         "privacy.html",
         "terms.html",
-        "notices.html"
+        "notices.html",
+        "COPYRIGHT.md",
+        "LICENSE.md",
+        "THIRD_PARTY_NOTICES.md"
     ];
 
     expectedAssets.forEach((asset) => {
@@ -106,6 +158,9 @@ test("branding and public navigation use the compact approved copy", () => {
     assert.doesNotMatch(index, /Let the rhythm appear as you write/i);
     assert.doesNotMatch(publicPages, /github\.com\/smgk\/chandas\.org/);
     assert.match(about, /href="https:\/\/x\.com\/ganeshkrishna"[^>]*>@ganeshkrishna<\/a>/);
+    assert.match(about, /Ganesh Krishna Shankarathota/);
+    assert.doesNotMatch(about, /Ganesha Krishna Shankarathota/);
+    assert.match(index, /© 2025–2026 Ganesh Krishna Shankarathota/);
     assert.match(
         index,
         /href="about\.html">About<\/a>\s*<a href="roadmap\.html">Roadmap<\/a>/

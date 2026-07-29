@@ -1,3 +1,7 @@
+<!--
+Copyright © 2025–2026 Ganesh Krishna Shankarathota
+SPDX-License-Identifier: GPL-3.0-only
+-->
 <resources>
     <string name="app_name">Chandas</string>
     <string name="share_chooser_title">Share composition</string>

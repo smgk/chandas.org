@@ -1,3 +1,6 @@
+# Copyright © 2025–2026 Ganesh Krishna Shankarathota
+# SPDX-License-Identifier: GPL-3.0-only
+
 # Download and install nvm:
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.2/install.sh | bash
 

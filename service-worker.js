@@ -1,6 +1,11 @@
+/*
+ * Copyright © 2025–2026 Ganesh Krishna Shankarathota
+ * SPDX-License-Identifier: GPL-3.0-only
+ */
+
 "use strict";
 
-const CACHE_NAME = "chandas-shell-v17";
+const CACHE_NAME = "chandas-shell-v18";
 const CORE_ASSETS = [
     "./",
     "./index.html",
@@ -18,7 +23,10 @@ const CORE_ASSETS = [
     "./roadmap.html",
     "./privacy.html",
     "./terms.html",
-    "./notices.html"
+    "./notices.html",
+    "./COPYRIGHT.md",
+    "./LICENSE.md",
+    "./THIRD_PARTY_NOTICES.md"
 ];
 
 self.addEventListener("install", (event) => {

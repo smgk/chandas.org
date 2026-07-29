@@ -1,3 +1,8 @@
+/*
+ * Copyright © 2025–2026 Ganesh Krishna Shankarathota
+ * SPDX-License-Identifier: GPL-3.0-only
+ */
+
 "use strict";
 
 const { expect, test } = require("@playwright/test");

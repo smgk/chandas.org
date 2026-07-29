@@ -1,3 +1,8 @@
+/*
+ * Copyright © 2025–2026 Ganesh Krishna Shankarathota
+ * SPDX-License-Identifier: GPL-3.0-only
+ */
+
 "use strict";
 
 const fs = require("node:fs");
@@ -21,7 +26,10 @@ const required = [
     "roadmap.html",
     "privacy.html",
     "terms.html",
-    "notices.html"
+    "notices.html",
+    "COPYRIGHT.md",
+    "LICENSE.md",
+    "THIRD_PARTY_NOTICES.md"
 ];
 
 for (const file of required) {

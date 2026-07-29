@@ -1,5 +1,7 @@
 {
   "catalogVersion": "3.0.0",
+  "copyright": "Copyright © 2025–2026 Ganesh Krishna Shankarathota",
+  "license": "GPL-3.0-only",
   "description": "Structural, mātrā, and aṃśa meter rules that cannot be represented as one fixed Guru/Laghu string.",
   "meters": [
     {

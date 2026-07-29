@@ -1,3 +1,7 @@
+<!--
+Copyright © 2025–2026 Ganesh Krishna Shankarathota
+SPDX-License-Identifier: GPL-3.0-only
+-->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <rect width="512" height="512" rx="112" fill="#a4431e"/>
   <circle cx="256" cy="256" r="176" fill="none" stroke="#f4efe5" stroke-width="12" opacity=".4"/>

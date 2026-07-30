@@ -84,5 +84,4 @@ analysis URLs retain only the authored poem.
   <https://kn.wikisource.org/wiki/ಮೈಸೂರು_ವಿಶ್ವವಿದ್ಯಾನಿಲಯ_ವಿಶ್ವಕೋಶ/ಕನ್ನಡ_ಛಂದಸ್ಸು>
 - *Chanda Nikasha: Verification and Identification of meters in Kannada
   Prosody*: <https://kannadakali.com/crav/dev/docs/ChandaNikasha-English.pdf>
-- Shrikaanth K. Murthy, aṃśa-gaṇa structure and karṣaṇa examples:
-  <https://threadreaderapp.com/thread/1262155137545654273.html>
+

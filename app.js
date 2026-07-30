@@ -329,6 +329,7 @@
             return null;
         }
         const params = new URLSearchParams(raw);
+        const linkVersion = Math.max(1, Number(params.get("v")) || 1);
         let verse = params.has("verse")
             ? params.get("verse")
             : params.has("text")
@@ -374,6 +375,9 @@
             } else if (optionType === "template") {
                 option.guideMode = guideModeFromUrl(value);
             } else {
+                if (linkVersion < 2) {
+                    continue;
+                }
                 try {
                     const slots = JSON.parse(value);
                     if (Array.isArray(slots)) {
@@ -1307,6 +1311,8 @@
     }
 
     function runAnalysis() {
+        window.clearTimeout(state.renderTimer);
+        state.renderTimer = null;
         const text = elements.composition.value;
         const oldStanzas = state.analysis ? state.analysis.stanzas : null;
         const parsedStanzas = Chandas.parseStanzas(text);
@@ -1656,7 +1662,7 @@
 
     function analysisUrl() {
         const url = new URL("https://chandas.org/");
-        url.searchParams.set("v", "1");
+        url.searchParams.set("v", "2");
         url.searchParams.set("verse", authoredCompositionText());
         const stanzas = state.analysis ? state.analysis.stanzas : [];
         stanzas.forEach((stanza, index) => {

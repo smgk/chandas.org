@@ -425,6 +425,14 @@ recommended, and optional behavior.
     vṛttas. Strong layouts for provisional structural, mātrā, and aṃśa
     families MUST remain unavailable until that family has a reviewed rule
     model and golden corpus.
+11. Strong-mode boxes MUST use shaping-safe visual syllable boundaries in
+    Kannada and Devanagari. A conjunct onset MUST remain intact in the following
+    box (`ಪಾ · ರ್ಥಾ`, `पा · र्था`) even when prosodic syllabification assigns
+    its closing consonant to the preceding syllable.
+12. Guru/Laghu validation MUST still operate across adjacent occupied Strong
+    boxes. Moving a conjunct onset visually MUST NOT make a preceding short
+    syllable Laghu when the conjunct closes it metrically. Blank positions MUST
+    remain real boundaries and MUST NOT create an inferred conjunct.
 
 ### FR-12: Prosody reference
 

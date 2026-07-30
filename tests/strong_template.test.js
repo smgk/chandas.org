@@ -76,6 +76,73 @@ test("preserves punctuation and whitespace as authored slot content", () => {
     );
 });
 
+test("keeps conjunct onsets intact in Kannada and Devanagari Strong slots", () => {
+    assert.deepEqual(
+        StrongTemplate.authoredUnits("ಪಾರ್ಥಾಯ ಪ್ರತಿಬೋಧಿತಾಂ"),
+        ["ಪಾ", "ರ್ಥಾ", "ಯ ", "ಪ್ರ", "ತಿ", "ಬೋ", "ಧಿ", "ತಾಂ"]
+    );
+    assert.deepEqual(
+        StrongTemplate.authoredUnits("पार्थाय प्रतिबोधिताम्"),
+        ["पा", "र्था", "य ", "प्र", "ति", "बो", "धि", "ताम्"]
+    );
+    assert.deepEqual(
+        StrongTemplate.authoredUnits("ನಿಶ್ಚಲ"),
+        ["ನಿ", "ಶ್ಚ", "ಲ"]
+    );
+    assert.deepEqual(
+        StrongTemplate.authoredUnits("निश्चल"),
+        ["नि", "श्च", "ल"]
+    );
+});
+
+test("classifies visual Strong slots with prosody across conjunct boundaries", () => {
+    const draft = {
+        version: StrongTemplate.MODEL_VERSION,
+        meterId: "test",
+        meterName: "test",
+        catalogVersion: "test",
+        analysisVersion: "test",
+        lines: [{
+            expected: Array.from("GGGLLGLG"),
+            slots: StrongTemplate.authoredUnits("ಪಾರ್ಥಾಯ ಪ್ರತಿಬೋಧಿತಾಂ")
+        }]
+    };
+    const inspection = StrongTemplate.inspectDraft(draft);
+
+    assert.deepEqual(draft.lines[0].slots, [
+        "ಪಾ", "ರ್ಥಾ", "ಯ ", "ಪ್ರ", "ತಿ", "ಬೋ", "ಧಿ", "ತಾಂ"
+    ]);
+    assert.equal(StrongTemplate.serializeDraft(draft), "ಪಾರ್ಥಾಯ ಪ್ರತಿಬೋಧಿತಾಂ");
+    assert.equal(inspection.lines[0].pattern, "GGGLLGLG");
+    assert.equal(inspection.violationCount, 0);
+    assert.equal(inspection.missingCount, 0);
+    assert.equal(inspection.lines[0].slots[2].status, "match");
+    assert.equal(inspection.lines[0].slots[2].actual, "G");
+    assert.equal(inspection.lines[0].slots[3].actual, "L");
+});
+
+test("does not infer a conjunct across an intentionally blank Strong slot", () => {
+    const draft = {
+        version: StrongTemplate.MODEL_VERSION,
+        meterId: "test",
+        meterName: "test",
+        catalogVersion: "test",
+        analysisVersion: "test",
+        lines: [{
+            expected: ["L", "L", "L"],
+            slots: ["ಯ", "", "ಪ್ರ"]
+        }]
+    };
+    const inspection = StrongTemplate.inspectDraft(draft);
+
+    assert.deepEqual(
+        inspection.lines[0].slots.map((slot) => slot.actual),
+        ["L", "", "L"]
+    );
+    assert.equal(inspection.violationCount, 0);
+    assert.equal(inspection.missingCount, 1);
+});
+
 test("merges ghost-mode edits back into previously occupied strong positions", () => {
     const draft = StrongTemplate.createFixedDraft(
         madhu,

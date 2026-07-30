@@ -199,6 +199,7 @@ test("documentation includes the searchable, offline meter catalog", () => {
     assert.match(documentation, /hosting request logs/);
     assert.match(documentation, /Kannada Kanda/);
     assert.match(documentation, /Pañcamātrā Chaupadi/);
+    assert.match(documentation, /ಪಾ · ರ್ಥಾ/);
     assert.match(documentation, /tea break/);
     assert.match(documentation, /id="meter-catalog-total"/);
     assert.match(documentation, /id="meter-catalog-search"/);

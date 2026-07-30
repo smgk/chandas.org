@@ -278,6 +278,60 @@ test("fills fixed-vritta strong-template positions out of order without copying 
     await expect(fourthLine).toHaveValue("द");
 });
 
+test("keeps conjunct onsets whole while Strong mode scans across slots", async ({
+    page
+}) => {
+    await page.locator("#composition").fill("ನಿಶ್ಚಲ");
+    await page.locator("#meter-picker summary").click();
+    await page.locator("#meter-search").fill("mandari");
+    await page.locator("#meter-select").selectOption("mandari");
+    await page.locator("#show-template").check();
+    await page.locator("#template-mode-strong").check();
+
+    const firstLine = page.locator(
+        '.strong-template-slot[data-line-index="0"]'
+    );
+    await expect.poll(() => firstLine.evaluateAll((inputs) =>
+        inputs.map((input) => input.value)))
+        .toEqual(["ನಿ", "ಶ್ಚ", "ಲ"]);
+    await expect(firstLine.nth(0)).toHaveClass(/is-match/);
+    await expect(firstLine.nth(1)).toHaveClass(/is-match/);
+    await expect(firstLine.nth(2)).toHaveClass(/is-match/);
+    await expect(page.locator("#active-pattern")).toContainText("GLL");
+    await expect(page.locator("#validation-summary"))
+        .toContainText("Every filled position follows mandari");
+
+    await page.locator("#template-mode-ghost").check();
+    await expect(page.locator("#composition")).toHaveValue("ನಿಶ್ಚಲ");
+});
+
+test("rebuilds version-one analysis-link slots with conjunct-safe boundaries", async ({
+    page
+}) => {
+    const oldSlots = [
+        ["ನಿಶ್", "ಚ", "ಲ"],
+        ["", "", ""],
+        ["", "", ""],
+        ["", "", ""]
+    ];
+    const params = new URLSearchParams({
+        v: "1",
+        verse: "ನಿಶ್ಚಲ",
+        meter1: "mandari",
+        template1: "strong",
+        slots1: JSON.stringify(oldSlots)
+    });
+
+    await page.goto(`/?${params.toString()}`);
+    await expect(page.locator("#template-mode-strong")).toBeChecked();
+    const firstLine = page.locator(
+        '.strong-template-slot[data-line-index="0"]'
+    );
+    await expect.poll(() => firstLine.evaluateAll((inputs) =>
+        inputs.map((input) => input.value)))
+        .toEqual(["ನಿ", "ಶ್ಚ", "ಲ"]);
+});
+
 test("keeps strong mode unavailable for provisional structural meter guides", async ({ page }) => {
     const params = new URLSearchParams({
         verse: "ಕವಿ",
@@ -591,7 +645,7 @@ test("copies and round-trips a per-stanza analysis link", async ({ page, browser
     const copied = new URL(await page.evaluate(() => navigator.clipboard.readText()));
 
     expect(copied.origin).toBe("https://chandas.org");
-    expect(copied.searchParams.get("v")).toBe("1");
+    expect(copied.searchParams.get("v")).toBe("2");
     expect(copied.searchParams.get("verse")).toBe(composition);
     expect(copied.searchParams.get("meter1")).toBe("madhu");
     expect(copied.searchParams.get("template1")).toBe("ghost");

@@ -19,7 +19,7 @@
 }(typeof globalThis !== "undefined" ? globalThis : this, function buildStrongTemplate(Chandas) {
     "use strict";
 
-    const MODEL_VERSION = 1;
+    const MODEL_VERSION = 2;
 
     function fixedPatterns(meter) {
         if (!meter || meter.kind !== "fixed") {
@@ -45,12 +45,23 @@
             return [source];
         }
 
-        return segmented.syllables.map((syllable, index, syllables) => {
-            const start = index === 0 ? 0 : syllable.start - offset;
-            const next = syllables[index + 1];
-            const end = next ? next.start - offset : source.length;
-            return source.slice(start, end);
+        // Prosodic segmentation assigns a consonant+virāma coda to the
+        // preceding syllable: ಪಾರ್ಥಾ scans as ಪಾರ್ + ಥಾ. Strong-mode boxes
+        // are visual editing units, so the same text must be displayed as
+        // ಪಾ + ರ್ಥಾ to keep the shaped conjunct intact. The highlight
+        // projector already finds that shaping-safe boundary on both Kannada
+        // and Devanagari, including Safari's finer grapheme behavior.
+        const starts = segmented.syllables.map((syllable) => {
+            const localStart = syllable.start - offset;
+            const projected = Chandas.projectHighlightRanges(source, [{
+                start: localStart,
+                end: source.length
+            }]);
+            return projected.length ? projected[0].start : localStart;
         });
+
+        return starts.map((start, index) =>
+            source.slice(start, starts[index + 1] ?? source.length));
     }
 
     function placeUnits(slotCount, units) {
@@ -235,10 +246,52 @@
         };
     }
 
+    function inspectLineSlots(line) {
+        const slots = line.slots.map((value, index) =>
+            inspectSlot(value, line.expected[index]));
+        let start = 0;
+
+        while (start < line.slots.length) {
+            if (!line.slots[start]) {
+                start += 1;
+                continue;
+            }
+
+            let end = start + 1;
+            while (end < line.slots.length && line.slots[end]) {
+                end += 1;
+            }
+
+            const authored = line.slots.slice(start, end);
+            const source = authored.join("");
+            const syllables = Chandas.segmentLine(source, 0).syllables;
+            const visualUnits = authoredUnits(source, 0);
+            const aligned = visualUnits.length === authored.length &&
+                visualUnits.every((unit, index) => unit === authored[index]);
+            if (aligned && syllables.length === authored.length) {
+                syllables.forEach((syllable, index) => {
+                    const slotIndex = start + index;
+                    const actual = syllable.classification;
+                    slots[slotIndex] = {
+                        status: actual === line.expected[slotIndex]
+                            ? "match"
+                            : "mismatch",
+                        actual,
+                        matras: actual === Chandas.GURU ? 2 : 1,
+                        syllableCount: 1
+                    };
+                });
+            }
+
+            start = end;
+        }
+
+        return slots;
+    }
+
     function inspectDraft(draft) {
         const lines = draft.lines.map((line) => {
-            const slots = line.slots.map((value, index) =>
-                inspectSlot(value, line.expected[index]));
+            const slots = inspectLineSlots(line);
             return {
                 pattern: slots.map((slot) => slot.actual || "○").join(""),
                 matras: slots.reduce((sum, slot) => sum + slot.matras, 0),

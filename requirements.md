@@ -602,6 +602,15 @@ analysis result.
 23. When the first consonant of every available pāda matches, the UI MUST
     report “Ādi-prāsa found.” Unless a selected meter explicitly requires
     first-letter prāsa, its absence MUST NOT be reported as a violation.
+24. A stanza containing at least two eligible Kannada-script pādas MUST receive
+    an automatic dvitīyākṣara-prāsa check even when no meter is selected or a
+    fixed/Sanskrit-vṛtta catalog meter is selected. The result MUST be marked
+    as an advisory Kannada-script observation and MUST NOT change meter
+    validity. When the selected meter already declares dvitīyākṣara-prāsa, its
+    required rule MUST take precedence without a duplicate automatic report.
+    Each nonblank line and each danda/pipe-delimited span is a pāda; blank lines
+    reset the comparison. Mixed Kannada–Devanagari stanzas MUST NOT be compared
+    across scripts.
 
 ## 7. User Experience and Accessibility
 

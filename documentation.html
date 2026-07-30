@@ -177,13 +177,21 @@ SPDX-License-Identifier: GPL-3.0-only
 
         <h2>Read the prāsa colors</h2>
         <p>
-            For meters with an encoded Kannada prāsa rule, Chandas checks the
-            terminal consonant of the second akṣara across the required lines.
-            The first syllable’s Guru/Laghu weight must also agree. A teal
-            letter highlight means the prāsa matches, red means the consonant
-            differs, and amber means the opening weight differs. The usual
-            dotted Laghu or solid Guru underline remains on the highlighted
-            letter.
+            Whenever a stanza is written in Kannada script, Chandas
+            automatically checks the terminal consonant of its second akṣara
+            across the available lines—even when no meter is selected or the
+            selected meter comes from the Sanskrit vṛtta catalog. This
+            automatic check is advisory: it helps with an ad-hoc meter without
+            declaring the selected meter wrong.
+        </p>
+        <p>
+            A cataloged Kannada meter may make the same prāsa a required part
+            of its validation and may add special positions of its own. In
+            either case, the first syllable’s Guru/Laghu weight must agree. A
+            teal letter highlight means the prāsa matches, red means the
+            consonant differs, and amber means the opening weight differs. The
+            usual dotted Laghu or solid Guru underline remains on the
+            highlighted letter.
         </p>
         <p>
             Ottu letters are compared by sound but colored as one safely shaped
@@ -192,6 +200,13 @@ SPDX-License-Identifier: GPL-3.0-only
             <code>ಲ್ಪ</code>. Spaces and punctuation politely stay out of the
             argument. Matching final consonants are checked for meters such as
             Ragaḷe and Chaupadi that declare antya-prāsa.
+        </p>
+        <p>
+            Each nonblank line is treated as a pāda for the automatic check;
+            danda and pipe marks can divide more than one pāda on a line, and
+            a blank line starts a fresh stanza. At least two eligible Kannada
+            pādas are needed. Mixed Kannada–Devanagari stanzas are not compared
+            across scripts.
         </p>
         <p>
             Chandas also reports <em>Ādi-prāsa found</em> when the first

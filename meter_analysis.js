@@ -114,6 +114,18 @@
         return sorted[0][1] > 0 ? sorted[0][0] : "unknown";
     }
 
+    function scriptsPresent(text) {
+        const scripts = new Set();
+        for (const point of codePoints(text)) {
+            for (const [name, config] of Object.entries(SCRIPT_CONFIG)) {
+                if (inRange(point.cp, config.block)) {
+                    scripts.add(name);
+                }
+            }
+        }
+        return scripts;
+    }
+
     function configForConsonantAt(text, index) {
         if (index < 0 || index >= text.length) {
             return null;
@@ -554,7 +566,15 @@
         };
     }
 
-    function addPrasaAnnotation(syllable, kind, status, shouldMark, detail) {
+    function addPrasaAnnotation(
+        syllable,
+        kind,
+        status,
+        shouldMark,
+        detail,
+        provenance,
+        required
+    ) {
         if (!shouldMark || !syllable) {
             return;
         }
@@ -562,13 +582,17 @@
             syllable.prasaAnnotations = [];
         }
         if (syllable.prasaAnnotations.some((annotation) =>
-            annotation.kind === kind && annotation.status === status)) {
+            annotation.kind === kind &&
+            annotation.status === status &&
+            annotation.provenance === provenance)) {
             return;
         }
         syllable.prasaAnnotations.push({
             kind,
             status,
-            detail: detail || ""
+            detail: detail || "",
+            provenance: provenance || "meter-rule",
+            required: required !== false
         });
     }
 
@@ -1327,14 +1351,20 @@
         };
     }
 
-    function evaluatePrasaGroup(occurrences, type, shouldMark) {
+    function evaluatePrasaGroup(occurrences, type, shouldMark, options) {
+        const provenance = options && options.provenance
+            ? options.provenance
+            : "meter-rule";
+        const required = !options || options.required !== false;
         const report = {
             type: prasaLabel(type),
             status: "incomplete",
             key: occurrences[0] ? occurrences[0].key : "",
             matches: 0,
             failures: 0,
-            weightFailures: 0
+            weightFailures: 0,
+            provenance,
+            required
         };
         if (occurrences.length < 2) {
             return report;
@@ -1352,7 +1382,9 @@
                     prasaLabel(type),
                     "mismatch",
                     shouldMark,
-                    reference.key
+                    reference.key,
+                    provenance,
+                    required
                 );
                 setViolation(
                     current.syllable,
@@ -1360,7 +1392,7 @@
                         ? "antya-prasa-mismatch"
                         : "dvitiyakshara-prasa-mismatch",
                     reference.key,
-                    shouldMark
+                    shouldMark && required
                 );
                 continue;
             }
@@ -1378,13 +1410,15 @@
                     prasaLabel(type),
                     "weight-mismatch",
                     shouldMark,
-                    reference.preceding.classification
+                    reference.preceding.classification,
+                    provenance,
+                    required
                 );
                 setViolation(
                     current.preceding,
                     "prasa-opening-weight-mismatch",
                     reference.preceding.classification,
-                    shouldMark
+                    shouldMark && required
                 );
             }
         }
@@ -1395,7 +1429,9 @@
                     prasaLabel(type),
                     "match",
                     shouldMark,
-                    reference.key
+                    reference.key,
+                    provenance,
+                    required
                 ));
         }
         return report;
@@ -1418,7 +1454,9 @@
                 "adi-prasa",
                 "match",
                 shouldMark,
-                reference.key
+                reference.key,
+                "automatic-observation",
+                false
             ));
         return {
             type: "adi-prasa",
@@ -1426,7 +1464,9 @@
             key: reference.key,
             matches: occurrences.length - 1,
             failures: 0,
-            weightFailures: 0
+            weightFailures: 0,
+            provenance: "automatic-observation",
+            required: false
         };
     }
 
@@ -1455,13 +1495,18 @@
                     }
                 });
             }
+            const provenance = relation.provenance || "meter-rule";
+            const required = relation.required !== false;
             for (const occurrences of configured.groups) {
                 const report = evaluatePrasaGroup(
                     occurrences,
                     configured.type,
-                    shouldMark
+                    shouldMark,
+                    { provenance, required }
                 );
-                result.failures += report.failures;
+                if (required) {
+                    result.failures += report.failures;
+                }
                 result.checks.push(report);
             }
         }
@@ -1471,6 +1516,33 @@
             result.findings.push(adi);
         }
         return result;
+    }
+
+    function hasDvitiyaksharaRelation(meter) {
+        return Boolean(meter) && (meter.lineRelations || []).some((relation) =>
+            relation.type === "dvitiyakshara-prasa");
+    }
+
+    function evaluateAutomaticKannadaPrasa(padas, stanzaText, shouldMark) {
+        const scripts = scriptsPresent(stanzaText);
+        if (scripts.size !== 1 || !scripts.has("kannada") ||
+            padas.length < 2 || !padas.every((pada) =>
+            pada.syllables.length > 0 &&
+            pada.syllables.every((syllable) => syllable.script === "kannada"))) {
+            return null;
+        }
+        const occurrences = padas
+            .map((pada) => prasaOccurrence(pada, "dvitiyakshara"))
+            .filter(Boolean);
+        return evaluatePrasaGroup(
+            occurrences,
+            "dvitiyakshara",
+            shouldMark,
+            {
+                provenance: "automatic-kannada",
+                required: false
+            }
+        );
     }
 
     function mergePadasByLine(padas) {
@@ -1848,6 +1920,16 @@
                 : selectedFixedMeter
                     ? evaluateLineRelations(padas, selectedFixedMeter, true)
                     : evaluateLineRelations(padas, {}, true);
+            if (!hasDvitiyaksharaRelation(selectedMeter)) {
+                const automaticPrasa = evaluateAutomaticKannadaPrasa(
+                    padas,
+                    stanza.text,
+                    true
+                );
+                if (automaticPrasa) {
+                    prasa.checks.unshift(automaticPrasa);
+                }
+            }
             const candidates = sortCandidates([
                 ...rankMeters(linePatterns, meters, meters.length),
                 ...rankStructuralMeters(padas, meters)
@@ -1892,7 +1974,7 @@
 
         return {
             text: originalText,
-            analysisVersion: "2.5.0",
+            analysisVersion: "2.6.0",
             catalogVersion: catalog && catalog.structuralCatalogVersion
                 ? String(catalog.structuralCatalogVersion)
                 : "",

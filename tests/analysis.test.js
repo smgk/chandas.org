@@ -181,6 +181,9 @@ test("matches dvitīyākṣara-prāsa through an ottu and highlights its whole c
     assert.equal(check.status, "match");
     assert.equal(check.key, "ಪ");
     assert.equal(check.failures, 0);
+    assert.equal(check.provenance, "meter-rule");
+    assert.equal(check.required, true);
+    assert.equal(stanza.prasa.checks.length, 1);
     assert.ok(firstTarget.prasaAnnotations.some((item) =>
         item.status === "match"));
     assert.equal(text.slice(projected.start, projected.end), "ಲ್ಪ");
@@ -221,6 +224,57 @@ test("reports consonant and opening Guru/Laghu prāsa failures separately", () =
         weight.padas[1].syllables[0].violationReason,
         "prasa-opening-weight-mismatch"
     );
+});
+
+test("checks Kannada dvitīyākṣara-prāsa without requiring a selected meter", () => {
+    const matching = Chandas.analyzeComposition("ಕಪ\nಜಪ", catalog, {}).stanzas[0];
+    const mismatching = Chandas.analyzeComposition("ಕಪ\nಜತ", catalog, {}).stanzas[0];
+    const match = matching.prasa.checks.find((item) =>
+        item.type === "dvitiyakshara-prasa");
+    const mismatch = mismatching.prasa.checks.find((item) =>
+        item.type === "dvitiyakshara-prasa");
+    const mismatchedSyllable = mismatching.padas[1].syllables[1];
+
+    assert.equal(match.status, "match");
+    assert.equal(match.provenance, "automatic-kannada");
+    assert.equal(match.required, false);
+    assert.equal(mismatch.status, "mismatch");
+    assert.equal(mismatch.failures, 1);
+    assert.equal(mismatch.required, false);
+    assert.equal(mismatching.violationCount, 0);
+    assert.equal(mismatchedSyllable.violation, false);
+    assert.notEqual(
+        mismatchedSyllable.violationReason,
+        "dvitiyakshara-prasa-mismatch"
+    );
+    assert.ok(mismatchedSyllable.prasaAnnotations.some((item) =>
+        item.status === "mismatch" &&
+        item.provenance === "automatic-kannada" &&
+        item.required === false));
+});
+
+test("keeps automatic Kannada prāsa active for a selected fixed vṛtta", () => {
+    const fixedCatalog = { metres: [["test-vritta", "LL"]] };
+    const stanza = Chandas.analyzeComposition(
+        "ಕಪ\nಜಪ",
+        fixedCatalog,
+        "test-vritta"
+    ).stanzas[0];
+    const check = stanza.prasa.checks.find((item) =>
+        item.type === "dvitiyakshara-prasa");
+
+    assert.equal(stanza.selectedMeterId, "test-vritta");
+    assert.equal(check.status, "match");
+    assert.equal(check.provenance, "automatic-kannada");
+    assert.equal(check.required, false);
+});
+
+test("does not apply automatic Kannada prāsa across other or mixed scripts", () => {
+    const devanagari = Chandas.analyzeComposition("कप\nजप", catalog, {}).stanzas[0];
+    const mixed = Chandas.analyzeComposition("ಕಪ\nजप", catalog, {}).stanzas[0];
+
+    assert.equal(devanagari.prasa.checks.length, 0);
+    assert.equal(mixed.prasa.checks.length, 0);
 });
 
 test("finds matching first letters as positive Ādi-prāsa", () => {
@@ -420,7 +474,7 @@ test("keeps an incomplete structural meter compatible without red violations", (
 
     assert.equal(stanza.violationCount, 0);
     assert.ok(stanza.missingCount > 0);
-    assert.equal(result.analysisVersion, "2.5.0");
+    assert.equal(result.analysisVersion, "2.6.0");
     assert.equal(result.catalogVersion, structuralCatalog.catalogVersion);
 });
 
@@ -515,7 +569,7 @@ test("recognizes the provisional Kannada Kanda characterization fixture", () => 
     );
     assert.equal(stanza.selectedMeter.ruleCompleteness, "provisional-rhythm");
     assert.deepEqual(stanza.selectedMeter.uncheckedRules, ["historical prāsa variants"]);
-    assert.equal(result.analysisVersion, "2.5.0");
+    assert.equal(result.analysisVersion, "2.6.0");
     assert.equal(result.catalogVersion, "3.2.0");
 });
 

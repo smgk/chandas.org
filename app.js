@@ -109,6 +109,8 @@
             "adi-prasa": "Ādi-prāsa",
             prasaMatches: "{type} matches on {key}.",
             prasaMismatches: "{type}: {count} mismatch(es).",
+            automaticPrasaMatches: "Automatic Kannada-script {type} matches on {key}.",
+            automaticPrasaMismatches: "Automatic Kannada-script {type}: {count} mismatch(es).",
             prasaWeightMismatches: "The first syllable’s Guru/Laghu weight differs in {count} place(s).",
             adiPrasaFound: "Ādi-prāsa found on {key}."
         },
@@ -210,6 +212,8 @@
             "adi-prasa": "ಆದಿಪ್ರಾಸ",
             prasaMatches: "{type} {key} ಅಕ್ಷರದಲ್ಲಿ ಹೊಂದಿದೆ.",
             prasaMismatches: "{type}: {count} ವ್ಯತ್ಯಾಸ.",
+            automaticPrasaMatches: "ಕನ್ನಡ ಲಿಪಿಯ ಸ್ವಯಂ ಪರಿಶೀಲನೆ: {type} {key} ಅಕ್ಷರದಲ್ಲಿ ಹೊಂದಿದೆ.",
+            automaticPrasaMismatches: "ಕನ್ನಡ ಲಿಪಿಯ ಸ್ವಯಂ ಪರಿಶೀಲನೆ: {type} {count} ಕಡೆ ಭಿನ್ನವಾಗಿದೆ.",
             prasaWeightMismatches: "ಮೊದಲ ಅಕ್ಷರದ ಗುರು–ಲಘು {count} ಕಡೆ ಭಿನ್ನವಾಗಿದೆ.",
             adiPrasaFound: "{key} ಅಕ್ಷರದಲ್ಲಿ ಆದಿಪ್ರಾಸ ಕಂಡಿದೆ."
         }
@@ -1668,20 +1672,27 @@
         const list = document.createElement("ul");
         for (const report of reports) {
             const item = document.createElement("li");
+            const isAutomaticKannada = report.provenance === "automatic-kannada";
             if (report.type === "adi-prasa" && report.status === "found") {
                 item.textContent = t("adiPrasaFound", { key: report.key });
                 item.className = "is-match";
             } else if (report.status === "match") {
-                item.textContent = t("prasaMatches", {
-                    type: t(report.type),
-                    key: report.key
-                });
+                item.textContent = t(
+                    isAutomaticKannada ? "automaticPrasaMatches" : "prasaMatches",
+                    {
+                        type: t(report.type),
+                        key: report.key
+                    }
+                );
                 item.className = "is-match";
             } else {
-                item.textContent = t("prasaMismatches", {
-                    type: t(report.type),
-                    count: report.failures
-                });
+                item.textContent = t(
+                    isAutomaticKannada ? "automaticPrasaMismatches" : "prasaMismatches",
+                    {
+                        type: t(report.type),
+                        count: report.failures
+                    }
+                );
                 item.className = "is-mismatch";
                 if (report.weightFailures) {
                     item.textContent += ` ${t("prasaWeightMismatches", {

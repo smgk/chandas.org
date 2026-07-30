@@ -59,6 +59,38 @@ test("allows choosing a meter before the first syllable is typed", async ({ page
     await expect(page.locator("#active-pattern")).toHaveText("L");
 });
 
+test("shows advisory Kannada prāsa with no meter and with a fixed vṛtta", async ({
+    page
+}) => {
+    const editor = page.locator("#composition");
+    await editor.fill("ಕಪ\nಜಪ");
+
+    await expect(page.locator("#prasa-summary")).toContainText(
+        "Automatic Kannada-script Dvitīyākṣara-prāsa matches on ಪ."
+    );
+    await expect(page.locator("#highlight-layer .prasa-match")).toHaveText(["ಪ", "ಪ"]);
+
+    await editor.fill("ಕಪ\nಜತ");
+    await expect(page.locator("#prasa-summary")).toContainText(
+        "Automatic Kannada-script Dvitīyākṣara-prāsa: 1 mismatch(es)."
+    );
+    await expect(page.locator("#highlight-layer .prasa-mismatch")).toHaveText("ತ");
+    await expect(page.locator("#highlight-layer .prasa-mismatch.violation")).toHaveCount(0);
+    await expect(page.locator("#validation-summary")).toHaveText(
+        "Choose a meter to check this stanza."
+    );
+
+    await page.locator("#meter-picker summary").click();
+    await page.locator("#meter-search").fill("madhu");
+    await page.locator("#meter-select").selectOption("madhu");
+    await expect(page.locator("#prasa-summary")).toContainText(
+        "Automatic Kannada-script Dvitīyākṣara-prāsa"
+    );
+
+    await editor.fill("कप\nजप");
+    await expect(page.locator("#prasa-summary")).toBeHidden();
+});
+
 test("keeps Kannada and Devanagari conjuncts joined across highlight changes", async ({
     page
 }) => {

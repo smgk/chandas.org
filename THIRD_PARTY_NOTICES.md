@@ -82,6 +82,8 @@ The provisional six-form Ṣaṭpadi and aṃśa-family rules are documented in
   <https://shastriyakannada.org/database/english/literature/SHATPADI%20HTML.htm>
 - Vishweshwar V. Dixit's *Chanda Nikasha (Naga-Pingala)*:
   <https://kannadakali.com/crav/dev/docs/ChandaNikasha-English.pdf>
+- Shrikaanth K. Murthy's aṃśa-gaṇa and karṣaṇa overview:
+  <https://threadreaderapp.com/thread/1262155137545654273.html>
 
 These public references supply prosodic facts, terminology, and catalog
 frames. Their scans, articles, and examples are not bundled with the

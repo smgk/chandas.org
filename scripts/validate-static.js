@@ -117,6 +117,15 @@ for (const meter of structuralCatalog.meters) {
         }
     }
     if (meter.kind === "amsha") {
+        if (meter.recitalPolicy !== undefined) {
+            const policy = meter.recitalPolicy;
+            if (!policy ||
+                policy.type !== "noninitial-laghu-karshana" ||
+                typeof policy.marker !== "string" || !policy.marker.trim() ||
+                policy.matrasPerMark !== 1) {
+                throw new Error(`${meter.id} has an invalid aṃśa recital policy`);
+            }
+        }
         for (const line of meter.amshaGroups) {
             if (!Array.isArray(line) || !line.length) {
                 throw new Error(`${meter.id} has an empty aṃśa line`);

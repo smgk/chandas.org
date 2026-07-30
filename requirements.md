@@ -622,6 +622,24 @@ analysis result.
     across scripts. Script detection MUST use letters and combining marks;
     danda, double danda, numerals, Markdown marks, and other punctuation MUST
     remain script-neutral.
+27. Classical aṃśa meters MUST support an explicit recital policy independently
+    from folk mātrā completion. Brahma, Viṣṇu, and Rudra gaṇas MUST expose full
+    sung capacities of four, six, and eight mātrās respectively.
+28. The opening aṃśa of a classical B/V/R gaṇa MUST be one Guru or two Laghus
+    and MUST NOT receive a karṣaṇa mark. Every Laghu in a later aṃśa MUST
+    remain classified Laghu and receive one superscript Kannada avagraha `ಽ`,
+    representing one mātrā of recital lengthening.
+29. The karṣaṇa guide MUST be enabled for classical Tripadi, Sāṅgatya,
+    Piriyakkara, Doreyakkara, Naḍuvaṇakkara, Eḍeyakkara, and Kiriyakkara when
+    selected. It MAY be shown before selection only when exactly one complete
+    aṃśa meter matches without structural violations or missing units.
+30. If equally preferred gaṇa divisions produce different karṣaṇa positions,
+    the analyzer MUST mark only positions shared by every retained best
+    division and MUST report the ambiguity. It MUST NOT silently present an
+    arbitrary division as certain.
+31. Classical karṣaṇa marks MUST remain analysis overlays. They MUST NOT
+    modify the authored editor value, copied or shared text, recovered drafts,
+    or analysis URLs.
 
 ## 7. User Experience and Accessibility
 

@@ -37,6 +37,10 @@ function devanagariTextForPattern(pattern) {
     return Array.from(pattern, (weight) => weight === "G" ? "का" : "क").join(" ");
 }
 
+function compactTextForPattern(pattern) {
+    return Array.from(pattern, (weight) => weight === "G" ? "ಕಾ" : "ಕ").join("");
+}
+
 test("loads every meter and alternate pattern from mishra.json", () => {
     const meters = Chandas.normalizeCatalog(catalog);
     assert.equal(meters.length, catalog.metres.length);
@@ -509,7 +513,7 @@ test("keeps an incomplete structural meter compatible without red violations", (
 
     assert.equal(stanza.violationCount, 0);
     assert.ok(stanza.missingCount > 0);
-    assert.equal(result.analysisVersion, "2.7.0");
+    assert.equal(result.analysisVersion, "2.8.0");
     assert.equal(result.catalogVersion, structuralCatalog.catalogVersion);
 });
 
@@ -604,8 +608,8 @@ test("recognizes the provisional Kannada Kanda characterization fixture", () => 
     );
     assert.equal(stanza.selectedMeter.ruleCompleteness, "provisional-rhythm");
     assert.deepEqual(stanza.selectedMeter.uncheckedRules, ["historical prāsa variants"]);
-    assert.equal(result.analysisVersion, "2.7.0");
-    assert.equal(result.catalogVersion, "3.3.0");
+    assert.equal(result.analysisVersion, "2.8.0");
+    assert.equal(result.catalogVersion, "3.4.0");
 });
 
 test("loads and validates the Pañcamātrā Chaupadi Kagga form", () => {
@@ -761,6 +765,11 @@ test("loads the Tripadi, Sāṅgatya, and five Akkara aṃśa families", () => {
     amshaMeters.forEach((meter) => {
         assert.equal(meter.linePolicy.count, meter.amshaGroups.length);
         assert.ok(meter.aliases.some((alias) => /[\u0c80-\u0cff]/u.test(alias)));
+        assert.deepEqual(meter.recitalPolicy, {
+            type: "noninitial-laghu-karshana",
+            marker: "ಽ",
+            matrasPerMark: 1
+        });
     });
 });
 
@@ -800,6 +809,51 @@ test("validates canonical aṃśa frames and cataloged Piriyakkara alternatives"
     assert.equal(stanza.missingCount, 0);
 });
 
+test("shows karṣaṇa in every supported classical aṃśa meter", () => {
+    const shortPatterns = {
+        B: "GL",
+        V: "GLL",
+        R: "GLLL"
+    };
+    const amshaMeters = structuralCatalog.meters.filter((meter) =>
+        meter.kind === "amsha");
+
+    for (const meter of amshaMeters) {
+        let globalGroup = 0;
+        const text = meter.amshaGroups.map((slots) =>
+            slots.map((slot) => {
+                globalGroup += 1;
+                const amshaClass = Array.isArray(slot) ? slot[0] : slot;
+                const pattern = meter.id === "structural:tripadi-kannada" &&
+                    [7, 11].includes(globalGroup)
+                    ? "LLLL"
+                    : shortPatterns[amshaClass];
+                return compactTextForPattern(pattern);
+            }).join(" ")
+        ).join("\n");
+        const stanza = Chandas.analyzeComposition(
+            text,
+            combinedCatalog,
+            meter.id
+        ).stanzas[0];
+
+        assert.equal(stanza.violationCount, 0, meter.name);
+        assert.equal(stanza.missingCount, 0, meter.name);
+        assert.ok(stanza.karshanaCount > 0, meter.name);
+        assert.equal(stanza.karshanaAmbiguityCount, 0, meter.name);
+        stanza.padas.flatMap((pada) => pada.syllables)
+            .filter((syllable) => syllable.recitalExtension)
+            .forEach((syllable) => {
+                assert.equal(syllable.classification, "L", meter.name);
+                assert.equal(
+                    syllable.recitalExtension.reason,
+                    "amsha-karshana",
+                    meter.name
+                );
+            });
+    }
+});
+
 test("enforces the core Tripadi aṃśa positions at original source ranges", () => {
     const validPatterns = [
         "GGG".repeat(4),
@@ -833,6 +887,144 @@ test("enforces the core Tripadi aṃśa positions at original source ranges", ()
     violations.forEach((syllable) => {
         assert.equal(text.slice(syllable.start, syllable.end), syllable.text);
     });
+});
+
+test("marks each non-initial aṃśa Laghu without marking the opening LL", () => {
+    const meter = {
+        id: "test:amsha-karshana",
+        name: "test aṃśa karṣaṇa",
+        kind: "amsha",
+        aliases: [],
+        signatureLines: ["BVR"],
+        ruleCompleteness: "complete",
+        recitalPolicy: {
+            type: "noninitial-laghu-karshana",
+            marker: "ಽ",
+            matrasPerMark: 1
+        },
+        linePolicy: { type: "fixed", unit: "line", count: 1 },
+        amshaGroups: [["B", "V", "R"]]
+    };
+    const catalog = { metres: [], structuralMeters: [meter] };
+    const text = [
+        compactTextForPattern("LLL"),
+        compactTextForPattern("LLLL"),
+        compactTextForPattern("GLLL")
+    ].join(" ");
+    const stanza = Chandas.analyzeComposition(text, catalog, meter.id).stanzas[0];
+    const syllables = stanza.padas[0].syllables;
+    const markedIndexes = syllables
+        .map((syllable, index) => syllable.recitalExtension ? index : -1)
+        .filter((index) => index >= 0);
+
+    assert.equal(stanza.violationCount, 0);
+    assert.equal(stanza.missingCount, 0);
+    assert.equal(stanza.karshanaCount, 6);
+    assert.equal(stanza.karshanaAmbiguityCount, 0);
+    assert.deepEqual(markedIndexes, [2, 5, 6, 8, 9, 10]);
+    markedIndexes.forEach((index) => {
+        assert.equal(syllables[index].classification, "L");
+        assert.equal(syllables[index].violation, false);
+        assert.equal(syllables[index].recitalExtension.marker, "ಽ");
+        assert.equal(syllables[index].recitalExtension.matras, 1);
+        assert.equal(
+            syllables[index].recitalExtension.reason,
+            "amsha-karshana"
+        );
+    });
+    assert.equal(stanza.padas[0].syllables[0].recitalExtension, undefined);
+    assert.equal(stanza.padas[0].syllables[1].recitalExtension, undefined);
+    assert.equal(stanza.padas[0].syllables[3].recitalExtension, undefined);
+    assert.equal(stanza.padas[0].syllables[4].recitalExtension, undefined);
+    assert.equal(stanza.padas[0].syllables[7].recitalExtension, undefined);
+});
+
+test("shows a unique detected aṃśa recital guide and preserves selected provenance", () => {
+    const vishnu = compactTextForPattern("GLL");
+    const brahma = compactTextForPattern("GL");
+    const text = [
+        [vishnu, vishnu, vishnu, vishnu],
+        [vishnu, vishnu, brahma],
+        [vishnu, vishnu, vishnu, vishnu],
+        [vishnu, vishnu, brahma]
+    ].map((groups) => groups.join(" ")).join("\n");
+
+    const detected = Chandas.analyzeComposition(text, combinedCatalog).stanzas[0];
+    const detectedMarks = detected.padas.flatMap((pada) => pada.syllables)
+        .filter((syllable) => syllable.recitalExtension);
+
+    assert.deepEqual(detected.detectedAmshaMeter, {
+        id: "structural:sangatya",
+        name: "sāṅgatya"
+    });
+    assert.equal(detected.karshanaCount, 26);
+    assert.equal(detected.karshanaAmbiguityCount, 0);
+    assert.equal(detectedMarks.length, 26);
+    detectedMarks.forEach((syllable) => {
+        assert.equal(syllable.recitalExtension.provenance, "detected-meter");
+    });
+
+    const selected = Chandas.analyzeComposition(
+        text,
+        combinedCatalog,
+        "structural:sangatya"
+    ).stanzas[0];
+    const selectedMarks = selected.padas.flatMap((pada) => pada.syllables)
+        .filter((syllable) => syllable.recitalExtension);
+
+    assert.equal(selected.detectedAmshaMeter, null);
+    assert.equal(selected.karshanaCount, 26);
+    assert.equal(selectedMarks.length, 26);
+    selectedMarks.forEach((syllable) => {
+        assert.equal(syllable.recitalExtension.provenance, "selected-meter");
+    });
+});
+
+test("withholds uncertain karṣaṇa positions until a gaṇa boundary resolves them", () => {
+    const meter = {
+        id: "test:ambiguous-amsha",
+        name: "ambiguous aṃśa",
+        kind: "amsha",
+        aliases: [],
+        signatureLines: ["V/B V/B"],
+        ruleCompleteness: "complete",
+        recitalPolicy: {
+            type: "noninitial-laghu-karshana",
+            marker: "ಽ",
+            matrasPerMark: 1
+        },
+        linePolicy: { type: "fixed", unit: "line", count: 1 },
+        amshaGroups: [[["V", "B"], ["V", "B"]]]
+    };
+    const catalog = { metres: [], structuralMeters: [meter] };
+    const ambiguous = Chandas.analyzeComposition(
+        compactTextForPattern("GGLLLG"),
+        catalog,
+        meter.id
+    ).stanzas[0];
+
+    assert.equal(ambiguous.violationCount, 0);
+    assert.equal(ambiguous.missingCount, 0);
+    assert.equal(ambiguous.karshanaAmbiguityCount, 1);
+    assert.equal(ambiguous.karshanaCount, 0);
+    assert.equal(
+        ambiguous.padas[0].syllables.some((syllable) =>
+            syllable.recitalExtension),
+        false
+    );
+
+    const resolved = Chandas.analyzeComposition(
+        `${compactTextForPattern("GGL")} ${compactTextForPattern("LLG")}`,
+        catalog,
+        meter.id
+    ).stanzas[0];
+    const marked = resolved.padas[0].syllables
+        .map((syllable, index) => syllable.recitalExtension ? index : -1)
+        .filter((index) => index >= 0);
+
+    assert.equal(resolved.karshanaAmbiguityCount, 0);
+    assert.equal(resolved.karshanaCount, 1);
+    assert.deepEqual(marked, [2]);
 });
 
 test("keeps classical Tripadi strict while folk Tripadi marks sung Laghu extensions", () => {

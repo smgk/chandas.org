@@ -44,9 +44,37 @@ Guru/Laghu weight of the first syllable are independent conditions.
 Aṃśa meters are sung forms with documented substitution and recitational
 freedom. The current release does not pretend that every such choice can be
 deduced from a short prose rule. Historical prāsa equivalences, melodic
-elongation, Tripadi repetition, folk variation, and substitutions not
+substitutions, Tripadi repetition, folk variation, and substitutions not
 explicitly represented in the catalog remain provisional until a prosody
 expert approves redistributable examples.
+
+## Recital karṣaṇa (`ಽ`)
+
+The three classes have full sung capacities of four, six, and eight mātrās:
+
+| Class | First aṃśa | Later aṃśas | Full sung duration |
+| --- | --- | --- | ---: |
+| Brahma (`B`) | `G` or `LL` | one syllable | 4 |
+| Viṣṇu (`V`) | `G` or `LL` | two syllables | 6 |
+| Rudra (`R`) | `G` or `LL` | three syllables | 8 |
+
+The opening `G` or `LL` fills the first aṃśa and is not marked. Every Laghu
+occupying a later aṃśa is lengthened by one mātrā in recitation. Chandas keeps
+that syllable visibly Laghu and places a faint superscript avagraha `ಽ` after
+it. Thus:
+
+- Brahma `GL` is displayed as `G Lಽ`;
+- Viṣṇu `GLL` is displayed as `G Lಽ Lಽ`;
+- Rudra `GLLL` is displayed as `G Lಽ Lಽ Lಽ`; and
+- in `LLLL`, the opening `LL` is unmarked while the last two Laghus receive
+  `ಽ`.
+
+The guide is shown whenever one of these aṃśa meters is selected. It may also
+appear before selection when exactly one complete aṃśa meter is detected.
+When equally good gaṇa divisions imply different karṣaṇa positions, only
+positions shared by every best division are marked and the UI reports the
+ambiguity. The marks are analysis overlays: editor text, copy, sharing, and
+analysis URLs retain only the authored poem.
 
 ## References
 
@@ -56,3 +84,5 @@ expert approves redistributable examples.
   <https://kn.wikisource.org/wiki/ಮೈಸೂರು_ವಿಶ್ವವಿದ್ಯಾನಿಲಯ_ವಿಶ್ವಕೋಶ/ಕನ್ನಡ_ಛಂದಸ್ಸು>
 - *Chanda Nikasha: Verification and Identification of meters in Kannada
   Prosody*: <https://kannadakali.com/crav/dev/docs/ChandaNikasha-English.pdf>
+- Shrikaanth K. Murthy, aṃśa-gaṇa structure and karṣaṇa examples:
+  <https://threadreaderapp.com/thread/1262155137545654273.html>

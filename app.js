@@ -79,6 +79,10 @@
             meterReady: "{meter} is ready. Start typing when the line arrives.",
             validMeter: "This stanza follows {meter}.",
             sungExtensionsValid: "{meter} fits with {count} sung extension(s), marked ಽ.",
+            karshanaValid: "{meter} fits; {count} recital lengthening(s) are marked ಽ.",
+            karshanaAmbiguousValid: "{meter} fits; {count} certain recital lengthening(s) are marked ಽ. {ambiguous} line(s) have alternate gaṇa divisions.",
+            detectedKarshana: "Detected {meter}; {count} recital lengthening(s) are marked ಽ. Select it to validate.",
+            detectedKarshanaAmbiguous: "Detected {meter}; {count} certain recital lengthening(s) are marked ಽ. {ambiguous} line(s) have alternate gaṇa divisions; select the meter to validate.",
             validationIssues: "{violations} mismatched and {missing} missing syllables for {meter}.",
             incompleteMeter: "{meter} is still possible; {missing} metrical units remain.",
             supportedRulesValid: "This stanza follows the supported rules for {meter}.",
@@ -183,6 +187,10 @@
             meterReady: "{meter} ಸಿದ್ಧವಾಗಿದೆ. ಪದ್ಯ ಹೊಳೆದಾಗ ಬರೆಯಲು ಆರಂಭಿಸಿ.",
             validMeter: "ಈ ಪದ್ಯವು {meter} ಛಂದಸ್ಸಿಗೆ ಹೊಂದುತ್ತದೆ.",
             sungExtensionsValid: "{meter}ಗೆ {count} ಗಾಯನ ವಿಸ್ತರಣೆಗಳು ಹೊಂದುತ್ತವೆ; ಅವನ್ನು ಽ ಗುರುತಿಸಿದೆ.",
+            karshanaValid: "{meter} ಹೊಂದುತ್ತದೆ; {count} ಕರ್ಷಣಗಳನ್ನು ಽ ಗುರುತಿಸಿದೆ.",
+            karshanaAmbiguousValid: "{meter} ಹೊಂದುತ್ತದೆ; ಖಚಿತವಾದ {count} ಕರ್ಷಣಗಳನ್ನು ಽ ಗುರುತಿಸಿದೆ. {ambiguous} ಸಾಲುಗಳಿಗೆ ಪರ್ಯಾಯ ಗಣವಿಭಾಗಗಳಿವೆ.",
+            detectedKarshana: "{meter} ಪತ್ತೆಯಾಗಿದೆ; {count} ಕರ್ಷಣಗಳನ್ನು ಽ ಗುರುತಿಸಿದೆ. ಪರಿಶೀಲಿಸಲು ಛಂದಸ್ಸನ್ನು ಆರಿಸಿ.",
+            detectedKarshanaAmbiguous: "{meter} ಪತ್ತೆಯಾಗಿದೆ; ಖಚಿತವಾದ {count} ಕರ್ಷಣಗಳನ್ನು ಽ ಗುರುತಿಸಿದೆ. {ambiguous} ಸಾಲುಗಳಿಗೆ ಪರ್ಯಾಯ ಗಣವಿಭಾಗಗಳಿವೆ; ಪರಿಶೀಲಿಸಲು ಛಂದಸ್ಸನ್ನು ಆರಿಸಿ.",
             validationIssues: "{meter}: {violations} ವ್ಯತ್ಯಾಸ, {missing} ಕೊರತೆಯ ಅಕ್ಷರಗಳು.",
             incompleteMeter: "{meter} ಇನ್ನೂ ಸಾಧ್ಯ; {missing} ಛಂದೋಘಟಕಗಳು ಬಾಕಿಯಿವೆ.",
             supportedRulesValid: "ಈ ಪದ್ಯವು {meter}ಗಾಗಿ ಬೆಂಬಲಿತ ನಿಯಮಗಳಿಗೆ ಹೊಂದುತ್ತದೆ.",
@@ -1198,7 +1206,9 @@
         }
 
         for (const segment of state.analysis ? state.analysis.segments : []) {
-            if (!segment.sungExtension) {
+            const extension = segment.recitalExtension ||
+                segment.sungExtension;
+            if (!extension) {
                 continue;
             }
             const annotation = byPosition.get(segment.end) || {
@@ -1206,10 +1216,13 @@
                 metrics: "",
                 ghost: ""
             };
-            const marker = segment.sungExtension.marker || "ಽ";
+            const marker = extension.marker || "ಽ";
             annotation.sungMarker = marker.repeat(
-                Math.max(1, Number(segment.sungExtension.matras) || 1)
+                Math.max(1, Number(extension.matras) || 1)
             );
+            annotation.extensionKind = segment.recitalExtension
+                ? "karshana"
+                : "sung";
             byPosition.set(segment.end, annotation);
         }
 
@@ -1225,7 +1238,11 @@
             ? `<span class="ghost-template">${escapeHtml(annotation.ghost)}</span>`
             : "";
         const sungMarker = annotation.sungMarker
-            ? `<span class="sung-extension-marker">${escapeHtml(annotation.sungMarker)}</span>`
+            ? `<span class="recital-extension-marker ${
+                annotation.extensionKind === "sung"
+                    ? "sung-extension-marker"
+                    : "amsha-karshana-marker"
+            }">${escapeHtml(annotation.sungMarker)}</span>`
             : "";
         return `<span class="inline-metric-anchor">${metrics}${ghost}${sungMarker}</span>`;
     }
@@ -1635,10 +1652,35 @@
         const summary = elements["validation-summary"];
         summary.classList.remove("has-errors");
         if (!stanza.selectedMeter) {
-            summary.textContent = t("noMeterSelected");
+            if (stanza.detectedAmshaMeter &&
+                (stanza.karshanaCount || stanza.karshanaAmbiguityCount)) {
+                summary.textContent = t(
+                    stanza.karshanaAmbiguityCount
+                        ? "detectedKarshanaAmbiguous"
+                        : "detectedKarshana",
+                    {
+                        meter: stanza.detectedAmshaMeter.name,
+                        count: stanza.karshanaCount,
+                        ambiguous: stanza.karshanaAmbiguityCount
+                    }
+                );
+            } else {
+                summary.textContent = t("noMeterSelected");
+            }
         } else if (stanza.violationCount === 0 && stanza.missingCount === 0) {
             const uncheckedRules = stanza.selectedMeter.uncheckedRules || [];
-            if (stanza.sungExtensionCount) {
+            if (stanza.karshanaCount || stanza.karshanaAmbiguityCount) {
+                summary.textContent = t(
+                    stanza.karshanaAmbiguityCount
+                        ? "karshanaAmbiguousValid"
+                        : "karshanaValid",
+                    {
+                        meter: stanza.selectedMeter.name,
+                        count: stanza.karshanaCount,
+                        ambiguous: stanza.karshanaAmbiguityCount
+                    }
+                );
+            } else if (stanza.sungExtensionCount) {
                 summary.textContent = t("sungExtensionsValid", {
                     meter: stanza.selectedMeter.name,
                     count: stanza.sungExtensionCount

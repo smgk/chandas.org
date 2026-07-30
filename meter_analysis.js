@@ -955,46 +955,154 @@
             .filter((item) => AMSHA_PATTERNS[item]);
     }
 
+    function metricalBoundaryScore(pada, syllableIndex) {
+        if (syllableIndex <= 0 || syllableIndex >= pada.syllables.length) {
+            return 0;
+        }
+        const before = pada.syllables[syllableIndex - 1];
+        const after = pada.syllables[syllableIndex];
+        const gap = pada.text.slice(before.end - pada.start, after.start - pada.start);
+        return gap && METRIC_BOUNDARY_RE.test(gap) ? 1 : 0;
+    }
+
+    function amshaSlotPatternOptions(slot) {
+        return amshaSlotClasses(slot).flatMap((amshaClass) =>
+            AMSHA_PATTERNS[amshaClass].map((pattern) => ({
+                amshaClass,
+                pattern
+            })));
+    }
+
     function amshaSlotPatterns(slot) {
-        return Array.from(new Set(amshaSlotClasses(slot)
-            .flatMap((item) => AMSHA_PATTERNS[item])));
+        return Array.from(new Set(amshaSlotPatternOptions(slot)
+            .map((option) => option.pattern)));
     }
 
     function amshaGroupLabel(slot) {
         return amshaSlotClasses(slot).join("/") || "?";
     }
 
+    function amshaKarshanaSyllables(group) {
+        const initialAmshaLength = group.pattern.startsWith("LL") ? 2 : 1;
+        return group.syllables.slice(initialAmshaLength)
+            .filter((syllable) => syllable.classification === LAGHU);
+    }
+
+    function extendKarshanaVariants(variants, syllables) {
+        const additions = syllables.map((syllable) => syllable.start);
+        return new Set(Array.from(variants || [""]).map((variant) => {
+            const previous = variant
+                ? variant.split(",").map(Number)
+                : [];
+            return previous.concat(additions).join(",");
+        }));
+    }
+
+    function mergeKarshanaVariants(target, source, limit) {
+        let truncated = false;
+        for (const variant of source) {
+            if (target.has(variant)) {
+                continue;
+            }
+            if (target.size >= limit) {
+                truncated = true;
+                continue;
+            }
+            target.add(variant);
+        }
+        return truncated;
+    }
+
+    function amshaMatchResult(state, details) {
+        const groups = state.groups || [];
+        const variants = Array.from(state.recitalVariants || [""])
+            .map((variant) => variant
+                ? variant.split(",").map(Number)
+                : []);
+        let certainStarts = null;
+        for (const variant of variants) {
+            const positions = new Set(variant);
+            certainStarts = certainStarts === null
+                ? positions
+                : new Set(Array.from(certainStarts)
+                    .filter((position) => positions.has(position)));
+        }
+        if (state.recitalVariantsTruncated) {
+            certainStarts = new Set();
+        }
+        const karshanaSyllables = groups
+            .flatMap(amshaKarshanaSyllables)
+            .filter((syllable) => certainStarts && certainStarts.has(syllable.start));
+
+        return {
+            ...details,
+            groups,
+            karshanaSyllables,
+            karshanaAmbiguous: Boolean(state.recitalVariantsTruncated) ||
+                variants.length > 1,
+            karshanaVariantCount: state.recitalVariantsTruncated
+                ? variants.length + 1
+                : variants.length
+        };
+    }
+
     function matchAmshaPada(pada, slots, globalGroupOffset) {
         const actual = pada.pattern;
         let states = [{
             position: 0,
-            groups: []
+            boundaryScore: 0,
+            groups: [],
+            recitalVariants: new Set([""]),
+            recitalVariantsTruncated: false
         }];
         const completedLevels = [states];
 
         for (let slotIndex = 0; slotIndex < slots.length; slotIndex += 1) {
-            const patterns = amshaSlotPatterns(slots[slotIndex]);
+            const options = amshaSlotPatternOptions(slots[slotIndex]);
             const nextByPosition = new Map();
             for (const state of states) {
-                for (const pattern of patterns) {
+                for (const option of options) {
+                    const pattern = option.pattern;
                     if (!actual.startsWith(pattern, state.position)) {
                         continue;
                     }
                     const end = state.position + pattern.length;
+                    const group = {
+                        localIndex: slotIndex + 1,
+                        globalIndex: globalGroupOffset + slotIndex + 1,
+                        expectedClass: amshaGroupLabel(slots[slotIndex]),
+                        actualClass: option.amshaClass,
+                        pattern,
+                        complete: true,
+                        overrun: false,
+                        syllables: pada.syllables.slice(state.position, end)
+                    };
                     const candidate = {
                         position: end,
-                        groups: state.groups.concat({
-                            localIndex: slotIndex + 1,
-                            globalIndex: globalGroupOffset + slotIndex + 1,
-                            expectedClass: amshaGroupLabel(slots[slotIndex]),
-                            pattern,
-                            complete: true,
-                            overrun: false,
-                            syllables: pada.syllables.slice(state.position, end)
-                        })
+                        boundaryScore: state.boundaryScore +
+                            metricalBoundaryScore(pada, end),
+                        groups: state.groups.concat(group),
+                        recitalVariants: extendKarshanaVariants(
+                            state.recitalVariants,
+                            amshaKarshanaSyllables(group)
+                        ),
+                        recitalVariantsTruncated:
+                            state.recitalVariantsTruncated
                     };
-                    if (!nextByPosition.has(end)) {
+                    const previous = nextByPosition.get(end);
+                    if (!previous ||
+                        candidate.boundaryScore > previous.boundaryScore) {
                         nextByPosition.set(end, candidate);
+                    } else if (candidate.boundaryScore ===
+                        previous.boundaryScore) {
+                        previous.recitalVariantsTruncated =
+                            previous.recitalVariantsTruncated ||
+                            candidate.recitalVariantsTruncated ||
+                            mergeKarshanaVariants(
+                                previous.recitalVariants,
+                                candidate.recitalVariants,
+                                64
+                            );
                     }
                 }
             }
@@ -1008,26 +1116,24 @@
         const exact = states.find((state) =>
             state.groups.length === slots.length && state.position === actual.length);
         if (exact) {
-            return {
-                groups: exact.groups,
+            return amshaMatchResult(exact, {
                 ruleFailures: 0,
                 missingCount: 0,
                 invalidIndex: -1,
                 extraStart: -1
-            };
+            });
         }
 
         const completeWithExtra = states
             .filter((state) => state.groups.length === slots.length)
             .sort((left, right) => right.position - left.position)[0];
         if (completeWithExtra && completeWithExtra.position < actual.length) {
-            return {
-                groups: completeWithExtra.groups,
+            return amshaMatchResult(completeWithExtra, {
                 ruleFailures: actual.length - completeWithExtra.position,
                 missingCount: 0,
                 invalidIndex: -1,
                 extraStart: completeWithExtra.position
-            };
+            });
         }
 
         let bestPartial = null;
@@ -1055,13 +1161,12 @@
             amshaSlotPatterns(slots[bestPartial.groups.length] || [])
                 .some((pattern) => pattern.startsWith(
                     actual.slice(bestPartial.position))))) {
-            return {
-                groups: bestPartial.groups,
+            return amshaMatchResult(bestPartial, {
                 ruleFailures: 0,
                 missingCount: Math.max(1, slots.length - bestPartial.groups.length),
                 invalidIndex: -1,
                 extraStart: -1
-            };
+            });
         }
 
         const allStates = completedLevels.flat();
@@ -1069,15 +1174,17 @@
             right.position - left.position ||
             right.groups.length - left.groups.length)[0] || {
             position: 0,
-            groups: []
+            boundaryScore: 0,
+            groups: [],
+            recitalVariants: new Set([""]),
+            recitalVariantsTruncated: false
         };
-        return {
-            groups: best.groups,
+        return amshaMatchResult(best, {
             ruleFailures: 1,
             missingCount: Math.max(0, slots.length - best.groups.length - 1),
             invalidIndex: Math.min(best.position, Math.max(0, actual.length - 1)),
             extraStart: -1
-        };
+        });
     }
 
     function evaluateLineBoundaryRules(pada, groups, padaIndex, meter, shouldMark) {
@@ -1119,6 +1226,12 @@
         let globalGroupOffset = 0;
         const groupsByPada = [];
         const completePadas = [];
+        const karshanaExtensions = [];
+        let karshanaAmbiguityCount = 0;
+        const recitalPolicy = meter.recitalPolicy &&
+            meter.recitalPolicy.type === "noninitial-laghu-karshana"
+            ? meter.recitalPolicy
+            : null;
         const expectedPadas = meter.amshaGroups || [];
         const lineCount = Math.max(padas.length, expectedPadas.length);
 
@@ -1146,6 +1259,38 @@
             completePadas[padaIndex] = matched.missingCount === 0;
             ruleFailures += matched.ruleFailures;
             missingCount += matched.missingCount;
+            if (recitalPolicy &&
+                matched.karshanaAmbiguous && matched.groups.length) {
+                karshanaAmbiguityCount += 1;
+            }
+            const certainStarts = new Set(
+                recitalPolicy
+                    ? matched.karshanaSyllables.map((syllable) => syllable.start)
+                    : []
+            );
+            for (const group of matched.groups) {
+                for (const syllable of amshaKarshanaSyllables(group)) {
+                    if (!certainStarts.has(syllable.start)) {
+                        continue;
+                    }
+                    const extension = {
+                        start: syllable.start,
+                        end: syllable.end,
+                        marker: String(recitalPolicy.marker || "ಽ"),
+                        matras: Number(recitalPolicy.matrasPerMark) || 1,
+                        reason: "amsha-karshana",
+                        amshaClass: group.actualClass,
+                        globalGroup: group.globalIndex
+                    };
+                    karshanaExtensions.push(extension);
+                    if (shouldMark) {
+                        syllable.recitalExtension = {
+                            ...extension,
+                            provenance: "selected-meter"
+                        };
+                    }
+                }
+            }
             if (shouldMark && matched.extraStart >= 0) {
                 pada.syllables.slice(matched.extraStart).forEach((syllable) =>
                     setViolation(syllable, "extra-amsha", "", true));
@@ -1195,6 +1340,8 @@
             result.status = "compatible";
         }
         result.prasa = prasa;
+        result.karshanaExtensions = karshanaExtensions;
+        result.karshanaAmbiguityCount = karshanaAmbiguityCount;
         return result;
     }
 
@@ -1221,16 +1368,6 @@
         }
         const groups = indexedRule(meter.padaGroups, padaIndex, meter);
         return Array.isArray(groups) ? [groups] : [];
-    }
-
-    function sungBoundaryScore(pada, syllableIndex) {
-        if (syllableIndex <= 0 || syllableIndex >= pada.syllables.length) {
-            return 0;
-        }
-        const before = pada.syllables[syllableIndex - 1];
-        const after = pada.syllables[syllableIndex];
-        const gap = pada.text.slice(before.end - pada.start, after.start - pada.start);
-        return gap && METRIC_BOUNDARY_RE.test(gap) ? 1 : 0;
     }
 
     function matchSungMatraGroups(pada, capacities, globalGroupOffset, meter) {
@@ -1270,7 +1407,7 @@
                     const candidate = {
                         position: end,
                         boundaryScore: state.boundaryScore +
-                            sungBoundaryScore(pada, end),
+                            metricalBoundaryScore(pada, end),
                         groups: state.groups.concat({
                             globalIndex: globalGroupOffset + localIndex + 1,
                             localIndex: localIndex + 1,
@@ -2074,10 +2211,43 @@
                     prasa.checks.unshift(automaticPrasa);
                 }
             }
+            const fixedCandidates = rankMeters(
+                linePatterns,
+                meters,
+                meters.length
+            );
+            const structuralCandidates = rankStructuralMeters(padas, meters);
             const candidates = sortCandidates([
-                ...rankMeters(linePatterns, meters, meters.length),
-                ...rankStructuralMeters(padas, meters)
+                ...fixedCandidates,
+                ...structuralCandidates
             ], 8, selectedMeterId);
+            let detectedAmshaMeter = null;
+            let detectedKarshana = null;
+            if (!selectedMeter) {
+                const compatibleAmsha = structuralCandidates.filter((candidate) =>
+                    candidate.kind === "amsha" &&
+                    candidate.status !== "approximate" &&
+                    candidate.distance === 0 &&
+                    candidate.missingCount === 0 &&
+                    candidate.violationCount === 0);
+                if (compatibleAmsha.length === 1) {
+                    detectedKarshana = compatibleAmsha[0];
+                    detectedAmshaMeter = meterById.get(detectedKarshana.id) || null;
+                    const syllableByStart = new Map(lines
+                        .flatMap((line) => line.syllables)
+                        .map((syllable) => [syllable.start, syllable]));
+                    for (const extension of
+                        detectedKarshana.karshanaExtensions || []) {
+                        const syllable = syllableByStart.get(extension.start);
+                        if (syllable && syllable.end === extension.end) {
+                            syllable.recitalExtension = {
+                                ...extension,
+                                provenance: "detected-meter"
+                            };
+                        }
+                    }
+                }
+            }
             const violationCount = structuralValidation
                 ? structuralValidation.violationCount
                 : lines.reduce((sum, line) => sum + line.violationCount, 0);
@@ -2115,6 +2285,22 @@
                     Array.isArray(structuralValidation.sungExtensions)
                     ? structuralValidation.sungExtensions.length
                     : 0,
+                karshanaCount: structuralValidation &&
+                    Array.isArray(structuralValidation.karshanaExtensions)
+                    ? structuralValidation.karshanaExtensions.length
+                    : detectedKarshana &&
+                        Array.isArray(detectedKarshana.karshanaExtensions)
+                        ? detectedKarshana.karshanaExtensions.length
+                        : 0,
+                karshanaAmbiguityCount: structuralValidation
+                    ? structuralValidation.karshanaAmbiguityCount || 0
+                    : detectedKarshana
+                        ? detectedKarshana.karshanaAmbiguityCount || 0
+                        : 0,
+                detectedAmshaMeter: detectedAmshaMeter ? {
+                    id: detectedAmshaMeter.id,
+                    name: detectedAmshaMeter.name
+                } : null,
                 violationCount,
                 missingCount
             };
@@ -2122,7 +2308,7 @@
 
         return {
             text: originalText,
-            analysisVersion: "2.7.0",
+            analysisVersion: "2.8.0",
             catalogVersion: catalog && catalog.structuralCatalogVersion
                 ? String(catalog.structuralCatalogVersion)
                 : "",

@@ -457,7 +457,7 @@ textarea:focus-visible {
 
 .line-metrics-badge,
 .ghost-template,
-.sung-extension-marker {
+.recital-extension-marker {
     position: absolute;
     z-index: 3;
     pointer-events: none;
@@ -469,7 +469,7 @@ textarea:focus-visible {
     left: 0.18rem;
 }
 
-.sung-extension-marker {
+.recital-extension-marker {
     top: -0.72em;
     left: -0.04em;
     color: color-mix(in srgb, var(--saffron) 68%, transparent);

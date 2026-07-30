@@ -240,6 +240,10 @@ frames. It checks opening dvitīyākṣara-prāsa (including Tripadi's internal
 first-line recurrence) while leaving melodic substitutions, sung and
 historical prāsa equivalences, and sparsely attested variants provisional.
 
+The classical aṃśa recital guide now marks every non-initial Laghu with
+superscript `ಽ`, including conservative unique-meter detection and
+ambiguity-safe gaṇa division. These karṣaṇa marks are display-only.
+
 A separate folk Tripadi slice recognizes the later
 `5555 / 5455 / 545` mātrā frame. It may infer one sung mātrā from a
 gaṇa-final Laghu and displays that inference as superscript `ಽ`; the classical

@@ -1,5 +1,5 @@
 {
-  "catalogVersion": "3.3.0",
+  "catalogVersion": "3.4.0",
   "copyright": "Copyright © 2025–2026 Ganesh Krishna Shankarathota",
   "license": "GPL-3.0-only",
   "description": "Structural, mātrā, and aṃśa meter rules that cannot be represented as one fixed Guru/Laghu string.",
@@ -417,6 +417,11 @@
       "ruleCompleteness": "provisional-rhythm",
       "uncheckedRules": ["sung prāsa variants", "rare gaṇa substitutions"],
       "sourceRef": "amshaSource",
+      "recitalPolicy": {
+        "type": "noninitial-laghu-karshana",
+        "marker": "ಽ",
+        "matrasPerMark": 1
+      },
       "linePolicy": { "type": "fixed", "unit": "line", "count": 3 },
       "amshaGroups": [
         ["V", "V", "V", "V"],
@@ -509,6 +514,11 @@
       "ruleCompleteness": "provisional-rhythm",
       "uncheckedRules": ["historical prāsa variants", "melodic elongation", "documented substitute gaṇas"],
       "sourceRef": "amshaSource",
+      "recitalPolicy": {
+        "type": "noninitial-laghu-karshana",
+        "marker": "ಽ",
+        "matrasPerMark": 1
+      },
       "linePolicy": { "type": "fixed", "unit": "line", "count": 4 },
       "amshaGroups": [
         ["V", "V", "V", "V"],
@@ -532,6 +542,11 @@
       "ruleCompleteness": "provisional-rhythm",
       "uncheckedRules": ["historical prāsa variants", "sung substitutions beyond gaṇas 2 and 4"],
       "sourceRef": "amshaSource",
+      "recitalPolicy": {
+        "type": "noninitial-laghu-karshana",
+        "marker": "ಽ",
+        "matrasPerMark": 1
+      },
       "linePolicy": { "type": "fixed", "unit": "line", "count": 4 },
       "amshaGroups": [
         ["B", ["V", "B"], "V", ["V", "B"], "V", "V", "R"],
@@ -555,6 +570,11 @@
       "ruleCompleteness": "provisional-rhythm",
       "uncheckedRules": ["historical prāsa variants", "documented substitute gaṇas"],
       "sourceRef": "amshaSource",
+      "recitalPolicy": {
+        "type": "noninitial-laghu-karshana",
+        "marker": "ಽ",
+        "matrasPerMark": 1
+      },
       "linePolicy": { "type": "fixed", "unit": "line", "count": 4 },
       "amshaGroups": [
         ["V", "V", "B", "V", "V", "B"],
@@ -578,6 +598,11 @@
       "ruleCompleteness": "provisional-rhythm",
       "uncheckedRules": ["historical prāsa variants", "documented substitute gaṇas"],
       "sourceRef": "amshaSource",
+      "recitalPolicy": {
+        "type": "noninitial-laghu-karshana",
+        "marker": "ಽ",
+        "matrasPerMark": 1
+      },
       "linePolicy": { "type": "fixed", "unit": "line", "count": 4 },
       "amshaGroups": [
         ["B", "V", "V", "V", "R"],
@@ -601,6 +626,11 @@
       "ruleCompleteness": "provisional-rhythm",
       "uncheckedRules": ["historical prāsa variants", "documented substitute gaṇas"],
       "sourceRef": "amshaSource",
+      "recitalPolicy": {
+        "type": "noninitial-laghu-karshana",
+        "marker": "ಽ",
+        "matrasPerMark": 1
+      },
       "linePolicy": { "type": "fixed", "unit": "line", "count": 4 },
       "amshaGroups": [
         ["B", "V", "V", "R"],
@@ -624,6 +654,11 @@
       "ruleCompleteness": "provisional-rhythm",
       "uncheckedRules": ["historical prāsa variants", "documented substitute gaṇas"],
       "sourceRef": "amshaSource",
+      "recitalPolicy": {
+        "type": "noninitial-laghu-karshana",
+        "marker": "ಽ",
+        "matrasPerMark": 1
+      },
       "linePolicy": { "type": "fixed", "unit": "line", "count": 4 },
       "amshaGroups": [
         ["V", "V", "R"],
@@ -867,9 +902,13 @@
       {
         "title": "Chanda Nikasha: Verification and Identification of meters in Kannada Prosody",
         "url": "https://kannadakali.com/crav/dev/docs/ChandaNikasha-English.pdf"
+      },
+      {
+        "title": "Aṃśa-gaṇa structure and karṣaṇa examples, Shrikaanth K. Murthy",
+        "url": "https://threadreaderapp.com/thread/1262155137545654273.html"
       }
     ],
-    "notes": "The aṃśa class patterns and family frames are documented in docs/rules/amsha-meters.md. Flexible sung substitutions and prāsa await expert review."
+    "notes": "The aṃśa class patterns, family frames, and non-initial-Laghu karṣaṇa guide are documented in docs/rules/amsha-meters.md. Flexible substitutions and historical prāsa variants await expert review."
   },
   "folkTripadiSource": {
     "title": "Kannada folk Tripadi rule packet",

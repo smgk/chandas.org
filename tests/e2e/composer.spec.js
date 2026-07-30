@@ -672,6 +672,47 @@ test("shows complete Ṣaṭpadi and aṃśa ghost frames", async ({ page }) => 
         ]);
 });
 
+test("shows classical aṃśa karṣaṇa after detection and selection", async ({
+    page
+}) => {
+    const compactTextForPattern = (pattern) =>
+        Array.from(pattern, (weight) => weight === "G" ? "ಕಾ" : "ಕ").join("");
+    const vishnu = compactTextForPattern("GLL");
+    const brahma = compactTextForPattern("GL");
+    const text = [
+        [vishnu, vishnu, vishnu, vishnu],
+        [vishnu, vishnu, brahma],
+        [vishnu, vishnu, vishnu, vishnu],
+        [vishnu, vishnu, brahma]
+    ].map((groups) => groups.join(" ")).join("\n");
+    const editor = page.locator("#composition");
+    await editor.fill(text);
+
+    await expect(page.locator("#candidate-list .candidate-name").first())
+        .toHaveText("sāṅgatya");
+    await expect(page.locator("#validation-summary")).toContainText(
+        "Detected sāṅgatya; 26 recital lengthening(s) are marked ಽ"
+    );
+    await expect(page.locator("#highlight-layer .recital-extension-marker"))
+        .toHaveCount(26);
+    await expect(page.locator("#highlight-layer .recital-extension-marker").first())
+        .toHaveText("ಽ");
+    await expect(page.locator("#highlight-layer .violation")).toHaveCount(0);
+    await expect(editor).toHaveValue(text);
+
+    await page.locator("#meter-picker summary").click();
+    await page.locator("#meter-search").fill("sangatya");
+    await page.locator("#meter-select").selectOption("structural:sangatya");
+
+    await expect(page.locator("#validation-summary")).toContainText(
+        "sāṅgatya fits; 26 recital lengthening(s) are marked ಽ"
+    );
+    await expect(page.locator("#highlight-layer .recital-extension-marker"))
+        .toHaveCount(26);
+    await expect(page.locator("#highlight-layer .violation")).toHaveCount(0);
+    await expect(editor).toHaveValue(text);
+});
+
 test("marks inferred sung Laghu in folk Tripadi without changing the poem", async ({
     page
 }) => {
@@ -709,6 +750,8 @@ test("marks inferred sung Laghu in folk Tripadi without changing the poem", asyn
         .selectOption("structural:tripadi-kannada");
     await expect(page.locator("#highlight-layer .sung-extension-marker"))
         .toHaveCount(0);
+    await expect(page.locator("#highlight-layer .amsha-karshana-marker"))
+        .toHaveCount(11);
     await expect(page.locator("#highlight-layer .violation")).toHaveCount(3);
 });
 

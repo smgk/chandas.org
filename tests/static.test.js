@@ -241,7 +241,7 @@ test("the provisional Kanda rule packet and attribution are retained", () => {
     const kanda = catalog.meters.find((meter) =>
         meter.id === "structural:kanda-kannada");
 
-    assert.equal(catalog.catalogVersion, "3.3.0");
+    assert.equal(catalog.catalogVersion, "3.4.0");
     assert.equal(kanda.ruleCompleteness, "provisional-rhythm");
     assert.deepEqual(kanda.uncheckedRules, ["historical prāsa variants"]);
     assert.deepEqual(kanda.lineRelations, [{ type: "dvitiyakshara-prasa" }]);
@@ -255,7 +255,7 @@ test("the provisional Kagga-form Chaupadi packet and references are retained", (
     const chaupadi = catalog.meters.find((meter) =>
         meter.id === "structural:panchamatra-chaupadi-kagga");
 
-    assert.equal(catalog.catalogVersion, "3.3.0");
+    assert.equal(catalog.catalogVersion, "3.4.0");
     assert.equal(chaupadi.ruleCompleteness, "provisional-rhythm");
     assert.deepEqual(chaupadi.padaGroups, [
         [5, 5, 5, 5],
@@ -299,7 +299,7 @@ test("the Ṣaṭpadi and aṃśa milestones retain their catalogs and rule pack
         meter.id.endsWith("-shatpadi"));
     const amsha = catalog.meters.filter((meter) => meter.kind === "amsha");
 
-    assert.equal(catalog.catalogVersion, "3.3.0");
+    assert.equal(catalog.catalogVersion, "3.4.0");
     assert.equal(shatpadis.length, 6);
     assert.equal(amsha.length, 7);
     shatpadis.forEach((meter) => {
@@ -309,6 +309,13 @@ test("the Ṣaṭpadi and aṃśa milestones retain their catalogs and rule pack
     });
     const tripadi = amsha.find((meter) => meter.id === "structural:tripadi-kannada");
     const sangatya = amsha.find((meter) => meter.id === "structural:sangatya");
+    amsha.forEach((meter) => {
+        assert.deepEqual(meter.recitalPolicy, {
+            type: "noninitial-laghu-karshana",
+            marker: "ಽ",
+            matrasPerMark: 1
+        });
+    });
     assert.deepEqual(tripadi.lineRelations[0].internalAnchors, [{
         pada: 1,
         group: 3,
@@ -319,6 +326,9 @@ test("the Ṣaṭpadi and aṃśa milestones retain their catalogs and rule pack
     assert.ok(fs.existsSync(path.join(root, "docs", "rules", "amsha-meters.md")));
     assert.match(read("documentation.html"), /five Akkara forms/);
     assert.match(read("documentation.html"), /Aṃśa meters/);
+    assert.match(read("documentation.html"), /G Lಽ Lಽ/);
+    assert.match(read("docs/rules/amsha-meters.md"), /Recital karṣaṇa/);
+    assert.match(read("requirements.md"), /equally preferred gaṇa divisions/);
 });
 
 test("folk Tripadi remains separate from classical Tripadi and documents sung marks", () => {

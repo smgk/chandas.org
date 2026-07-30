@@ -62,6 +62,7 @@
     };
 
     const MARK_RE = /\p{Mark}/u;
+    const SCRIPT_EVIDENCE_RE = /[\p{Letter}\p{Mark}]/u;
     const METRIC_BOUNDARY_RE = /^[\p{White_Space}\p{Punctuation}]+$/u;
 
     function codePoints(text, offset) {
@@ -104,7 +105,8 @@
 
         for (const point of codePoints(text)) {
             for (const [name, config] of Object.entries(SCRIPT_CONFIG)) {
-                if (inRange(point.cp, config.block)) {
+                if (inRange(point.cp, config.block) &&
+                    SCRIPT_EVIDENCE_RE.test(point.char)) {
                     counts[name] += 1;
                 }
             }
@@ -118,7 +120,8 @@
         const scripts = new Set();
         for (const point of codePoints(text)) {
             for (const [name, config] of Object.entries(SCRIPT_CONFIG)) {
-                if (inRange(point.cp, config.block)) {
+                if (inRange(point.cp, config.block) &&
+                    SCRIPT_EVIDENCE_RE.test(point.char)) {
                     scripts.add(name);
                 }
             }
@@ -1974,7 +1977,7 @@
 
         return {
             text: originalText,
-            analysisVersion: "2.6.0",
+            analysisVersion: "2.6.1",
             catalogVersion: catalog && catalog.structuralCatalogVersion
                 ? String(catalog.structuralCatalogVersion)
                 : "",

@@ -610,7 +610,9 @@ analysis result.
     required rule MUST take precedence without a duplicate automatic report.
     Each nonblank line and each danda/pipe-delimited span is a pāda; blank lines
     reset the comparison. Mixed Kannada–Devanagari stanzas MUST NOT be compared
-    across scripts.
+    across scripts. Script detection MUST use letters and combining marks;
+    danda, double danda, numerals, Markdown marks, and other punctuation MUST
+    remain script-neutral.
 
 ## 7. User Experience and Accessibility
 

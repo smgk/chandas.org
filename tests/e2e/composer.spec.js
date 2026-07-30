@@ -91,6 +91,35 @@ test("shows advisory Kannada prāsa with no meter and with a fixed vṛtta", asy
     await expect(page.locator("#prasa-summary")).toBeHidden();
 });
 
+test("keeps Kannada prāsa active around danda and verse numbers", async ({ page }) => {
+    const text = [
+        "**ಶ್ರೀಯನರಾತಿ ಸಾಧನ ಪಯೋನಿಧಿಯೊಳ್ ಪಡೆದುಂ ಧರಿತ್ರಿಯಂ**",
+        "**ಜೀಯೆನೆ ಬೇಡಿಕೊಳ್ಳದೆ ವಿರೋಧಿ ನರೇಂದ್ರರನೊತ್ತಿಕೊಂಡುಮಾ।**",
+        "**ತ್ಮೀಯ ಸುಪುಷ್ಪಪಟ್ಟಮನೊಡಂಬಡೆ ತಾಳ್ದಿಯುಮಿಂತುದಾತ್ತ ನಾ**",
+        "**ರಾಯಣನಾದ ದೇವನೆಮಗೀಗರಿಕೇಸರಿ ಸೌಖ್ಯಕೋಟಿಯಂ ॥೧॥**"
+    ].join("\n");
+    await page.locator("#composition").fill(text);
+
+    await expect(page.locator("#candidate-list .candidate-name").first())
+        .toHaveText("utpalamālikā");
+    await expect(page.locator("#prasa-summary")).toContainText(
+        "Automatic Kannada-script Dvitīyākṣara-prāsa matches on ಯ."
+    );
+    await expect(page.locator("#highlight-layer .prasa-match")).toHaveText([
+        "ಯ", "ಯೆ", "ಯ", "ಯ"
+    ]);
+
+    await page.locator("#meter-picker summary").click();
+    await page.locator("#meter-search").fill("utpalamalika");
+    await page.locator("#meter-select").selectOption("utpalamālikā");
+    await expect(page.locator("#prasa-summary")).toContainText(
+        "Automatic Kannada-script Dvitīyākṣara-prāsa matches on ಯ."
+    );
+    await expect(page.locator("#highlight-layer .prasa-match")).toHaveText([
+        "ಯ", "ಯೆ", "ಯ", "ಯ"
+    ]);
+});
+
 test("keeps Kannada and Devanagari conjuncts joined across highlight changes", async ({
     page
 }) => {

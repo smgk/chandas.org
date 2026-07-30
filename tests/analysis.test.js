@@ -63,6 +63,9 @@ test("splits stanzas only at blank lines and preserves source offsets", () => {
 test("detects Kannada and Devanagari scripts independently of language", () => {
     assert.equal(Chandas.detectScript("ಕಾವ್ಯ"), "kannada");
     assert.equal(Chandas.detectScript("काव्य"), "devanagari");
+    assert.equal(Chandas.detectScript("ಕ।॥೧॥"), "kannada");
+    assert.equal(Chandas.detectScript("क।॥१॥"), "devanagari");
+    assert.equal(Chandas.detectScript("।॥೧१॥"), "unknown");
     assert.equal(Chandas.detectScript("plain text"), "unknown");
 });
 
@@ -277,6 +280,38 @@ test("does not apply automatic Kannada prāsa across other or mixed scripts", ()
     assert.equal(mixed.prasa.checks.length, 0);
 });
 
+test("treats danda, verse numbers, and Markdown as neutral in Kannada prāsa", () => {
+    const text = [
+        "**ಶ್ರೀಯನರಾತಿ ಸಾಧನ ಪಯೋನಿಧಿಯೊಳ್ ಪಡೆದುಂ ಧರಿತ್ರಿಯಂ**",
+        "**ಜೀಯೆನೆ ಬೇಡಿಕೊಳ್ಳದೆ ವಿರೋಧಿ ನರೇಂದ್ರರನೊತ್ತಿಕೊಂಡುಮಾ।**",
+        "**ತ್ಮೀಯ ಸುಪುಷ್ಪಪಟ್ಟಮನೊಡಂಬಡೆ ತಾಳ್ದಿಯುಮಿಂತುದಾತ್ತ ನಾ**",
+        "**ರಾಯಣನಾದ ದೇವನೆಮಗೀಗರಿಕೇಸರಿ ಸೌಖ್ಯಕೋಟಿಯಂ ॥೧॥**"
+    ].join("\n");
+    for (const selectedMeter of [{}, "utpalamālikā"]) {
+        const stanza = Chandas.analyzeComposition(
+            text,
+            catalog,
+            selectedMeter
+        ).stanzas[0];
+        const check = stanza.prasa.checks.find((item) =>
+            item.type === "dvitiyakshara-prasa");
+        const highlighted = stanza.padas.map((pada) =>
+            pada.syllables.find((syllable) =>
+                (syllable.prasaAnnotations || []).some((item) =>
+                    item.kind === "dvitiyakshara-prasa" &&
+                    item.status === "match")));
+
+        assert.equal(stanza.candidates[0].id, "utpalamālikā");
+        assert.equal(stanza.candidates[0].status, "exact");
+        assert.equal(check.status, "match");
+        assert.equal(check.key, "ಯ");
+        assert.equal(check.provenance, "automatic-kannada");
+        assert.deepEqual(highlighted.map((syllable) => syllable.text), [
+            "ಯ", "ಯೆ", "ಯ", "ಯ"
+        ]);
+    }
+});
+
 test("finds matching first letters as positive Ādi-prāsa", () => {
     const stanza = Chandas.analyzeComposition("ಮಲ್ಪ\nಮಂಪ", catalog, {}).stanzas[0];
     const finding = stanza.prasa.findings.find((item) =>
@@ -474,7 +509,7 @@ test("keeps an incomplete structural meter compatible without red violations", (
 
     assert.equal(stanza.violationCount, 0);
     assert.ok(stanza.missingCount > 0);
-    assert.equal(result.analysisVersion, "2.6.0");
+    assert.equal(result.analysisVersion, "2.6.1");
     assert.equal(result.catalogVersion, structuralCatalog.catalogVersion);
 });
 
@@ -569,7 +604,7 @@ test("recognizes the provisional Kannada Kanda characterization fixture", () => 
     );
     assert.equal(stanza.selectedMeter.ruleCompleteness, "provisional-rhythm");
     assert.deepEqual(stanza.selectedMeter.uncheckedRules, ["historical prāsa variants"]);
-    assert.equal(result.analysisVersion, "2.6.0");
+    assert.equal(result.analysisVersion, "2.6.1");
     assert.equal(result.catalogVersion, "3.2.0");
 });
 

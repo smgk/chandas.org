@@ -596,7 +596,9 @@ analysis result.
     match independently.
 22. Punctuation and whitespace MUST be transparent to prāsa extraction.
     Successful prāsa, consonant failure, and first-syllable weight failure MUST
-    have distinguishable color treatments and accessible text reports.
+    have distinguishable letter-level color fills and accessible text reports.
+    A highlighted akṣara MUST retain its ordinary dotted Laghu or solid Guru
+    underline so its syllable weight remains readable.
 23. When the first consonant of every available pāda matches, the UI MUST
     report “Ādi-prāsa found.” Unless a selected meter explicitly requires
     first-letter prāsa, its absence MUST NOT be reported as a violation.

@@ -142,15 +142,37 @@ test("editor styling preserves Indic shaping across highlight states", () => {
     const violationRule = styles.match(
         /\.highlight-layer \.violation\s*\{([^}]*)\}/
     );
+    const prasaRules = [
+        "prasa-match",
+        "prasa-mismatch",
+        "prasa-weight-mismatch"
+    ].map((className) => styles.match(
+        new RegExp(`\\.highlight-layer \\.${className}\\s*\\{([^}]*)\\}`)
+    ));
 
     assert.match(styles, /letter-spacing:\s*normal/);
     assert.ok(violationRule);
     assert.doesNotMatch(violationRule[1], /font-weight/);
+    for (const rule of prasaRules) {
+        assert.ok(rule);
+        assert.match(rule[1], /background:\s*#[0-9a-f]{6}/i);
+        assert.doesNotMatch(rule[1], /border-bottom|outline/);
+        assert.doesNotMatch(rule[1], /text-decoration/);
+    }
+    assert.match(
+        styles,
+        /\.highlight-layer \.laghu\.prasa-weight-mismatch[\s\S]*?text-decoration-style:\s*dotted/
+    );
+    assert.match(
+        styles,
+        /\.highlight-layer \.guru\.prasa-weight-mismatch[\s\S]*?text-decoration-style:\s*solid/
+    );
 });
 
 test("branding and public navigation use the compact approved copy", () => {
     const index = read("index.html");
     const about = read("about.html");
+    const packageMetadata = JSON.parse(read("package.json"));
     const publicPages = [index, read("privacy.html"), read("terms.html")].join("\n");
 
     assert.match(index, /say it in-verse/);
@@ -160,6 +182,14 @@ test("branding and public navigation use the compact approved copy", () => {
     assert.match(about, /href="https:\/\/x\.com\/ganeshkrishna"[^>]*>@ganeshkrishna<\/a>/);
     assert.match(about, /Ganesh Krishna Shankarathota/);
     assert.doesNotMatch(about, /Ganesha Krishna Shankarathota/);
+    assert.match(
+        about,
+        new RegExp(`data-app-version="${packageMetadata.version}"`)
+    );
+    assert.match(
+        about,
+        new RegExp(`Version <strong>${packageMetadata.version}</strong>`)
+    );
     assert.match(index, /© 2025–2026 Ganesh Krishna Shankarathota/);
     assert.match(
         index,

@@ -486,17 +486,27 @@ test("colors ottu prāsa safely and reports consonant, weight, and ādi findings
     await expect(page.locator("#highlight-layer .prasa-match")).toHaveText([
         "ಲ್ಪ", "ಪ", "ಲ್ಪ", "ಪ"
     ]);
+    await expect(page.locator("#highlight-layer .prasa-match").first())
+        .toHaveCSS("background-color", "rgb(184, 229, 221)");
 
     await editor.fill("ಮಲ್ಪ\nಜಂಪ\nಸಲ್ಪ\nದಂತ");
     await expect(page.locator("#prasa-summary"))
         .toContainText("Dvitīyākṣara-prāsa: 1 mismatch(es).");
     await expect(page.locator("#highlight-layer .prasa-mismatch")).toHaveText("ತ");
+    await expect(page.locator("#highlight-layer .prasa-mismatch"))
+        .toHaveCSS("background-color", "rgb(244, 190, 185)");
 
     await editor.fill("ಮಲ್ಪ\nಜಂಪ\nಸಲ್ಪ\nದಪ");
     await expect(page.locator("#prasa-summary"))
         .toContainText("first syllable’s Guru/Laghu weight differs");
     await expect(page.locator("#highlight-layer .prasa-weight-mismatch"))
         .toHaveText("ದ");
+    await expect(page.locator("#highlight-layer .prasa-weight-mismatch"))
+        .toHaveCSS("background-color", "rgb(241, 207, 143)");
+    await expect(page.locator("#highlight-layer .prasa-weight-mismatch"))
+        .toHaveClass(/laghu/);
+    await expect(page.locator("#highlight-layer .prasa-weight-mismatch"))
+        .toHaveCSS("text-decoration-style", "dotted");
 
     await editor.fill("ಮಲ್ಪ\nಮಂಪ");
     await expect(page.locator("#prasa-summary"))

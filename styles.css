@@ -408,20 +408,45 @@ textarea:focus-visible {
 }
 
 .highlight-layer .prasa-match {
-    border-bottom: 3px solid #16847b;
-    background: color-mix(in srgb, #16847b 10%, transparent);
+    border-radius: 0.18em;
+    color: #123f3a;
+    background: #b8e5dd;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
 }
 
 .highlight-layer .prasa-mismatch {
-    border-bottom: 3px dashed var(--error);
-    background: color-mix(in srgb, var(--error) 12%, transparent);
+    border-radius: 0.18em;
+    color: #6e1e1b;
+    background: #f4beb9;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
 }
 
 .highlight-layer .prasa-weight-mismatch {
-    border-radius: 0.2rem;
-    outline: 2px dotted #b77412;
-    outline-offset: 1px;
-    background: color-mix(in srgb, #d7982f 13%, transparent);
+    border-radius: 0.18em;
+    color: #5f3b00;
+    background: #f1cf8f;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+}
+
+.highlight-layer .laghu.prasa-match,
+.highlight-layer .laghu.prasa-mismatch,
+.highlight-layer .laghu.prasa-weight-mismatch {
+    text-decoration-line: underline;
+    text-decoration-style: dotted;
+    text-decoration-color: var(--green);
+    text-decoration-thickness: 2px;
+}
+
+.highlight-layer .guru.prasa-match,
+.highlight-layer .guru.prasa-mismatch,
+.highlight-layer .guru.prasa-weight-mismatch {
+    text-decoration-line: underline;
+    text-decoration-style: solid;
+    text-decoration-color: var(--saffron);
+    text-decoration-thickness: 2px;
 }
 
 .inline-metric-anchor {
@@ -685,19 +710,21 @@ textarea:focus-visible {
 }
 
 .sample.prasa-match {
-    border-bottom: 3px solid #16847b;
-    background: color-mix(in srgb, #16847b 10%, transparent);
+    border-radius: 0.18em;
+    color: #123f3a;
+    background: #b8e5dd;
 }
 
 .sample.prasa-mismatch {
-    border-bottom: 3px solid var(--error);
-    background: color-mix(in srgb, var(--error) 12%, transparent);
+    border-radius: 0.18em;
+    color: #6e1e1b;
+    background: #f4beb9;
 }
 
 .sample.prasa-weight-mismatch {
-    border-radius: 0.14rem;
-    outline: 2px dotted #b77412;
-    background: color-mix(in srgb, #d7982f 13%, transparent);
+    border-radius: 0.18em;
+    color: #5f3b00;
+    background: #f1cf8f;
 }
 
 .editor-help {
@@ -1147,6 +1174,18 @@ textarea:focus-visible {
 
 .legal-page h2 {
     margin-top: 2rem;
+}
+
+.about-version {
+    width: fit-content;
+    margin: -1.7rem 0 2.2rem;
+    padding: 0.2rem 0.58rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    color: var(--muted);
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
 }
 
 .legal-page a {

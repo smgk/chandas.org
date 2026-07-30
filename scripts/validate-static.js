@@ -40,6 +40,15 @@ for (const file of required) {
     }
 }
 
+const packageMetadata = JSON.parse(
+    fs.readFileSync(path.join(root, "package.json"), "utf8")
+);
+const about = fs.readFileSync(path.join(root, "about.html"), "utf8");
+if (!about.includes(`data-app-version="${packageMetadata.version}"`) ||
+    !about.includes(`Version <strong>${packageMetadata.version}</strong>`)) {
+    throw new Error("about.html must display the package version");
+}
+
 const catalog = JSON.parse(fs.readFileSync(path.join(root, "mishra.json"), "utf8"));
 if (!Array.isArray(catalog.metres) || catalog.metres.length === 0) {
     throw new Error("mishra.json does not contain a non-empty metres array");

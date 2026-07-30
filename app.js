@@ -1251,13 +1251,10 @@
                     start: segment.start,
                     end: segment.end,
                     className: [
-                        segment.violation
-                    ? "violation"
-                    : segment.classification === Chandas.GURU
-                        ? "guru"
-                                : "laghu",
+                        segment.classification === Chandas.GURU ? "guru" : "laghu",
+                        segment.violation ? "violation" : "",
                         ...prasaClasses
-                    ].join(" ")
+                    ].filter(Boolean).join(" ")
                 };
             }),
             ...state.analysis.unsupported.map((range) => ({

@@ -241,7 +241,7 @@ test("the provisional Kanda rule packet and attribution are retained", () => {
     const kanda = catalog.meters.find((meter) =>
         meter.id === "structural:kanda-kannada");
 
-    assert.equal(catalog.catalogVersion, "3.2.0");
+    assert.equal(catalog.catalogVersion, "3.3.0");
     assert.equal(kanda.ruleCompleteness, "provisional-rhythm");
     assert.deepEqual(kanda.uncheckedRules, ["historical prāsa variants"]);
     assert.deepEqual(kanda.lineRelations, [{ type: "dvitiyakshara-prasa" }]);
@@ -255,7 +255,7 @@ test("the provisional Kagga-form Chaupadi packet and references are retained", (
     const chaupadi = catalog.meters.find((meter) =>
         meter.id === "structural:panchamatra-chaupadi-kagga");
 
-    assert.equal(catalog.catalogVersion, "3.2.0");
+    assert.equal(catalog.catalogVersion, "3.3.0");
     assert.equal(chaupadi.ruleCompleteness, "provisional-rhythm");
     assert.deepEqual(chaupadi.padaGroups, [
         [5, 5, 5, 5],
@@ -299,7 +299,7 @@ test("the Ṣaṭpadi and aṃśa milestones retain their catalogs and rule pack
         meter.id.endsWith("-shatpadi"));
     const amsha = catalog.meters.filter((meter) => meter.kind === "amsha");
 
-    assert.equal(catalog.catalogVersion, "3.2.0");
+    assert.equal(catalog.catalogVersion, "3.3.0");
     assert.equal(shatpadis.length, 6);
     assert.equal(amsha.length, 7);
     shatpadis.forEach((meter) => {
@@ -319,4 +319,30 @@ test("the Ṣaṭpadi and aṃśa milestones retain their catalogs and rule pack
     assert.ok(fs.existsSync(path.join(root, "docs", "rules", "amsha-meters.md")));
     assert.match(read("documentation.html"), /five Akkara forms/);
     assert.match(read("documentation.html"), /Aṃśa meters/);
+});
+
+test("folk Tripadi remains separate from classical Tripadi and documents sung marks", () => {
+    const catalog = JSON.parse(read("structural_meters.json"));
+    const classical = catalog.meters.find((meter) =>
+        meter.id === "structural:tripadi-kannada");
+    const folk = catalog.meters.find((meter) =>
+        meter.id === "structural:tripadi-folk-kannada");
+
+    assert.equal(classical.kind, "amsha");
+    assert.equal(classical.sourceRef, "amshaSource");
+    assert.equal(folk.kind, "matra");
+    assert.equal(folk.sourceRef, "folkTripadiSource");
+    assert.deepEqual(folk.padaGroups, [
+        [5, 5, 5, 5],
+        [5, 4, 5, 5],
+        [5, 4, 5]
+    ]);
+    assert.deepEqual(folk.sungLaghuExtension, {
+        maxMatras: 1,
+        marker: "ಽ"
+    });
+    assert.ok(fs.existsSync(path.join(root, "docs", "rules", "folk-tripadi.md")));
+    assert.match(read("documentation.html"), /Folk Tripadi \(Kannada\)/);
+    assert.match(read("documentation.html"), /superscript/);
+    assert.match(read("requirements.md"), /MUST NOT weaken or\s+replace classical/);
 });

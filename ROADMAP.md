@@ -240,6 +240,12 @@ frames. It checks opening dvitīyākṣara-prāsa (including Tripadi's internal
 first-line recurrence) while leaving melodic substitutions, sung and
 historical prāsa equivalences, and sparsely attested variants provisional.
 
+A separate folk Tripadi slice recognizes the later
+`5555 / 5455 / 545` mātrā frame. It may infer one sung mātrā from a
+gaṇa-final Laghu and displays that inference as superscript `ಽ`; the classical
+aṃśa entry is unchanged. Broader melodic and regional realizations still need
+expert-reviewed corpora.
+
 Other mātrā, aṃśa, mixed, and regional traditions stay in the backlog and
 follow the same source, corpus, expert-review, versioning, and test gates.
 Meter count is not a success metric; trustworthy results are.

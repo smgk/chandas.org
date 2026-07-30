@@ -2,7 +2,7 @@
 
 **Status:** Draft for stakeholder review
 
-**Last updated:** 2026-07-27
+**Last updated:** 2026-07-29
 
 **Products:** `chandas.org` website and Android application
 
@@ -580,29 +580,38 @@ analysis result.
     variation, sung repetition, historical prāsa equivalences, and substitute
     gaṇas MUST remain named as provisional where the corpus does not justify a
     deterministic rule.
-19. Pañcamātrā Chaupadi MUST initially be scoped to the familiar written-text
+19. Folk Tripadi MUST be a separate catalog entry and MUST NOT weaken or
+    replace classical aṃśa Tripadi. Its provisional three-line mātrā frame
+    MUST be `5555 / 5455 / 545`, or `20 | 19 | 14` sung mātrās.
+20. In folk Tripadi, a gaṇa-final written Laghu MAY supply at most one inferred
+    sung mātrā. A successful inference MUST keep the written classification
+    Laghu, avoid a red violation, and show a faint superscript Kannada
+    avagraha `ಽ` at that syllable. The marker MUST remain an overlay annotation
+    and MUST NOT modify the editor value, copied poem, or shared analysis URL.
+    Larger extensions, elision, and regional realizations remain provisional.
+21. Pañcamātrā Chaupadi MUST initially be scoped to the familiar written-text
     form used by D. V. Gundappa's *Mankuthimmana Kagga*, with four lines
     encoded as `5555 / 5553 / 5555 / 5551`, or
     `20 | 18 | 20 | 16` observed mātrās.
-20. The Kagga-form entry MUST remain visibly provisional. It MUST check
+22. The Kagga-form entry MUST remain visibly provisional. It MUST check
     opening dvitīyākṣara-prāsa and line-ending antya-prāsa across all four
     lines. Pādānta lengthening, śithila-dvitva, historical prāsa equivalences,
     and broader Chaupadi variants MUST remain named as unchecked rather than
     silently accepted or rejected.
-21. Dvitīyākṣara-prāsa comparison MUST use the terminal consonant of the
+23. Dvitīyākṣara-prāsa comparison MUST use the terminal consonant of the
     second displayed akṣara while preserving a shaping-safe display range.
     Thus `ಮಲ್ಪ` and `ಜಂಪ` compare on `ಪ`, while the complete `ಲ್ಪ` cluster may
     be highlighted. The Guru/Laghu weight of the preceding first syllable MUST
     match independently.
-22. Punctuation and whitespace MUST be transparent to prāsa extraction.
+24. Punctuation and whitespace MUST be transparent to prāsa extraction.
     Successful prāsa, consonant failure, and first-syllable weight failure MUST
     have distinguishable letter-level color fills and accessible text reports.
     A highlighted akṣara MUST retain its ordinary dotted Laghu or solid Guru
     underline so its syllable weight remains readable.
-23. When the first consonant of every available pāda matches, the UI MUST
+25. When the first consonant of every available pāda matches, the UI MUST
     report “Ādi-prāsa found.” Unless a selected meter explicitly requires
     first-letter prāsa, its absence MUST NOT be reported as a violation.
-24. A stanza containing at least two eligible Kannada-script pādas MUST receive
+26. A stanza containing at least two eligible Kannada-script pādas MUST receive
     an automatic dvitīyākṣara-prāsa check even when no meter is selected or a
     fixed/Sanskrit-vṛtta catalog meter is selected. The result MUST be marked
     as an advisory Kannada-script observation and MUST NOT change meter

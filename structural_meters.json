@@ -1,5 +1,5 @@
 {
-  "catalogVersion": "3.2.0",
+  "catalogVersion": "3.3.0",
   "copyright": "Copyright © 2025–2026 Ganesh Krishna Shankarathota",
   "license": "GPL-3.0-only",
   "description": "Structural, mātrā, and aṃśa meter rules that cannot be represented as one fixed Guru/Laghu string.",
@@ -457,6 +457,47 @@
       "notes": "Checks the core aṃśa frame, required Brahma positions, opening dvitīyākṣara-prāsa, and its internal recurrence in the first line's third gaṇa. Sung and folk substitutions remain explicitly provisional."
     },
     {
+      "id": "structural:tripadi-folk-kannada",
+      "name": "folk tripadi (Kannada)",
+      "aliases": [
+        "folk tripadi",
+        "janapada tripadi",
+        "matra tripadi",
+        "matraa tripadi",
+        "mātrā tripadi",
+        "ಜನಪದ ತ್ರಿಪದಿ",
+        "ಮಾತ್ರಾ ತ್ರಿಪದಿ",
+        "ಮಾತ್ರೆಯ ತ್ರಿಪದಿ"
+      ],
+      "kind": "matra",
+      "signatureLines": [
+        "3 lines · 20 | 19 | 14 sung mātrās",
+        "5555 | 5455 | 545; gaṇa-final Laghu may be sung long (ಽ)"
+      ],
+      "ruleCompleteness": "provisional-rhythm",
+      "uncheckedRules": [
+        "regional and sung variants",
+        "expansion and elision beyond one mātrā"
+      ],
+      "sourceRef": "folkTripadiSource",
+      "linePolicy": { "type": "fixed", "unit": "line", "count": 3 },
+      "padaGroups": [
+        [5, 5, 5, 5],
+        [5, 4, 5, 5],
+        [5, 4, 5]
+      ],
+      "sungLaghuExtension": {
+        "maxMatras": 1,
+        "marker": "ಽ"
+      },
+      "lineRelations": [
+        {
+          "type": "dvitiyakshara-prasa"
+        }
+      ],
+      "notes": "Recognizes the later folk mātrā frame independently of classical aṃśa Tripadi. A gaṇa-final Laghu may supply one inferred sung mātrā; the analyzer marks that realization with a superscript avagraha without changing the poem."
+    },
+    {
       "id": "structural:sangatya",
       "name": "sāṅgatya",
       "aliases": ["sangatya", "saangatya", "sangathya", "ಸಾಂಗತ್ಯ"],
@@ -829,5 +870,19 @@
       }
     ],
     "notes": "The aṃśa class patterns and family frames are documented in docs/rules/amsha-meters.md. Flexible sung substitutions and prāsa await expert review."
+  },
+  "folkTripadiSource": {
+    "title": "Kannada folk Tripadi rule packet",
+    "references": [
+      {
+        "title": "Tripadi, Classical Kannada",
+        "url": "https://shastriyakannada.org/database/english/literature/TRIPADI%20HTML.htm"
+      },
+      {
+        "title": "Akshara Gana, Matra Gana and Amshagana, Classical Kannada",
+        "url": "https://shastriyakannada.org/database/english/literature/AKSHARA%20GANA%2C%20MATRA%20GANA%20AND%20AMSHAGANA%20HTML.htm"
+      }
+    ],
+    "notes": "The separate later folk mātrā frame and inferred one-mātrā sung realization are documented in docs/rules/folk-tripadi.md. Regional and broader sung variants await expert review."
   }
 }

@@ -65,6 +65,10 @@ if (!structuralCatalog.catalogVersion ||
 if (!structuralCatalog.meters.some((meter) => meter.id === "structural:anushtubh-pathya")) {
     throw new Error("structural_meters.json must include pathyā Anuṣṭubh");
 }
+if (!structuralCatalog.meters.some((meter) =>
+    meter.id === "structural:tripadi-folk-kannada")) {
+    throw new Error("structural_meters.json must include folk Tripadi");
+}
 const structuralIds = new Set();
 for (const meter of structuralCatalog.meters) {
     if (!meter.id || structuralIds.has(meter.id)) {
@@ -143,6 +147,14 @@ for (const meter of structuralCatalog.meters) {
     }
 
     const capacities = meter.padaGroups.flat();
+    if (meter.sungLaghuExtension !== undefined) {
+        const policy = meter.sungLaghuExtension;
+        if (!policy || !Number.isInteger(policy.maxMatras) ||
+            policy.maxMatras < 1 || policy.maxMatras > 2 ||
+            typeof policy.marker !== "string" || !policy.marker.trim()) {
+            throw new Error(`${meter.id} has an invalid sung-Laghu policy`);
+        }
+    }
     if (meter.padaGroupOptions !== undefined) {
         if (!Array.isArray(meter.padaGroupOptions) ||
             meter.padaGroupOptions.length !== meter.padaGroups.length) {

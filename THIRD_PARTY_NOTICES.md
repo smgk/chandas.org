@@ -86,3 +86,14 @@ The provisional six-form Ṣaṭpadi and aṃśa-family rules are documented in
 These public references supply prosodic facts, terminology, and catalog
 frames. Their scans, articles, and examples are not bundled with the
 application.
+
+The separate provisional folk Tripadi mātrā frame and sung-Laghu annotation
+are documented in `docs/rules/folk-tripadi.md` against:
+
+- *Tripadi*, Classical Kannada:
+  <https://shastriyakannada.org/database/english/literature/TRIPADI%20HTML.htm>
+- *Akshara Gana, Matra Gana and Amshagana*, Classical Kannada:
+  <https://shastriyakannada.org/database/english/literature/AKSHARA%20GANA%2C%20MATRA%20GANA%20AND%20AMSHAGANA%20HTML.htm>
+
+These references supply rule facts and terminology. Their page content is not
+bundled with the application.

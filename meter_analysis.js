@@ -1223,10 +1223,138 @@
         return Array.isArray(groups) ? [groups] : [];
     }
 
+    function sungBoundaryScore(pada, syllableIndex) {
+        if (syllableIndex <= 0 || syllableIndex >= pada.syllables.length) {
+            return 0;
+        }
+        const before = pada.syllables[syllableIndex - 1];
+        const after = pada.syllables[syllableIndex];
+        const gap = pada.text.slice(before.end - pada.start, after.start - pada.start);
+        return gap && METRIC_BOUNDARY_RE.test(gap) ? 1 : 0;
+    }
+
+    function matchSungMatraGroups(pada, capacities, globalGroupOffset, meter) {
+        const policy = meter.sungLaghuExtension;
+        const maxExtension = policy && Number.isInteger(policy.maxMatras)
+            ? policy.maxMatras
+            : 0;
+        if (maxExtension < 1) {
+            return null;
+        }
+
+        let states = [{
+            position: 0,
+            boundaryScore: 0,
+            groups: []
+        }];
+        for (let localIndex = 0; localIndex < capacities.length; localIndex += 1) {
+            const capacity = capacities[localIndex];
+            const nextByPosition = new Map();
+            for (const state of states) {
+                let observedMatras = 0;
+                for (let end = state.position + 1;
+                    end <= pada.syllables.length;
+                    end += 1) {
+                    const syllable = pada.syllables[end - 1];
+                    observedMatras += matraValue(syllable);
+                    if (observedMatras > capacity) {
+                        break;
+                    }
+                    const extensionMatras = capacity - observedMatras;
+                    const canExtend = extensionMatras === 0 ||
+                        (extensionMatras <= maxExtension &&
+                            syllable.classification === LAGHU);
+                    if (!canExtend) {
+                        continue;
+                    }
+                    const candidate = {
+                        position: end,
+                        boundaryScore: state.boundaryScore +
+                            sungBoundaryScore(pada, end),
+                        groups: state.groups.concat({
+                            globalIndex: globalGroupOffset + localIndex + 1,
+                            localIndex: localIndex + 1,
+                            capacity,
+                            matras: capacity,
+                            observedMatras,
+                            complete: true,
+                            overrun: false,
+                            syllables: pada.syllables.slice(state.position, end),
+                            pattern: pada.syllables.slice(state.position, end)
+                                .map((item) => item.classification).join(""),
+                            extensionMatras,
+                            extensionSyllable: extensionMatras ? syllable : null
+                        })
+                    };
+                    const previous = nextByPosition.get(end);
+                    if (!previous ||
+                        candidate.boundaryScore > previous.boundaryScore) {
+                        nextByPosition.set(end, candidate);
+                    }
+                }
+            }
+            states = Array.from(nextByPosition.values());
+            if (!states.length) {
+                return null;
+            }
+        }
+
+        return states
+            .filter((state) => state.position === pada.syllables.length)
+            .sort((left, right) =>
+                right.boundaryScore - left.boundaryScore)[0] || null;
+    }
+
     function evaluateMatraPada(pada, groups, globalGroupOffset, padaIndex, meter, shouldMark) {
         let ruleFailures = 0;
         let missingCount = 0;
         const target = groups.reduce((sum, value) => sum + value, 0);
+        const sungMatch = matchSungMatraGroups(
+            pada,
+            groups,
+            globalGroupOffset,
+            meter
+        );
+        if (sungMatch) {
+            const sungExtensions = sungMatch.groups
+                .filter((group) => group.extensionSyllable)
+                .map((group) => ({
+                    start: group.extensionSyllable.start,
+                    end: group.extensionSyllable.end,
+                    matras: group.extensionMatras
+                }));
+            if (shouldMark) {
+                sungMatch.groups.forEach((group) => {
+                    if (group.extensionSyllable) {
+                        group.extensionSyllable.sungExtension = {
+                            marker: String(
+                                meter.sungLaghuExtension.marker || "ಽ"
+                            ),
+                            matras: group.extensionMatras,
+                            reason: "sung-laghu-extension"
+                        };
+                    }
+                });
+            }
+            for (const group of sungMatch.groups) {
+                ruleFailures += evaluateMatraGroupRules(
+                    group,
+                    pada,
+                    padaIndex,
+                    meter,
+                    shouldMark
+                );
+            }
+            return {
+                groups,
+                matchedGroups: sungMatch.groups,
+                target,
+                ruleFailures,
+                missingCount: 0,
+                sungExtensions
+            };
+        }
+
         const boundaries = new Set();
         let boundary = 0;
         groups.slice(0, -1).forEach((group) => {
@@ -1277,9 +1405,11 @@
 
         return {
             groups,
+            matchedGroups: collectedGroups,
             target,
             ruleFailures,
-            missingCount
+            missingCount,
+            sungExtensions: []
         };
     }
 
@@ -1677,6 +1807,7 @@
         let expectedUnits = 0;
         const groupsByPada = [];
         const completePadas = [];
+        const sungExtensions = [];
 
         for (let padaIndex = 0; padaIndex < evaluatedLineCount; padaIndex += 1) {
             const pada = padas[padaIndex];
@@ -1724,10 +1855,11 @@
                     true
                 )
                 : candidates[0];
-            groupsByPada[padaIndex] = selected.groups;
+            groupsByPada[padaIndex] = selected.matchedGroups || selected.groups;
             completePadas[padaIndex] = selected.missingCount === 0;
             ruleFailures += selected.ruleFailures;
             missingCount += selected.missingCount;
+            sungExtensions.push(...(selected.sungExtensions || []));
             globalGroupOffset += selected.groups.length;
         }
 
@@ -1753,6 +1885,7 @@
             result.status = "compatible";
         }
         result.prasa = prasa;
+        result.sungExtensions = sungExtensions;
         return result;
     }
 
@@ -1811,7 +1944,7 @@
             }));
     }
 
-    function sortCandidates(candidates, limit) {
+    function sortCandidates(candidates, limit, selectedMeterId) {
         const statusRank = { exact: 0, compatible: 1, approximate: 2 };
         const completenessRank = {
             complete: 0,
@@ -1819,14 +1952,22 @@
             "provisional-rhythm": 1,
             "group-totals": 2
         };
-        return candidates.sort((left, right) =>
+        const ranked = candidates.sort((left, right) =>
             statusRank[left.status] - statusRank[right.status] ||
             (completenessRank[left.ruleCompleteness] ?? 1) -
                 (completenessRank[right.ruleCompleteness] ?? 1) ||
             left.score - right.score ||
             left.distance - right.distance ||
-            left.name.localeCompare(right.name)
-        ).slice(0, limit || 8);
+            left.name.localeCompare(right.name));
+        const visible = ranked.slice(0, limit || 8);
+        const selected = selectedMeterId
+            ? ranked.find((candidate) => candidate.id === selectedMeterId)
+            : null;
+        if (selected && !visible.some((candidate) =>
+            candidate.id === selectedMeterId)) {
+            visible[visible.length - 1] = selected;
+        }
+        return visible;
     }
 
     function selectedMeterFor(index, selectedMeters) {
@@ -1936,7 +2077,7 @@
             const candidates = sortCandidates([
                 ...rankMeters(linePatterns, meters, meters.length),
                 ...rankStructuralMeters(padas, meters)
-            ], 8);
+            ], 8, selectedMeterId);
             const violationCount = structuralValidation
                 ? structuralValidation.violationCount
                 : lines.reduce((sum, line) => sum + line.violationCount, 0);
@@ -1970,6 +2111,10 @@
                         : []
                 } : null,
                 prasa,
+                sungExtensionCount: structuralValidation &&
+                    Array.isArray(structuralValidation.sungExtensions)
+                    ? structuralValidation.sungExtensions.length
+                    : 0,
                 violationCount,
                 missingCount
             };
@@ -1977,7 +2122,7 @@
 
         return {
             text: originalText,
-            analysisVersion: "2.6.1",
+            analysisVersion: "2.7.0",
             catalogVersion: catalog && catalog.structuralCatalogVersion
                 ? String(catalog.structuralCatalogVersion)
                 : "",

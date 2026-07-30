@@ -509,7 +509,7 @@ test("keeps an incomplete structural meter compatible without red violations", (
 
     assert.equal(stanza.violationCount, 0);
     assert.ok(stanza.missingCount > 0);
-    assert.equal(result.analysisVersion, "2.6.1");
+    assert.equal(result.analysisVersion, "2.7.0");
     assert.equal(result.catalogVersion, structuralCatalog.catalogVersion);
 });
 
@@ -604,8 +604,8 @@ test("recognizes the provisional Kannada Kanda characterization fixture", () => 
     );
     assert.equal(stanza.selectedMeter.ruleCompleteness, "provisional-rhythm");
     assert.deepEqual(stanza.selectedMeter.uncheckedRules, ["historical prāsa variants"]);
-    assert.equal(result.analysisVersion, "2.6.1");
-    assert.equal(result.catalogVersion, "3.2.0");
+    assert.equal(result.analysisVersion, "2.7.0");
+    assert.equal(result.catalogVersion, "3.3.0");
 });
 
 test("loads and validates the Pañcamātrā Chaupadi Kagga form", () => {
@@ -833,6 +833,79 @@ test("enforces the core Tripadi aṃśa positions at original source ranges", ()
     violations.forEach((syllable) => {
         assert.equal(text.slice(syllable.start, syllable.end), syllable.text);
     });
+});
+
+test("keeps classical Tripadi strict while folk Tripadi marks sung Laghu extensions", () => {
+    const text = [
+        "ಕೂಸು ಇದ್ದ ಮನೆಗೆ ಬೀಸಣಿಗೆ ಯಾತಕ",
+        "ಕೂಸು ಕಂದಯ್ಯ ಒಳಹೊರಗ ಆಡಿದರ",
+        "ಬೀಸಣಿಗೆ ಗಾಳಿ ಬೀಸ್ಯಾವ"
+    ].join("\n");
+    const meters = Chandas.normalizeCatalog(combinedCatalog);
+    const classical = meters.find((meter) =>
+        meter.id === "structural:tripadi-kannada");
+    const folk = meters.find((meter) =>
+        meter.id === "structural:tripadi-folk-kannada");
+
+    assert.equal(classical.kind, "amsha");
+    assert.deepEqual(classical.amshaGroups, [
+        ["V", "V", "V", "V"],
+        ["V", "B", "V", "V"],
+        ["V", "B", "V"]
+    ]);
+    assert.equal(folk.kind, "matra");
+    assert.deepEqual(folk.padaGroups, [
+        [5, 5, 5, 5],
+        [5, 4, 5, 5],
+        [5, 4, 5]
+    ]);
+    assert.deepEqual(folk.sungLaghuExtension, {
+        maxMatras: 1,
+        marker: "ಽ"
+    });
+
+    const folkStanza = Chandas.analyzeComposition(
+        text,
+        combinedCatalog,
+        folk.id
+    ).stanzas[0];
+    const extensions = folkStanza.padas
+        .flatMap((pada) => pada.syllables)
+        .filter((syllable) => syllable.sungExtension);
+
+    assert.equal(folkStanza.violationCount, 0);
+    assert.equal(folkStanza.missingCount, 0);
+    assert.equal(folkStanza.sungExtensionCount, 4);
+    assert.equal(extensions.length, 4);
+    extensions.forEach((syllable) => {
+        assert.equal(syllable.classification, "L");
+        assert.equal(syllable.violation, false);
+        assert.deepEqual(syllable.sungExtension, {
+            marker: "ಽ",
+            matras: 1,
+            reason: "sung-laghu-extension"
+        });
+    });
+    assert.equal(folkStanza.prasa.checks[0].status, "match");
+    assert.equal(folkStanza.prasa.checks[0].key, "ಸ");
+    assert.equal(
+        folkStanza.candidates.find((candidate) => candidate.id === folk.id).status,
+        "compatible"
+    );
+
+    const classicalStanza = Chandas.analyzeComposition(
+        text,
+        combinedCatalog,
+        classical.id
+    ).stanzas[0];
+    const classicalViolations = classicalStanza.padas
+        .flatMap((pada) => pada.syllables)
+        .filter((syllable) => syllable.violation)
+        .map((syllable) => syllable.text);
+
+    assert.equal(classicalStanza.violationCount, 3);
+    assert.deepEqual(classicalViolations, ["ಗೆ", "ಗ", "ಗೆ"]);
+    assert.equal(classicalStanza.sungExtensionCount, 0);
 });
 
 test("loads all three Ragale forms with repeating line policies", () => {

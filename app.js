@@ -78,6 +78,7 @@
             noMeterSelected: "Choose a meter to check this stanza.",
             meterReady: "{meter} is ready. Start typing when the line arrives.",
             validMeter: "This stanza follows {meter}.",
+            sungExtensionsValid: "{meter} fits with {count} sung extension(s), marked ಽ.",
             validationIssues: "{violations} mismatched and {missing} missing syllables for {meter}.",
             incompleteMeter: "{meter} is still possible; {missing} metrical units remain.",
             supportedRulesValid: "This stanza follows the supported rules for {meter}.",
@@ -181,6 +182,7 @@
             noMeterSelected: "ಈ ಪದ್ಯವನ್ನು ಪರೀಕ್ಷಿಸಲು ಛಂದಸ್ಸನ್ನು ಆರಿಸಿ.",
             meterReady: "{meter} ಸಿದ್ಧವಾಗಿದೆ. ಪದ್ಯ ಹೊಳೆದಾಗ ಬರೆಯಲು ಆರಂಭಿಸಿ.",
             validMeter: "ಈ ಪದ್ಯವು {meter} ಛಂದಸ್ಸಿಗೆ ಹೊಂದುತ್ತದೆ.",
+            sungExtensionsValid: "{meter}ಗೆ {count} ಗಾಯನ ವಿಸ್ತರಣೆಗಳು ಹೊಂದುತ್ತವೆ; ಅವನ್ನು ಽ ಗುರುತಿಸಿದೆ.",
             validationIssues: "{meter}: {violations} ವ್ಯತ್ಯಾಸ, {missing} ಕೊರತೆಯ ಅಕ್ಷರಗಳು.",
             incompleteMeter: "{meter} ಇನ್ನೂ ಸಾಧ್ಯ; {missing} ಛಂದೋಘಟಕಗಳು ಬಾಕಿಯಿವೆ.",
             supportedRulesValid: "ಈ ಪದ್ಯವು {meter}ಗಾಗಿ ಬೆಂಬಲಿತ ನಿಯಮಗಳಿಗೆ ಹೊಂದುತ್ತದೆ.",
@@ -1195,6 +1197,22 @@
             }
         }
 
+        for (const segment of state.analysis ? state.analysis.segments : []) {
+            if (!segment.sungExtension) {
+                continue;
+            }
+            const annotation = byPosition.get(segment.end) || {
+                position: segment.end,
+                metrics: "",
+                ghost: ""
+            };
+            const marker = segment.sungExtension.marker || "ಽ";
+            annotation.sungMarker = marker.repeat(
+                Math.max(1, Number(segment.sungExtension.matras) || 1)
+            );
+            byPosition.set(segment.end, annotation);
+        }
+
         return Array.from(byPosition.values()).sort((left, right) =>
             left.position - right.position);
     }
@@ -1206,7 +1224,10 @@
         const ghost = annotation.ghost
             ? `<span class="ghost-template">${escapeHtml(annotation.ghost)}</span>`
             : "";
-        return `<span class="inline-metric-anchor">${metrics}${ghost}</span>`;
+        const sungMarker = annotation.sungMarker
+            ? `<span class="sung-extension-marker">${escapeHtml(annotation.sungMarker)}</span>`
+            : "";
+        return `<span class="inline-metric-anchor">${metrics}${ghost}${sungMarker}</span>`;
     }
 
     function renderCursorMetrics() {
@@ -1617,7 +1638,12 @@
             summary.textContent = t("noMeterSelected");
         } else if (stanza.violationCount === 0 && stanza.missingCount === 0) {
             const uncheckedRules = stanza.selectedMeter.uncheckedRules || [];
-            if (uncheckedRules.length) {
+            if (stanza.sungExtensionCount) {
+                summary.textContent = t("sungExtensionsValid", {
+                    meter: stanza.selectedMeter.name,
+                    count: stanza.sungExtensionCount
+                });
+            } else if (uncheckedRules.length) {
                 summary.textContent = t(
                     uncheckedRules.length === 1
                         ? "uncheckedRulesValid"

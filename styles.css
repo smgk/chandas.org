@@ -456,12 +456,29 @@ textarea:focus-visible {
 }
 
 .line-metrics-badge,
-.ghost-template {
+.ghost-template,
+.sung-extension-marker {
     position: absolute;
     z-index: 3;
-    left: 0.18rem;
     pointer-events: none;
     white-space: nowrap;
+}
+
+.line-metrics-badge,
+.ghost-template {
+    left: 0.18rem;
+}
+
+.sung-extension-marker {
+    top: -0.72em;
+    left: -0.04em;
+    color: color-mix(in srgb, var(--saffron) 68%, transparent);
+    font-family: var(--editor-font);
+    font-size: 0.66em;
+    font-weight: 650;
+    line-height: 1;
+    text-decoration: none;
+    text-shadow: 0 1px var(--paper);
 }
 
 .line-metrics-badge {

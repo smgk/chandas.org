@@ -672,6 +672,46 @@ test("shows complete Ṣaṭpadi and aṃśa ghost frames", async ({ page }) => 
         ]);
 });
 
+test("marks inferred sung Laghu in folk Tripadi without changing the poem", async ({
+    page
+}) => {
+    const text = [
+        "ಕೂಸು ಇದ್ದ ಮನೆಗೆ ಬೀಸಣಿಗೆ ಯಾತಕ",
+        "ಕೂಸು ಕಂದಯ್ಯ ಒಳಹೊರಗ ಆಡಿದರ",
+        "ಬೀಸಣಿಗೆ ಗಾಳಿ ಬೀಸ್ಯಾವ"
+    ].join("\n");
+    const editor = page.locator("#composition");
+    await editor.fill(text);
+
+    await expect(page.locator("#candidate-list .candidate-name").first())
+        .toHaveText("folk tripadi (Kannada)");
+    await page.locator("#meter-picker summary").click();
+    await page.locator("#meter-search").fill("janapada tripadi");
+    await expect(page.locator("#meter-select option")).toHaveText([
+        "folk tripadi (Kannada)"
+    ]);
+    await page.locator("#meter-select")
+        .selectOption("structural:tripadi-folk-kannada");
+
+    await expect(page.locator("#validation-summary")).toContainText(
+        "fits with 4 sung extension(s), marked ಽ"
+    );
+    await expect(page.locator("#validation-summary")).not.toHaveClass(/has-errors/);
+    await expect(page.locator("#highlight-layer .violation")).toHaveCount(0);
+    await expect(page.locator("#highlight-layer .sung-extension-marker"))
+        .toHaveText(["ಽ", "ಽ", "ಽ", "ಽ"]);
+    await expect(page.locator("#prasa-summary"))
+        .toContainText("Dvitīyākṣara-prāsa matches on ಸ.");
+    await expect(editor).toHaveValue(text);
+
+    await page.locator("#meter-search").fill("tripadi");
+    await page.locator("#meter-select")
+        .selectOption("structural:tripadi-kannada");
+    await expect(page.locator("#highlight-layer .sung-extension-marker"))
+        .toHaveCount(0);
+    await expect(page.locator("#highlight-layer .violation")).toHaveCount(3);
+});
+
 test("recovers the anonymous local draft and meter selection", async ({ page }) => {
     const composition = "ಕವಿ\n\nकाव्य";
     await page.locator("#composition").fill(composition);
@@ -892,7 +932,7 @@ test("opens documentation and searches the complete prosody catalog", async ({ p
     await expect(page.locator("h1")).toContainText("How to use Chandas");
     await expect(page.locator("main")).toContainText("tea break");
     await expect(page.locator("#meter-catalog-status"))
-        .toHaveText("1,375 of 1,375 supported meters shown.");
+        .toHaveText("1,376 of 1,376 supported meters shown.");
 
     await page.locator("#meter-catalog-search").fill("anushtup");
     await expect(page.locator(".meter-catalog-item")).toHaveCount(1);

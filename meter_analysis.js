@@ -503,6 +503,75 @@
         return padas;
     }
 
+    function consonantKeyForSyllable(syllable, consonantPosition) {
+        const config = syllable && SCRIPT_CONFIG[syllable.script];
+        if (!config) {
+            return "";
+        }
+        const consonants = codePoints(String(syllable.text || "").normalize("NFC"))
+            .filter((point) => inRange(point.cp, config.consonant))
+            .map((point) => point.char);
+        if (consonantPosition === "initial") {
+            return consonants[0] || "";
+        }
+        if (consonantPosition === "terminal") {
+            return consonants[consonants.length - 1] || "";
+        }
+        return consonants.join("");
+    }
+
+    function prasaOccurrence(pada, type) {
+        if (!pada || !pada.syllables.length) {
+            return null;
+        }
+        let index = 0;
+        if (type === "dvitiyakshara") {
+            index = 1;
+        } else if (type === "antya") {
+            index = pada.syllables.length - 1;
+        }
+        const syllable = pada.syllables[index];
+        if (!syllable) {
+            return null;
+        }
+        const key = consonantKeyForSyllable(
+            syllable,
+            type === "adi"
+                ? "initial"
+                : type === "dvitiyakshara" || type === "antya"
+                    ? "terminal"
+                    : "all"
+        );
+        if (!key) {
+            return null;
+        }
+        return {
+            type,
+            key,
+            script: syllable.script,
+            syllable,
+            preceding: type === "dvitiyakshara" ? pada.syllables[0] : null
+        };
+    }
+
+    function addPrasaAnnotation(syllable, kind, status, shouldMark, detail) {
+        if (!shouldMark || !syllable) {
+            return;
+        }
+        if (!Array.isArray(syllable.prasaAnnotations)) {
+            syllable.prasaAnnotations = [];
+        }
+        if (syllable.prasaAnnotations.some((annotation) =>
+            annotation.kind === kind && annotation.status === status)) {
+            return;
+        }
+        syllable.prasaAnnotations.push({
+            kind,
+            status,
+            detail: detail || ""
+        });
+    }
+
     function sanitizePattern(pattern) {
         return String(pattern || "").toUpperCase().replace(/[^GL]/g, "");
     }
@@ -1021,6 +1090,8 @@
         let missingCount = 0;
         let expectedUnits = 0;
         let globalGroupOffset = 0;
+        const groupsByPada = [];
+        const completePadas = [];
         const expectedPadas = meter.amshaGroups || [];
         const lineCount = Math.max(padas.length, expectedPadas.length);
 
@@ -1038,11 +1109,14 @@
             expectedUnits += slots.length;
             if (!pada) {
                 missingCount += slots.length;
+                completePadas[padaIndex] = false;
                 globalGroupOffset += slots.length;
                 continue;
             }
 
             const matched = matchAmshaPada(pada, slots, globalGroupOffset);
+            groupsByPada[padaIndex] = matched.groups;
+            completePadas[padaIndex] = matched.missingCount === 0;
             ruleFailures += matched.ruleFailures;
             missingCount += matched.missingCount;
             if (shouldMark && matched.extraStart >= 0) {
@@ -1076,7 +1150,13 @@
             globalGroupOffset += slots.length;
         }
 
-        ruleFailures += evaluateLineRelations(padas, meter, shouldMark);
+        const prasa = evaluateLineRelations(
+            padas,
+            meter,
+            shouldMark,
+            { groupsByPada, completePadas }
+        );
+        ruleFailures += prasa.failures;
         const result = structuralScore(
             padas,
             expectedPadas.length,
@@ -1087,6 +1167,7 @@
         if (result.status === "exact" && meter.ruleCompleteness !== "complete") {
             result.status = "compatible";
         }
+        result.prasa = prasa;
         return result;
     }
 
@@ -1176,49 +1257,220 @@
     }
 
     function rhymeKeyForPada(pada) {
-        const syllable = pada && pada.syllables[pada.syllables.length - 1];
-        const config = syllable && SCRIPT_CONFIG[syllable.script];
-        if (!syllable || !config) {
-            return null;
-        }
-        const consonants = codePoints(syllable.text)
-            .filter((point) => inRange(point.cp, config.consonant))
-            .map((point) => point.char)
-            .join("");
-        return consonants ? { key: consonants, syllable } : null;
+        const occurrence = prasaOccurrence(pada, "antya");
+        return occurrence
+            ? { key: occurrence.key, syllable: occurrence.syllable }
+            : null;
     }
 
-    function evaluateLineRelations(padas, meter, shouldMark) {
-        let failures = 0;
-        for (const relation of meter.lineRelations || []) {
-            if (relation.type !== "pairwise-antya-prasa") {
-                continue;
-            }
-            const pairSize = Number.isInteger(relation.pairSize) && relation.pairSize > 1
+    function prasaLabel(type) {
+        if (type === "dvitiyakshara") {
+            return "dvitiyakshara-prasa";
+        }
+        if (type === "antya") {
+            return "antya-prasa";
+        }
+        return "adi-prasa";
+    }
+
+    function groupsForRelation(padas, relation, context) {
+        const type = relation.type === "pairwise-antya-prasa" ||
+            relation.type === "antya-prasa"
+            ? "antya"
+            : "dvitiyakshara";
+        const pairSize = relation.type === "pairwise-antya-prasa"
+            ? (Number.isInteger(relation.pairSize) && relation.pairSize > 1
                 ? relation.pairSize
-                : 2;
-            for (let start = 0; start + pairSize <= padas.length; start += pairSize) {
-                const reference = rhymeKeyForPada(padas[start]);
-                if (!reference) {
-                    continue;
-                }
-                for (let offset = 1; offset < pairSize; offset += 1) {
-                    const current = rhymeKeyForPada(padas[start + offset]);
-                    if (!current || current.syllable.script !== reference.syllable.script ||
-                        current.key === reference.key) {
-                        continue;
-                    }
-                    failures += 1;
-                    setViolation(
-                        current.syllable,
-                        relation.violationReason || "antya-prasa-mismatch",
-                        `ending consonant ${reference.key}`,
-                        shouldMark
-                    );
-                }
+                : 2)
+            : Math.max(1, padas.length);
+        const groups = [];
+        for (let start = 0; start < padas.length; start += pairSize) {
+            const slice = padas.slice(start, start + pairSize)
+                .map((pada, offset) =>
+                    type === "antya" &&
+                    context && Array.isArray(context.completePadas) &&
+                    context.completePadas[start + offset] === false
+                        ? null
+                        : prasaOccurrence(pada, type))
+                .filter(Boolean);
+            if (slice.length > 0) {
+                groups.push(slice);
+            }
+            if (relation.type !== "pairwise-antya-prasa") {
+                break;
             }
         }
-        return failures;
+        return { type, groups };
+    }
+
+    function internalPrasaOccurrence(context, anchor) {
+        const padaIndex = Math.max(0, Number(anchor.pada || 1) - 1);
+        const groupIndex = Math.max(0, Number(anchor.group || 1) - 1);
+        const syllableIndex = Math.max(0, Number(anchor.syllable || 2) - 1);
+        const groups = context && context.groupsByPada &&
+            context.groupsByPada[padaIndex];
+        const group = groups && groups[groupIndex];
+        const syllable = group && group.syllables[syllableIndex];
+        if (!syllable) {
+            return null;
+        }
+        const key = consonantKeyForSyllable(syllable, "terminal");
+        if (!key) {
+            return null;
+        }
+        return {
+            type: "dvitiyakshara",
+            key,
+            script: syllable.script,
+            syllable,
+            preceding: group.syllables[syllableIndex - 1] || null
+        };
+    }
+
+    function evaluatePrasaGroup(occurrences, type, shouldMark) {
+        const report = {
+            type: prasaLabel(type),
+            status: "incomplete",
+            key: occurrences[0] ? occurrences[0].key : "",
+            matches: 0,
+            failures: 0,
+            weightFailures: 0
+        };
+        if (occurrences.length < 2) {
+            return report;
+        }
+
+        const reference = occurrences[0];
+        const matched = [reference];
+        report.status = "match";
+        for (const current of occurrences.slice(1)) {
+            if (current.script !== reference.script || current.key !== reference.key) {
+                report.failures += 1;
+                report.status = "mismatch";
+                addPrasaAnnotation(
+                    current.syllable,
+                    prasaLabel(type),
+                    "mismatch",
+                    shouldMark,
+                    reference.key
+                );
+                setViolation(
+                    current.syllable,
+                    type === "antya"
+                        ? "antya-prasa-mismatch"
+                        : "dvitiyakshara-prasa-mismatch",
+                    reference.key,
+                    shouldMark
+                );
+                continue;
+            }
+
+            matched.push(current);
+            report.matches += 1;
+            if (type === "dvitiyakshara" &&
+                reference.preceding && current.preceding &&
+                reference.preceding.classification !== current.preceding.classification) {
+                report.failures += 1;
+                report.weightFailures += 1;
+                report.status = "mismatch";
+                addPrasaAnnotation(
+                    current.preceding,
+                    prasaLabel(type),
+                    "weight-mismatch",
+                    shouldMark,
+                    reference.preceding.classification
+                );
+                setViolation(
+                    current.preceding,
+                    "prasa-opening-weight-mismatch",
+                    reference.preceding.classification,
+                    shouldMark
+                );
+            }
+        }
+        if (matched.length > 1) {
+            matched.forEach((occurrence) =>
+                addPrasaAnnotation(
+                    occurrence.syllable,
+                    prasaLabel(type),
+                    "match",
+                    shouldMark,
+                    reference.key
+                ));
+        }
+        return report;
+    }
+
+    function detectAdiPrasa(padas, shouldMark) {
+        const occurrences = padas.map((pada) => prasaOccurrence(pada, "adi"))
+            .filter(Boolean);
+        if (occurrences.length < 2 || occurrences.length !== padas.length) {
+            return null;
+        }
+        const reference = occurrences[0];
+        if (!occurrences.every((current) =>
+            current.script === reference.script && current.key === reference.key)) {
+            return null;
+        }
+        occurrences.forEach((occurrence) =>
+            addPrasaAnnotation(
+                occurrence.syllable,
+                "adi-prasa",
+                "match",
+                shouldMark,
+                reference.key
+            ));
+        return {
+            type: "adi-prasa",
+            status: "found",
+            key: reference.key,
+            matches: occurrences.length - 1,
+            failures: 0,
+            weightFailures: 0
+        };
+    }
+
+    function evaluateLineRelations(padas, meter, shouldMark, context) {
+        const result = {
+            failures: 0,
+            checks: [],
+            findings: []
+        };
+        for (const relation of meter.lineRelations || []) {
+            if (![
+                "dvitiyakshara-prasa",
+                "antya-prasa",
+                "pairwise-antya-prasa"
+            ].includes(relation.type)) {
+                continue;
+            }
+            const configured = groupsForRelation(padas, relation, context);
+            if (configured.type === "dvitiyakshara" &&
+                Array.isArray(relation.internalAnchors) &&
+                configured.groups.length) {
+                relation.internalAnchors.forEach((anchor) => {
+                    const occurrence = internalPrasaOccurrence(context, anchor);
+                    if (occurrence) {
+                        configured.groups[0].push(occurrence);
+                    }
+                });
+            }
+            for (const occurrences of configured.groups) {
+                const report = evaluatePrasaGroup(
+                    occurrences,
+                    configured.type,
+                    shouldMark
+                );
+                result.failures += report.failures;
+                result.checks.push(report);
+            }
+        }
+
+        const adi = detectAdiPrasa(padas, shouldMark);
+        if (adi) {
+            result.findings.push(adi);
+        }
+        return result;
     }
 
     function mergePadasByLine(padas) {
@@ -1251,6 +1503,7 @@
         let ruleFailures = 0;
         let missingCount = 0;
         const expectedPadas = meter.padas || [];
+        const completePadas = [];
 
         for (let padaIndex = 0; padaIndex < Math.max(padas.length, expectedPadas.length);
             padaIndex += 1) {
@@ -1266,8 +1519,10 @@
             }
             if (!pada) {
                 missingCount += rule.syllables;
+                completePadas[padaIndex] = false;
                 continue;
             }
+            completePadas[padaIndex] = pada.syllables.length >= rule.syllables;
 
             if (pada.syllables.length > rule.syllables) {
                 const extras = pada.syllables.slice(rule.syllables);
@@ -1311,6 +1566,13 @@
             }
         }
 
+        const prasa = evaluateLineRelations(
+            padas,
+            meter,
+            shouldMark,
+            { completePadas }
+        );
+        ruleFailures += prasa.failures;
         const result = structuralScore(
             padas,
             expectedPadas.length,
@@ -1318,6 +1580,7 @@
             missingCount,
             expectedPadas.reduce((sum, rule) => sum + rule.syllables, 0)
         );
+        result.prasa = prasa;
         return result;
     }
 
@@ -1337,6 +1600,8 @@
             : Math.max(padas.length, expectedPadas.length);
         let globalGroupOffset = 0;
         let expectedUnits = 0;
+        const groupsByPada = [];
+        const completePadas = [];
 
         for (let padaIndex = 0; padaIndex < evaluatedLineCount; padaIndex += 1) {
             const pada = padas[padaIndex];
@@ -1355,6 +1620,7 @@
             expectedUnits += target;
             if (!pada) {
                 missingCount += target;
+                completePadas[padaIndex] = false;
                 globalGroupOffset += primaryGroups.length;
                 continue;
             }
@@ -1383,12 +1649,20 @@
                     true
                 )
                 : candidates[0];
+            groupsByPada[padaIndex] = selected.groups;
+            completePadas[padaIndex] = selected.missingCount === 0;
             ruleFailures += selected.ruleFailures;
             missingCount += selected.missingCount;
             globalGroupOffset += selected.groups.length;
         }
 
-        ruleFailures += evaluateLineRelations(padas, meter, shouldMark);
+        const prasa = evaluateLineRelations(
+            padas,
+            meter,
+            shouldMark,
+            { groupsByPada, completePadas }
+        );
+        ruleFailures += prasa.failures;
         const lineCountComplete = isRepeating
             ? padas.length >= minimumLines && padas.length <= maximumLines
             : padas.length === expectedPadas.length;
@@ -1403,6 +1677,7 @@
         if (result.status === "exact" && meter.ruleCompleteness !== "complete") {
             result.status = "compatible";
         }
+        result.prasa = prasa;
         return result;
     }
 
@@ -1568,11 +1843,18 @@
                     line.missingCount = 0;
                 });
             }
+            const prasa = structuralValidation
+                ? structuralValidation.prasa
+                : selectedFixedMeter
+                    ? evaluateLineRelations(padas, selectedFixedMeter, true)
+                    : evaluateLineRelations(padas, {}, true);
             const candidates = sortCandidates([
                 ...rankMeters(linePatterns, meters, meters.length),
                 ...rankStructuralMeters(padas, meters)
             ], 8);
-            const violationCount = lines.reduce((sum, line) => sum + line.violationCount, 0);
+            const violationCount = structuralValidation
+                ? structuralValidation.violationCount
+                : lines.reduce((sum, line) => sum + line.violationCount, 0);
             const missingCount = structuralValidation
                 ? structuralValidation.missingCount
                 : lines.reduce((sum, line) => sum + line.missingCount, 0) +
@@ -1602,6 +1884,7 @@
                         ? selectedMeter.uncheckedRules
                         : []
                 } : null,
+                prasa,
                 violationCount,
                 missingCount
             };
@@ -1609,7 +1892,7 @@
 
         return {
             text: originalText,
-            analysisVersion: "2.4.0",
+            analysisVersion: "2.5.0",
             catalogVersion: catalog && catalog.structuralCatalogVersion
                 ? String(catalog.structuralCatalogVersion)
                 : "",

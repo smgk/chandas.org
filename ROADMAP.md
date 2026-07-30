@@ -207,9 +207,9 @@ The implementation must:
 - provide a structural ghost guide before adding a strong template.
 
 The catalog now checks all six forms as full verses and provides six-line
-ghost guides. Their quantitative frames and lagam restriction are encoded;
-ādi-prāsa, historical exceptions, and the golden corpora still require expert
-approval.
+ghost guides. Their quantitative frames, lagam restriction, and opening
+dvitīyākṣara-prāsa are encoded; historical prāsa equivalences, exceptions, and
+the golden corpora still require expert approval.
 
 ### M5 — Further Kannada meters
 
@@ -228,15 +228,16 @@ Initial priority:
 - Piriyakkara, Doreyakkara, Naḍuvaṇakkara, Eḍeyakkara, and Kiriyakkara
 
 The Kagga-form engineering slice now recognizes the modal written frame
-`5555 / 5553 / 5555 / 5551` and provides a four-line ghost guide. It remains
-provisional: pādānta lengthening, śithila-dvitva, prāsa, and the broader
-historical Chaupadi family still need expert-reviewed corpora.
+`5555 / 5553 / 5555 / 5551`, opening dvitīyākṣara-prāsa, line-ending
+antya-prāsa, and a four-line ghost guide. It remains provisional: pādānta
+lengthening, śithila-dvitva, historical equivalences, and the broader
+Chaupadi family still need expert-reviewed corpora.
 
 The shared evaluator represents Brahma, Viṣṇu, and Rudra aṃśa-gaṇas, gaṇa
 alternatives, required Tripadi positions, yati boundaries, and fixed family
-frames. It deliberately labels melodic substitutions, prāsa, sung repetition,
-and sparsely attested variants as unchecked until reviewed examples settle
-their accepted scope.
+frames. It checks opening dvitīyākṣara-prāsa (including Tripadi's internal
+first-line recurrence) while leaving melodic substitutions, sung and
+historical prāsa equivalences, and sparsely attested variants provisional.
 
 Other mātrā, aṃśa, mixed, and regional traditions stay in the backlog and
 follow the same source, corpus, expert-review, versioning, and test gates.

@@ -1,5 +1,5 @@
 {
-  "catalogVersion": "3.1.0",
+  "catalogVersion": "3.2.0",
   "copyright": "Copyright © 2025–2026 Ganesh Krishna Shankarathota",
   "license": "GPL-3.0-only",
   "description": "Structural, mātrā, and aṃśa meter rules that cannot be represented as one fixed Guru/Laghu string.",
@@ -111,7 +111,7 @@
         "gaṇas 6 & 14: LGL or LLLL; 8 & 16 end G"
       ],
       "ruleCompleteness": "provisional-rhythm",
-      "uncheckedRules": ["prāsa"],
+      "uncheckedRules": ["historical prāsa variants"],
       "sourceRef": "kandaSource",
       "linePolicy": { "type": "fixed", "count": 4 },
       "padaGroups": [[4, 4, 4], [4, 4, 4, 4, 4], [4, 4, 4], [4, 4, 4, 4, 4]],
@@ -140,7 +140,12 @@
           "violationReason": "required-yati"
         }
       ],
-      "notes": "Implements the rhythmic and yati rules in the cited rule packet. Prāsa is not yet checked, and the entry remains provisional until the golden corpus is approved."
+      "lineRelations": [
+        {
+          "type": "dvitiyakshara-prasa"
+        }
+      ],
+      "notes": "Implements the rhythmic, yati, and dvitīyākṣara-prāsa rules in the cited rule packet. The entry remains provisional until the golden corpus is approved."
     },
     {
       "id": "structural:panchamatra-chaupadi-kagga",
@@ -169,7 +174,7 @@
       "uncheckedRules": [
         "pādānta lengthening",
         "śithila-dvitva",
-        "prāsa",
+        "historical prāsa variants",
         "historical chaupadi variants"
       ],
       "sourceRef": "chaupadiSource",
@@ -180,7 +185,15 @@
         [5, 5, 5, 5],
         [5, 5, 5, 1]
       ],
-      "notes": "Recognizes the modal written-text frame used by D. V. Gundappa's Mankuthimmana Kagga. It is intentionally narrower than the broader historical mātrā-chaupadi family. Recitational lengthening, śithila-dvitva, prāsa, and less common variants await an expert-reviewed corpus."
+      "lineRelations": [
+        {
+          "type": "dvitiyakshara-prasa"
+        },
+        {
+          "type": "antya-prasa"
+        }
+      ],
+      "notes": "Recognizes the modal written-text frame used by D. V. Gundappa's Mankuthimmana Kagga, including opening dvitīyākṣara-prāsa and line-ending antya-prāsa. It is intentionally narrower than the broader historical mātrā-chaupadi family. Recitational lengthening, śithila-dvitva, and less common variants await an expert-reviewed corpus."
     },
     {
       "id": "structural:shara-shatpadi",
@@ -192,7 +205,7 @@
         "44 | 44 | 444+G / 44 | 44 | 444+G"
       ],
       "ruleCompleteness": "provisional-rhythm",
-      "uncheckedRules": ["ādi-prāsa", "historical and sung variants"],
+      "uncheckedRules": ["historical and sung prāsa variants"],
       "sourceRef": "shatpadiSource",
       "linePolicy": { "type": "fixed", "unit": "line", "count": 6 },
       "padaGroups": [
@@ -210,6 +223,11 @@
           "violationReason": "forbidden-lagam-opening"
         }
       ],
+      "lineRelations": [
+        {
+          "type": "dvitiyakshara-prasa"
+        }
+      ],
       "notes": "Checks all six quantitative lines and their short/extended relationship. The final two-mātrā cadence may be a Guru or resolved Laghu pair. Literary constraints remain provisional."
     },
     {
@@ -222,7 +240,7 @@
         "55 | 55 | 555+G / 55 | 55 | 555+G"
       ],
       "ruleCompleteness": "provisional-rhythm",
-      "uncheckedRules": ["ādi-prāsa", "historical and sung variants"],
+      "uncheckedRules": ["historical and sung prāsa variants"],
       "sourceRef": "shatpadiSource",
       "linePolicy": { "type": "fixed", "unit": "line", "count": 6 },
       "padaGroups": [
@@ -240,6 +258,11 @@
           "violationReason": "forbidden-lagam-opening"
         }
       ],
+      "lineRelations": [
+        {
+          "type": "dvitiyakshara-prasa"
+        }
+      ],
       "notes": "Checks all six quantitative lines and their short/extended relationship. The final two-mātrā cadence may be a Guru or resolved Laghu pair. Literary constraints remain provisional."
     },
     {
@@ -252,7 +275,7 @@
         "3333 | 3333 | 333333+G (repeated)"
       ],
       "ruleCompleteness": "provisional-rhythm",
-      "uncheckedRules": ["ādi-prāsa", "historical and sung variants"],
+      "uncheckedRules": ["historical and sung prāsa variants"],
       "sourceRef": "shatpadiSource",
       "linePolicy": { "type": "fixed", "unit": "line", "count": 6 },
       "padaGroups": [
@@ -270,6 +293,11 @@
           "violationReason": "forbidden-lagam-opening"
         }
       ],
+      "lineRelations": [
+        {
+          "type": "dvitiyakshara-prasa"
+        }
+      ],
       "notes": "Checks all six quantitative lines and their short/extended relationship. The final two-mātrā cadence may be a Guru or resolved Laghu pair. Literary constraints remain provisional."
     },
     {
@@ -282,7 +310,7 @@
         "3434 | 3434 | 343434+G (repeated)"
       ],
       "ruleCompleteness": "provisional-rhythm",
-      "uncheckedRules": ["ādi-prāsa", "historical and sung variants"],
+      "uncheckedRules": ["historical and sung prāsa variants"],
       "sourceRef": "shatpadiSource",
       "linePolicy": { "type": "fixed", "unit": "line", "count": 6 },
       "padaGroups": [
@@ -300,6 +328,11 @@
           "violationReason": "forbidden-lagam-opening"
         }
       ],
+      "lineRelations": [
+        {
+          "type": "dvitiyakshara-prasa"
+        }
+      ],
       "notes": "Checks the alternating three/four-mātrā gaṇas across the complete six-line verse. Literary constraints remain provisional pending expert corpus review."
     },
     {
@@ -312,7 +345,7 @@
         "4444 | 4444 | 444444+G (repeated)"
       ],
       "ruleCompleteness": "provisional-rhythm",
-      "uncheckedRules": ["ādi-prāsa", "historical and sung variants"],
+      "uncheckedRules": ["historical and sung prāsa variants"],
       "sourceRef": "shatpadiSource",
       "linePolicy": { "type": "fixed", "unit": "line", "count": 6 },
       "padaGroups": [
@@ -330,6 +363,11 @@
           "violationReason": "forbidden-lagam-opening"
         }
       ],
+      "lineRelations": [
+        {
+          "type": "dvitiyakshara-prasa"
+        }
+      ],
       "notes": "Checks all six quantitative lines, including the extended third and sixth lines. Literary constraints remain provisional pending expert corpus review."
     },
     {
@@ -342,7 +380,7 @@
         "5555 | 5555 | 555555+G (repeated)"
       ],
       "ruleCompleteness": "provisional-rhythm",
-      "uncheckedRules": ["ādi-prāsa", "historical and sung variants"],
+      "uncheckedRules": ["historical and sung prāsa variants"],
       "sourceRef": "shatpadiSource",
       "linePolicy": { "type": "fixed", "unit": "line", "count": 6 },
       "padaGroups": [
@@ -360,6 +398,11 @@
           "violationReason": "forbidden-lagam-opening"
         }
       ],
+      "lineRelations": [
+        {
+          "type": "dvitiyakshara-prasa"
+        }
+      ],
       "notes": "Checks four five-mātrā gaṇas in the short lines and six plus the final cadence in lines three and six. Literary constraints remain provisional."
     },
     {
@@ -372,7 +415,7 @@
         "VVVV | VBVV | VBV; gaṇas 6 and 10 are Brahma"
       ],
       "ruleCompleteness": "provisional-rhythm",
-      "uncheckedRules": ["dvitīyākṣara-prāsa", "sung repetition", "rare gaṇa substitutions"],
+      "uncheckedRules": ["sung prāsa variants", "rare gaṇa substitutions"],
       "sourceRef": "amshaSource",
       "linePolicy": { "type": "fixed", "unit": "line", "count": 3 },
       "amshaGroups": [
@@ -399,7 +442,19 @@
           "violationReason": "required-yati"
         }
       ],
-      "notes": "Checks the core aṃśa frame and required Brahma positions. Tripadi has flexible sung and folk realizations, so substitutions and prāsa remain explicitly unchecked."
+      "lineRelations": [
+        {
+          "type": "dvitiyakshara-prasa",
+          "internalAnchors": [
+            {
+              "pada": 1,
+              "group": 3,
+              "syllable": 2
+            }
+          ]
+        }
+      ],
+      "notes": "Checks the core aṃśa frame, required Brahma positions, opening dvitīyākṣara-prāsa, and its internal recurrence in the first line's third gaṇa. Sung and folk substitutions remain explicitly provisional."
     },
     {
       "id": "structural:sangatya",
@@ -411,7 +466,7 @@
         "VVVV | VVB / VVVV | VVB"
       ],
       "ruleCompleteness": "provisional-rhythm",
-      "uncheckedRules": ["prāsa", "melodic elongation", "documented substitute gaṇas"],
+      "uncheckedRules": ["historical prāsa variants", "melodic elongation", "documented substitute gaṇas"],
       "sourceRef": "amshaSource",
       "linePolicy": { "type": "fixed", "unit": "line", "count": 4 },
       "amshaGroups": [
@@ -420,7 +475,12 @@
         ["V", "V", "V", "V"],
         ["V", "V", "B"]
       ],
-      "notes": "Checks the common Sāṅgatya aṃśa frame. Melodic substitutions are historically normal and remain compatible rather than being silently rejected as a complete rule."
+      "lineRelations": [
+        {
+          "type": "dvitiyakshara-prasa"
+        }
+      ],
+      "notes": "Checks the common Sāṅgatya aṃśa frame and opening dvitīyākṣara-prāsa. Melodic substitutions are historically normal and remain compatible rather than being silently rejected as a complete rule."
     },
     {
       "id": "structural:piriyakkara",
@@ -429,7 +489,7 @@
       "kind": "amsha",
       "signatureLines": ["4 lines · 7 aṃśa-gaṇas each", "B(V/B)V(V/B)VVR"],
       "ruleCompleteness": "provisional-rhythm",
-      "uncheckedRules": ["prāsa", "sung substitutions beyond gaṇas 2 and 4"],
+      "uncheckedRules": ["historical prāsa variants", "sung substitutions beyond gaṇas 2 and 4"],
       "sourceRef": "amshaSource",
       "linePolicy": { "type": "fixed", "unit": "line", "count": 4 },
       "amshaGroups": [
@@ -437,6 +497,11 @@
         ["B", ["V", "B"], "V", ["V", "B"], "V", "V", "R"],
         ["B", ["V", "B"], "V", ["V", "B"], "V", "V", "R"],
         ["B", ["V", "B"], "V", ["V", "B"], "V", "V", "R"]
+      ],
+      "lineRelations": [
+        {
+          "type": "dvitiyakshara-prasa"
+        }
       ],
       "notes": "Checks the classical seven-gaṇa frame and the specifically documented Brahma alternatives in positions two and four. Broader sung substitutions remain unchecked."
     },
@@ -447,7 +512,7 @@
       "kind": "amsha",
       "signatureLines": ["4 lines · 6 aṃśa-gaṇas each", "VVBVVB"],
       "ruleCompleteness": "provisional-rhythm",
-      "uncheckedRules": ["prāsa", "documented substitute gaṇas"],
+      "uncheckedRules": ["historical prāsa variants", "documented substitute gaṇas"],
       "sourceRef": "amshaSource",
       "linePolicy": { "type": "fixed", "unit": "line", "count": 4 },
       "amshaGroups": [
@@ -455,6 +520,11 @@
         ["V", "V", "B", "V", "V", "B"],
         ["V", "V", "B", "V", "V", "B"],
         ["V", "V", "B", "V", "V", "B"]
+      ],
+      "lineRelations": [
+        {
+          "type": "dvitiyakshara-prasa"
+        }
       ],
       "notes": "Checks the classical six-gaṇa frame. The source records broad optional substitutions, which await an expert-reviewed corpus."
     },
@@ -465,7 +535,7 @@
       "kind": "amsha",
       "signatureLines": ["4 lines · 5 aṃśa-gaṇas each", "BVVVR"],
       "ruleCompleteness": "provisional-rhythm",
-      "uncheckedRules": ["prāsa", "documented substitute gaṇas"],
+      "uncheckedRules": ["historical prāsa variants", "documented substitute gaṇas"],
       "sourceRef": "amshaSource",
       "linePolicy": { "type": "fixed", "unit": "line", "count": 4 },
       "amshaGroups": [
@@ -473,6 +543,11 @@
         ["B", "V", "V", "V", "R"],
         ["B", "V", "V", "V", "R"],
         ["B", "V", "V", "V", "R"]
+      ],
+      "lineRelations": [
+        {
+          "type": "dvitiyakshara-prasa"
+        }
       ],
       "notes": "Checks the classical five-gaṇa frame. Optional sung substitutions remain explicitly provisional."
     },
@@ -483,7 +558,7 @@
       "kind": "amsha",
       "signatureLines": ["4 lines · 4 aṃśa-gaṇas each", "BVVR"],
       "ruleCompleteness": "provisional-rhythm",
-      "uncheckedRules": ["prāsa", "documented substitute gaṇas"],
+      "uncheckedRules": ["historical prāsa variants", "documented substitute gaṇas"],
       "sourceRef": "amshaSource",
       "linePolicy": { "type": "fixed", "unit": "line", "count": 4 },
       "amshaGroups": [
@@ -491,6 +566,11 @@
         ["B", "V", "V", "R"],
         ["B", "V", "V", "R"],
         ["B", "V", "V", "R"]
+      ],
+      "lineRelations": [
+        {
+          "type": "dvitiyakshara-prasa"
+        }
       ],
       "notes": "Checks the classical four-gaṇa frame. Optional sung substitutions remain explicitly provisional."
     },
@@ -501,7 +581,7 @@
       "kind": "amsha",
       "signatureLines": ["4 lines · 3 aṃśa-gaṇas each", "VVR"],
       "ruleCompleteness": "provisional-rhythm",
-      "uncheckedRules": ["prāsa", "documented substitute gaṇas"],
+      "uncheckedRules": ["historical prāsa variants", "documented substitute gaṇas"],
       "sourceRef": "amshaSource",
       "linePolicy": { "type": "fixed", "unit": "line", "count": 4 },
       "amshaGroups": [
@@ -509,6 +589,11 @@
         ["V", "V", "R"],
         ["V", "V", "R"],
         ["V", "V", "R"]
+      ],
+      "lineRelations": [
+        {
+          "type": "dvitiyakshara-prasa"
+        }
       ],
       "notes": "Checks the classical three-gaṇa frame. Optional sung substitutions remain explicitly provisional."
     },

@@ -525,8 +525,9 @@ analysis result.
    sixth and fourteenth gaṇas, Guru endings at gaṇas eight and sixteen, and
    conditional yati for an all-Laghu special gaṇa.
 7. Kannada Kanda MUST remain visibly provisional rather than exact until its
-   rule packet and golden corpus receive subject-matter approval. Prāsa MUST
-   be identified as unchecked until it is implemented.
+   rule packet and golden corpus receive subject-matter approval. Its opening
+   dvitīyākṣara-prāsa MUST be checked; historical equivalence and sung
+   variants MUST remain identified as unchecked.
 8. The catalog MUST support repeating or variable line policies with minimum,
    optional maximum, and guide-preview counts. Such policies MUST validate
    every written line without inventing missing future lines.
@@ -551,8 +552,8 @@ analysis result.
     frame and final two-mātrā cadence.
 15. Selecting a Ṣaṭpadi MUST validate and guide the complete six-line verse.
     Six lines without the cataloged internal gaṇas MUST NOT be labeled an exact
-    match. Ādi-prāsa and historical variants MUST remain visibly unchecked
-    until reviewed.
+    match. Opening dvitīyākṣara-prāsa MUST be checked across all six lines;
+    historical and sung prāsa variants MUST remain visibly provisional.
 16. The catalog and evaluator MUST represent Brahma, Viṣṇu, and Rudra
     aṃśa-gaṇas independently from simple mātrā totals, including alternative
     gaṇa classes in a position.
@@ -561,18 +562,33 @@ analysis result.
     Kiriyakkara. Tripadi MUST encode its 4/4/3 gaṇa line shape, Brahma gaṇas at
     positions 6 and 10, the documented yati boundaries, and the double-Laghu
     openings at positions 7 and 11.
-18. Melodic elongation, folk variation, sung repetition, prāsa, and
-    historically documented substitute gaṇas MUST be named as unchecked where
-    the shipped corpus does not yet justify a deterministic validation rule.
-    Such entries MUST remain provisional pending expert approval.
+18. Tripadi MUST check opening dvitīyākṣara-prāsa across its three lines and
+    the recurrence at the second syllable of the first line's third gaṇa.
+    Sāṅgatya and the five Akkara forms MUST check opening
+    dvitīyākṣara-prāsa across their four lines. Melodic elongation, folk
+    variation, sung repetition, historical prāsa equivalences, and substitute
+    gaṇas MUST remain named as provisional where the corpus does not justify a
+    deterministic rule.
 19. Pañcamātrā Chaupadi MUST initially be scoped to the familiar written-text
     form used by D. V. Gundappa's *Mankuthimmana Kagga*, with four lines
     encoded as `5555 / 5553 / 5555 / 5551`, or
     `20 | 18 | 20 | 16` observed mātrās.
-20. The Kagga-form entry MUST remain visibly provisional. Pādānta
-    lengthening, śithila-dvitva, prāsa, and broader historical Chaupadi
-    variants MUST be named as unchecked rather than silently accepted or
-    rejected until an expert-reviewed corpus establishes their rules.
+20. The Kagga-form entry MUST remain visibly provisional. It MUST check
+    opening dvitīyākṣara-prāsa and line-ending antya-prāsa across all four
+    lines. Pādānta lengthening, śithila-dvitva, historical prāsa equivalences,
+    and broader Chaupadi variants MUST remain named as unchecked rather than
+    silently accepted or rejected.
+21. Dvitīyākṣara-prāsa comparison MUST use the terminal consonant of the
+    second displayed akṣara while preserving a shaping-safe display range.
+    Thus `ಮಲ್ಪ` and `ಜಂಪ` compare on `ಪ`, while the complete `ಲ್ಪ` cluster may
+    be highlighted. The Guru/Laghu weight of the preceding first syllable MUST
+    match independently.
+22. Punctuation and whitespace MUST be transparent to prāsa extraction.
+    Successful prāsa, consonant failure, and first-syllable weight failure MUST
+    have distinguishable color treatments and accessible text reports.
+23. When the first consonant of every available pāda matches, the UI MUST
+    report “Ādi-prāsa found.” Unless a selected meter explicitly requires
+    first-letter prāsa, its absence MUST NOT be reported as a violation.
 
 ## 7. User Experience and Accessibility
 
@@ -887,9 +903,9 @@ The MVP is acceptable when:
 12. The first template release uses a non-destructive ghost guide. A later
     release offers both ghost and strong templates, with the strong template
     supporting arbitrary out-of-order position filling.
-13. Kannada Kanda is cataloged separately from Āryāgīti. Its first engineering
-    release checks the sourced rhythm and yati rules, reports prāsa as
-    unchecked, and remains provisional pending expert corpus approval.
+13. Kannada Kanda is cataloged separately from Āryāgīti. Its engineering
+    release checks the sourced rhythm, yati, and dvitīyākṣara-prāsa rules and
+    remains provisional pending expert corpus approval.
 14. Utsāha, Mandānila, and Lalita Ragaḷe use an unbounded repeating-line
     policy. Their first engineering release checks mātrā groups, Mandānila
     alternatives and lagam, and pairwise end-rhyme while remaining provisional
@@ -913,8 +929,9 @@ The MVP is acceptable when:
 5. Choose the minimum Android version and supported browser window.
 6. Obtain expert approval for the pathyā Anuṣṭubh corpus and determine which
    vipulā variations the next catalog version will accept.
-7. Obtain expert approval for the Kannada Kanda rule packet and golden corpus,
-   then add prāsa validation before promoting it from provisional.
+7. Obtain expert approval for the Kannada Kanda rule packet, prāsa
+   equivalence classes, and golden corpus before promoting it from
+   provisional.
 8. Add and review the remaining jāti/mātrā traditions and the full internal
    gaṇa constraints for the initial Āryā-family entries.
 9. Obtain expert approval for the Kagga-form Pañcamātrā Chaupadi corpus,

@@ -24,8 +24,9 @@ as exact equivalents.
 - An unfinished current line reports only its own remaining mātrās. Chandas
   does not invent missing future Ragaḷe lines.
 
-The encoded pairwise antya-prāsa rule compares the consonant or consonant
-cluster in the final syllable of adjacent lines: lines 1–2, 3–4, and so on. An
+The encoded pairwise antya-prāsa rule compares the terminal consonant of the
+final akṣara in adjacent lines: lines 1–2, 3–4, and so on. The complete shaped
+cluster is highlighted even when the matching consonant is an ottu. An
 unpaired line in a composition still in progress is not marked as missing.
 
 ## Utsāha Ragaḷe

@@ -32,6 +32,9 @@
             laghu: "Laghu",
             guru: "Guru",
             violation: "Violation",
+            prasaMatchLegend: "Prāsa found",
+            prasaMismatchLegend: "Prāsa mismatch",
+            openingWeightLegend: "Opening weight mismatch",
             syllableShort: "S",
             matraShort: "M",
             cursorMetrics: "Syllable {syllable} · Mātrās {matras}",
@@ -97,7 +100,15 @@
             nextStanza: "Next stanza",
             urlImported: "Verse added from the link",
             urlMeterMissing: "The meter in this link was not found.",
-            urlStrongFallback: "This meter currently supports Ghost guidance only."
+            urlStrongFallback: "This meter currently supports Ghost guidance only.",
+            prasaHeading: "Prāsa",
+            "dvitiyakshara-prasa": "Dvitīyākṣara-prāsa",
+            "antya-prasa": "Antya-prāsa",
+            "adi-prasa": "Ādi-prāsa",
+            prasaMatches: "{type} matches on {key}.",
+            prasaMismatches: "{type}: {count} mismatch(es).",
+            prasaWeightMismatches: "The first syllable’s Guru/Laghu weight differs in {count} place(s).",
+            adiPrasaFound: "Ādi-prāsa found on {key}."
         },
         kn: {
             skip: "ರಚನೆಗೆ ಹೋಗಿ",
@@ -120,6 +131,9 @@
             laghu: "ಲಘು",
             guru: "ಗುರು",
             violation: "ದೋಷ",
+            prasaMatchLegend: "ಪ್ರಾಸ ಹೊಂದಿದೆ",
+            prasaMismatchLegend: "ಪ್ರಾಸ ವ್ಯತ್ಯಾಸ",
+            openingWeightLegend: "ಮೊದಲ ಅಕ್ಷರದ ಗುರು–ಲಘು ವ್ಯತ್ಯಾಸ",
             syllableShort: "ಅ",
             matraShort: "ಮಾ",
             cursorMetrics: "ಅಕ್ಷರ {syllable} · ಮಾತ್ರೆ {matras}",
@@ -185,7 +199,15 @@
             nextStanza: "ಮುಂದಿನ ಪದ್ಯ",
             urlImported: "ಕೊಂಡಿಯಿಂದ ಪದ್ಯವನ್ನು ಸೇರಿಸಲಾಗಿದೆ",
             urlMeterMissing: "ಈ ಕೊಂಡಿಯಲ್ಲಿರುವ ಛಂದಸ್ಸು ದೊರೆಯಲಿಲ್ಲ.",
-            urlStrongFallback: "ಈ ಛಂದಸ್ಸಿಗೆ ಈಗ ಮಂದ ಮಾದರಿ ಮಾತ್ರ ಲಭ್ಯ."
+            urlStrongFallback: "ಈ ಛಂದಸ್ಸಿಗೆ ಈಗ ಮಂದ ಮಾದರಿ ಮಾತ್ರ ಲಭ್ಯ.",
+            prasaHeading: "ಪ್ರಾಸ",
+            "dvitiyakshara-prasa": "ದ್ವಿತೀಯಾಕ್ಷರ ಪ್ರಾಸ",
+            "antya-prasa": "ಅಂತ್ಯಪ್ರಾಸ",
+            "adi-prasa": "ಆದಿಪ್ರಾಸ",
+            prasaMatches: "{type} {key} ಅಕ್ಷರದಲ್ಲಿ ಹೊಂದಿದೆ.",
+            prasaMismatches: "{type}: {count} ವ್ಯತ್ಯಾಸ.",
+            prasaWeightMismatches: "ಮೊದಲ ಅಕ್ಷರದ ಗುರು–ಲಘು {count} ಕಡೆ ಭಿನ್ನವಾಗಿದೆ.",
+            adiPrasaFound: "{key} ಅಕ್ಷರದಲ್ಲಿ ಆದಿಪ್ರಾಸ ಕಂಡಿದೆ."
         }
     };
 
@@ -223,7 +245,7 @@
             "template-mode-picker", "template-mode-ghost", "template-mode-strong",
             "strong-template-availability", "whole-verse-template",
             "strong-template-editor", "strong-template-lines",
-            "validation-summary", "share-dialog",
+            "validation-summary", "prasa-summary", "share-dialog",
             "include-meter", "include-link", "system-share", "twitter-share",
             "facebook-share", "dialog-copy", "copy-analysis-url", "toast"
         ].forEach((id) => {
@@ -1160,15 +1182,26 @@
         }
 
         const ranges = Chandas.projectHighlightRanges(text, [
-            ...state.analysis.segments.map((segment) => ({
-                start: segment.start,
-                end: segment.end,
-                className: segment.violation
+            ...state.analysis.segments.map((segment) => {
+                const prasaClasses = (segment.prasaAnnotations || []).map((annotation) =>
+                    annotation.status === "match"
+                        ? "prasa-match"
+                        : annotation.status === "weight-mismatch"
+                            ? "prasa-weight-mismatch"
+                            : "prasa-mismatch");
+                return {
+                    start: segment.start,
+                    end: segment.end,
+                    className: [
+                        segment.violation
                     ? "violation"
                     : segment.classification === Chandas.GURU
                         ? "guru"
-                        : "laghu"
-            })),
+                                : "laghu",
+                        ...prasaClasses
+                    ].join(" ")
+                };
+            }),
             ...state.analysis.unsupported.map((range) => ({
                 start: range.start,
                 end: range.end,
@@ -1413,6 +1446,8 @@
             elements["selected-meter-reference"].hidden = true;
             elements["show-template"].checked = false;
             elements["template-mode-picker"].hidden = true;
+            elements["prasa-summary"].hidden = true;
+            elements["prasa-summary"].replaceChildren();
             renderWholeVerseTemplate();
             renderStrongTemplate();
             return;
@@ -1510,8 +1545,55 @@
             });
             summary.classList.add("has-errors");
         }
+        renderPrasaSummary(stanza);
         renderWholeVerseTemplate();
         renderStrongTemplate();
+    }
+
+    function renderPrasaSummary(stanza) {
+        const output = elements["prasa-summary"];
+        const prasa = stanza && stanza.prasa;
+        const reports = [
+            ...((prasa && prasa.checks) || []).filter((report) =>
+                report.status !== "incomplete"),
+            ...((prasa && prasa.findings) || [])
+        ];
+        output.hidden = reports.length === 0;
+        output.replaceChildren();
+        if (!reports.length) {
+            return;
+        }
+
+        const heading = document.createElement("strong");
+        heading.textContent = t("prasaHeading");
+        const list = document.createElement("ul");
+        for (const report of reports) {
+            const item = document.createElement("li");
+            if (report.type === "adi-prasa" && report.status === "found") {
+                item.textContent = t("adiPrasaFound", { key: report.key });
+                item.className = "is-match";
+            } else if (report.status === "match") {
+                item.textContent = t("prasaMatches", {
+                    type: t(report.type),
+                    key: report.key
+                });
+                item.className = "is-match";
+            } else {
+                item.textContent = t("prasaMismatches", {
+                    type: t(report.type),
+                    count: report.failures
+                });
+                item.className = "is-mismatch";
+                if (report.weightFailures) {
+                    item.textContent += ` ${t("prasaWeightMismatches", {
+                        count: report.weightFailures
+                    })}`;
+                    item.classList.add("has-weight-mismatch");
+                }
+            }
+            list.append(item);
+        }
+        output.append(heading, list);
     }
 
     function filterMeterOptions(query) {

@@ -11,9 +11,9 @@ This packet documents the rhythmic rules encoded for Kannada Kanda
 though they share the same top-level `12 | 20 | 12 | 20` mātrā totals.
 
 The implementation checks mātrā groups, special gaṇa realizations, required
-line endings, and the conditional yati described below. Prāsa is recorded as
-an unchecked rule and is not used to claim that every literary requirement is
-satisfied.
+line endings, the conditional yati, and opening dvitīyākṣara-prāsa. Historical
+prāsa equivalence classes remain provisional and are not used to claim that
+every literary requirement is satisfied.
 
 ## Structure
 
@@ -48,6 +48,8 @@ Gaṇas are numbered globally from 1 through 16 across the four lines.
    first syllable.
 5. Every syllable must fit wholly within its four-mātrā group; a Guru may not
    straddle a group boundary.
+6. The second akṣara's terminal consonant and the first syllable's Guru/Laghu
+   weight must recur across the four lines.
 
 ## Source reconciliation
 
@@ -127,5 +129,5 @@ Before changing the catalog entry from `provisional-rhythm` to `complete`:
 - verify this packet against a standard printed Kannada prosody reference;
 - approve a redistributable golden corpus from multiple authors or works;
 - confirm how śithila-dvitva should be entered and reported;
-- specify and implement the required prāsa checks;
+- approve the required prāsa checks and historical equivalence classes;
 - review intentional differences between Kannada Kanda and Āryāgīti.

@@ -237,6 +237,8 @@ test("fills fixed-vritta strong-template positions out of order without copying 
     const first = page.locator('.strong-template-slot[data-line-index="0"][data-slot-index="0"]');
     const later = page.locator('.strong-template-slot[data-line-index="0"][data-slot-index="1"]');
     const fourthLine = page.locator('.strong-template-slot[data-line-index="3"][data-slot-index="0"]');
+    await expect(first).toHaveValue("ಕ");
+    await page.waitForTimeout(60);
     await first.fill("");
     await expect(first).toHaveValue("");
     await later.fill("ಕಾ");
@@ -393,7 +395,9 @@ test("finds and validates provisional Kannada Kanda independently", async ({ pag
     await expect(page.locator("#active-matras"))
         .toHaveText("Mātrās by pāda: 12 | 20 | 12 | 20");
     await expect(page.locator("#validation-summary"))
-        .toContainText("prāsa is not checked yet");
+        .toContainText("historical prāsa variants is not checked yet");
+    await expect(page.locator("#prasa-summary"))
+        .toContainText("Dvitīyākṣara-prāsa matches on ವ.");
     await expect(page.locator("#validation-summary")).not.toHaveClass(/has-errors/);
     await expect(page.locator("#highlight-layer .violation")).toHaveCount(0);
     await expect(page.locator("#whole-verse-template .whole-template-line-guide"))
@@ -435,9 +439,11 @@ test("finds, guides, and validates Pañcamātrā Chaupadi in the Kagga form", as
         .toHaveText("Mātrās by pāda: 20 | 18 | 20 | 16");
     await expect(page.locator("#validation-summary"))
         .toContainText(
-            "pādānta lengthening, śithila-dvitva, prāsa, " +
+            "pādānta lengthening, śithila-dvitva, historical prāsa variants, " +
             "historical chaupadi variants are not checked yet"
         );
+    await expect(page.locator("#prasa-summary"))
+        .toContainText("Dvitīyākṣara-prāsa matches on ಕ.");
     await expect(page.locator("#validation-summary")).not.toHaveClass(/has-errors/);
     await expect(page.locator("#whole-verse-template .whole-template-line-guide"))
         .toHaveText([
@@ -446,6 +452,37 @@ test("finds, guides, and validates Pañcamātrā Chaupadi in the Kagga form", as
             "M 20 · 5|5|5|5",
             "M 16 · 5|5|5|1"
         ]);
+});
+
+test("colors ottu prāsa safely and reports consonant, weight, and ādi findings", async ({
+    page
+}) => {
+    const editor = page.locator("#composition");
+    await editor.fill("ಮಲ್ಪ\nಜಂಪ\nಸಲ್ಪ\nದಂಪ");
+    await page.locator("#meter-picker summary").click();
+    await page.locator("#meter-search").fill("kandapadya");
+    await page.locator("#meter-select").selectOption("structural:kanda-kannada");
+
+    await expect(page.locator("#prasa-summary"))
+        .toContainText("Dvitīyākṣara-prāsa matches on ಪ.");
+    await expect(page.locator("#highlight-layer .prasa-match")).toHaveText([
+        "ಲ್ಪ", "ಪ", "ಲ್ಪ", "ಪ"
+    ]);
+
+    await editor.fill("ಮಲ್ಪ\nಜಂಪ\nಸಲ್ಪ\nದಂತ");
+    await expect(page.locator("#prasa-summary"))
+        .toContainText("Dvitīyākṣara-prāsa: 1 mismatch(es).");
+    await expect(page.locator("#highlight-layer .prasa-mismatch")).toHaveText("ತ");
+
+    await editor.fill("ಮಲ್ಪ\nಜಂಪ\nಸಲ್ಪ\nದಪ");
+    await expect(page.locator("#prasa-summary"))
+        .toContainText("first syllable’s Guru/Laghu weight differs");
+    await expect(page.locator("#highlight-layer .prasa-weight-mismatch"))
+        .toHaveText("ದ");
+
+    await editor.fill("ಮಲ್ಪ\nಮಂಪ");
+    await expect(page.locator("#prasa-summary"))
+        .toContainText("Ādi-prāsa found on ಮ.");
 });
 
 test("finds, guides, and validates all three repeatable Ragale forms", async ({ page }) => {

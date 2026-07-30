@@ -207,10 +207,18 @@ for (const meter of structuralCatalog.meters) {
         }
     }
     for (const relation of meter.lineRelations || []) {
-        if (relation.type !== "pairwise-antya-prasa" ||
-            !Number.isInteger(relation.pairSize) ||
-            relation.pairSize < 2 ||
-            !relation.violationReason) {
+        const supported = [
+            "dvitiyakshara-prasa",
+            "antya-prasa",
+            "pairwise-antya-prasa"
+        ];
+        const invalidPair = relation.type === "pairwise-antya-prasa" &&
+            (!Number.isInteger(relation.pairSize) || relation.pairSize < 2);
+        const invalidAnchors = (relation.internalAnchors || []).some((anchor) =>
+            !Number.isInteger(anchor.pada) || anchor.pada < 1 ||
+            !Number.isInteger(anchor.group) || anchor.group < 1 ||
+            !Number.isInteger(anchor.syllable) || anchor.syllable < 1);
+        if (!supported.includes(relation.type) || invalidPair || invalidAnchors) {
             throw new Error(`${meter.id} has an invalid line relationship`);
         }
     }

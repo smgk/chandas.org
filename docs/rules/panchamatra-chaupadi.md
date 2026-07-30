@@ -40,11 +40,14 @@ The first implementation checks:
 
 - exactly four written lines;
 - the modal `5555 / 5553 / 5555 / 5551` group capacities;
-- group-boundary overruns, missing mātrās, and extra mātrās.
+- group-boundary overruns, missing mātrās, and extra mātrās;
+- opening dvitīyākṣara-prāsa across the four lines; and
+- line-ending antya-prāsa across the four lines.
 
-It does not yet check pādānta lengthening, śithila-dvitva, prāsa, or every
-historical and modern chaupadi variant. Those rules need a redistributable,
-expert-reviewed corpus before the detector can safely accept more alternatives.
+It does not yet check pādānta lengthening, śithila-dvitva, historical prāsa
+equivalence classes, or every historical and modern chaupadi variant. Those
+rules need a redistributable, expert-reviewed corpus before the detector can
+safely accept more alternatives.
 
 ## References
 

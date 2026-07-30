@@ -31,15 +31,22 @@ aṃśa class.
 | Kiriyakkara | 4 | `VVR` on each line |
 
 Tripadi additionally checks Brahma gaṇas 6 and 10, double-Laghu openings at
-gaṇas 7 and 11, yati after gaṇa 2 of line 1, and yati after gaṇa 3 of line 2.
+gaṇas 7 and 11, yati after gaṇa 2 of line 1, yati after gaṇa 3 of line 2,
+opening dvitīyākṣara-prāsa across all three lines, and its internal recurrence
+at the second syllable of the first line's third gaṇa.
+
+Sāṅgatya and the five Akkara forms check opening dvitīyākṣara-prāsa across all
+four lines. In every such check, the second akṣara's terminal consonant and the
+Guru/Laghu weight of the first syllable are independent conditions.
 
 ## Deliberately provisional
 
 Aṃśa meters are sung forms with documented substitution and recitational
 freedom. The current release does not pretend that every such choice can be
-deduced from a short prose rule. Prāsa, melodic elongation, Tripadi repetition,
-folk variation, and substitutions not explicitly represented in the catalog
-remain unchecked until a prosody expert approves redistributable examples.
+deduced from a short prose rule. Historical prāsa equivalences, melodic
+elongation, Tripadi repetition, folk variation, and substitutions not
+explicitly represented in the catalog remain provisional until a prosody
+expert approves redistributable examples.
 
 ## References
 
@@ -49,4 +56,3 @@ remain unchecked until a prosody expert approves redistributable examples.
   <https://kn.wikisource.org/wiki/ಮೈಸೂರು_ವಿಶ್ವವಿದ್ಯಾನಿಲಯ_ವಿಶ್ವಕೋಶ/ಕನ್ನಡ_ಛಂದಸ್ಸು>
 - *Chanda Nikasha: Verification and Identification of meters in Kannada
   Prosody*: <https://kannadakali.com/crav/dev/docs/ChandaNikasha-English.pdf>
-

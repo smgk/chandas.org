@@ -211,9 +211,10 @@ test("the provisional Kanda rule packet and attribution are retained", () => {
     const kanda = catalog.meters.find((meter) =>
         meter.id === "structural:kanda-kannada");
 
-    assert.equal(catalog.catalogVersion, "3.1.0");
+    assert.equal(catalog.catalogVersion, "3.2.0");
     assert.equal(kanda.ruleCompleteness, "provisional-rhythm");
-    assert.deepEqual(kanda.uncheckedRules, ["prāsa"]);
+    assert.deepEqual(kanda.uncheckedRules, ["historical prāsa variants"]);
+    assert.deepEqual(kanda.lineRelations, [{ type: "dvitiyakshara-prasa" }]);
     assert.ok(fs.existsSync(path.join(root, "docs", "rules", "kanda.md")));
     assert.match(read("THIRD_PARTY_NOTICES.md"), /Chanda Nikasha/);
     assert.match(read("notices.html"), /Kannada Kanda/);
@@ -224,7 +225,7 @@ test("the provisional Kagga-form Chaupadi packet and references are retained", (
     const chaupadi = catalog.meters.find((meter) =>
         meter.id === "structural:panchamatra-chaupadi-kagga");
 
-    assert.equal(catalog.catalogVersion, "3.1.0");
+    assert.equal(catalog.catalogVersion, "3.2.0");
     assert.equal(chaupadi.ruleCompleteness, "provisional-rhythm");
     assert.deepEqual(chaupadi.padaGroups, [
         [5, 5, 5, 5],
@@ -232,6 +233,10 @@ test("the provisional Kagga-form Chaupadi packet and references are retained", (
         [5, 5, 5, 5],
         [5, 5, 5, 1]
     ]);
+    assert.deepEqual(
+        chaupadi.lineRelations.map((relation) => relation.type),
+        ["dvitiyakshara-prasa", "antya-prasa"]
+    );
     assert.ok(chaupadi.aliases.includes("panchamatra chowpadi"));
     assert.ok(chaupadi.aliases.includes("ಕಗ್ಗ"));
     assert.ok(fs.existsSync(path.join(
@@ -264,13 +269,22 @@ test("the Ṣaṭpadi and aṃśa milestones retain their catalogs and rule pack
         meter.id.endsWith("-shatpadi"));
     const amsha = catalog.meters.filter((meter) => meter.kind === "amsha");
 
-    assert.equal(catalog.catalogVersion, "3.1.0");
+    assert.equal(catalog.catalogVersion, "3.2.0");
     assert.equal(shatpadis.length, 6);
     assert.equal(amsha.length, 7);
     shatpadis.forEach((meter) => {
         assert.equal(meter.linePolicy.count, 6);
         assert.equal(meter.padaGroups.length, 6);
+        assert.deepEqual(meter.lineRelations, [{ type: "dvitiyakshara-prasa" }]);
     });
+    const tripadi = amsha.find((meter) => meter.id === "structural:tripadi-kannada");
+    const sangatya = amsha.find((meter) => meter.id === "structural:sangatya");
+    assert.deepEqual(tripadi.lineRelations[0].internalAnchors, [{
+        pada: 1,
+        group: 3,
+        syllable: 2
+    }]);
+    assert.deepEqual(sangatya.lineRelations, [{ type: "dvitiyakshara-prasa" }]);
     assert.ok(fs.existsSync(path.join(root, "docs", "rules", "shatpadi.md")));
     assert.ok(fs.existsSync(path.join(root, "docs", "rules", "amsha-meters.md")));
     assert.match(read("documentation.html"), /five Akkara forms/);

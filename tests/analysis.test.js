@@ -153,6 +153,111 @@ test("a conjunct after whitespace or punctuation makes the preceding Laghu Guru"
     assert.equal(ordinaryOnset.syllables[0].classification, "L");
 });
 
+test("matches dvitīyākṣara-prāsa through an ottu and highlights its whole cluster", () => {
+    const prasaCatalog = {
+        metres: [],
+        structuralMeters: [{
+            id: "test:dvitiyakshara",
+            name: "test dvitīyākṣara",
+            kind: "matra",
+            linePolicy: { type: "fixed", count: 2 },
+            padaGroups: [[3], [3]],
+            lineRelations: [{ type: "dvitiyakshara-prasa" }]
+        }]
+    };
+    const text = "ಮಲ್ಪ\nಜಂಪ";
+    const stanza = Chandas.analyzeComposition(
+        text,
+        prasaCatalog,
+        "test:dvitiyakshara"
+    ).stanzas[0];
+    const check = stanza.prasa.checks[0];
+    const firstTarget = stanza.padas[0].syllables[1];
+    const [projected] = Chandas.projectHighlightRanges(text, [{
+        start: firstTarget.start,
+        end: firstTarget.end
+    }]);
+
+    assert.equal(check.status, "match");
+    assert.equal(check.key, "ಪ");
+    assert.equal(check.failures, 0);
+    assert.ok(firstTarget.prasaAnnotations.some((item) =>
+        item.status === "match"));
+    assert.equal(text.slice(projected.start, projected.end), "ಲ್ಪ");
+});
+
+test("reports consonant and opening Guru/Laghu prāsa failures separately", () => {
+    const prasaCatalog = {
+        metres: [],
+        structuralMeters: [{
+            id: "test:dvitiyakshara",
+            name: "test dvitīyākṣara",
+            kind: "matra",
+            linePolicy: { type: "fixed", count: 2 },
+            padaGroups: [[3], [3]],
+            lineRelations: [{ type: "dvitiyakshara-prasa" }]
+        }]
+    };
+    const consonant = Chandas.analyzeComposition(
+        "ಮಲ್ಪ\nಜಂತ",
+        prasaCatalog,
+        "test:dvitiyakshara"
+    ).stanzas[0];
+    const weight = Chandas.analyzeComposition(
+        "ಮಲ್ಪ\nಜಪ",
+        prasaCatalog,
+        "test:dvitiyakshara"
+    ).stanzas[0];
+
+    assert.equal(consonant.prasa.checks[0].failures, 1);
+    assert.equal(
+        consonant.padas[1].syllables[1].violationReason,
+        "dvitiyakshara-prasa-mismatch"
+    );
+    assert.equal(weight.prasa.checks[0].weightFailures, 1);
+    assert.ok(weight.padas[1].syllables[0].prasaAnnotations.some((item) =>
+        item.status === "weight-mismatch"));
+    assert.equal(
+        weight.padas[1].syllables[0].violationReason,
+        "prasa-opening-weight-mismatch"
+    );
+});
+
+test("finds matching first letters as positive Ādi-prāsa", () => {
+    const stanza = Chandas.analyzeComposition("ಮಲ್ಪ\nಮಂಪ", catalog, {}).stanzas[0];
+    const finding = stanza.prasa.findings.find((item) =>
+        item.type === "adi-prasa");
+
+    assert.equal(finding.status, "found");
+    assert.equal(finding.key, "ಮ");
+    assert.ok(stanza.padas.every((pada) =>
+        pada.syllables[0].prasaAnnotations.some((item) =>
+            item.kind === "adi-prasa" && item.status === "match")));
+});
+
+test("does not treat the current end of an unfinished line as antya-prāsa", () => {
+    const prasaCatalog = {
+        metres: [],
+        structuralMeters: [{
+            id: "test:antya",
+            name: "test antya",
+            kind: "matra",
+            linePolicy: { type: "fixed", count: 2 },
+            padaGroups: [[2], [2]],
+            lineRelations: [{ type: "antya-prasa" }]
+        }]
+    };
+    const stanza = Chandas.analyzeComposition(
+        "ಕಪ\nಜ",
+        prasaCatalog,
+        "test:antya"
+    ).stanzas[0];
+
+    assert.equal(stanza.prasa.checks[0].status, "incomplete");
+    assert.equal(stanza.prasa.failures, 0);
+    assert.equal(stanza.padas[1].syllables[0].prasaAnnotations, undefined);
+});
+
 test("source ranges reconstruct the analyzed syllables without shifting punctuation", () => {
     const text = "  ಕಂ, ಕಾ!  ";
     const result = Chandas.analyzeComposition(text, catalog, {});
@@ -315,7 +420,7 @@ test("keeps an incomplete structural meter compatible without red violations", (
 
     assert.equal(stanza.violationCount, 0);
     assert.ok(stanza.missingCount > 0);
-    assert.equal(result.analysisVersion, "2.4.0");
+    assert.equal(result.analysisVersion, "2.5.0");
     assert.equal(result.catalogVersion, structuralCatalog.catalogVersion);
 });
 
@@ -409,9 +514,9 @@ test("recognizes the provisional Kannada Kanda characterization fixture", () => 
         stanza.candidates.indexOf(aryagitiCandidate)
     );
     assert.equal(stanza.selectedMeter.ruleCompleteness, "provisional-rhythm");
-    assert.deepEqual(stanza.selectedMeter.uncheckedRules, ["prāsa"]);
-    assert.equal(result.analysisVersion, "2.4.0");
-    assert.equal(result.catalogVersion, "3.1.0");
+    assert.deepEqual(stanza.selectedMeter.uncheckedRules, ["historical prāsa variants"]);
+    assert.equal(result.analysisVersion, "2.5.0");
+    assert.equal(result.catalogVersion, "3.2.0");
 });
 
 test("loads and validates the Pañcamātrā Chaupadi Kagga form", () => {
@@ -447,7 +552,7 @@ test("loads and validates the Pañcamātrā Chaupadi Kagga form", () => {
     assert.deepEqual(stanza.selectedMeter.uncheckedRules, [
         "pādānta lengthening",
         "śithila-dvitva",
-        "prāsa",
+        "historical prāsa variants",
         "historical chaupadi variants"
     ]);
 });

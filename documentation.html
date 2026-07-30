@@ -168,6 +168,29 @@ SPDX-License-Identifier: GPL-3.0-only
             detectors.
         </p>
 
+        <h2>Read the prāsa colors</h2>
+        <p>
+            For meters with an encoded Kannada prāsa rule, Chandas checks the
+            terminal consonant of the second akṣara across the required lines.
+            The first syllable’s Guru/Laghu weight must also agree. Teal means
+            the prāsa matches, red means the consonant differs, and an amber
+            dotted outline means the opening weight differs.
+        </p>
+        <p>
+            Ottu letters are compared by sound but colored as one safely shaped
+            cluster. So <code>ಮಲ್ಪ</code> and <code>ಜಂಪ</code> meet on
+            <code>ಪ</code>, while the editor may color all of
+            <code>ಲ್ಪ</code>. Spaces and punctuation politely stay out of the
+            argument. Matching final consonants are checked for meters such as
+            Ragaḷe and Chaupadi that declare antya-prāsa.
+        </p>
+        <p>
+            Chandas also reports <em>Ādi-prāsa found</em> when the first
+            consonant of every available line matches. That is a pleasant
+            finding, not a scolding: its absence is not an error unless a
+            future meter rule explicitly requires it.
+        </p>
+
         <h2>Save, copy, and share</h2>
         <p>
             Your current draft and per-stanza choices are recovered privately

@@ -11,7 +11,9 @@
 A stanza has six logical lines. Lines 1, 2, 4, and 5 share the short frame;
 lines 3 and 6 contain one-and-a-half times as many full gaṇas followed by a
 two-mātrā cadence. A final Laghu resolution may fill that cadence as described
-by the traditional rule. A gaṇa beginning `LG` is rejected.
+by the traditional rule. A gaṇa beginning `LG` is rejected. The terminal
+consonant of the second akṣara and the preceding first syllable's Guru/Laghu
+weight are checked across all six lines.
 
 | Form | Short lines | Extended lines |
 | --- | --- | --- |
@@ -22,10 +24,9 @@ by the traditional rule. A gaṇa beginning `LG` is rejected.
 | Parivardhinī | `4+4+4+4` = 16 | `4+4+4+4+4+4+2` = 26 |
 | Vārdhaka | `5+5+5+5` = 20 | `5+5+5+5+5+5+2` = 32 |
 
-## Not yet encoded
+## Still provisional
 
-- Ādi-prāsa.
-- Reading-dependent historical exceptions and sung variants.
+- Reading-dependent historical and sung prāsa equivalences.
 - Tradition-specific interpretation that needs an approved golden corpus.
 
 The UI therefore reports a rhythmically conforming result as compatible, not
@@ -41,4 +42,3 @@ expert-approved exact.
   <https://shastriyakannada.org/database/english/literature/SHATPADI%20HTML.htm>
 - *Chanda Nikasha: Verification and Identification of meters in Kannada
   Prosody*: <https://kannadakali.com/crav/dev/docs/ChandaNikasha-English.pdf>
-

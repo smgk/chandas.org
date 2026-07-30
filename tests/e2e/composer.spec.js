@@ -120,6 +120,23 @@ test("keeps Kannada prāsa active around danda and verse numbers", async ({ page
     ]);
 });
 
+test("treats the trailing dead ರ್ in ಟರ್ as a coda for prāsa", async ({ page }) => {
+    const text = [
+        "ಕಟ್ಟಿದಸಿಂಘಮನ್ ಕೆಟ್ಟೋದೇನೆಮಗೆಂದು",
+        "ಬಿಟ್ಟವೋಲ್ ಕಲಿಗೆವಿಪರೀತಂಗಹಿತರ್ಕಳ್",
+        "ಕೆಟ್ಟರ್ಮೇಣ್ಸತ್ತರವಿಚಾರಂ"
+    ].join("\n");
+    await page.locator("#composition").fill(text);
+
+    await expect(page.locator("#prasa-summary")).toContainText(
+        "Automatic Kannada-script Dvitīyākṣara-prāsa matches on ಟ."
+    );
+    await expect(page.locator("#highlight-layer .prasa-match")).toHaveText([
+        "ಟ್ಟಿ", "ಟ್ಟ", "ಟ್ಟ"
+    ]);
+    await expect(page.locator("#highlight-layer .prasa-mismatch")).toHaveCount(0);
+});
+
 test("keeps Kannada and Devanagari conjuncts joined across highlight changes", async ({
     page
 }) => {
@@ -824,6 +841,34 @@ test("share options are explicit and default to composition only", async ({ page
     await expect(page.locator("#share-dialog")).toBeVisible();
     await expect(page.locator("#include-meter")).not.toBeChecked();
     await expect(page.locator("#include-link")).not.toBeChecked();
+
+    await page.mouse.click(1, 1);
+    await expect(page.locator("#share-dialog")).toBeHidden();
+});
+
+test("dismisses the share overlay after every share action", async ({ page }) => {
+    await page.locator("#composition").fill("ಕವಿ");
+    await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
+    await page.evaluate(() => {
+        window.open = () => null;
+        Object.defineProperty(navigator, "share", {
+            configurable: true,
+            value: async () => undefined
+        });
+    });
+
+    for (const selector of [
+        "#system-share",
+        "#twitter-share",
+        "#facebook-share",
+        "#dialog-copy",
+        "#copy-analysis-url"
+    ]) {
+        await page.locator("#share").click();
+        await expect(page.locator("#share-dialog")).toBeVisible();
+        await page.locator(selector).click();
+        await expect(page.locator("#share-dialog")).toBeHidden();
+    }
 });
 
 test("copies and round-trips a per-stanza analysis link", async ({ page, browser }) => {

@@ -2044,6 +2044,28 @@
         }, 2600);
     }
 
+    function closeShareDialog() {
+        const dialog = elements["share-dialog"];
+        if (dialog && dialog.open) {
+            dialog.close();
+        }
+    }
+
+    function dismissShareDialogFromBackdrop(event) {
+        const dialog = elements["share-dialog"];
+        if (event.target !== dialog) {
+            return;
+        }
+        const bounds = dialog.getBoundingClientRect();
+        const outside = event.clientX < bounds.left ||
+            event.clientX > bounds.right ||
+            event.clientY < bounds.top ||
+            event.clientY > bounds.bottom;
+        if (outside) {
+            closeShareDialog();
+        }
+    }
+
     async function loadCatalog() {
         const [fixedResponse, structuralResponse] = await Promise.all([
             fetch("mishra.json", { cache: "force-cache" }),
@@ -2247,12 +2269,30 @@
         elements["new-draft"].addEventListener("click", clearDraft);
         elements.copy.addEventListener("click", () => copyText(authoredCompositionText()));
         elements.share.addEventListener("click", () => elements["share-dialog"].showModal());
-        elements["dialog-copy"].addEventListener("click", () => copyText(shareText()));
-        elements["copy-analysis-url"].addEventListener("click", () =>
-            copyText(analysisUrl(), "analysisLinkCopied"));
-        elements["system-share"].addEventListener("click", systemShare);
-        elements["twitter-share"].addEventListener("click", openTwitterShare);
-        elements["facebook-share"].addEventListener("click", openFacebookShare);
+        elements["share-dialog"].addEventListener(
+            "click",
+            dismissShareDialogFromBackdrop
+        );
+        elements["dialog-copy"].addEventListener("click", () => {
+            closeShareDialog();
+            copyText(shareText());
+        });
+        elements["copy-analysis-url"].addEventListener("click", () => {
+            closeShareDialog();
+            copyText(analysisUrl(), "analysisLinkCopied");
+        });
+        elements["system-share"].addEventListener("click", () => {
+            closeShareDialog();
+            systemShare();
+        });
+        elements["twitter-share"].addEventListener("click", () => {
+            closeShareDialog();
+            openTwitterShare();
+        });
+        elements["facebook-share"].addEventListener("click", () => {
+            closeShareDialog();
+            openFacebookShare();
+        });
 
         elements["previous-stanza"].addEventListener("click", () =>
             setActiveStanza(state.activeStanzaIndex - 1, true));

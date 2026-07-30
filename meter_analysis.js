@@ -523,16 +523,42 @@
         if (!config) {
             return "";
         }
-        const consonants = codePoints(String(syllable.text || "").normalize("NFC"))
-            .filter((point) => inRange(point.cp, config.consonant))
-            .map((point) => point.char);
+        const points = codePoints(String(syllable.text || "").normalize("NFC"));
+        const consonants = points
+            .map((point, index) => ({ point, index }))
+            .filter(({ point }) => inRange(point.cp, config.consonant));
         if (consonantPosition === "initial") {
-            return consonants[0] || "";
+            return consonants[0] ? consonants[0].point.char : "";
+        }
+        if (consonantPosition === "terminal-live") {
+            const liveConsonants = consonants.filter(({ index }) => {
+                for (let nextIndex = index + 1;
+                    nextIndex < points.length;
+                    nextIndex += 1) {
+                    const next = points[nextIndex];
+                    if (next.cp === config.virama) {
+                        return false;
+                    }
+                    if (isConsonant(next, config)) {
+                        return true;
+                    }
+                    if (config.ignoredMarks.has(next.cp) ||
+                        next.cp === 0x200c || next.cp === 0x200d) {
+                        continue;
+                    }
+                    return true;
+                }
+                return true;
+            });
+            const terminal = liveConsonants[liveConsonants.length - 1] ||
+                consonants[consonants.length - 1];
+            return terminal ? terminal.point.char : "";
         }
         if (consonantPosition === "terminal") {
-            return consonants[consonants.length - 1] || "";
+            const terminal = consonants[consonants.length - 1];
+            return terminal ? terminal.point.char : "";
         }
-        return consonants.join("");
+        return consonants.map(({ point }) => point.char).join("");
     }
 
     function prasaOccurrence(pada, type) {
@@ -553,8 +579,10 @@
             syllable,
             type === "adi"
                 ? "initial"
-                : type === "dvitiyakshara" || type === "antya"
-                    ? "terminal"
+                : type === "dvitiyakshara"
+                    ? "terminal-live"
+                    : type === "antya"
+                        ? "terminal"
                     : "all"
         );
         if (!key) {
@@ -1608,7 +1636,7 @@
         if (!syllable) {
             return null;
         }
-        const key = consonantKeyForSyllable(syllable, "terminal");
+        const key = consonantKeyForSyllable(syllable, "terminal-live");
         if (!key) {
             return null;
         }
@@ -2308,7 +2336,7 @@
 
         return {
             text: originalText,
-            analysisVersion: "2.8.0",
+            analysisVersion: "2.8.1",
             catalogVersion: catalog && catalog.structuralCatalogVersion
                 ? String(catalog.structuralCatalogVersion)
                 : "",

@@ -196,6 +196,54 @@ test("matches dvitīyākṣara-prāsa through an ottu and highlights its whole c
     assert.equal(text.slice(projected.start, projected.end), "ಲ್ಪ");
 });
 
+test("ignores a trailing dead consonant when extracting dvitīyākṣara-prāsa", () => {
+    const text = [
+        "ಕಟ್ಟಿದಸಿಂಘಮನ್ ಕೆಟ್ಟೋದೇನೆಮಗೆಂದು",
+        "ಬಿಟ್ಟವೋಲ್ ಕಲಿಗೆವಿಪರೀತಂಗಹಿತರ್ಕಳ್",
+        "ಕೆಟ್ಟರ್ಮೇಣ್ಸತ್ತರವಿಚಾರಂ"
+    ].join("\n");
+    const stanza = Chandas.analyzeComposition(text, combinedCatalog).stanzas[0];
+    const check = stanza.prasa.checks[0];
+    const targets = stanza.padas.map((pada) => pada.syllables[1]);
+
+    assert.equal(check.status, "match");
+    assert.equal(check.key, "ಟ");
+    assert.equal(check.failures, 0);
+    assert.deepEqual(targets.map((syllable) => syllable.text), [
+        "ಟಿ", "ಟ", "ಟರ್"
+    ]);
+    targets.forEach((syllable) => {
+        assert.ok(syllable.prasaAnnotations.some((annotation) =>
+            annotation.status === "match" &&
+            annotation.detail === "ಟ"));
+    });
+});
+
+test("retains a trailing dead consonant as the antya-prāsa key", () => {
+    const prasaCatalog = {
+        metres: [],
+        structuralMeters: [{
+            id: "test:antya-coda",
+            name: "test antya coda",
+            kind: "matra",
+            linePolicy: { type: "fixed", count: 2 },
+            padaGroups: [[4], [4]],
+            lineRelations: [{ type: "antya-prasa" }]
+        }]
+    };
+    const stanza = Chandas.analyzeComposition(
+        "ಕಾಕಳ್\nಮಾಮಳ್",
+        prasaCatalog,
+        "test:antya-coda"
+    ).stanzas[0];
+    const check = stanza.prasa.checks.find((item) =>
+        item.type === "antya-prasa");
+
+    assert.equal(check.status, "match");
+    assert.equal(check.key, "ಳ");
+    assert.equal(check.failures, 0);
+});
+
 test("reports consonant and opening Guru/Laghu prāsa failures separately", () => {
     const prasaCatalog = {
         metres: [],
@@ -513,7 +561,7 @@ test("keeps an incomplete structural meter compatible without red violations", (
 
     assert.equal(stanza.violationCount, 0);
     assert.ok(stanza.missingCount > 0);
-    assert.equal(result.analysisVersion, "2.8.0");
+    assert.equal(result.analysisVersion, "2.8.1");
     assert.equal(result.catalogVersion, structuralCatalog.catalogVersion);
 });
 
@@ -608,7 +656,7 @@ test("recognizes the provisional Kannada Kanda characterization fixture", () => 
     );
     assert.equal(stanza.selectedMeter.ruleCompleteness, "provisional-rhythm");
     assert.deepEqual(stanza.selectedMeter.uncheckedRules, ["historical prāsa variants"]);
-    assert.equal(result.analysisVersion, "2.8.0");
+    assert.equal(result.analysisVersion, "2.8.1");
     assert.equal(result.catalogVersion, "3.4.0");
 });
 

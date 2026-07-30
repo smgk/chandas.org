@@ -2,7 +2,7 @@
 
 **Status:** Draft for stakeholder review
 
-**Last updated:** 2026-07-29
+**Last updated:** 2026-07-30
 
 **Products:** `chandas.org` website and Android application
 
@@ -313,7 +313,11 @@ recommended, and optional behavior.
 13. Plain analysis-link creation MUST remain local and available offline.
     Short-link creation that requires storage or a network service is deferred
     to its roadmap milestone.
-14. Analysis links MUST round-trip leading, interior, and trailing authored
+14. Activating any destination, copy, or analysis-link action in the Share
+    dialog MUST dismiss the dialog immediately while preserving toast or
+    platform feedback. Clicking the modal backdrop MUST also dismiss it;
+    users MUST NOT be required to activate only the close button.
+15. Analysis links MUST round-trip leading, interior, and trailing authored
     line breaks without trimming. A Strong-mode link MUST preserve the complete
     slot matrix so an unfilled earlier pāda or metrical position remains empty
     when the recipient opens the link.
@@ -601,8 +605,10 @@ analysis result.
 23. Dvitīyākṣara-prāsa comparison MUST use the terminal consonant of the
     second displayed akṣara while preserving a shaping-safe display range.
     Thus `ಮಲ್ಪ` and `ಜಂಪ` compare on `ಪ`, while the complete `ಲ್ಪ` cluster may
-    be highlighted. The Guru/Laghu weight of the preceding first syllable MUST
-    match independently.
+    be highlighted. “Terminal consonant” means the last live consonant not
+    killed by virāma: a trailing dead coda MUST NOT displace it, so `ಟರ್`
+    compares on `ಟ`, not `ರ`. The Guru/Laghu weight of the preceding first
+    syllable MUST match independently.
 24. Punctuation and whitespace MUST be transparent to prāsa extraction.
     Successful prāsa, consonant failure, and first-syllable weight failure MUST
     have distinguishable letter-level color fills and accessible text reports.

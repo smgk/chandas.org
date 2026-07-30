@@ -146,6 +146,11 @@ recommended, and optional behavior.
 15. User documentation MUST warn that placing verse in a URL can expose it to
     browser history, messaging systems, and hosting request logs even though
     analysis remains local.
+16. The meter catalog and selection control MUST remain available before any
+    composition text exists. A meter selected in the empty editor MUST apply
+    to the first stanza when typing begins and survive local draft recovery.
+17. URL import MUST preserve authored line breaks exactly, including leading
+    blank pādas used for samasyā-pūraṇa and trailing or interior blank lines.
 
 ### FR-2: Live analysis
 
@@ -308,6 +313,10 @@ recommended, and optional behavior.
 13. Plain analysis-link creation MUST remain local and available offline.
     Short-link creation that requires storage or a network service is deferred
     to its roadmap milestone.
+14. Analysis links MUST round-trip leading, interior, and trailing authored
+    line breaks without trimming. A Strong-mode link MUST preserve the complete
+    slot matrix so an unfilled earlier pāda or metrical position remains empty
+    when the recipient opens the link.
 
 ### FR-8: Anonymous local draft recovery
 
@@ -417,7 +426,9 @@ recommended, and optional behavior.
    MUST NOT discard authored text or filled-slot structure.
 8. Copying or sharing MUST exclude unfilled positions and template symbols and
    MUST include only text authored by the user, subject to the existing
-   optional meter-name and link settings.
+   optional meter-name and link settings. Empty Strong rows before or between
+   authored rows MUST remain line breaks so the authored pāda keeps its verse
+   position; no placeholder character may be inserted for an empty slot.
 9. Fixed, structural, and mātrā meters MAY use different strong-template slot
    representations, but each representation MUST expose only constraints
    actually supported by the versioned meter catalog.
@@ -704,6 +715,11 @@ The MVP is acceptable when:
 14. **Copy analysis link** produces a canonical URL that round-trips the
     authored text and each stanza's selected meter and supported template mode
     in desktop, mobile, and offline browser tests.
+15. A user may select a meter in an empty editor, and that selection remains
+    active when the first syllable is typed.
+16. A samasyā-pūraṇa link containing only a later pāda retains its leading
+    blank lines through URL copy/import and Ghost/Strong switching. Its Strong
+    slot matrix retains all earlier blank rows and cells.
 
 ## 10. Test Strategy
 
@@ -765,14 +781,15 @@ The MVP is acceptable when:
 - **Strong-template tests:** For fixed vṛttas, fill positions out of order,
   retain blank positions, edit and clear filled slots, switch between ghost
   and strong modes, restore a partially filled structured draft, and verify
-  that copy and sharing contain only authored text. Repeat the suite for each
+  that copy and sharing contain only authored text while retaining meaningful
+  blank rows. Repeat the suite for each
   structural, mātrā, or aṃśa presentation before enabling that family.
 - **URL-import tests:** Cover raw and named query forms, Kannada and
   Devanagari line breaks, appending to recovered drafts, multiple imported
   stanzas, catalog IDs and common Roman meter names, Ghost/Strong choices,
   out-of-order Strong slot restoration, malformed optional slot state,
-  unsupported-Strong fallback, query removal, refresh, offline reload, and
-  query-free navigation cache keys.
+  leading-line samasyā-pūraṇa frames, unsupported-Strong fallback, query
+  removal, refresh, offline reload, and query-free navigation cache keys.
 - **Accessibility tests:** Automated checks plus manual keyboard,
   screen-reader, contrast, zoom, dynamic-type, and color-vision checks.
 - **Performance tests:** Record input latency and analysis duration for typical,

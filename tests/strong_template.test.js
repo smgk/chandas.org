@@ -58,7 +58,7 @@ test("retains arbitrary later-position associations while other slots are blank"
     assert.equal(draft.lines[0].slots[0], "");
     assert.equal(draft.lines[0].slots[1], "ಕಾ");
     assert.equal(draft.lines[3].slots[0], "द");
-    assert.equal(StrongTemplate.serializeDraft(draft), "ಕಾ\nद");
+    assert.equal(StrongTemplate.serializeDraft(draft), "ಕಾ\n\n\nद");
 
     const inspection = StrongTemplate.inspectDraft(draft);
     assert.equal(inspection.missingCount, 6);
@@ -74,6 +74,29 @@ test("preserves punctuation and whitespace as authored slot content", () => {
         StrongTemplate.authoredUnits("क।  क्र"),
         ["क।  ", "क्र"]
     );
+});
+
+test("keeps leading empty verse lines when the first authored pāda is later", () => {
+    const stanza = stanzaFor("\n\n\nಕಾ");
+    const draft = StrongTemplate.createFixedDraft(
+        madhu,
+        stanza,
+        {
+            catalogVersion: "test",
+            analysisVersion: "test",
+            lineOffset: 3,
+            sourceStart: 0
+        }
+    );
+
+    assert.deepEqual(draft.lines.slice(0, 3).map((line) => line.slots), [
+        ["", ""],
+        ["", ""],
+        ["", ""]
+    ]);
+    assert.deepEqual(draft.lines[3].slots, ["ಕಾ", ""]);
+    assert.equal(draft.sourceStart, 0);
+    assert.equal(StrongTemplate.serializeDraft(draft), "\n\n\nಕಾ");
 });
 
 test("keeps conjunct onsets intact in Kannada and Devanagari Strong slots", () => {

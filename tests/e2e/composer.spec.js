@@ -41,6 +41,24 @@ test("analyzes Kannada and Devanagari stanzas inline", async ({ page }) => {
     await expect(page.locator("#active-pattern")).toHaveText("LGG");
 });
 
+test("allows choosing a meter before the first syllable is typed", async ({ page }) => {
+    await expect(page.locator("#analysis-content")).toBeVisible();
+    await expect(page.locator("#meter-picker")).toBeVisible();
+    await page.locator("#meter-picker summary").click();
+    await page.locator("#meter-search").fill("madhu");
+    await page.locator("#meter-select").selectOption("madhu");
+
+    await expect(page.locator("#selected-meter-name")).toHaveText("madhu");
+    await expect(page.locator("#validation-summary"))
+        .toContainText("madhu is ready");
+    await page.waitForTimeout(350);
+    await page.reload();
+    await expect(page.locator("#selected-meter-name")).toHaveText("madhu");
+    await page.locator("#composition").fill("ಕ");
+    await expect(page.locator("#selected-meter-name")).toHaveText("madhu");
+    await expect(page.locator("#active-pattern")).toHaveText("L");
+});
+
 test("keeps Kannada and Devanagari conjuncts joined across highlight changes", async ({
     page
 }) => {
@@ -257,12 +275,12 @@ test("fills fixed-vritta strong-template positions out of order without copying 
     await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
     await page.locator("#copy").click();
     await expect.poll(() => page.evaluate(() => navigator.clipboard.readText()))
-        .toBe("ಕಾ\nद");
+        .toBe("ಕಾ\n\n\nद");
 
     await page.locator("#template-mode-ghost").check();
     await expect(page.locator("#strong-template-editor")).toBeHidden();
     await expect(page.locator("#editor-shell")).toBeVisible();
-    await expect(page.locator("#composition")).toHaveValue("ಕಾ\nद");
+    await expect(page.locator("#composition")).toHaveValue("ಕಾ\n\n\nद");
     await page.locator("#composition").fill("ಕ\nद");
 
     await page.locator("#template-mode-strong").check();
@@ -682,7 +700,7 @@ test("copies and round-trips a per-stanza analysis link", async ({ page, browser
     const copied = new URL(await page.evaluate(() => navigator.clipboard.readText()));
 
     expect(copied.origin).toBe("https://chandas.org");
-    expect(copied.searchParams.get("v")).toBe("2");
+    expect(copied.searchParams.get("v")).toBe("3");
     expect(copied.searchParams.get("verse")).toBe(composition);
     expect(copied.searchParams.get("meter1")).toBe("madhu");
     expect(copied.searchParams.get("template1")).toBe("ghost");
@@ -714,6 +732,83 @@ test("copies and round-trips a per-stanza analysis link", async ({ page, browser
     await expect(importedPage.locator("#template-mode-ghost")).toBeChecked();
     expect(runtimeErrors).toEqual([]);
     await importedContext.close();
+});
+
+test("preserves a samasyā-pūraṇa frame and blank Strong slots in its link", async ({
+    page,
+    browser
+}) => {
+    const composition = "\n\n\nಕಾ";
+    await page.locator("#composition").fill(composition);
+    await page.locator("#meter-picker summary").click();
+    await page.locator("#meter-search").fill("madhu");
+    await page.locator("#meter-select").selectOption("madhu");
+    await page.locator("#show-template").check();
+    await page.locator("#template-mode-strong").check();
+
+    const firstLine = page.locator(
+        '.strong-template-slot[data-line-index="0"][data-slot-index="0"]'
+    );
+    const finalLine = page.locator(
+        '.strong-template-slot[data-line-index="3"][data-slot-index="0"]'
+    );
+    await expect(firstLine).toHaveValue("");
+    await expect(finalLine).toHaveValue("ಕಾ");
+
+    await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
+    await page.locator("#share").click();
+    await page.locator("#copy-analysis-url").click();
+    const copied = new URL(await page.evaluate(() => navigator.clipboard.readText()));
+    const slots = JSON.parse(copied.searchParams.get("slots1"));
+
+    expect(copied.searchParams.get("verse")).toBe(composition);
+    expect(slots.slice(0, 3)).toEqual([
+        ["", ""],
+        ["", ""],
+        ["", ""]
+    ]);
+    expect(slots[3]).toEqual(["ಕಾ", ""]);
+
+    const importedContext = await browser.newContext();
+    const importedPage = await importedContext.newPage();
+    const localUrl = new URL("/", page.url());
+    localUrl.search = copied.search;
+    await importedPage.goto(localUrl.toString());
+
+    await expect(importedPage.locator("#composition")).toHaveValue(composition);
+    await expect(importedPage.locator("#template-mode-strong")).toBeChecked();
+    await expect(importedPage.locator(
+        '.strong-template-slot[data-line-index="0"][data-slot-index="0"]'
+    )).toHaveValue("");
+    await expect(importedPage.locator(
+        '.strong-template-slot[data-line-index="3"][data-slot-index="0"]'
+    )).toHaveValue("ಕಾ");
+    await importedPage.locator("#template-mode-ghost").check();
+    await expect(importedPage.locator("#composition")).toHaveValue(composition);
+    await importedContext.close();
+
+    const appendContext = await browser.newContext();
+    await appendContext.addInitScript(() => {
+        localStorage.setItem("chandas.draft.v1", JSON.stringify({
+            version: 3,
+            text: "ಮುನ್ನುಡಿ",
+            selections: {},
+            templates: {},
+            templateModes: {},
+            strongDrafts: {},
+            language: "en",
+            selectionStart: 7,
+            selectionEnd: 7
+        }));
+    });
+    const appendPage = await appendContext.newPage();
+    await appendPage.goto(localUrl.toString());
+    await expect(appendPage.locator("#composition"))
+        .toHaveValue(`ಮುನ್ನುಡಿ\n\n${composition}`);
+    await expect(appendPage.locator(
+        '.strong-template-slot[data-line-index="3"][data-slot-index="0"]'
+    )).toHaveValue("ಕಾ");
+    await appendContext.close();
 });
 
 test("opens documentation and searches the complete prosody catalog", async ({ page }) => {

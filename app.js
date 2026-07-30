@@ -43,6 +43,7 @@
             activeStanza: "Active stanza",
             stanza: "Stanza {number} of {total}",
             analysisEmpty: "Your meter suggestions will appear here.",
+            chooseMeterFirst: "Choose a meter or begin writing",
             pattern: "Current pattern",
             matras: "Mātrās by pāda",
             selectedMeterReference: "Selected meter",
@@ -75,6 +76,7 @@
             approximate: "Closest",
             selected: "Selected",
             noMeterSelected: "Choose a meter to check this stanza.",
+            meterReady: "{meter} is ready. Start typing when the line arrives.",
             validMeter: "This stanza follows {meter}.",
             validationIssues: "{violations} mismatched and {missing} missing syllables for {meter}.",
             incompleteMeter: "{meter} is still possible; {missing} metrical units remain.",
@@ -142,6 +144,7 @@
             activeStanza: "ಪ್ರಸ್ತುತ ಪದ್ಯ",
             stanza: "ಪದ್ಯ {number} / {total}",
             analysisEmpty: "ಛಂದಸ್ಸಿನ ಸೂಚನೆಗಳು ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತವೆ.",
+            chooseMeterFirst: "ಛಂದಸ್ಸನ್ನು ಆರಿಸಿ ಅಥವಾ ಬರೆಯಲು ಆರಂಭಿಸಿ",
             pattern: "ಪ್ರಸ್ತುತ ಗಣ ವಿನ್ಯಾಸ",
             matras: "ಪಾದದ ಮಾತ್ರೆಗಳು",
             selectedMeterReference: "ಆಯ್ದ ಛಂದಸ್ಸು",
@@ -174,6 +177,7 @@
             approximate: "ಸಮೀಪ",
             selected: "ಆಯ್ಕೆ",
             noMeterSelected: "ಈ ಪದ್ಯವನ್ನು ಪರೀಕ್ಷಿಸಲು ಛಂದಸ್ಸನ್ನು ಆರಿಸಿ.",
+            meterReady: "{meter} ಸಿದ್ಧವಾಗಿದೆ. ಪದ್ಯ ಹೊಳೆದಾಗ ಬರೆಯಲು ಆರಂಭಿಸಿ.",
             validMeter: "ಈ ಪದ್ಯವು {meter} ಛಂದಸ್ಸಿಗೆ ಹೊಂದುತ್ತದೆ.",
             validationIssues: "{meter}: {violations} ವ್ಯತ್ಯಾಸ, {missing} ಕೊರತೆಯ ಅಕ್ಷರಗಳು.",
             incompleteMeter: "{meter} ಇನ್ನೂ ಸಾಧ್ಯ; {missing} ಛಂದೋಘಟಕಗಳು ಬಾಕಿಯಿವೆ.",
@@ -239,8 +243,10 @@
             "composition", "highlight-layer", "editor-shell", "draft-state", "cursor-metrics",
             "language", "new-draft", "copy", "share", "analysis-title",
             "previous-stanza", "next-stanza", "empty-analysis", "analysis-content",
-            "active-pattern", "active-matras", "selected-meter-reference", "selected-meter-name",
+            "pattern-block", "active-pattern", "active-matras",
+            "selected-meter-reference", "selected-meter-name",
             "selected-meter-signature", "candidate-list", "meter-picker",
+            "suggestion-heading",
             "meter-search", "meter-select", "clear-meter", "show-template",
             "template-mode-picker", "template-mode-ghost", "template-mode-strong",
             "strong-template-availability", "whole-verse-template",
@@ -418,10 +424,9 @@
             : null;
     }
 
-    function stripOuterLineBreaks(value) {
-        return String(value || "")
-            .replace(/^(?:\r?\n)+/, "")
-            .replace(/(?:\r?\n)+$/, "");
+    function normalizeImportedVerse(value) {
+        return String(value === null || value === undefined ? "" : value)
+            .replace(/\r\n?/g, "\n");
     }
 
     function appendAsPadya(existing, incoming) {
@@ -483,7 +488,7 @@
         }
 
         let insertionStart = null;
-        const incoming = stripOuterLineBreaks(payload.verse);
+        const incoming = normalizeImportedVerse(payload.verse);
         let importMessage = incoming ? t("urlImported") : "";
         if (incoming) {
             const appended = appendAsPadya(authoredCompositionText(), incoming);
@@ -506,6 +511,16 @@
             : [];
         let selectionChanged = false;
         let missingMeter = false;
+        if (!targetIndices.length && payload.meter !== null &&
+            payload.meter !== undefined) {
+            const meter = meterFromUrlToken(payload.meter);
+            if (meter) {
+                state.selections[0] = meter.id;
+                selectionChanged = true;
+            } else {
+                missingMeter = true;
+            }
+        }
         targetIndices.forEach((stanzaIndex, relativeIndex) => {
             const option = payload.stanzaOptions[relativeIndex] || {};
             const meterToken = Object.hasOwn(option, "meter")
@@ -531,6 +546,17 @@
 
         let fellBack = false;
         let templateChanged = false;
+        if (!targetIndices.length && payload.guideMode !== null &&
+            payload.guideMode !== undefined && state.selections[0]) {
+            const selected = meterForId(state.selections[0]);
+            let mode = payload.guideMode;
+            if (mode === "strong") {
+                mode = "ghost";
+                fellBack = true;
+            }
+            setTemplateMode(0, selected ? mode : "off");
+            templateChanged = true;
+        }
         targetIndices.forEach((stanzaIndex, relativeIndex) => {
             const option = payload.stanzaOptions[relativeIndex] || {};
             const requestedMode = Object.hasOwn(option, "guideMode")
@@ -642,6 +668,31 @@
         return `mishra-baseline+structural-${structuralVersion || "unknown"}`;
     }
 
+    function strongSourceFrame(stanza, meter) {
+        const prefix = elements.composition.value.slice(0, stanza.start);
+        const lineCount = Array.isArray(meter.versePatterns)
+            ? meter.versePatterns.length
+            : Number(meter.linePolicy && meter.linePolicy.count) || 1;
+        const trailingBlankRun = prefix.match(/(?:[^\S\n]*\n)+$/);
+        if (!trailingBlankRun) {
+            return { lineOffset: 0, sourceStart: stanza.start };
+        }
+        const totalLineBreaks = (trailingBlankRun[0].match(/\n/g) || []).length;
+        const hasEarlierText = prefix.slice(0, trailingBlankRun.index).trim().length > 0;
+        const stanzaSeparatorBreaks = hasEarlierText ? Math.min(2, totalLineBreaks) : 0;
+        const blankLines = Math.max(0, totalLineBreaks - stanzaSeparatorBreaks);
+        const lineOffset = Math.min(blankLines, Math.max(0, lineCount - 1));
+        const trailingBlankLines = lineOffset
+            ? prefix.match(new RegExp(`(?:[^\\S\\n]*\\n){${lineOffset}}$`))
+            : null;
+        return {
+            lineOffset,
+            sourceStart: trailingBlankLines
+                ? stanza.start - trailingBlankLines[0].length
+                : stanza.start
+        };
+    }
+
     function strongDraftFor(stanza, meter, create) {
         const key = strongDraftKey(stanza.index, meter.id);
         const existing = state.strongDrafts[key];
@@ -651,9 +702,11 @@
         if (!create) {
             return null;
         }
+        const sourceFrame = strongSourceFrame(stanza, meter);
         const draft = ChandasStrongTemplate.createFixedDraft(meter, stanza, {
             catalogVersion: strongCatalogVersion(),
-            analysisVersion: state.analysis && state.analysis.analysisVersion
+            analysisVersion: state.analysis && state.analysis.analysisVersion,
+            ...sourceFrame
         });
         state.strongDrafts[key] = draft;
         state.strongHistory[key] = [];
@@ -685,7 +738,9 @@
                 return;
             }
             replacements.push({
-                start: stanza.start,
+                start: Number.isFinite(draft.sourceStart)
+                    ? draft.sourceStart
+                    : stanza.start,
                 end: stanza.end,
                 text: ChandasStrongTemplate.serializeDraft(draft)
             });
@@ -1066,9 +1121,12 @@
         }
         const authored = ChandasStrongTemplate.serializeDraft(draft);
         const text = elements.composition.value;
+        const sourceStart = Number.isFinite(draft.sourceStart)
+            ? draft.sourceStart
+            : stanza.start;
         elements.composition.value =
-            text.slice(0, stanza.start) + authored + text.slice(stanza.end);
-        const caret = stanza.start + authored.length;
+            text.slice(0, sourceStart) + authored + text.slice(stanza.end);
+        const caret = sourceStart + authored.length;
         elements.composition.setSelectionRange(caret, caret);
     }
 
@@ -1322,8 +1380,21 @@
 
         const oldActive = stanzaAtOffset(oldStanzas, caretOffset);
         const newActive = stanzaAtOffset(newStanzas, caretOffset);
-        if (!nextSelections[newActive] && oldSelections[oldActive]) {
-            copyStanzaState(oldActive, newActive);
+        const previouslyActive = Math.max(
+            0,
+            Math.min(state.activeStanzaIndex, oldStanzas.length - 1)
+        );
+        const selectedOldIndex = Object.keys(oldSelections)
+            .map(Number)
+            .find((index) => Number.isInteger(index) && oldSelections[index]);
+        const sourceOldIndex = oldSelections[previouslyActive]
+            ? previouslyActive
+            : oldSelections[oldActive]
+                ? oldActive
+                : selectedOldIndex;
+        if (sourceOldIndex !== undefined &&
+            !nextSelections[newActive] && oldSelections[sourceOldIndex]) {
+            copyStanzaState(sourceOldIndex, newActive);
         }
 
         state.selections = nextSelections;
@@ -1436,23 +1507,54 @@
         const hasStanzas = stanzas.length > 0;
 
         elements["empty-analysis"].hidden = hasStanzas;
-        elements["analysis-content"].hidden = !hasStanzas;
+        elements["analysis-content"].hidden = false;
         elements["previous-stanza"].disabled = !hasStanzas || state.activeStanzaIndex <= 0;
         elements["next-stanza"].disabled = !hasStanzas ||
             state.activeStanzaIndex >= stanzas.length - 1;
 
         if (!hasStanzas) {
-            elements["analysis-title"].textContent = "—";
-            elements["selected-meter-reference"].hidden = true;
+            const selectedMeter = meterForId(state.selections[0]);
+            elements["analysis-title"].textContent = t("chooseMeterFirst");
+            elements["pattern-block"].hidden = true;
+            elements["suggestion-heading"].hidden = true;
+            elements["candidate-list"].hidden = true;
+            elements["candidate-list"].replaceChildren();
+            elements["selected-meter-reference"].hidden = !selectedMeter;
             elements["show-template"].checked = false;
+            elements["show-template"].disabled = true;
             elements["template-mode-picker"].hidden = true;
             elements["prasa-summary"].hidden = true;
             elements["prasa-summary"].replaceChildren();
+            if (selectedMeter) {
+                elements["selected-meter-name"].textContent = selectedMeter.name;
+                elements["selected-meter-signature"].replaceChildren(
+                    ...selectedMeter.patterns.map((pattern, index, patterns) => {
+                        const line = document.createElement("span");
+                        line.textContent = patterns.length > 1
+                            ? `${index + 1}. ${pattern}`
+                            : pattern;
+                        return line;
+                    })
+                );
+            } else {
+                elements["selected-meter-name"].textContent = "";
+                elements["selected-meter-signature"].replaceChildren();
+            }
+            filterMeterOptions(elements["meter-search"].value);
+            elements["meter-select"].value = selectedMeter ? selectedMeter.id : "";
+            elements["validation-summary"].classList.remove("has-errors");
+            elements["validation-summary"].textContent = selectedMeter
+                ? t("meterReady", { meter: selectedMeter.name })
+                : t("noMeterSelected");
             renderWholeVerseTemplate();
             renderStrongTemplate();
             return;
         }
 
+        elements["pattern-block"].hidden = false;
+        elements["suggestion-heading"].hidden = false;
+        elements["candidate-list"].hidden = false;
+        elements["show-template"].disabled = false;
         const stanza = stanzas[state.activeStanzaIndex];
         elements["analysis-title"].textContent = t("stanza", {
             number: state.activeStanzaIndex + 1,
@@ -1627,6 +1729,15 @@
 
     function selectMeter(meterId) {
         if (!state.analysis || !state.analysis.stanzas[state.activeStanzaIndex]) {
+            if (meterId) {
+                state.selections[0] = meterId;
+            } else {
+                delete state.selections[0];
+                delete state.templates[0];
+                delete state.templateModes[0];
+            }
+            renderAnalysisPanel();
+            scheduleSave();
             return;
         }
         const currentMeterId = state.selections[state.activeStanzaIndex] || "";
@@ -1744,9 +1855,12 @@
 
     function analysisUrl() {
         const url = new URL("https://chandas.org/");
-        url.searchParams.set("v", "2");
+        url.searchParams.set("v", "3");
         url.searchParams.set("verse", authoredCompositionText());
         const stanzas = state.analysis ? state.analysis.stanzas : [];
+        if (!stanzas.length && state.selections[0]) {
+            url.searchParams.set("meter", state.selections[0]);
+        }
         stanzas.forEach((stanza, index) => {
             const meterId = state.selections[stanza.index] ||
                 stanza.selectedMeterId;

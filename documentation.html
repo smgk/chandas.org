@@ -39,10 +39,12 @@ SPDX-License-Identifier: GPL-3.0-only
 
         <h2>Choose a meter</h2>
         <p>
-            Chandas.org suggests likely meters while you type. Select one to check
-            the active stanza, or use <em>Choose any meter</em> to search the
-            full catalog. Ordinary Roman spelling works even when the displayed
-            name has scholarly diacritics.
+            You may choose a meter before typing anything; it waits patiently
+            and applies to the first stanza when you begin. Chandas.org also
+            suggests likely meters while you type. Select one to check the
+            active stanza, or use <em>Choose any meter</em> to search the full
+            catalog. Ordinary Roman spelling works even when the displayed name
+            has scholarly diacritics.
         </p>
         <p>
             Each blank-line-separated stanza may have its own meter. Use
@@ -52,18 +54,19 @@ SPDX-License-Identifier: GPL-3.0-only
         <p>
             Kannada Kanda is listed separately from Āryāgīti. Chandas checks
             its four lines, sixteen four-mātrā gaṇas, special sixth and
-            fourteenth gaṇas, required Guru endings, and conditional yati.
+            fourteenth gaṇas, required Guru endings, conditional yati, and
+            dvitīyākṣara-prāsa.
             The rule set remains marked as possible—not exact—until its golden
-            corpus is reviewed, and prāsa is not checked yet.
+            corpus and historical prāsa variants are reviewed.
         </p>
         <p>
             Pañcamātrā Chaupadi is available in the familiar
             <em>Mankuthimmana Kagga</em> form. Chandas checks the four-line
-            written frame as <code>5555 / 5553 / 5555 / 5551</code>, while
-            keeping pādānta lengthening, śithila-dvitva, prāsa, and broader
-            historical Chaupadi variants visibly provisional. In other words,
-            it knows this Kagga gait without claiming that every four-legged
-            creature is the same horse.
+            written frame as <code>5555 / 5553 / 5555 / 5551</code>, opening
+            dvitīyākṣara-prāsa, and ending antya-prāsa, while keeping pādānta
+            lengthening, śithila-dvitva, and broader historical variants
+            visibly provisional. In other words, it knows this Kagga gait
+            without claiming that every four-legged creature is the same horse.
         </p>
         <p>
             Utsāha, Mandānila, and Lalita Ragaḷe are repeatable-line meters,
@@ -112,9 +115,11 @@ SPDX-License-Identifier: GPL-3.0-only
             selected meter and Ghost/Strong choice using numbered parameters
             such as <code>meter1</code> and <code>template1</code>. Empty
             Strong positions stay model state rather than authored characters,
-            while filled out-of-order positions retain their slots. Guide
-            symbols stay out of the link. This is the honest, plain URL
-            version, so a generous poem may produce a URL with similarly
+            while filled out-of-order positions retain their slots. Leading
+            and interior blank lines are preserved too, so a samasyā-pūraṇa
+            link containing only its final pāda does not promote it to line
+            one. Guide symbols stay out of the link. This is the honest, plain
+            URL version, so a generous poem may produce a URL with similarly
             generous proportions.
         </p>
         <p>
@@ -162,7 +167,9 @@ SPDX-License-Identifier: GPL-3.0-only
         <p>
             Strong drafts, including deliberately empty positions, recover on
             this device. Switching back to <em>Ghost</em> keeps the authored
-            text. Copy and Share include only what you typed. Structural,
+            text and meaningful blank rows. Copy and Share include only what
+            you typed, plus the line breaks needed to keep a later pāda later;
+            analysis links also retain every empty Strong slot. Structural,
             mātrā, and aṃśa meters keep Ghost guidance until their strong
             layouts have completed the same rule and corpus review as their
             detectors.

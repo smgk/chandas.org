@@ -36,9 +36,10 @@ post-MVP track**, not a distant “more meters someday” item.
 - Per-line syllable and mātrā totals, inline violations, meter ranking, and
   ghost templates.
 - Fixed-vṛtta Strong templates with arbitrary-position entry, local recovery,
-  authored-text-only copy/share, and Ghost/Strong switching.
-- One-shot URL verse import with recovered-draft appending and optional
-  per-stanza meter and template selection.
+  authored-text-only copy/share, preserved blank-row placement, and
+  Ghost/Strong switching.
+- One-shot URL verse import with exact line-break preservation,
+  recovered-draft appending, and optional per-stanza meter/template selection.
 
 The UI must not label a result “exact Kanda,” “exact Ragale,” or “exact
 Ṣaṭpadi” until the relevant internal gaṇa, line-structure, and exception rules

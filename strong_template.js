@@ -19,7 +19,7 @@
 }(typeof globalThis !== "undefined" ? globalThis : this, function buildStrongTemplate(Chandas) {
     "use strict";
 
-    const MODEL_VERSION = 2;
+    const MODEL_VERSION = 3;
 
     function fixedPatterns(meter) {
         if (!meter || meter.kind !== "fixed") {
@@ -82,8 +82,15 @@
             return null;
         }
         const stanzaLines = stanza && Array.isArray(stanza.lines) ? stanza.lines : [];
+        const lineOffset = Math.max(
+            0,
+            Math.min(
+                Number(metadata && metadata.lineOffset) || 0,
+                patterns.length - 1
+            )
+        );
         const lines = patterns.map((pattern, lineIndex) => {
-            const sourceLine = stanzaLines[lineIndex];
+            const sourceLine = stanzaLines[lineIndex - lineOffset];
             const units = sourceLine
                 ? authoredUnits(sourceLine.text, sourceLine.start, sourceLine.script)
                 : [];
@@ -108,6 +115,9 @@
             meterName: meter.name,
             catalogVersion: String(metadata && metadata.catalogVersion || ""),
             analysisVersion: String(metadata && metadata.analysisVersion || ""),
+            sourceStart: Number.isFinite(metadata && metadata.sourceStart)
+                ? metadata.sourceStart
+                : Number(stanza && stanza.start) || 0,
             lines
         };
     }
@@ -208,10 +218,12 @@
         if (!draft || !Array.isArray(draft.lines)) {
             return "";
         }
-        return draft.lines
-            .map((line) => line.slots.join(""))
-            .filter((line) => line.length > 0)
-            .join("\n");
+        const lines = draft.lines.map((line) => line.slots.join(""));
+        let finalAuthoredLine = lines.length - 1;
+        while (finalAuthoredLine >= 0 && lines[finalAuthoredLine].length === 0) {
+            finalAuthoredLine -= 1;
+        }
+        return lines.slice(0, finalAuthoredLine + 1).join("\n");
     }
 
     function inspectSlot(value, expected) {

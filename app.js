@@ -49,6 +49,8 @@
             chooseMeterFirst: "Choose a meter or begin writing",
             pattern: "Current pattern",
             matras: "Mātrās by pāda",
+            realizedAmsha: "Realized aṃśa: {scan}",
+            recitalSubstitutions: "{count} reviewed recital-dependent gaṇa substitution(s) are shown in the realized aṃśa scan.",
             selectedMeterReference: "Selected meter",
             closestMeters: "Closest meters",
             suggestionNote: "Suggestions adjust while you type.",
@@ -159,6 +161,8 @@
             chooseMeterFirst: "ಛಂದಸ್ಸನ್ನು ಆರಿಸಿ ಅಥವಾ ಬರೆಯಲು ಆರಂಭಿಸಿ",
             pattern: "ಪ್ರಸ್ತುತ ಗಣ ವಿನ್ಯಾಸ",
             matras: "ಪಾದದ ಮಾತ್ರೆಗಳು",
+            realizedAmsha: "ಬಳಕೆಯಾದ ಅಂಶಗಣ: {scan}",
+            recitalSubstitutions: "ಬಳಕೆಯಾದ ಅಂಶಗಣದ ವಿನ್ಯಾಸದಲ್ಲಿ ಪರಿಶೀಲಿತ {count} ಗಾಯನಾಧಾರಿತ ಪರ್ಯಾಯ ಗಣಗಳಿವೆ.",
             selectedMeterReference: "ಆಯ್ದ ಛಂದಸ್ಸು",
             closestMeters: "ಸಮೀಪದ ಛಂದಸ್ಸುಗಳು",
             suggestionNote: "ಬರೆಯುತ್ತಿದ್ದಂತೆ ಸೂಚನೆಗಳು ಬದಲಾಗುತ್ತವೆ.",
@@ -267,6 +271,7 @@
             "language", "new-draft", "app-update", "copy", "share", "analysis-title",
             "previous-stanza", "next-stanza", "empty-analysis", "analysis-content",
             "pattern-block", "active-pattern", "active-matras",
+            "active-amsha-realization",
             "selected-meter-reference", "selected-meter-name",
             "selected-meter-signature", "candidate-list", "meter-picker",
             "suggestion-heading",
@@ -1561,6 +1566,8 @@
             const selectedMeter = meterForId(state.selections[0]);
             elements["analysis-title"].textContent = t("chooseMeterFirst");
             elements["pattern-block"].hidden = true;
+            elements["active-amsha-realization"].hidden = true;
+            elements["active-amsha-realization"].textContent = "";
             elements["suggestion-heading"].hidden = true;
             elements["candidate-list"].hidden = true;
             elements["candidate-list"].replaceChildren();
@@ -1609,6 +1616,16 @@
         elements["active-matras"].textContent = stanza.matraPattern.length
             ? `${t("matras")}: ${stanza.matraPattern.join(" | ")}`
             : "";
+        const realizedAmsha = (stanza.realizedAmshaScan || [])
+            .filter(Boolean);
+        elements["active-amsha-realization"].hidden =
+            realizedAmsha.length === 0;
+        elements["active-amsha-realization"].textContent =
+            realizedAmsha.length
+                ? t("realizedAmsha", {
+                    scan: realizedAmsha.join(" · ")
+                })
+                : "";
 
         const selectedReference = elements["selected-meter-reference"];
         selectedReference.hidden = !stanza.selectedMeter;
@@ -1721,6 +1738,11 @@
                 missing: stanza.missingCount
             });
             summary.classList.add("has-errors");
+        }
+        if (stanza.substitutionCount) {
+            summary.append(` ${t("recitalSubstitutions", {
+                count: stanza.substitutionCount
+            })}`);
         }
         renderPrasaSummary(stanza);
         renderWholeVerseTemplate();

@@ -994,18 +994,63 @@
         return gap && METRIC_BOUNDARY_RE.test(gap) ? 1 : 0;
     }
 
-    function amshaSlotPatternOptions(slot) {
-        return amshaSlotClasses(slot).flatMap((amshaClass) => {
+    function amshaSubstitutionRules(
+        meter,
+        expectedClass,
+        padaIndex,
+        slotIndex
+    ) {
+        return (meter && Array.isArray(meter.amshaSubstitutions)
+            ? meter.amshaSubstitutions
+            : []).filter((rule) =>
+            String(rule.expectedClass || "").toUpperCase() === expectedClass &&
+            (!Array.isArray(rule.padas) ||
+                rule.padas.includes(padaIndex + 1)) &&
+            (!Array.isArray(rule.localGroups) ||
+                rule.localGroups.includes(slotIndex + 1)));
+    }
+
+    function amshaSlotPatternOptions(slot, meter, padaIndex, slotIndex) {
+        const canonical = amshaSlotClasses(slot).flatMap((amshaClass) => {
             const patterns = AMSHA_PATTERNS[amshaClass] || [amshaClass];
             return patterns.map((pattern) => ({
                 amshaClass,
+                canonicalClass: amshaClass,
+                isSubstitution: false,
+                recitalPolicy: "standard",
                 pattern
             }));
         });
+        const substitutions = amshaSlotClasses(slot).flatMap((expectedClass) =>
+            amshaSubstitutionRules(
+                meter,
+                expectedClass,
+                padaIndex,
+                slotIndex
+            )
+                .flatMap((rule) => {
+                    const actualClass = String(rule.actualClass || "").toUpperCase();
+                    const patterns = AMSHA_PATTERNS[actualClass] || [];
+                    return patterns.map((pattern) => ({
+                        amshaClass: actualClass,
+                        canonicalClass: expectedClass,
+                        isSubstitution: true,
+                        recitalPolicy: String(rule.karshana || "none"),
+                        realizedMatras: Number(rule.realizedMatras) || 0,
+                        realization: String(rule.realization || "recital-dependent"),
+                        pattern
+                    }));
+                }));
+        return canonical.concat(substitutions);
     }
 
-    function amshaSlotPatterns(slot) {
-        return Array.from(new Set(amshaSlotPatternOptions(slot)
+    function amshaSlotPatterns(slot, meter, padaIndex, slotIndex) {
+        return Array.from(new Set(amshaSlotPatternOptions(
+            slot,
+            meter,
+            padaIndex,
+            slotIndex
+        )
             .map((option) => option.pattern)));
     }
 
@@ -1014,7 +1059,8 @@
     }
 
     function amshaKarshanaSyllables(group) {
-        if (!AMSHA_PATTERNS[group.actualClass]) {
+        if (!AMSHA_PATTERNS[group.actualClass] ||
+            group.recitalPolicy === "none") {
             return [];
         }
         const initialAmshaLength = group.pattern.startsWith("LL") ? 2 : 1;
@@ -1071,6 +1117,7 @@
         return {
             ...details,
             groups,
+            substitutionCount: state.substitutionCount || 0,
             karshanaSyllables,
             karshanaAmbiguous: Boolean(state.recitalVariantsTruncated) ||
                 variants.length > 1,
@@ -1080,11 +1127,18 @@
         };
     }
 
-    function matchAmshaPada(pada, slots, globalGroupOffset) {
+    function matchAmshaPada(
+        pada,
+        slots,
+        globalGroupOffset,
+        meter,
+        padaIndex
+    ) {
         const actual = pada.pattern;
         let states = [{
             position: 0,
             boundaryScore: 0,
+            substitutionCount: 0,
             groups: [],
             recitalVariants: new Set([""]),
             recitalVariantsTruncated: false
@@ -1092,7 +1146,12 @@
         const completedLevels = [states];
 
         for (let slotIndex = 0; slotIndex < slots.length; slotIndex += 1) {
-            const options = amshaSlotPatternOptions(slots[slotIndex]);
+            const options = amshaSlotPatternOptions(
+                slots[slotIndex],
+                meter,
+                padaIndex,
+                slotIndex
+            );
             const nextByPosition = new Map();
             for (const state of states) {
                 for (const option of options) {
@@ -1105,7 +1164,12 @@
                         localIndex: slotIndex + 1,
                         globalIndex: globalGroupOffset + slotIndex + 1,
                         expectedClass: amshaGroupLabel(slots[slotIndex]),
+                        canonicalClass: option.canonicalClass,
                         actualClass: option.amshaClass,
+                        isSubstitution: option.isSubstitution,
+                        recitalPolicy: option.recitalPolicy,
+                        realizedMatras: option.realizedMatras || 0,
+                        realization: option.realization || "",
                         pattern,
                         complete: true,
                         overrun: false,
@@ -1115,6 +1179,8 @@
                         position: end,
                         boundaryScore: state.boundaryScore +
                             metricalBoundaryScore(pada, end),
+                        substitutionCount: state.substitutionCount +
+                            (option.isSubstitution ? 1 : 0),
                         groups: state.groups.concat(group),
                         recitalVariants: extendKarshanaVariants(
                             state.recitalVariants,
@@ -1125,10 +1191,15 @@
                     };
                     const previous = nextByPosition.get(end);
                     if (!previous ||
-                        candidate.boundaryScore > previous.boundaryScore) {
+                        candidate.substitutionCount <
+                            previous.substitutionCount ||
+                        (candidate.substitutionCount ===
+                            previous.substitutionCount &&
+                            candidate.boundaryScore > previous.boundaryScore)) {
                         nextByPosition.set(end, candidate);
-                    } else if (candidate.boundaryScore ===
-                        previous.boundaryScore) {
+                    } else if (candidate.substitutionCount ===
+                        previous.substitutionCount &&
+                        candidate.boundaryScore === previous.boundaryScore) {
                         previous.recitalVariantsTruncated =
                             previous.recitalVariantsTruncated ||
                             candidate.recitalVariantsTruncated ||
@@ -1160,7 +1231,10 @@
 
         const completeWithExtra = states
             .filter((state) => state.groups.length === slots.length)
-            .sort((left, right) => right.position - left.position)[0];
+            .sort((left, right) =>
+                right.position - left.position ||
+                left.substitutionCount - right.substitutionCount ||
+                right.boundaryScore - left.boundaryScore)[0];
         if (completeWithExtra && completeWithExtra.position < actual.length) {
             return amshaMatchResult(completeWithExtra, {
                 ruleFailures: actual.length - completeWithExtra.position,
@@ -1179,20 +1253,39 @@
                 const remaining = actual.slice(state.position);
                 const nextSlot = slots[state.groups.length];
                 const isPrefix = remaining.length === 0 ||
-                    (nextSlot && amshaSlotPatterns(nextSlot)
+                    (nextSlot && amshaSlotPatterns(
+                        nextSlot,
+                        meter,
+                        padaIndex,
+                        state.groups.length
+                    )
                         .some((pattern) => pattern.startsWith(remaining)));
                 if (!isPrefix) {
                     continue;
                 }
                 if (!bestPartial || state.position > bestPartial.position ||
                     (state.position === bestPartial.position &&
-                        state.groups.length > bestPartial.groups.length)) {
+                        state.groups.length > bestPartial.groups.length) ||
+                    (state.position === bestPartial.position &&
+                        state.groups.length === bestPartial.groups.length &&
+                        state.substitutionCount <
+                            bestPartial.substitutionCount) ||
+                    (state.position === bestPartial.position &&
+                        state.groups.length === bestPartial.groups.length &&
+                        state.substitutionCount ===
+                            bestPartial.substitutionCount &&
+                        state.boundaryScore > bestPartial.boundaryScore)) {
                     bestPartial = state;
                 }
             }
         }
         if (bestPartial && (bestPartial.position === actual.length ||
-            amshaSlotPatterns(slots[bestPartial.groups.length] || [])
+            amshaSlotPatterns(
+                slots[bestPartial.groups.length] || [],
+                meter,
+                padaIndex,
+                bestPartial.groups.length
+            )
                 .some((pattern) => pattern.startsWith(
                     actual.slice(bestPartial.position))))) {
             return amshaMatchResult(bestPartial, {
@@ -1206,9 +1299,12 @@
         const allStates = completedLevels.flat();
         const best = allStates.sort((left, right) =>
             right.position - left.position ||
-            right.groups.length - left.groups.length)[0] || {
+            right.groups.length - left.groups.length ||
+            left.substitutionCount - right.substitutionCount ||
+            right.boundaryScore - left.boundaryScore)[0] || {
             position: 0,
             boundaryScore: 0,
+            substitutionCount: 0,
             groups: [],
             recitalVariants: new Set([""]),
             recitalVariantsTruncated: false
@@ -1261,6 +1357,7 @@
         const groupsByPada = [];
         const completePadas = [];
         const karshanaExtensions = [];
+        const amshaSubstitutions = [];
         let karshanaAmbiguityCount = 0;
         const recitalPolicy = meter.recitalPolicy &&
             meter.recitalPolicy.type === "noninitial-laghu-karshana"
@@ -1288,7 +1385,13 @@
                 continue;
             }
 
-            const matched = matchAmshaPada(pada, slots, globalGroupOffset);
+            const matched = matchAmshaPada(
+                pada,
+                slots,
+                globalGroupOffset,
+                meter,
+                padaIndex
+            );
             groupsByPada[padaIndex] = matched.groups;
             completePadas[padaIndex] = matched.missingCount === 0;
             ruleFailures += matched.ruleFailures;
@@ -1303,6 +1406,21 @@
                     : []
             );
             for (const group of matched.groups) {
+                if (group.isSubstitution) {
+                    const first = group.syllables[0];
+                    const last = group.syllables.at(-1);
+                    amshaSubstitutions.push({
+                        pada: padaIndex + 1,
+                        group: group.localIndex,
+                        expectedClass: group.canonicalClass,
+                        actualClass: group.actualClass,
+                        realizedMatras: group.realizedMatras,
+                        realization: group.realization,
+                        karshana: group.recitalPolicy,
+                        start: first ? first.start : pada.start,
+                        end: last ? last.end : pada.start
+                    });
+                }
                 for (const syllable of amshaKarshanaSyllables(group)) {
                     if (!certainStarts.has(syllable.start)) {
                         continue;
@@ -1373,9 +1491,22 @@
         if (result.status === "exact" && meter.ruleCompleteness !== "complete") {
             result.status = "compatible";
         }
+        if (amshaSubstitutions.length) {
+            result.status = result.status === "exact"
+                ? "compatible"
+                : result.status;
+            result.score += (amshaSubstitutions.length * 0.01) /
+                Math.max(1, expectedUnits);
+        }
         result.prasa = prasa;
         result.karshanaExtensions = karshanaExtensions;
         result.karshanaAmbiguityCount = karshanaAmbiguityCount;
+        result.canonicalAmshaScan = expectedPadas.map((slots) =>
+            slots.map(amshaGroupLabel).join(""));
+        result.realizedAmshaScan = groupsByPada.map((groups) =>
+            (groups || []).map((group) => group.actualClass).join(""));
+        result.amshaSubstitutions = amshaSubstitutions;
+        result.substitutionCount = amshaSubstitutions.length;
         return result;
     }
 
@@ -2134,6 +2265,8 @@
             statusRank[left.status] - statusRank[right.status] ||
             (completenessRank[left.ruleCompleteness] ?? 1) -
                 (completenessRank[right.ruleCompleteness] ?? 1) ||
+            (left.substitutionCount || 0) -
+                (right.substitutionCount || 0) ||
             left.score - right.score ||
             left.distance - right.distance ||
             left.name.localeCompare(right.name));
@@ -2326,6 +2459,32 @@
                     Array.isArray(structuralValidation.sungExtensions)
                     ? structuralValidation.sungExtensions.length
                     : 0,
+                canonicalAmshaScan: structuralValidation &&
+                    Array.isArray(structuralValidation.canonicalAmshaScan)
+                    ? structuralValidation.canonicalAmshaScan
+                    : detectedKarshana &&
+                        Array.isArray(detectedKarshana.canonicalAmshaScan)
+                        ? detectedKarshana.canonicalAmshaScan
+                        : [],
+                realizedAmshaScan: structuralValidation &&
+                    Array.isArray(structuralValidation.realizedAmshaScan)
+                    ? structuralValidation.realizedAmshaScan
+                    : detectedKarshana &&
+                        Array.isArray(detectedKarshana.realizedAmshaScan)
+                        ? detectedKarshana.realizedAmshaScan
+                        : [],
+                amshaSubstitutions: structuralValidation &&
+                    Array.isArray(structuralValidation.amshaSubstitutions)
+                    ? structuralValidation.amshaSubstitutions
+                    : detectedKarshana &&
+                        Array.isArray(detectedKarshana.amshaSubstitutions)
+                        ? detectedKarshana.amshaSubstitutions
+                        : [],
+                substitutionCount: structuralValidation
+                    ? structuralValidation.substitutionCount || 0
+                    : detectedKarshana
+                        ? detectedKarshana.substitutionCount || 0
+                        : 0,
                 karshanaCount: structuralValidation &&
                     Array.isArray(structuralValidation.karshanaExtensions)
                     ? structuralValidation.karshanaExtensions.length
@@ -2349,7 +2508,7 @@
 
         return {
             text: originalText,
-            analysisVersion: "2.9.0",
+            analysisVersion: "2.10.0",
             catalogVersion: catalog && catalog.structuralCatalogVersion
                 ? String(catalog.structuralCatalogVersion)
                 : "",

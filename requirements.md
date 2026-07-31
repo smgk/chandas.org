@@ -407,12 +407,15 @@ recommended, and optional behavior.
 10. For an aṃśa meter, the guide MUST show its Brahma/Viṣṇu/Rudra gaṇa frame
     and accepted cataloged alternatives rather than inventing fixed syllable
     weights.
-11. The guide MUST follow the stanza's selected meter and MUST update or close
+11. The live analysis of an aṃśa meter MUST keep its canonical frame separate
+    from the realized gaṇa scan. A cataloged substitute MUST expose both the
+    canonical and observed classes and MUST NOT replace the meter signature.
+12. The guide MUST follow the stanza's selected meter and MUST update or close
    predictably when that selection changes or is cleared.
-12. Showing or hiding the guide MUST NOT move the caret, change wrapping,
+13. Showing or hiding the guide MUST NOT move the caret, change wrapping,
    corrupt IME composition, or interfere with selection, undo, redo, paste,
    highlighting, scrolling, or accessibility.
-13. The first-version ghost template MAY assume sequential free-text
+14. The first-version ghost template MAY assume sequential free-text
    composition. It is not required to let the user fill a later empty metrical
    position while earlier positions remain empty.
 
@@ -682,6 +685,14 @@ analysis result.
 37. Kannada Gītike and a separately native Utsāha form are outside this
     expansion. A name appearing in a historical overview is not sufficient to
     ship a rule without an implementable signature and source.
+38. Chandovatamsa MUST retain `VVVB` as its canonical signature while keeping
+    catalog-scoped recital substitutions separate. A substituted match MUST
+    expose expected and observed gaṇa classes, remain compatible rather than
+    canonical, and rank below an otherwise equal canonical match.
+39. A contracted substitute MUST declare its target sung duration and marker
+    policy. When that policy is unmarked, the analyzer MUST NOT invent a
+    karṣaṇa or modify the authored text. The reviewed four-line realization
+    MUST display as `VVVB / VRVB / VVVV / VVVB`.
 
 ## 7. User Experience and Accessibility
 

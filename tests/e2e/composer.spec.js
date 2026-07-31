@@ -741,6 +741,36 @@ test("shows classical aṃśa karṣaṇa after detection and selection", async 
     await expect(editor).toHaveValue(text);
 });
 
+test("shows the reviewed Chandovatamsa realization without false gaṇa errors", async ({
+    page
+}) => {
+    const text = [
+        "ಕಡಿದಾದ ಕಣಿವೆಯ ಬೆಳ್ಳಿಯೇ? ಕೆನೆಯೇ!",
+        "ಸಿಡಿಲಿನ ಕುಡಿಯ ಒಳನಂಜಿನ ಹನಿಯೇ",
+        "ಕೊಡದಲ್ಲಿ ತುಳುಕಿದೆ ಬುಡದಲ್ಲಿ ಬಳುಕಿದೆ.",
+        "ನೋಡದ ಶಿಖರದ ಮಂಜಿನ ಖನಿಯೇ!"
+    ].join("\n");
+    const editor = page.locator("#composition");
+    await editor.fill(text);
+    await page.locator("#meter-picker summary").click();
+    await page.locator("#meter-search").fill("chandovatamsa");
+    await page.locator("#meter-select")
+        .selectOption("structural:chandovatamsa-nagavarma");
+
+    await expect(page.locator("#selected-meter-signature"))
+        .toContainText("VVVB | VVVB | VVVB | VVVB");
+    await expect(page.locator("#active-amsha-realization")).toHaveText(
+        "Realized aṃśa: VVVB · VRVB · VVVV · VVVB"
+    );
+    await expect(page.locator("#validation-summary"))
+        .toContainText("2 reviewed recital-dependent gaṇa substitution(s)");
+    await expect(page.locator("#highlight-layer .violation")).toHaveCount(1);
+    await expect(page.locator("#highlight-layer .violation")).toHaveText("ನೋ");
+    await expect(page.locator("#highlight-layer .amsha-karshana-marker"))
+        .toHaveCount(18);
+    await expect(editor).toHaveValue(text);
+});
+
 test("marks inferred sung Laghu in folk Tripadi without changing the poem", async ({
     page
 }) => {

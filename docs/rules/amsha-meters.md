@@ -44,6 +44,22 @@ aṃśa class.
 | Akkarike (Nāgavarma) | 4 | `VBVBVR` on each line |
 | Madanavatī (Nāgavarma) | 4 | `VVVVV+G` on each line |
 
+### Chandovatamsa recital realizations
+
+Nāgavarma's `VVVB` remains the canonical signature on every line. The catalog
+also records two positions from a poet-reviewed modern example:
+
+| Position | Canonical | Realized | Sung duration | Display |
+| --- | --- | --- | ---: | --- |
+| Line 2, gaṇa 2 | `V` | `R` | 6 mātrās | contracted; no karṣaṇa |
+| Line 3, gaṇa 4 | `B` | `V` | 4 mātrās | contracted; no karṣaṇa |
+
+The complete realized scan is `VVVB / VRVB / VVVV / VVVB`. These are
+compatible recital-dependent substitutions, not replacements for the
+canonical signature. Canonical matches rank above substituted matches.
+Because the reviewed realization has no pulled letter, the analyzer does not
+invent an avagraha inside either substitute gaṇa.
+
 Tripadi additionally checks Brahma gaṇas 6 and 10, double-Laghu openings at
 gaṇas 7 and 11, yati after gaṇa 2 of line 1, yati after gaṇa 3 of line 2,
 opening dvitīyākṣara-prāsa across all three lines, and its internal recurrence
@@ -63,7 +79,7 @@ aṃśa divisions without choosing one arbitrarily.
 
 Aṃśa meters are sung forms with documented substitution and recitational
 freedom. The current release does not pretend that every such choice can be
-deduced from a short prose rule. Historical prāsa equivalences, melodic
+deduced from a short prose rule. Historical prāsa equivalences, other melodic
 substitutions, Tripadi repetition, folk variation, and substitutions not
 explicitly represented in the catalog remain provisional until a prosody
 expert approves redistributable examples.
@@ -88,6 +104,11 @@ it. Thus:
 - Rudra `GLLL` is displayed as `G Lಽ Lಽ Lಽ`; and
 - in `LLLL`, the opening `LL` is unmarked while the last two Laghus receive
   `ಽ`.
+
+A cataloged contracted substitute is different: its target duration belongs to
+the canonical slot, and no written Laghu receives an avagraha unless the
+reviewed realization identifies one. Chandovatamsa's two encoded substitutes
+therefore remain unmarked.
 
 The guide is shown whenever one of these aṃśa meters is selected. It may also
 appear before selection when exactly one complete aṃśa meter is detected.

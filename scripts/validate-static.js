@@ -143,6 +143,45 @@ for (const meter of structuralCatalog.meters) {
                 }
             }
         }
+        const substitutionTargets = new Set();
+        for (const rule of meter.amshaSubstitutions || []) {
+            const padas = rule && rule.padas;
+            const localGroups = rule && rule.localGroups;
+            if (!Array.isArray(padas) || !padas.length ||
+                !Array.isArray(localGroups) || !localGroups.length ||
+                !["B", "V", "R"].includes(rule.expectedClass) ||
+                !["B", "V", "R"].includes(rule.actualClass) ||
+                rule.expectedClass === rule.actualClass ||
+                rule.realization !== "contracted" ||
+                rule.karshana !== "none" ||
+                !Number.isInteger(rule.realizedMatras) ||
+                rule.realizedMatras < 1 ||
+                padas.some((pada) =>
+                    !Number.isInteger(pada) ||
+                    pada < 1 ||
+                    pada > meter.amshaGroups.length) ||
+                localGroups.some((group) =>
+                    !Number.isInteger(group) || group < 1)) {
+                throw new Error(`${meter.id} has an invalid aṃśa substitution`);
+            }
+            for (const pada of padas) {
+                for (const group of localGroups) {
+                    const canonical = meter.amshaGroups[pada - 1][group - 1];
+                    const canonicalClasses = Array.isArray(canonical)
+                        ? canonical
+                        : [canonical];
+                    const key = `${pada}:${group}:${rule.actualClass}`;
+                    if (!canonical ||
+                        !canonicalClasses.includes(rule.expectedClass) ||
+                        substitutionTargets.has(key)) {
+                        throw new Error(
+                            `${meter.id} has an invalid aṃśa substitution target`
+                        );
+                    }
+                    substitutionTargets.add(key);
+                }
+            }
+        }
         for (const rule of meter.groupRules || []) {
             if (!Array.isArray(rule.globalGroups) ||
                 !(rule.allowedPrefixes || []).every((prefix) => /^[GL]+$/.test(prefix))) {

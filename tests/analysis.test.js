@@ -567,7 +567,7 @@ test("keeps an incomplete structural meter compatible without red violations", (
 
     assert.equal(stanza.violationCount, 0);
     assert.ok(stanza.missingCount > 0);
-    assert.equal(result.analysisVersion, "2.9.0");
+    assert.equal(result.analysisVersion, "2.10.0");
     assert.equal(result.catalogVersion, structuralCatalog.catalogVersion);
 });
 
@@ -662,8 +662,8 @@ test("recognizes the provisional Kannada Kanda characterization fixture", () => 
     );
     assert.equal(stanza.selectedMeter.ruleCompleteness, "provisional-rhythm");
     assert.deepEqual(stanza.selectedMeter.uncheckedRules, ["historical prāsa variants"]);
-    assert.equal(result.analysisVersion, "2.9.0");
-    assert.equal(result.catalogVersion, "4.0.0");
+    assert.equal(result.analysisVersion, "2.10.0");
+    assert.equal(result.catalogVersion, "4.1.0");
 });
 
 test("loads and validates the Pañcamātrā Chaupadi Kagga form", () => {
@@ -905,6 +905,146 @@ test("distinguishes the selected historical aṃśa signatures", () => {
             entry.id === "structural:adivaraha-jayakirti").notes,
         /Jayakīrti/
     );
+});
+
+test("accepts the reviewed Chandovatamsa realizations without inventing karṣaṇa", () => {
+    const text = [
+        "ಕಡಿದಾದ ಕಣಿವೆಯ ಬೆಳ್ಳಿಯೇ? ಕೆನೆಯೇ!",
+        "ಸಿಡಿಲಿನ ಕುಡಿಯ ಒಳನಂಜಿನ ಹನಿಯೇ",
+        "ಕೊಡದಲ್ಲಿ ತುಳುಕಿದೆ ಬುಡದಲ್ಲಿ ಬಳುಕಿದೆ.",
+        "ನೋಡದ ಶಿಖರದ ಮಂಜಿನ ಖನಿಯೇ!"
+    ].join("\n");
+    const stanza = Chandas.analyzeComposition(
+        text,
+        combinedCatalog,
+        "structural:chandovatamsa-nagavarma"
+    ).stanzas[0];
+    const candidate = stanza.candidates.find((entry) =>
+        entry.id === "structural:chandovatamsa-nagavarma");
+    const violations = stanza.padas.flatMap((pada) => pada.syllables)
+        .filter((syllable) => syllable.violation);
+
+    assert.equal(stanza.missingCount, 0);
+    assert.deepEqual(stanza.canonicalAmshaScan, [
+        "VVVB", "VVVB", "VVVB", "VVVB"
+    ]);
+    assert.deepEqual(stanza.realizedAmshaScan, [
+        "VVVB", "VRVB", "VVVV", "VVVB"
+    ]);
+    assert.deepEqual(
+        stanza.amshaSubstitutions.map((item) => ({
+            pada: item.pada,
+            group: item.group,
+            expectedClass: item.expectedClass,
+            actualClass: item.actualClass,
+            realizedMatras: item.realizedMatras,
+            realization: item.realization,
+            karshana: item.karshana,
+            text: text.slice(item.start, item.end)
+        })),
+        [
+            {
+                pada: 2,
+                group: 2,
+                expectedClass: "V",
+                actualClass: "R",
+                realizedMatras: 6,
+                realization: "contracted",
+                karshana: "none",
+                text: "ಕುಡಿಯ ಒಳ"
+            },
+            {
+                pada: 3,
+                group: 4,
+                expectedClass: "B",
+                actualClass: "V",
+                realizedMatras: 4,
+                realization: "contracted",
+                karshana: "none",
+                text: "ಬಳುಕಿದೆ"
+            }
+        ]
+    );
+    assert.equal(stanza.substitutionCount, 2);
+    assert.equal(candidate.substitutionCount, 2);
+    assert.equal(candidate.status, "approximate");
+    assert.deepEqual(
+        violations.map((syllable) => [
+            syllable.text,
+            syllable.violationReason
+        ]),
+        [["ನೋ", "prasa-opening-weight-mismatch"]]
+    );
+    for (const substitution of stanza.amshaSubstitutions) {
+        const substitutedSyllables = stanza.padas
+            .flatMap((pada) => pada.syllables)
+            .filter((syllable) =>
+                syllable.start >= substitution.start &&
+                syllable.end <= substitution.end);
+        assert.ok(substitutedSyllables.length > 0);
+        assert.equal(
+            substitutedSyllables.some((syllable) =>
+                syllable.recitalExtension),
+            false
+        );
+    }
+    assert.equal(
+        candidate.karshanaExtensions.some((extension) =>
+            [6, 12].includes(extension.globalGroup)),
+        false
+    );
+});
+
+test("ranks canonical Chandovatamsa above its scoped substituted realization", () => {
+    const vishnu = compactTextForPattern("LLLL");
+    const brahma = compactTextForPattern("LLL");
+    const rudra = compactTextForPattern("LLLLL");
+    const canonical = Array.from({ length: 4 }, () =>
+        [vishnu, vishnu, vishnu, brahma].join(" ")).join("\n");
+    const substituted = [
+        [vishnu, vishnu, vishnu, brahma],
+        [vishnu, rudra, vishnu, brahma],
+        [vishnu, vishnu, vishnu, vishnu],
+        [vishnu, vishnu, vishnu, brahma]
+    ].map((groups) => groups.join(" ")).join("\n");
+    const unscoped = [
+        [vishnu, rudra, vishnu, brahma],
+        [vishnu, vishnu, vishnu, brahma],
+        [vishnu, vishnu, vishnu, brahma],
+        [vishnu, vishnu, vishnu, brahma]
+    ].map((groups) => groups.join(" ")).join("\n");
+    const id = "structural:chandovatamsa-nagavarma";
+    const canonicalStanza = Chandas.analyzeComposition(
+        canonical,
+        combinedCatalog,
+        id
+    ).stanzas[0];
+    const substitutedStanza = Chandas.analyzeComposition(
+        substituted,
+        combinedCatalog,
+        id
+    ).stanzas[0];
+    const unscopedStanza = Chandas.analyzeComposition(
+        unscoped,
+        combinedCatalog,
+        id
+    ).stanzas[0];
+    const canonicalCandidate = canonicalStanza.candidates.find((entry) =>
+        entry.id === id);
+    const substitutedCandidate = substitutedStanza.candidates.find((entry) =>
+        entry.id === id);
+
+    assert.equal(canonicalStanza.violationCount, 0);
+    assert.equal(canonicalCandidate.substitutionCount, 0);
+    assert.equal(substitutedStanza.violationCount, 0);
+    assert.equal(substitutedStanza.missingCount, 0);
+    assert.equal(substitutedCandidate.status, "compatible");
+    assert.equal(substitutedCandidate.substitutionCount, 2);
+    assert.ok(canonicalCandidate.score < substitutedCandidate.score);
+    assert.ok(unscopedStanza.violationCount > 0);
+    assert.notDeepEqual(unscopedStanza.realizedAmshaScan, [
+        "VRVB", "VVVB", "VVVB", "VVVB"
+    ]);
 });
 
 test("validates the added historical Tripadi, Chaupadi, Ṣaṭpadi, and song frames", () => {

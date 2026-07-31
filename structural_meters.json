@@ -1,5 +1,5 @@
 {
-  "catalogVersion": "4.0.0",
+  "catalogVersion": "4.1.0",
   "copyright": "Copyright © 2025–2026 Ganesh Krishna Shankarathota",
   "license": "GPL-3.0-only",
   "description": "Structural, mātrā, and aṃśa meter rules that cannot be represented as one fixed Guru/Laghu string.",
@@ -983,7 +983,7 @@
         "VVVB | VVVB | VVVB | VVVB"
       ],
       "ruleCompleteness": "provisional-rhythm",
-      "uncheckedRules": ["historical prāsa variants", "documented gaṇa substitutions"],
+      "uncheckedRules": ["historical prāsa variants", "other gaṇa substitutions"],
       "sourceRef": "historicalKannadaSource",
       "recitalPolicy": {
         "type": "noninitial-laghu-karshana",
@@ -997,12 +997,34 @@
         ["V", "V", "V", "B"],
         ["V", "V", "V", "B"]
       ],
+      "amshaSubstitutions": [
+        {
+          "padas": [2],
+          "localGroups": [2],
+          "expectedClass": "V",
+          "actualClass": "R",
+          "realizedMatras": 6,
+          "realization": "contracted",
+          "karshana": "none",
+          "authority": "poet-reviewed example"
+        },
+        {
+          "padas": [3],
+          "localGroups": [4],
+          "expectedClass": "B",
+          "actualClass": "V",
+          "realizedMatras": 4,
+          "realization": "contracted",
+          "karshana": "none",
+          "authority": "poet-reviewed example"
+        }
+      ],
       "lineRelations": [
         {
           "type": "dvitiyakshara-prasa"
         }
       ],
-      "notes": "Implements Nāgavarma's three Viṣṇu plus one Brahma signature. Jayakīrti's different VBBBB frame is cataloged separately as Ādivarāha."
+      "notes": "Keeps Nāgavarma's three Viṣṇu plus one Brahma signature canonical while accepting the reviewed VRVB second line and VVVV third line as unmarked contracted realizations. Jayakīrti's different VBBBB frame is cataloged separately as Ādivarāha."
     },
     {
       "id": "structural:adivaraha-jayakirti",

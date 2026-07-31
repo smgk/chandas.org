@@ -224,6 +224,20 @@
                 "Aṃśa key",
                 "B = Brahma, V = Viṣṇu, R = Rudra; a slash marks an accepted alternative"
             );
+            if (Array.isArray(meter.amshaSubstitutions) &&
+                meter.amshaSubstitutions.length) {
+                const substitutions = meter.amshaSubstitutions.map((rule) =>
+                    `Line ${rule.padas.join("/")}, gaṇa ` +
+                    `${rule.localGroups.join("/")}: ` +
+                    `${rule.expectedClass}→${rule.actualClass}, ` +
+                    `${rule.realizedMatras} sung mātrās, no karṣaṇa`);
+                addDefinition(
+                    document,
+                    definitions,
+                    "Reviewed recital realizations",
+                    substitutions.join(" · ")
+                );
+            }
         } else {
             const lines = meter.padas.map((pada, index) => {
                 const cadence = pada.cadence

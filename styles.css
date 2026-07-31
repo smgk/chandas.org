@@ -861,6 +861,16 @@ textarea:focus-visible {
     font-variant-numeric: tabular-nums;
 }
 
+.amsha-realization-output {
+    display: block;
+    margin-top: 0.3rem;
+    color: var(--green);
+    font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+    font-size: 0.76rem;
+    font-weight: 650;
+    line-height: 1.45;
+}
+
 .selected-meter-reference {
     margin-top: 0.75rem;
     padding: 0.85rem 1rem;

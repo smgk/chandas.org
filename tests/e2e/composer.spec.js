@@ -613,7 +613,7 @@ test("finds, guides, and validates all three repeatable Ragale forms", async ({ 
     await expect(page.locator("#whole-verse-template .whole-template-line-label"))
         .toHaveText("Each line");
     await expect(page.locator("#whole-verse-template .whole-template-line-guide"))
-        .toHaveText("M 12 · 3|3|3|3");
+        .toHaveText("M 12 · 3|3|3|3 or 3|3|3|3|3|3|3|3");
 
     await editor.fill(`${utsahaLine}\n${utsahaLine.slice(0, -1)}ತ`);
     await expect(page.locator("#highlight-layer .violation")).toHaveCount(1);
@@ -1031,7 +1031,7 @@ test("opens documentation and searches the complete prosody catalog", async ({ p
     await expect(page.locator("h1")).toContainText("How to use Chandas");
     await expect(page.locator("main")).toContainText("tea break");
     await expect(page.locator("#meter-catalog-status"))
-        .toHaveText("1,376 of 1,376 supported meters shown.");
+        .toHaveText("1,389 of 1,389 supported meters shown.");
 
     await page.locator("#meter-catalog-search").fill("anushtup");
     await expect(page.locator(".meter-catalog-item")).toHaveCount(1);

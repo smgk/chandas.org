@@ -62,6 +62,11 @@ if (!structuralCatalog.catalogVersion ||
     structuralCatalog.meters.length === 0) {
     throw new Error("structural_meters.json does not contain a versioned meter list");
 }
+if (!Array.isArray(structuralCatalog.fixedMeters) ||
+    structuralCatalog.fixedMeters.some((entry) =>
+        !Array.isArray(entry) || entry.length < 2 || !/^[GL]+$/.test(entry[1]))) {
+    throw new Error("structural_meters.json contains invalid fixed-vṛtta extensions");
+}
 if (!structuralCatalog.meters.some((meter) => meter.id === "structural:anushtubh-pathya")) {
     throw new Error("structural_meters.json must include pathyā Anuṣṭubh");
 }
@@ -132,7 +137,8 @@ for (const meter of structuralCatalog.meters) {
             }
             for (const slot of line) {
                 const options = Array.isArray(slot) ? slot : [slot];
-                if (!options.length || options.some((item) => !["B", "V", "R"].includes(item))) {
+                if (!options.length ||
+                    options.some((item) => !["B", "V", "R", "G", "L"].includes(item))) {
                     throw new Error(`${meter.id} has an invalid aṃśa slot`);
                 }
             }
@@ -177,8 +183,10 @@ for (const meter of structuralCatalog.meters) {
             }
             options.forEach((option) => {
                 if (!Array.isArray(option) ||
-                    option.length !== primary.length ||
-                    option.reduce((sum, value) => sum + value, 0) !== primaryTotal ||
+                    (!meter.allowDifferentOptionTotals &&
+                        (option.length !== primary.length ||
+                            option.reduce((sum, value) => sum + value, 0) !==
+                                primaryTotal)) ||
                     option.some((value) => !Number.isInteger(value) || value < 1)) {
                     throw new Error(`${meter.id} has an incompatible mātrā-group option`);
                 }
@@ -256,5 +264,6 @@ for (const meter of structuralCatalog.meters) {
 
 console.log(
     `Validated ${required.length} production assets and ` +
-    `${catalog.metres.length + structuralCatalog.meters.length} meters.`
+    `${catalog.metres.length + structuralCatalog.fixedMeters.length +
+        structuralCatalog.meters.length} meters.`
 );

@@ -553,9 +553,9 @@ analysis result.
 8. The catalog MUST support repeating or variable line policies with minimum,
    optional maximum, and guide-preview counts. Such policies MUST validate
    every written line without inventing missing future lines.
-9. The initial Kannada Ragaḷe release MUST include Utsāha as four three-mātrā
-   gaṇas, Mandānila as four four-mātrā gaṇas, and Lalita as four five-mātrā
-   gaṇas on every repeatable line.
+9. The Kannada Ragaḷe catalog MUST include Utsāha as either four or eight
+   three-mātrā gaṇas (12 or 24 mātrās), Mandānila as four four-mātrā gaṇas,
+   and Lalita as four five-mātrā gaṇas on every repeatable line.
 10. Mandānila MUST also accept the reviewed `3+5+3+5` alternative and MUST
     reject a gaṇa beginning `LG` under the encoded lagam-varjya rule.
 11. Ragaḷe validation MUST check pairwise antya-prāsa independently from
@@ -565,9 +565,10 @@ analysis result.
 12. Laghu contributes one mātrā and Guru contributes two mātrās. The engine
    MUST expose the observed total for each pāda and MUST mark the source
    syllable that overruns a required group boundary.
-13. Fixed-pattern entries in `mishra.json` MUST remain unchanged. Structural
-   rules MUST be composed with them at runtime rather than rewriting the source
-   list.
+13. The attributed fixed-pattern entries in `mishra.json` MUST remain
+   unchanged. Sourced fixed-vṛtta extensions and structural rules MUST be
+   versioned separately and composed with that baseline at runtime rather than
+   rewriting the attributed source list.
 14. The quantitative Ṣaṭpadi release MUST include Śara, Kusuma, Bhoga,
     Bhāminī, Parivardhinī, and Vārdhaka as six-line entries. Lines 1, 2, 4,
     and 5 MUST use each form's short frame; lines 3 and 6 MUST use its extended
@@ -658,6 +659,29 @@ analysis result.
     NOT be positioned at the trailing text boundary where it can appear to
     annotate the following syllable. Conjuncts MUST retain shaping as one
     visual akṣara beneath the marker.
+33. The historical Kannada expansion MUST keep identically or similarly named
+    traditions explicit. Chandovatamsa MUST use Nāgavarma's `VVVB` signature;
+    Jayakīrti's `VBBBB` signature MUST be cataloged separately as Ādivarāha.
+    Akkarike MUST use Nāgavarma's `VBVBVR` signature. Madanavatī MUST initially
+    use Nāgavarma's primary `VVVVV+G` signature and name its equal-mātrā
+    `4V+R` division as unchecked until alternative whole-line aṃśa division is
+    deterministic.
+34. The expansion MUST include Eḷe (`VVVV / VBV`), aṃśa Ṣaṭpadi
+    (`VV / VV / VVR`, repeated), Sobagina Sone
+    (`VVVV / VVV / VVVV / VVV`), and Uddaṇḍa Ṣaṭpadi
+    (five/five/eight four-mātrā gaṇas). All MUST retain provisional labels for
+    undocumented substitutions and recitational variants.
+35. Historical mātrā Tripadi (`5555 / 5355 / 535`), historical mātrā
+    Chaupadi (`5553` on four lines), and aṃśa Chaupadi (`VR` on four lines)
+    MUST be distinct catalog choices. They MUST NOT weaken classical aṃśa
+    Tripadi, folk Tripadi, or Kagga-form Pañcamātrā Chaupadi.
+36. The fixed-vṛtta extension MUST include Kannada Campakamāle and
+    Mahāsragdharā as the sourced two-Laghu-initial counterparts of
+    Utpalamālikā and Sragdharā. Their patterns MUST be added outside the
+    attributed `mishra.json` baseline.
+37. Kannada Gītike and a separately native Utsāha form are outside this
+    expansion. A name appearing in a historical overview is not sufficient to
+    ship a rule without an implementable signature and source.
 
 ## 7. User Experience and Accessibility
 

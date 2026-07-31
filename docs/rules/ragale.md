@@ -16,7 +16,7 @@ as exact equivalents.
 
 ## Shared structure
 
-- Each line has four mātrā gaṇas.
+- Each line has a cataloged sequence of mātrā gaṇas.
 - A passage may continue for an unbounded number of lines.
 - Adjacent lines form end-rhyme pairs.
 - Laghu (`L`) contributes one mātrā and Guru (`G`) contributes two.
@@ -31,10 +31,11 @@ unpaired line in a composition still in progress is not marked as missing.
 
 ## Utsāha Ragaḷe
 
-Every line has four three-mātrā gaṇas:
+Every line has either four or eight three-mātrā gaṇas:
 
 ```text
 3 + 3 + 3 + 3 = 12 mātrās
+3 + 3 + 3 + 3 + 3 + 3 + 3 + 3 = 24 mātrās
 ```
 
 ## Mandānila Ragaḷe

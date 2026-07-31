@@ -3,7 +3,8 @@
 **Catalog IDs:** `structural:shara-shatpadi`,
 `structural:kusuma-shatpadi`, `structural:bhoga-shatpadi`,
 `structural:bhamini-shatpadi`, `structural:parivardhini-shatpadi`,
-`structural:vardhaka-shatpadi`  
+`structural:vardhaka-shatpadi`, `structural:uddanda-shatpadi`,
+`structural:amsha-shatpadi`
 **Status:** Provisional rhythmic rules; expert corpus review pending
 
 ## Encoded common frame
@@ -23,6 +24,17 @@ weight are checked across all six lines.
 | Bhāminī | `3+4+3+4` = 14 | `3+4+3+4+3+4+2` = 23 |
 | Parivardhinī | `4+4+4+4` = 16 | `4+4+4+4+4+4+2` = 26 |
 | Vārdhaka | `5+5+5+5` = 20 | `5+5+5+5+5+5+2` = 32 |
+| Uddaṇḍa | `4+4+4+4+4` = 20 | `4×8` = 32 |
+
+Aṃśa Ṣaṭpadi is kept in the same six-line family but is not reduced to mātrā
+totals. Its complete frame is:
+
+```text
+VV / VV / VVR / VV / VV / VVR
+```
+
+The evaluator therefore supplies the same recital-karṣaṇa guidance used by
+other classical aṃśa meters.
 
 ## Still provisional
 

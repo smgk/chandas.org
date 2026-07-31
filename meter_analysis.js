@@ -980,7 +980,8 @@
     function amshaSlotClasses(slot) {
         const classes = Array.isArray(slot) ? slot : [slot];
         return classes.map((item) => String(item || "").toUpperCase())
-            .filter((item) => AMSHA_PATTERNS[item]);
+            .filter((item) =>
+                AMSHA_PATTERNS[item] || item === GURU || item === LAGHU);
     }
 
     function metricalBoundaryScore(pada, syllableIndex) {
@@ -994,11 +995,13 @@
     }
 
     function amshaSlotPatternOptions(slot) {
-        return amshaSlotClasses(slot).flatMap((amshaClass) =>
-            AMSHA_PATTERNS[amshaClass].map((pattern) => ({
+        return amshaSlotClasses(slot).flatMap((amshaClass) => {
+            const patterns = AMSHA_PATTERNS[amshaClass] || [amshaClass];
+            return patterns.map((pattern) => ({
                 amshaClass,
                 pattern
-            })));
+            }));
+        });
     }
 
     function amshaSlotPatterns(slot) {
@@ -1011,6 +1014,9 @@
     }
 
     function amshaKarshanaSyllables(group) {
+        if (!AMSHA_PATTERNS[group.actualClass]) {
+            return [];
+        }
         const initialAmshaLength = group.pattern.startsWith("LL") ? 2 : 1;
         return group.syllables.slice(initialAmshaLength)
             .filter((syllable) => syllable.classification === LAGHU);
@@ -2023,6 +2029,13 @@
             groupsByPada[padaIndex] = selected.matchedGroups || selected.groups;
             completePadas[padaIndex] = selected.missingCount === 0;
             ruleFailures += selected.ruleFailures;
+            ruleFailures += evaluateLineBoundaryRules(
+                pada,
+                groupsByPada[padaIndex],
+                padaIndex,
+                meter,
+                shouldMark
+            );
             missingCount += selected.missingCount;
             sungExtensions.push(...(selected.sungExtensions || []));
             globalGroupOffset += selected.groups.length;
@@ -2336,7 +2349,7 @@
 
         return {
             text: originalText,
-            analysisVersion: "2.8.1",
+            analysisVersion: "2.9.0",
             catalogVersion: catalog && catalog.structuralCatalogVersion
                 ? String(catalog.structuralCatalogVersion)
                 : "",

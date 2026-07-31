@@ -2183,6 +2183,10 @@
         const structuralCatalog = await structuralResponse.json();
         state.catalog = {
             ...fixedCatalog,
+            metres: [
+                ...(fixedCatalog.metres || []),
+                ...(structuralCatalog.fixedMeters || [])
+            ],
             structuralMeters: structuralCatalog.meters,
             structuralCatalogVersion: structuralCatalog.catalogVersion
         };

@@ -359,7 +359,10 @@
             const structuralCatalog = await structuralResponse.json();
             const structural = structuralCatalog.meters.map(structuralMeter)
                 .sort((a, b) => a.name.localeCompare(b.name));
-            const fixed = fixedCatalog.metres.map(fixedMeter)
+            const fixed = [
+                ...(fixedCatalog.metres || []),
+                ...(structuralCatalog.fixedMeters || [])
+            ].map(fixedMeter)
                 .sort((a, b) => a.name.localeCompare(b.name));
             const meters = [...structural, ...fixed];
             document.getElementById("meter-catalog-total").textContent =

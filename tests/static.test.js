@@ -258,7 +258,7 @@ test("the provisional Kanda rule packet and attribution are retained", () => {
     const kanda = catalog.meters.find((meter) =>
         meter.id === "structural:kanda-kannada");
 
-    assert.equal(catalog.catalogVersion, "3.4.0");
+    assert.equal(catalog.catalogVersion, "4.0.0");
     assert.equal(kanda.ruleCompleteness, "provisional-rhythm");
     assert.deepEqual(kanda.uncheckedRules, ["historical prāsa variants"]);
     assert.deepEqual(kanda.lineRelations, [{ type: "dvitiyakshara-prasa" }]);
@@ -272,7 +272,7 @@ test("the provisional Kagga-form Chaupadi packet and references are retained", (
     const chaupadi = catalog.meters.find((meter) =>
         meter.id === "structural:panchamatra-chaupadi-kagga");
 
-    assert.equal(catalog.catalogVersion, "3.4.0");
+    assert.equal(catalog.catalogVersion, "4.0.0");
     assert.equal(chaupadi.ruleCompleteness, "provisional-rhythm");
     assert.deepEqual(chaupadi.padaGroups, [
         [5, 5, 5, 5],
@@ -316,12 +316,15 @@ test("the Ṣaṭpadi and aṃśa milestones retain their catalogs and rule pack
         meter.id.endsWith("-shatpadi"));
     const amsha = catalog.meters.filter((meter) => meter.kind === "amsha");
 
-    assert.equal(catalog.catalogVersion, "3.4.0");
-    assert.equal(shatpadis.length, 6);
-    assert.equal(amsha.length, 7);
+    assert.equal(catalog.catalogVersion, "4.0.0");
+    assert.equal(shatpadis.length, 8);
+    assert.equal(amsha.length, 15);
     shatpadis.forEach((meter) => {
         assert.equal(meter.linePolicy.count, 6);
-        assert.equal(meter.padaGroups.length, 6);
+        assert.equal(
+            (meter.padaGroups || meter.amshaGroups).length,
+            6
+        );
         assert.deepEqual(meter.lineRelations, [{ type: "dvitiyakshara-prasa" }]);
     });
     const tripadi = amsha.find((meter) => meter.id === "structural:tripadi-kannada");
@@ -341,11 +344,47 @@ test("the Ṣaṭpadi and aṃśa milestones retain their catalogs and rule pack
     assert.deepEqual(sangatya.lineRelations, [{ type: "dvitiyakshara-prasa" }]);
     assert.ok(fs.existsSync(path.join(root, "docs", "rules", "shatpadi.md")));
     assert.ok(fs.existsSync(path.join(root, "docs", "rules", "amsha-meters.md")));
-    assert.match(read("documentation.html"), /five Akkara forms/);
+    assert.match(read("documentation.html"), /Akkara forms/);
     assert.match(read("documentation.html"), /Aṃśa meters/);
     assert.match(read("documentation.html"), /G Lಽ Lಽ/);
     assert.match(read("docs/rules/amsha-meters.md"), /Recital karṣaṇa/);
     assert.match(read("requirements.md"), /equally preferred gaṇa divisions/);
+});
+
+test("the historical Kannada expansion retains explicit authorities and variants", () => {
+    const catalog = JSON.parse(read("structural_meters.json"));
+    const ids = new Set(catalog.meters.map((meter) => meter.id));
+    const required = [
+        "structural:ele-kannada",
+        "structural:tripadi-matra-historical",
+        "structural:chaupadi-amsha-kannada",
+        "structural:chaupadi-matra-historical",
+        "structural:amsha-shatpadi",
+        "structural:uddanda-shatpadi",
+        "structural:sobagina-sone",
+        "structural:chandovatamsa-nagavarma",
+        "structural:adivaraha-jayakirti",
+        "structural:akkarike-nagavarma",
+        "structural:madanavati-nagavarma"
+    ];
+    required.forEach((id) => assert.ok(ids.has(id), id));
+
+    const chandovatamsa = catalog.meters.find((meter) =>
+        meter.id === "structural:chandovatamsa-nagavarma");
+    const adivaraha = catalog.meters.find((meter) =>
+        meter.id === "structural:adivaraha-jayakirti");
+    const madanavati = catalog.meters.find((meter) =>
+        meter.id === "structural:madanavati-nagavarma");
+    assert.deepEqual(chandovatamsa.amshaGroups[0], ["V", "V", "V", "B"]);
+    assert.deepEqual(adivaraha.amshaGroups[0], ["V", "B", "B", "B", "B"]);
+    assert.deepEqual(madanavati.amshaGroups[0], ["V", "V", "V", "V", "V", "G"]);
+    assert.deepEqual(catalog.fixedMeters, [
+        ["campakamāle (Kannada)", "LLLLGLGLLLGLLGLLGLGLG"],
+        ["mahāsragdharā (Kannada)", "LLGGGLGGLLLLLLGGLGGLGG"]
+    ]);
+    assert.match(read("docs/rules/amsha-meters.md"), /Chandovatamsa/);
+    assert.match(read("docs/rules/shatpadi.md"), /Uddaṇḍa/);
+    assert.match(read("docs/rules/ragale.md"), /24 mātrās/);
 });
 
 test("folk Tripadi remains separate from classical Tripadi and documents sung marks", () => {

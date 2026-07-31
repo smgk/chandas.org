@@ -1,8 +1,17 @@
 {
-  "catalogVersion": "3.4.0",
+  "catalogVersion": "4.0.0",
   "copyright": "Copyright © 2025–2026 Ganesh Krishna Shankarathota",
   "license": "GPL-3.0-only",
   "description": "Structural, mātrā, and aṃśa meter rules that cannot be represented as one fixed Guru/Laghu string.",
+  "fixedMeters": [
+    ["campakamāle (Kannada)", "LLLLGLGLLLGLLGLLGLGLG"],
+    ["mahāsragdharā (Kannada)", "LLGGGLGGLLLLLLGGLGGLGG"]
+  ],
+  "fixedMeterSource": {
+    "title": "Kannada fixed-vṛtta derivations",
+    "url": "https://kn.wikipedia.org/wiki/ಕನ್ನಡ_ಛಂದಸ್ಸು",
+    "notes": "The cited formulas describe Campakamāle and Mahāsragdharā as the Kannada counterparts formed by replacing the initial Guru of Utpalamālikā and Sragdharā with two Laghus."
+  },
   "meters": [
     {
       "id": "structural:anushtubh-pathya",
@@ -674,6 +683,439 @@
       "notes": "Checks the classical three-gaṇa frame. Optional sung substitutions remain explicitly provisional."
     },
     {
+      "id": "structural:ele-kannada",
+      "name": "eḷe (Kannada)",
+      "aliases": [
+        "ele",
+        "eḷe",
+        "ele padya",
+        "ಎಳೆ",
+        "ಏಳೆ",
+        "ಎಳೆ ಪದ್ಯ"
+      ],
+      "kind": "amsha",
+      "signatureLines": [
+        "2 lines · 4 | 3 aṃśa-gaṇas",
+        "VVVV | VBV; gaṇa 6 is Brahma"
+      ],
+      "ruleCompleteness": "provisional-rhythm",
+      "uncheckedRules": ["historical gaṇa substitutions", "rare prāsa variants"],
+      "sourceRef": "historicalKannadaSource",
+      "recitalPolicy": {
+        "type": "noninitial-laghu-karshana",
+        "marker": "ಽ",
+        "matrasPerMark": 1
+      },
+      "linePolicy": { "type": "fixed", "unit": "line", "count": 2 },
+      "amshaGroups": [
+        ["V", "V", "V", "V"],
+        ["V", "B", "V"]
+      ],
+      "lineBoundaryRules": [
+        {
+          "padas": [1],
+          "afterGroup": 2,
+          "violationReason": "required-yati"
+        }
+      ],
+      "lineRelations": [
+        {
+          "type": "dvitiyakshara-prasa",
+          "internalAnchors": [
+            {
+              "pada": 1,
+              "group": 3,
+              "syllable": 2
+            }
+          ]
+        }
+      ],
+      "notes": "Checks the two-line aṃśa frame, first-line yati, opening dvitīyākṣara-prāsa, and the internal recurrence in the first line's third gaṇa."
+    },
+    {
+      "id": "structural:tripadi-matra-historical",
+      "name": "mātrā tripadi (historical Kannada)",
+      "aliases": [
+        "historical matra tripadi",
+        "classical matra tripadi",
+        "matraa tripadi historical",
+        "ಮಾತ್ರಾ ತ್ರಿಪದಿ",
+        "ಐತಿಹಾಸಿಕ ಮಾತ್ರಾ ತ್ರಿಪದಿ"
+      ],
+      "kind": "matra",
+      "signatureLines": [
+        "3 lines · 20 | 18 | 13 mātrās",
+        "5555 | 5355 | 535"
+      ],
+      "ruleCompleteness": "provisional-rhythm",
+      "uncheckedRules": ["recital variants", "historical gaṇa substitutions"],
+      "sourceRef": "historicalKannadaSource",
+      "linePolicy": { "type": "fixed", "unit": "line", "count": 3 },
+      "padaGroups": [
+        [5, 5, 5, 5],
+        [5, 3, 5, 5],
+        [5, 3, 5]
+      ],
+      "lineBoundaryRules": [
+        {
+          "padas": [1],
+          "afterGroup": 2,
+          "violationReason": "required-yati"
+        },
+        {
+          "padas": [2],
+          "afterGroup": 3,
+          "violationReason": "required-yati"
+        }
+      ],
+      "lineRelations": [
+        {
+          "type": "dvitiyakshara-prasa",
+          "internalAnchors": [
+            {
+              "pada": 1,
+              "group": 3,
+              "syllable": 2
+            }
+          ]
+        }
+      ],
+      "notes": "Represents the historical mātrā-gaṇa Tripadi frame separately from both classical aṃśa Tripadi and the later folk 5555 | 5455 | 545 realization."
+    },
+    {
+      "id": "structural:chaupadi-amsha-kannada",
+      "name": "aṃśa chaupadi (Kannada)",
+      "aliases": [
+        "amsha chaupadi",
+        "amsha choupadi",
+        "amsha chowpadi",
+        "ಅಂಶ ಚೌಪದಿ",
+        "ಅಂಶಗಣ ಚೌಪದಿ"
+      ],
+      "kind": "amsha",
+      "signatureLines": [
+        "4 lines · 2 aṃśa-gaṇas each",
+        "VR | VR | VR | VR"
+      ],
+      "ruleCompleteness": "provisional-rhythm",
+      "uncheckedRules": ["historical prāsa variants", "documented gaṇa substitutions"],
+      "sourceRef": "historicalKannadaSource",
+      "recitalPolicy": {
+        "type": "noninitial-laghu-karshana",
+        "marker": "ಽ",
+        "matrasPerMark": 1
+      },
+      "linePolicy": { "type": "fixed", "unit": "line", "count": 4 },
+      "amshaGroups": [
+        ["V", "R"],
+        ["V", "R"],
+        ["V", "R"],
+        ["V", "R"]
+      ],
+      "lineRelations": [
+        {
+          "type": "dvitiyakshara-prasa"
+        }
+      ],
+      "notes": "Checks the compact V+R aṃśa frame described for Kannada Chaupadi. It remains distinct from Kagga's narrower pañcamātrā form."
+    },
+    {
+      "id": "structural:chaupadi-matra-historical",
+      "name": "mātrā chaupadi (historical Kannada)",
+      "aliases": [
+        "historical matra chaupadi",
+        "matra choupadi",
+        "matra chowpadi",
+        "ಮಾತ್ರಾ ಚೌಪದಿ",
+        "ಮಾತ್ರಾಗಣ ಚೌಪದಿ"
+      ],
+      "kind": "matra",
+      "signatureLines": [
+        "4 lines · 18 mātrās each",
+        "5553 | 5553 | 5553 | 5553"
+      ],
+      "ruleCompleteness": "provisional-rhythm",
+      "uncheckedRules": ["recital variants", "historical prāsa variants"],
+      "sourceRef": "historicalKannadaSource",
+      "linePolicy": { "type": "fixed", "unit": "line", "count": 4 },
+      "padaGroups": [
+        [5, 5, 5, 3],
+        [5, 5, 5, 3],
+        [5, 5, 5, 3],
+        [5, 5, 5, 3]
+      ],
+      "lineRelations": [
+        {
+          "type": "dvitiyakshara-prasa"
+        }
+      ],
+      "notes": "Checks the broader historical 5+5+5+3 mātrā Chaupadi family without conflating it with the modal Kagga stanza."
+    },
+    {
+      "id": "structural:amsha-shatpadi",
+      "name": "aṃśa ṣaṭpadi",
+      "aliases": [
+        "amsha shatpadi",
+        "amsha satpadi",
+        "amshagana shatpadi",
+        "ಅಂಶ ಷಟ್ಪದಿ",
+        "ಅಂಶಗಣ ಷಟ್ಪದಿ"
+      ],
+      "kind": "amsha",
+      "signatureLines": [
+        "6 lines · 2 | 2 | 3 aṃśa-gaṇas, repeated",
+        "VV | VV | VVR / VV | VV | VVR"
+      ],
+      "ruleCompleteness": "provisional-rhythm",
+      "uncheckedRules": ["historical prāsa variants", "documented gaṇa substitutions"],
+      "sourceRef": "historicalKannadaSource",
+      "recitalPolicy": {
+        "type": "noninitial-laghu-karshana",
+        "marker": "ಽ",
+        "matrasPerMark": 1
+      },
+      "linePolicy": { "type": "fixed", "unit": "line", "count": 6 },
+      "amshaGroups": [
+        ["V", "V"],
+        ["V", "V"],
+        ["V", "V", "R"],
+        ["V", "V"],
+        ["V", "V"],
+        ["V", "V", "R"]
+      ],
+      "lineRelations": [
+        {
+          "type": "dvitiyakshara-prasa"
+        }
+      ],
+      "notes": "Checks the complete six-line aṃśa Ṣaṭpadi frame and supplies karṣaṇa guidance for each matched aṃśa."
+    },
+    {
+      "id": "structural:uddanda-shatpadi",
+      "name": "uddaṇḍa ṣaṭpadi",
+      "aliases": [
+        "uddanda shatpadi",
+        "uddaṇḍa shatpadi",
+        "uddanda satpadi",
+        "ಉದ್ದಂಡ ಷಟ್ಪದಿ",
+        "ಉದ್ದಂಡಷಟ್ಪದಿ"
+      ],
+      "kind": "matra",
+      "signatureLines": [
+        "20 | 20 | 32 / 20 | 20 | 32 mātrās",
+        "44444 | 44444 | 44444444, repeated"
+      ],
+      "ruleCompleteness": "provisional-rhythm",
+      "uncheckedRules": ["historical prāsa variants", "śithila-dvitva"],
+      "sourceRef": "historicalKannadaSource",
+      "linePolicy": { "type": "fixed", "unit": "line", "count": 6 },
+      "padaGroups": [
+        [4, 4, 4, 4, 4],
+        [4, 4, 4, 4, 4],
+        [4, 4, 4, 4, 4, 4, 4, 4],
+        [4, 4, 4, 4, 4],
+        [4, 4, 4, 4, 4],
+        [4, 4, 4, 4, 4, 4, 4, 4]
+      ],
+      "groupRules": [
+        {
+          "everyGroup": true,
+          "forbiddenPrefixes": ["LG"],
+          "violationReason": "forbidden-lagam-opening"
+        }
+      ],
+      "lineRelations": [
+        {
+          "type": "dvitiyakshara-prasa"
+        }
+      ],
+      "notes": "Checks the five/five/eight four-mātrā-gaṇa arrangement over all six lines. Literary and recitational variants remain provisional."
+    },
+    {
+      "id": "structural:sobagina-sone",
+      "name": "sobagina sone",
+      "aliases": [
+        "sobagina sone",
+        "sobagina song",
+        "ಸೊಬಗಿನ ಸೋನೆ",
+        "ಸೊಬಗಿನಸೋನೆ"
+      ],
+      "kind": "amsha",
+      "signatureLines": [
+        "4 lines · paired half-verses",
+        "VVVV | VVV / VVVV | VVV"
+      ],
+      "ruleCompleteness": "provisional-rhythm",
+      "uncheckedRules": ["historical prāsa variants", "melodic elongation"],
+      "sourceRef": "historicalKannadaSource",
+      "recitalPolicy": {
+        "type": "noninitial-laghu-karshana",
+        "marker": "ಽ",
+        "matrasPerMark": 1
+      },
+      "linePolicy": { "type": "fixed", "unit": "line", "count": 4 },
+      "amshaGroups": [
+        ["V", "V", "V", "V"],
+        ["V", "V", "V"],
+        ["V", "V", "V", "V"],
+        ["V", "V", "V"]
+      ],
+      "lineRelations": [
+        {
+          "type": "dvitiyakshara-prasa"
+        }
+      ],
+      "notes": "Checks the VVVV/VVV paired pattern and keeps this song form distinct from Sāṅgatya's VVVV/VVB cadence."
+    },
+    {
+      "id": "structural:chandovatamsa-nagavarma",
+      "name": "chandovatamsa (Nāgavarma)",
+      "aliases": [
+        "chandovatamsa",
+        "chandovatamsa nagavarma",
+        "chandovatamsaka",
+        "ಛಂದೋವತಂಸ",
+        "ಛಂದೋವತಂಸಕ"
+      ],
+      "kind": "amsha",
+      "signatureLines": [
+        "Nāgavarma: 4 lines · 4 aṃśa-gaṇas each",
+        "VVVB | VVVB | VVVB | VVVB"
+      ],
+      "ruleCompleteness": "provisional-rhythm",
+      "uncheckedRules": ["historical prāsa variants", "documented gaṇa substitutions"],
+      "sourceRef": "historicalKannadaSource",
+      "recitalPolicy": {
+        "type": "noninitial-laghu-karshana",
+        "marker": "ಽ",
+        "matrasPerMark": 1
+      },
+      "linePolicy": { "type": "fixed", "unit": "line", "count": 4 },
+      "amshaGroups": [
+        ["V", "V", "V", "B"],
+        ["V", "V", "V", "B"],
+        ["V", "V", "V", "B"],
+        ["V", "V", "V", "B"]
+      ],
+      "lineRelations": [
+        {
+          "type": "dvitiyakshara-prasa"
+        }
+      ],
+      "notes": "Implements Nāgavarma's three Viṣṇu plus one Brahma signature. Jayakīrti's different VBBBB frame is cataloged separately as Ādivarāha."
+    },
+    {
+      "id": "structural:adivaraha-jayakirti",
+      "name": "ādivarāha (Jayakīrti)",
+      "aliases": [
+        "adivaraha",
+        "aadivaraaha",
+        "adivaraha jayakirti",
+        "ಆದಿವರಾಹ",
+        "ಆದಿವಾರಾಹ"
+      ],
+      "kind": "amsha",
+      "signatureLines": [
+        "Jayakīrti: 4 lines · 5 aṃśa-gaṇas each",
+        "VBBBB | VBBBB | VBBBB | VBBBB"
+      ],
+      "ruleCompleteness": "provisional-rhythm",
+      "uncheckedRules": ["historical prāsa variants", "documented gaṇa substitutions"],
+      "sourceRef": "historicalKannadaSource",
+      "recitalPolicy": {
+        "type": "noninitial-laghu-karshana",
+        "marker": "ಽ",
+        "matrasPerMark": 1
+      },
+      "linePolicy": { "type": "fixed", "unit": "line", "count": 4 },
+      "amshaGroups": [
+        ["V", "B", "B", "B", "B"],
+        ["V", "B", "B", "B", "B"],
+        ["V", "B", "B", "B", "B"],
+        ["V", "B", "B", "B", "B"]
+      ],
+      "lineRelations": [
+        {
+          "type": "dvitiyakshara-prasa"
+        }
+      ],
+      "notes": "Uses the Jayakīrti VBBBB signature under the distinct Ādivarāha name, avoiding a collision with Nāgavarma's Chandovatamsa."
+    },
+    {
+      "id": "structural:akkarike-nagavarma",
+      "name": "akkarike (Nāgavarma)",
+      "aliases": [
+        "akkarike",
+        "akkarike nagavarma",
+        "aksharike",
+        "ಅಕ್ಕರಿಕೆ",
+        "ಅಕ್ಷರಿಕೆ"
+      ],
+      "kind": "amsha",
+      "signatureLines": [
+        "Nāgavarma: 4 lines · 6 aṃśa-gaṇas each",
+        "VBVBVR | VBVBVR | VBVBVR | VBVBVR"
+      ],
+      "ruleCompleteness": "provisional-rhythm",
+      "uncheckedRules": ["historical yati variants", "documented gaṇa substitutions"],
+      "sourceRef": "historicalKannadaSource",
+      "recitalPolicy": {
+        "type": "noninitial-laghu-karshana",
+        "marker": "ಽ",
+        "matrasPerMark": 1
+      },
+      "linePolicy": { "type": "fixed", "unit": "line", "count": 4 },
+      "amshaGroups": [
+        ["V", "B", "V", "B", "V", "R"],
+        ["V", "B", "V", "B", "V", "R"],
+        ["V", "B", "V", "B", "V", "R"],
+        ["V", "B", "V", "B", "V", "R"]
+      ],
+      "lineRelations": [
+        {
+          "type": "dvitiyakshara-prasa"
+        }
+      ],
+      "notes": "Implements Nāgavarma's V-B-V-B-V-R aṃśa signature. Historical yati placement remains advisory until a larger approved corpus is available."
+    },
+    {
+      "id": "structural:madanavati-nagavarma",
+      "name": "madanavatī (Nāgavarma)",
+      "aliases": [
+        "madanavati",
+        "madanavathi",
+        "madanavati nagavarma",
+        "ಮದನವತಿ",
+        "ಮದನವತೀ"
+      ],
+      "kind": "amsha",
+      "signatureLines": [
+        "Nāgavarma primary form: 4 lines",
+        "VVVVV+G | VVVVV+G | VVVVV+G | VVVVV+G"
+      ],
+      "ruleCompleteness": "provisional-rhythm",
+      "uncheckedRules": ["equivalent 4V+R realization", "historical prāsa variants"],
+      "sourceRef": "historicalKannadaSource",
+      "recitalPolicy": {
+        "type": "noninitial-laghu-karshana",
+        "marker": "ಽ",
+        "matrasPerMark": 1
+      },
+      "linePolicy": { "type": "fixed", "unit": "line", "count": 4 },
+      "amshaGroups": [
+        ["V", "V", "V", "V", "V", "G"],
+        ["V", "V", "V", "V", "V", "G"],
+        ["V", "V", "V", "V", "V", "G"],
+        ["V", "V", "V", "V", "V", "G"]
+      ],
+      "lineRelations": [
+        {
+          "type": "dvitiyakshara-prasa"
+        }
+      ],
+      "notes": "Implements Nāgavarma's primary five-Viṣṇu-plus-Guru realization. The equal-mātrā 4V+R division is documented but remains unchecked until whole-line alternative aṃśa divisions are supported."
+    },
+    {
       "id": "structural:mandanila-ragale",
       "name": "mandānila ragaḷe",
       "aliases": [
@@ -724,8 +1166,8 @@
       ],
       "kind": "matra",
       "signatureLines": [
-        "unbounded lines; 4 gaṇas per line",
-        "3+3+3+3 = 12 mātrās",
+        "unbounded lines; 4 or 8 gaṇas per line",
+        "3+3+3+3 = 12 or 3×8 = 24 mātrās",
         "adjacent lines use antya-prāsa"
       ],
       "ruleCompleteness": "provisional-rhythm",
@@ -733,6 +1175,10 @@
       "sourceRef": "ragaleSource",
       "linePolicy": { "type": "repeating", "unit": "line", "min": 1, "previewCount": 1 },
       "padaGroups": [[3, 3, 3, 3]],
+      "allowDifferentOptionTotals": true,
+      "padaGroupOptions": [
+        [[3, 3, 3, 3], [3, 3, 3, 3, 3, 3, 3, 3]]
+      ],
       "lineRelations": [
         {
           "type": "pairwise-antya-prasa",
@@ -740,7 +1186,7 @@
           "violationReason": "antya-prasa-mismatch"
         }
       ],
-      "notes": "Checks four three-mātrā gaṇas on every written line and pairwise end-rhyme. The entry remains provisional pending expert review."
+      "notes": "Checks either four or eight three-mātrā gaṇas on every written line and pairwise end-rhyme. The entry remains provisional pending expert review."
     },
     {
       "id": "structural:lalita-ragale",
@@ -923,5 +1369,23 @@
       }
     ],
     "notes": "The separate later folk mātrā frame and inferred one-mātrā sung realization are documented in docs/rules/folk-tripadi.md. Regional and broader sung variants await expert review."
+  },
+  "historicalKannadaSource": {
+    "title": "Historical Kannada prosody expansion rule packet",
+    "references": [
+      {
+        "title": "Nāgavarma's Canarese Prosody, Kittel edition",
+        "url": "https://archive.org/details/nagavarmascanare00nagarich"
+      },
+      {
+        "title": "Kannada Prosody, University of Mysore Encyclopaedia",
+        "url": "https://kn.wikisource.org/wiki/ಮೈಸೂರು_ವಿಶ್ವವಿದ್ಯಾನಿಲಯ_ವಿಶ್ವಕೋಶ/ಕನ್ನಡ_ಛಂದಸ್ಸು"
+      },
+      {
+        "title": "Kannada metres overview",
+        "url": "https://kn.wikipedia.org/wiki/ಕನ್ನಡ_ಛಂದಸ್ಸು"
+      }
+    ],
+    "notes": "The new entries encode the cited historical signatures while labeling unresolved substitutions, recitational variants, and whole-line alternatives as provisional."
   }
 }

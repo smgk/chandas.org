@@ -3,7 +3,13 @@
 **Catalog IDs:** `structural:tripadi-kannada`,
 `structural:sangatya`, `structural:piriyakkara`,
 `structural:doreyakkara`, `structural:naduvanakkara`,
-`structural:edeyakkara`, `structural:kiriyakkara`  
+`structural:edeyakkara`, `structural:kiriyakkara`,
+`structural:ele-kannada`, `structural:chaupadi-amsha-kannada`,
+`structural:amsha-shatpadi`, `structural:sobagina-sone`,
+`structural:chandovatamsa-nagavarma`,
+`structural:adivaraha-jayakirti`,
+`structural:akkarike-nagavarma`,
+`structural:madanavati-nagavarma`
 **Status:** Provisional core frames; expert corpus review pending
 
 ## Aṃśa classes
@@ -29,6 +35,14 @@ aṃśa class.
 | Naḍuvaṇakkara | 4 | `BVVVR` on each line |
 | Eḍeyakkara | 4 | `BVVR` on each line |
 | Kiriyakkara | 4 | `VVR` on each line |
+| Eḷe | 2 | `VVVV / VBV` |
+| Aṃśa Chaupadi | 4 | `VR` on each line |
+| Aṃśa Ṣaṭpadi | 6 | `VV / VV / VVR`, repeated |
+| Sobagina Sone | 4 | `VVVV / VVV / VVVV / VVV` |
+| Chandovatamsa (Nāgavarma) | 4 | `VVVB` on each line |
+| Ādivarāha (Jayakīrti) | 4 | `VBBBB` on each line |
+| Akkarike (Nāgavarma) | 4 | `VBVBVR` on each line |
+| Madanavatī (Nāgavarma) | 4 | `VVVVV+G` on each line |
 
 Tripadi additionally checks Brahma gaṇas 6 and 10, double-Laghu openings at
 gaṇas 7 and 11, yati after gaṇa 2 of line 1, yati after gaṇa 3 of line 2,
@@ -38,6 +52,12 @@ at the second syllable of the first line's third gaṇa.
 Sāṅgatya and the five Akkara forms check opening dvitīyākṣara-prāsa across all
 four lines. In every such check, the second akṣara's terminal consonant and the
 Guru/Laghu weight of the first syllable are independent conditions.
+
+Eḷe also checks the yati after its first line's second gaṇa and the internal
+prāsa in the following gaṇa. Madanavatī's terminal `G` is a literal final Guru,
+not a fourth aṃśa class. Its equal-mātrā `4V+R` division is documented as an
+unchecked alternative until the evaluator can retain alternative whole-line
+aṃśa divisions without choosing one arbitrarily.
 
 ## Deliberately provisional
 
@@ -84,4 +104,3 @@ analysis URLs retain only the authored poem.
   <https://kn.wikisource.org/wiki/ಮೈಸೂರು_ವಿಶ್ವವಿದ್ಯಾನಿಲಯ_ವಿಶ್ವಕೋಶ/ಕನ್ನಡ_ಛಂದಸ್ಸು>
 - *Chanda Nikasha: Verification and Identification of meters in Kannada
   Prosody*: <https://kannadakali.com/crav/dev/docs/ChandaNikasha-English.pdf>
-

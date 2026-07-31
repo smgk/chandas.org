@@ -2,7 +2,7 @@
 
 **Status:** Active post-MVP plan
 
-**Updated:** 2026-07-28
+**Updated:** 2026-07-30
 
 **Baseline:** `mvp-baseline`
 
@@ -28,11 +28,17 @@ post-MVP track**, not a distant “more meters someday” item.
 - First-class provisional Kannada Kanda validation, kept separate from
   Āryāgīti.
 - Provisional Utsāha, Mandānila, and Lalita Ragaḷe detection with repeatable
-  lines, pairwise antya-prāsa, and no invented future lines.
+  lines, pairwise antya-prāsa, no invented future lines, and both 12- and
+  24-mātrā Utsāha lines.
 - All six quantitative Ṣaṭpadi forms with complete six-line templates and
-  short/extended-line validation.
+  short/extended-line validation, plus Uddaṇḍa and aṃśa Ṣaṭpadi.
 - Provisional aṃśa-frame detection for Tripadi, Sāṅgatya, and all five Akkara
-  forms.
+  forms, now joined by Eḷe, Sobagina Sone, Nāgavarma's Chandovatamsa,
+  Akkarike and Madanavatī, and Jayakīrti's Ādivarāha.
+- Historical mātrā Tripadi and both historical mātrā and aṃśa Chaupadi,
+  without weakening their folk, classical, or Kagga-form neighbors.
+- Sourced Kannada Campakamāle and Mahāsragdharā fixed-vṛtta extensions,
+  composed with the unchanged attributed `mishra.json` baseline.
 - Per-line syllable and mātrā totals, inline violations, meter ranking, and
   ghost templates.
 - Fixed-vṛtta Strong templates with arbitrary-position entry, local recovery,
@@ -155,7 +161,7 @@ form.
 Order:
 
 1. **Mandānila Ragale** — four four-mātrā groups per line.
-2. **Utsāha Ragale** — four three-mātrā groups per line.
+2. **Utsāha Ragale** — four or eight three-mātrā groups per line.
 3. **Lalita Ragale** — four five-mātrā groups per line.
 
 For every form:
@@ -191,6 +197,8 @@ First implement six-line stanza parsing and relationships among lines. Then add:
 4. Śara Ṣaṭpadi
 5. Kusuma Ṣaṭpadi
 6. Bhoga Ṣaṭpadi
+7. Uddaṇḍa Ṣaṭpadi
+8. Aṃśa Ṣaṭpadi
 
 Each form needs its own reviewed gaṇa model. “Six lines” alone is never enough
 for an exact match.
@@ -249,6 +257,12 @@ A separate folk Tripadi slice recognizes the later
 gaṇa-final Laghu and displays that inference as superscript `ಽ`; the classical
 aṃśa entry is unchanged. Broader melodic and regional realizations still need
 expert-reviewed corpora.
+
+The completed catalog 4.0 expansion adds Eḷe, historical mātrā Tripadi, historical mātrā and
+aṃśa Chaupadi, aṃśa Ṣaṭpadi, Uddaṇḍa, Sobagina Sone, Nāgavarma
+Chandovatamsa/Akkarike/Madanavatī, and Jayakīrti Ādivarāha as distinct,
+source-labeled entries. Kannada Gītike and a separately native Utsāha remain
+deferred until implementable signatures are approved.
 
 Other mātrā, aṃśa, mixed, and regional traditions stay in the backlog and
 follow the same source, corpus, expert-review, versioning, and test gates.

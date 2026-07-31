@@ -26,6 +26,7 @@ const kandaFixture = JSON.parse(fs.readFileSync(
 ));
 const combinedCatalog = {
     ...catalog,
+    metres: [...catalog.metres, ...(structuralCatalog.fixedMeters || [])],
     structuralMeters: structuralCatalog.meters
 };
 
@@ -478,7 +479,12 @@ test("loads the versioned structural catalog without changing mishra entries", (
     const anushtubh = meters.find((meter) =>
         meter.id === "structural:anushtubh-pathya");
 
-    assert.equal(meters.length, catalog.metres.length + structuralCatalog.meters.length);
+    assert.equal(
+        meters.length,
+        catalog.metres.length +
+            structuralCatalog.fixedMeters.length +
+            structuralCatalog.meters.length
+    );
     assert.equal(anushtubh.name, "anuṣṭubh (pathyā)");
     assert.ok(anushtubh.aliases.includes("anushtup"));
     assert.equal(anushtubh.kind, "syllable-structural");
@@ -561,7 +567,7 @@ test("keeps an incomplete structural meter compatible without red violations", (
 
     assert.equal(stanza.violationCount, 0);
     assert.ok(stanza.missingCount > 0);
-    assert.equal(result.analysisVersion, "2.8.1");
+    assert.equal(result.analysisVersion, "2.9.0");
     assert.equal(result.catalogVersion, structuralCatalog.catalogVersion);
 });
 
@@ -656,8 +662,8 @@ test("recognizes the provisional Kannada Kanda characterization fixture", () => 
     );
     assert.equal(stanza.selectedMeter.ruleCompleteness, "provisional-rhythm");
     assert.deepEqual(stanza.selectedMeter.uncheckedRules, ["historical prāsa variants"]);
-    assert.equal(result.analysisVersion, "2.8.1");
-    assert.equal(result.catalogVersion, "3.4.0");
+    assert.equal(result.analysisVersion, "2.9.0");
+    assert.equal(result.catalogVersion, "4.0.0");
 });
 
 test("loads and validates the Pañcamātrā Chaupadi Kagga form", () => {
@@ -721,7 +727,15 @@ test("marks a written mātrā beyond the Kagga-form fourth-line cadence", () => 
 
 test("loads and validates all six quantitative Ṣaṭpadi forms as six-line verses", () => {
     const meters = Chandas.normalizeCatalog(combinedCatalog);
-    const shatpadis = meters.filter((meter) => meter.id.endsWith("-shatpadi"));
+    const quantitativeIds = new Set([
+        "structural:shara-shatpadi",
+        "structural:kusuma-shatpadi",
+        "structural:bhoga-shatpadi",
+        "structural:bhamini-shatpadi",
+        "structural:parivardhini-shatpadi",
+        "structural:vardhaka-shatpadi"
+    ]);
+    const shatpadis = meters.filter((meter) => quantitativeIds.has(meter.id));
     const patternForCapacity = {
         2: "G",
         3: "GL",
@@ -797,7 +811,7 @@ test("keeps an unfinished Ṣaṭpadi compatible and marks a written line overru
     );
 });
 
-test("loads the Tripadi, Sāṅgatya, and five Akkara aṃśa families", () => {
+test("loads every cataloged Kannada aṃśa family", () => {
     const meters = Chandas.normalizeCatalog(combinedCatalog);
     const amshaMeters = meters.filter((meter) => meter.kind === "amsha");
 
@@ -808,7 +822,15 @@ test("loads the Tripadi, Sāṅgatya, and five Akkara aṃśa families", () => {
         "structural:doreyakkara",
         "structural:naduvanakkara",
         "structural:edeyakkara",
-        "structural:kiriyakkara"
+        "structural:kiriyakkara",
+        "structural:ele-kannada",
+        "structural:chaupadi-amsha-kannada",
+        "structural:amsha-shatpadi",
+        "structural:sobagina-sone",
+        "structural:chandovatamsa-nagavarma",
+        "structural:adivaraha-jayakirti",
+        "structural:akkarike-nagavarma",
+        "structural:madanavati-nagavarma"
     ]);
     amshaMeters.forEach((meter) => {
         assert.equal(meter.linePolicy.count, meter.amshaGroups.length);
@@ -821,8 +843,8 @@ test("loads the Tripadi, Sāṅgatya, and five Akkara aṃśa families", () => {
     });
 });
 
-test("validates canonical aṃśa frames and cataloged Piriyakkara alternatives", () => {
-    const classPattern = { B: "GG", V: "GGG", R: "GGGG" };
+test("validates canonical aṃśa frames, a literal cadence, and Piriyakkara alternatives", () => {
+    const classPattern = { B: "GG", V: "GGG", R: "GGGG", G: "G", L: "L" };
     const amshaMeters = structuralCatalog.meters.filter((meter) =>
         meter.kind === "amsha" && meter.id !== "structural:tripadi-kannada");
 
@@ -857,11 +879,131 @@ test("validates canonical aṃśa frames and cataloged Piriyakkara alternatives"
     assert.equal(stanza.missingCount, 0);
 });
 
+test("distinguishes the selected historical aṃśa signatures", () => {
+    const expected = new Map([
+        ["structural:chandovatamsa-nagavarma", ["V", "V", "V", "B"]],
+        ["structural:adivaraha-jayakirti", ["V", "B", "B", "B", "B"]],
+        ["structural:akkarike-nagavarma", ["V", "B", "V", "B", "V", "R"]],
+        ["structural:madanavati-nagavarma", ["V", "V", "V", "V", "V", "G"]]
+    ]);
+
+    for (const [id, signature] of expected) {
+        const meter = structuralCatalog.meters.find((entry) => entry.id === id);
+        assert.deepEqual(meter.amshaGroups, Array.from(
+            { length: 4 },
+            () => signature
+        ));
+        assert.equal(meter.sourceRef, "historicalKannadaSource");
+    }
+    assert.match(
+        structuralCatalog.meters.find((entry) =>
+            entry.id === "structural:chandovatamsa-nagavarma").notes,
+        /Nāgavarma/
+    );
+    assert.match(
+        structuralCatalog.meters.find((entry) =>
+            entry.id === "structural:adivaraha-jayakirti").notes,
+        /Jayakīrti/
+    );
+});
+
+test("validates the added historical Tripadi, Chaupadi, Ṣaṭpadi, and song frames", () => {
+    const matraPattern = {
+        3: "GL",
+        4: "GG",
+        5: "GGL"
+    };
+    const amshaPattern = { B: "GG", V: "GGG", R: "GGGG", G: "G" };
+    const ids = [
+        "structural:ele-kannada",
+        "structural:tripadi-matra-historical",
+        "structural:chaupadi-amsha-kannada",
+        "structural:chaupadi-matra-historical",
+        "structural:amsha-shatpadi",
+        "structural:uddanda-shatpadi",
+        "structural:sobagina-sone"
+    ];
+
+    for (const id of ids) {
+        const meter = structuralCatalog.meters.find((entry) => entry.id === id);
+        const lines = meter.kind === "amsha"
+            ? meter.amshaGroups.map((groups) => textForPattern(groups
+                .map((group) => amshaPattern[Array.isArray(group) ? group[0] : group])
+                .join("")))
+            : meter.padaGroups.map((groups) => textForPattern(groups
+                .map((capacity) => matraPattern[capacity])
+                .join("")));
+        const stanza = Chandas.analyzeComposition(
+            lines.join("\n"),
+            combinedCatalog,
+            id
+        ).stanzas[0];
+
+        assert.equal(stanza.violationCount, 0, meter.name);
+        assert.equal(stanza.missingCount, 0, meter.name);
+        assert.equal(
+            stanza.candidates.find((candidate) => candidate.id === id).status,
+            "compatible",
+            meter.name
+        );
+    }
+});
+
+test("enforces historical mātrā Tripadi yati at the original syllable", () => {
+    const lineOne = compactTextForPattern("GGL".repeat(4));
+    const text = [
+        lineOne,
+        textForPattern("GGLGLGGLGGL"),
+        textForPattern("GGLGLGGL")
+    ].join("\n");
+    const stanza = Chandas.analyzeComposition(
+        text,
+        combinedCatalog,
+        "structural:tripadi-matra-historical"
+    ).stanzas[0];
+    const violations = stanza.padas.flatMap((pada) => pada.syllables)
+        .filter((syllable) => syllable.violationReason === "required-yati");
+
+    assert.equal(violations.length, 1);
+    assert.equal(violations[0], stanza.padas[0].syllables[6]);
+    assert.equal(text.slice(violations[0].start, violations[0].end), "ಕಾ");
+});
+
+test("loads the two sourced Kannada fixed-vṛtta extensions without rewriting mishra", () => {
+    assert.deepEqual(structuralCatalog.fixedMeters, [
+        ["campakamāle (Kannada)", "LLLLGLGLLLGLLGLLGLGLG"],
+        ["mahāsragdharā (Kannada)", "LLGGGLGGLLLLLLGGLGGLGG"]
+    ]);
+    assert.equal(
+        catalog.metres.some((entry) => /\(Kannada\)$/.test(entry[0])),
+        false
+    );
+
+    for (const [name, pattern] of structuralCatalog.fixedMeters) {
+        const text = Array.from({ length: 4 }, () =>
+            textForPattern(pattern)).join("\n");
+        const stanza = Chandas.analyzeComposition(
+            text,
+            combinedCatalog,
+            name
+        ).stanzas[0];
+        assert.equal(stanza.violationCount, 0, name);
+        assert.equal(stanza.missingCount, 0, name);
+        assert.equal(
+            stanza.candidates.find((candidate) => candidate.id === name).status,
+            "exact",
+            name
+        );
+    }
+});
+
 test("shows karṣaṇa in every supported classical aṃśa meter", () => {
     const shortPatterns = {
         B: "GL",
         V: "GLL",
-        R: "GLLL"
+        R: "GLLL",
+        G: "G",
+        L: "L"
     };
     const amshaMeters = structuralCatalog.meters.filter((meter) =>
         meter.kind === "amsha");
@@ -1182,6 +1324,24 @@ test("validates unbounded Utsāha Ragale without inventing future lines", () => 
     }
 });
 
+test("accepts the twenty-four-mātrā Utsāha Ragaḷe line variant", () => {
+    const line = textForPattern("GL".repeat(8));
+    const stanza = Chandas.analyzeComposition(
+        `${line}\n${line}`,
+        combinedCatalog,
+        "structural:utsaha-ragale"
+    ).stanzas[0];
+
+    assert.deepEqual(stanza.matraPattern, [24, 24]);
+    assert.equal(stanza.violationCount, 0);
+    assert.equal(stanza.missingCount, 0);
+    assert.equal(
+        stanza.candidates.find((candidate) =>
+            candidate.id === "structural:utsaha-ragale").status,
+        "compatible"
+    );
+});
+
 test("keeps Ragale missing units local to the unfinished current line", () => {
     const stanza = Chandas.analyzeComposition(
         textForPattern("GLGL"),
@@ -1274,7 +1434,7 @@ test("applies repeating Ragale rules in Devanagari and marks line excess", () =>
     assert.equal(valid.missingCount, 0);
 
     const excessive = Chandas.analyzeComposition(
-        devanagariTextForPattern("GLGLGLGLG"),
+        devanagariTextForPattern("GL".repeat(9)),
         combinedCatalog,
         "structural:utsaha-ragale"
     ).stanzas[0];

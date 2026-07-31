@@ -105,6 +105,16 @@ test("service worker pre-caches every core web asset", () => {
     assert.match(worker, /event\.request\.mode === "navigate"/);
     assert.match(worker, /cache\.put\(cacheRequest, copy\)/);
     assert.doesNotMatch(worker, /cache\.put\(event\.request, copy\)/);
+    assert.match(worker, /event\.data\.type === "SKIP_WAITING"/);
+    assert.match(worker, /hasLegacyShell \? self\.skipWaiting\(\)/);
+    assert.match(read("app.js"), /UPDATE_CHECK_INTERVAL_MS = 15 \* 60 \* 1000/);
+    assert.match(read("app.js"), /updateViaCache: "none"/);
+    assert.match(read("app.js"), /visibilitychange/);
+    assert.match(read("app.js"), /controllerchange/);
+    assert.match(
+        read("index.html"),
+        /id="app-update"[^>]*aria-live="polite"[^>]*hidden/
+    );
 });
 
 test("the composition control and live regions have accessible labels", () => {
@@ -167,6 +177,13 @@ test("editor styling preserves Indic shaping across highlight states", () => {
         styles,
         /\.highlight-layer \.guru\.prasa-weight-mismatch[\s\S]*?text-decoration-style:\s*solid/
     );
+    assert.match(styles, /\.recital-extension-anchor\s*\{[\s\S]*?position:\s*relative/);
+    assert.match(styles, /\.recital-extension-marker\s*\{[\s\S]*?left:\s*50%/);
+    assert.match(
+        styles,
+        /\.recital-extension-marker\s*\{[\s\S]*?transform:\s*translateX\(-50%\)/
+    );
+    assert.match(read("app.js"), /class="recital-extension-anchor"/);
 });
 
 test("branding and public navigation use the compact approved copy", () => {

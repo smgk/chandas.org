@@ -9,6 +9,7 @@
     const DRAFT_KEY = "chandas.draft.v1";
     const LANGUAGE_KEY = "chandas.language.v1";
     const SAVE_DELAY_MS = 280;
+    const UPDATE_CHECK_INTERVAL_MS = 15 * 60 * 1000;
 
     const messages = {
         en: {
@@ -17,6 +18,8 @@
             learn: "Learn",
             language: "Interface language",
             newDraft: "New",
+            updateAvailable: "Update available",
+            updating: "Updating…",
             eyebrow: "A live prosody companion",
             title: "Chandas - say it in-verse",
             intro: "Type Kannada or Devanagari verse. Guru and Laghu appear in place, and the closest meters stay quietly within reach.",
@@ -125,6 +128,8 @@
             learn: "ಕಲಿಯಿರಿ",
             language: "ತೆರೆಯ ಭಾಷೆ",
             newDraft: "ಹೊಸದು",
+            updateAvailable: "ನವೀಕರಣ ಲಭ್ಯ",
+            updating: "ನವೀಕರಿಸಲಾಗುತ್ತಿದೆ…",
             eyebrow: "ಛಂದದ ಪದ್ಯದ ಸಂಗಾತಿ",
             title: "ಛಂದಸ್ - ಪದ್ಯದಲ್ಲಿ ಹೇಳಿ",
             intro: "ಕನ್ನಡ ಅಥವಾ ದೇವನಾಗರಿ ಪದ್ಯವನ್ನು ಬರೆಯಿರಿ. ಗುರು–ಲಘು ಅದೇ ಪಠ್ಯದಲ್ಲಿ ಕಾಣುತ್ತದೆ; ಸಮೀಪದ ಛಂದಸ್ಸುಗಳು ಪಕ್ಕದಲ್ಲಿರುತ್ತವೆ.",
@@ -249,13 +254,17 @@
         restoreSelectionFrame: null,
         saveTimer: null,
         renderTimer: null,
-        toastTimer: null
+        toastTimer: null,
+        serviceWorkerRegistration: null,
+        waitingServiceWorker: null,
+        updateCheckTimer: null,
+        updateRequested: false
     };
 
     function cacheElements() {
         [
             "composition", "highlight-layer", "editor-shell", "draft-state", "cursor-metrics",
-            "language", "new-draft", "copy", "share", "analysis-title",
+            "language", "new-draft", "app-update", "copy", "share", "analysis-title",
             "previous-stanza", "next-stanza", "empty-analysis", "analysis-content",
             "pattern-block", "active-pattern", "active-matras",
             "selected-meter-reference", "selected-meter-name",
@@ -1205,27 +1214,6 @@
             }
         }
 
-        for (const segment of state.analysis ? state.analysis.segments : []) {
-            const extension = segment.recitalExtension ||
-                segment.sungExtension;
-            if (!extension) {
-                continue;
-            }
-            const annotation = byPosition.get(segment.end) || {
-                position: segment.end,
-                metrics: "",
-                ghost: ""
-            };
-            const marker = extension.marker || "ಽ";
-            annotation.sungMarker = marker.repeat(
-                Math.max(1, Number(extension.matras) || 1)
-            );
-            annotation.extensionKind = segment.recitalExtension
-                ? "karshana"
-                : "sung";
-            byPosition.set(segment.end, annotation);
-        }
-
         return Array.from(byPosition.values()).sort((left, right) =>
             left.position - right.position);
     }
@@ -1237,14 +1225,22 @@
         const ghost = annotation.ghost
             ? `<span class="ghost-template">${escapeHtml(annotation.ghost)}</span>`
             : "";
-        const sungMarker = annotation.sungMarker
-            ? `<span class="recital-extension-marker ${
-                annotation.extensionKind === "sung"
-                    ? "sung-extension-marker"
-                    : "amsha-karshana-marker"
-            }">${escapeHtml(annotation.sungMarker)}</span>`
-            : "";
-        return `<span class="inline-metric-anchor">${metrics}${ghost}${sungMarker}</span>`;
+        return `<span class="inline-metric-anchor">${metrics}${ghost}</span>`;
+    }
+
+    function highlightedRangeHtml(range, text) {
+        const highlighted = `<span class="${range.className}">${
+            escapeHtml(text.slice(range.start, range.end))
+        }</span>`;
+        if (!range.recitalMarker) {
+            return highlighted;
+        }
+        const markerClass = range.extensionKind === "sung"
+            ? "sung-extension-marker"
+            : "amsha-karshana-marker";
+        return `<span class="recital-extension-anchor">${highlighted}` +
+            `<span class="recital-extension-marker ${markerClass}" ` +
+            `aria-hidden="true">${escapeHtml(range.recitalMarker)}</span></span>`;
     }
 
     function renderCursorMetrics() {
@@ -1289,6 +1285,8 @@
                         : annotation.status === "weight-mismatch"
                             ? "prasa-weight-mismatch"
                             : "prasa-mismatch");
+                const extension = segment.recitalExtension ||
+                    segment.sungExtension;
                 return {
                     start: segment.start,
                     end: segment.end,
@@ -1296,7 +1294,15 @@
                         segment.classification === Chandas.GURU ? "guru" : "laghu",
                         segment.violation ? "violation" : "",
                         ...prasaClasses
-                    ].filter(Boolean).join(" ")
+                    ].filter(Boolean).join(" "),
+                    recitalMarker: extension
+                        ? (extension.marker || "ಽ").repeat(
+                            Math.max(1, Number(extension.matras) || 1)
+                        )
+                        : "",
+                    extensionKind: segment.recitalExtension
+                        ? "karshana"
+                        : "sung"
                 };
             }),
             ...state.analysis.unsupported.map((range) => ({
@@ -1331,7 +1337,7 @@
                 continue;
             }
             html += escapeHtml(text.slice(cursor, range.start));
-            html += `<span class="${range.className}">${escapeHtml(text.slice(range.start, range.end))}</span>`;
+            html += highlightedRangeHtml(range, text);
             cursor = Math.max(cursor, range.end);
             appendAnnotationsThrough(cursor);
         }
@@ -2066,6 +2072,103 @@
         }
     }
 
+    function exposeAppUpdate(worker) {
+        if (!worker || !elements["app-update"] || state.updateRequested) {
+            return;
+        }
+        state.waitingServiceWorker = worker;
+        elements["app-update"].hidden = false;
+        elements["app-update"].disabled = false;
+        elements["app-update"].textContent = t("updateAvailable");
+    }
+
+    function watchInstallingWorker(worker) {
+        if (!worker) {
+            return;
+        }
+        worker.addEventListener("statechange", () => {
+            if (worker.state === "installed" &&
+                navigator.serviceWorker.controller) {
+                exposeAppUpdate(worker);
+            }
+        });
+    }
+
+    async function checkForAppUpdate() {
+        const registration = state.serviceWorkerRegistration;
+        if (!registration || navigator.onLine === false) {
+            return;
+        }
+        try {
+            await registration.update();
+            if (registration.waiting) {
+                exposeAppUpdate(registration.waiting);
+            }
+        } catch (error) {
+            console.warn("Application update check failed", error);
+        }
+    }
+
+    function activateAppUpdate() {
+        const worker = state.waitingServiceWorker ||
+            (state.serviceWorkerRegistration &&
+                state.serviceWorkerRegistration.waiting);
+        if (!worker) {
+            checkForAppUpdate();
+            return;
+        }
+        saveDraft();
+        state.updateRequested = true;
+        elements["app-update"].disabled = true;
+        elements["app-update"].textContent = t("updating");
+        worker.postMessage({ type: "SKIP_WAITING" });
+    }
+
+    async function initializeServiceWorker() {
+        if (!("serviceWorker" in navigator) ||
+            location.protocol === "file:" ||
+            location.hostname === "appassets.androidplatform.net") {
+            return;
+        }
+
+        navigator.serviceWorker.addEventListener("controllerchange", () => {
+            if (!state.updateRequested) {
+                return;
+            }
+            state.updateRequested = false;
+            window.location.reload();
+        });
+
+        try {
+            const registration = await navigator.serviceWorker.register(
+                "service-worker.js",
+                { updateViaCache: "none" }
+            );
+            state.serviceWorkerRegistration = registration;
+            if (registration.waiting && navigator.serviceWorker.controller) {
+                exposeAppUpdate(registration.waiting);
+            }
+            watchInstallingWorker(registration.installing);
+            registration.addEventListener("updatefound", () => {
+                watchInstallingWorker(registration.installing);
+            });
+
+            state.updateCheckTimer = window.setInterval(
+                checkForAppUpdate,
+                UPDATE_CHECK_INTERVAL_MS
+            );
+            window.addEventListener("online", checkForAppUpdate);
+            document.addEventListener("visibilitychange", () => {
+                if (document.visibilityState === "visible") {
+                    checkForAppUpdate();
+                }
+            });
+            checkForAppUpdate();
+        } catch (error) {
+            console.warn("Service worker registration failed", error);
+        }
+    }
+
     async function loadCatalog() {
         const [fixedResponse, structuralResponse] = await Promise.all([
             fetch("mishra.json", { cache: "force-cache" }),
@@ -2267,6 +2370,7 @@
         });
 
         elements["new-draft"].addEventListener("click", clearDraft);
+        elements["app-update"].addEventListener("click", activateAppUpdate);
         elements.copy.addEventListener("click", () => copyText(authoredCompositionText()));
         elements.share.addEventListener("click", () => elements["share-dialog"].showModal());
         elements["share-dialog"].addEventListener(
@@ -2462,13 +2566,7 @@
         }
         importFromUrl();
 
-        if ("serviceWorker" in navigator &&
-            location.protocol !== "file:" &&
-            location.hostname !== "appassets.androidplatform.net") {
-            navigator.serviceWorker.register("service-worker.js").catch((error) => {
-                console.warn("Service worker registration failed", error);
-            });
-        }
+        initializeServiceWorker();
     }
 
     if (document.readyState === "loading") {

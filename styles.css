@@ -200,6 +200,23 @@ textarea:focus-visible {
     color: var(--saffron-dark);
 }
 
+.app-update-button {
+    border-color: color-mix(in srgb, var(--green) 55%, var(--line));
+    color: var(--green);
+    background: color-mix(in srgb, var(--green) 10%, #fffdf8);
+    font-weight: 750;
+}
+
+.app-update-button:hover {
+    border-color: var(--green);
+    color: var(--green);
+}
+
+.app-update-button:disabled {
+    cursor: progress;
+    opacity: 0.72;
+}
+
 .page-shell {
     width: min(1180px, calc(100% - 2rem));
     margin: 0 auto;
@@ -456,8 +473,7 @@ textarea:focus-visible {
 }
 
 .line-metrics-badge,
-.ghost-template,
-.recital-extension-marker {
+.ghost-template {
     position: absolute;
     z-index: 3;
     pointer-events: none;
@@ -469,16 +485,26 @@ textarea:focus-visible {
     left: 0.18rem;
 }
 
+.recital-extension-anchor {
+    position: relative;
+    display: inline;
+}
+
 .recital-extension-marker {
-    top: -0.72em;
-    left: -0.04em;
+    position: absolute;
+    z-index: 3;
+    top: -0.76em;
+    left: 50%;
     color: color-mix(in srgb, var(--saffron) 68%, transparent);
     font-family: var(--editor-font);
     font-size: 0.66em;
     font-weight: 650;
     line-height: 1;
+    pointer-events: none;
     text-decoration: none;
     text-shadow: 0 1px var(--paper);
+    transform: translateX(-50%);
+    white-space: nowrap;
 }
 
 .line-metrics-badge {
@@ -1498,6 +1524,12 @@ textarea:focus-visible {
         flex-wrap: wrap;
         gap: 0.65rem;
         padding-top: max(0.75rem, env(safe-area-inset-top));
+    }
+
+    .header-actions {
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 0.35rem;
     }
 
     .brand small {

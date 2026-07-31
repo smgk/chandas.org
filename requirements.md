@@ -338,6 +338,13 @@ recommended, and optional behavior.
    synchronized, backed up, or associated with an account.
 8. Application updates MUST preserve compatible local drafts. Any incompatible
    migration MUST protect the original text and provide a recovery/export path.
+9. While the web application is open and online, it MUST check periodically,
+   and again after regaining connectivity or foreground visibility, for a
+   complete newer application shell. A successfully downloaded update MUST
+   expose a compact **Update available** control near the primary header
+   actions. Activating it MUST save the current local draft, promote the
+   waiting application shell, and reload exactly once. A partial or failed
+   download MUST leave the current working shell active.
 
 ### FR-9: Synonyms (post-MVP)
 
@@ -646,6 +653,11 @@ analysis result.
 31. Classical karṣaṇa marks MUST remain analysis overlays. They MUST NOT
     modify the authored editor value, copied or shared text, recovered drafts,
     or analysis URLs.
+32. Each sung-extension or classical-karṣaṇa avagraha MUST be centered directly
+    above the complete orthographic syllable whose Laghu is lengthened. It MUST
+    NOT be positioned at the trailing text boundary where it can appear to
+    annotate the following syllable. Conjuncts MUST retain shaping as one
+    visual akṣara beneath the marker.
 
 ## 7. User Experience and Accessibility
 

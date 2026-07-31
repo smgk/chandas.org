@@ -5,7 +5,8 @@
 
 "use strict";
 
-const CACHE_NAME = "chandas-shell-v28";
+const CACHE_NAME = "chandas-shell-v29";
+const UPDATE_UI_BOOTSTRAP_CACHE = "chandas-shell-v29";
 const CORE_ASSETS = [
     "./",
     "./index.html",
@@ -33,8 +34,24 @@ self.addEventListener("install", (event) => {
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then((cache) => cache.addAll(CORE_ASSETS))
-            .then(() => self.skipWaiting())
+            // Existing releases activated workers immediately and cannot show
+            // the new update button. Bridge those caches once; later workers
+            // remain waiting until the user accepts the update.
+            .then(() => caches.keys())
+            .then((keys) => {
+                const hasLegacyShell = CACHE_NAME === UPDATE_UI_BOOTSTRAP_CACHE &&
+                    keys.some((key) =>
+                        key.startsWith("chandas-shell-v") &&
+                        key !== CACHE_NAME);
+                return hasLegacyShell ? self.skipWaiting() : undefined;
+            })
     );
+});
+
+self.addEventListener("message", (event) => {
+    if (event.data && event.data.type === "SKIP_WAITING") {
+        event.waitUntil(self.skipWaiting());
+    }
 });
 
 self.addEventListener("activate", (event) => {

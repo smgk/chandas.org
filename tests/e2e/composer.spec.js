@@ -714,6 +714,17 @@ test("shows classical aṃśa karṣaṇa after detection and selection", async 
         .toHaveCount(26);
     await expect(page.locator("#highlight-layer .recital-extension-marker").first())
         .toHaveText("ಽ");
+    const markerOffsets = await page.locator(
+        "#highlight-layer .recital-extension-anchor"
+    ).evaluateAll((anchors) => anchors.map((anchor) => {
+        const syllable = anchor.firstElementChild.getBoundingClientRect();
+        const marker = anchor.lastElementChild.getBoundingClientRect();
+        return Math.abs(
+            (syllable.left + syllable.width / 2) -
+            (marker.left + marker.width / 2)
+        );
+    }));
+    expect(Math.max(...markerOffsets)).toBeLessThanOrEqual(1);
     await expect(page.locator("#highlight-layer .violation")).toHaveCount(0);
     await expect(editor).toHaveValue(text);
 
@@ -1047,6 +1058,76 @@ test("opens documentation and searches the complete prosody catalog", async ({ p
 
     await page.getByText("Return to Chandas").click();
     await expect(page.locator("#composition")).toBeVisible();
+});
+
+test("offers a downloaded application update and preserves the draft on reload", async ({
+    browser
+}) => {
+    const context = await browser.newContext();
+    await context.addInitScript(() => {
+        const controllerListeners = [];
+        const alreadyActivated =
+            sessionStorage.getItem("chandas.fake-update-activated") === "yes";
+        const serviceWorker = {
+            controller: {},
+            addEventListener(type, listener) {
+                if (type === "controllerchange") {
+                    controllerListeners.push(listener);
+                }
+            },
+            async register(url, options) {
+                window.__fakeServiceWorkerRegistration = { url, options };
+                return registration;
+            }
+        };
+        const worker = {
+            state: "installed",
+            addEventListener() {},
+            postMessage(message) {
+                if (message && message.type === "SKIP_WAITING") {
+                    sessionStorage.setItem(
+                        "chandas.fake-update-activated",
+                        "yes"
+                    );
+                    setTimeout(() => {
+                        controllerListeners.forEach((listener) => listener());
+                    }, 0);
+                }
+            }
+        };
+        const registration = {
+            waiting: alreadyActivated ? null : worker,
+            installing: null,
+            addEventListener() {},
+            async update() {
+                window.__fakeUpdateChecks =
+                    (window.__fakeUpdateChecks || 0) + 1;
+            }
+        };
+        Object.defineProperty(navigator, "serviceWorker", {
+            configurable: true,
+            value: serviceWorker
+        });
+    });
+    const updatePage = await context.newPage();
+    await updatePage.goto("/");
+
+    const updateButton = updatePage.locator("#app-update");
+    await expect(updateButton).toBeVisible();
+    await expect(updateButton).toHaveText("Update available");
+    await expect.poll(() => updatePage.evaluate(() =>
+        window.__fakeUpdateChecks || 0)).toBeGreaterThan(0);
+    await expect(updatePage.evaluate(() =>
+        window.__fakeServiceWorkerRegistration.options.updateViaCache
+    )).resolves.toBe("none");
+
+    await updatePage.locator("#composition").fill("ಕಾವ್ಯ ಇನ್ನೂ ಮುಗಿದಿಲ್ಲ");
+    await updateButton.click();
+
+    await expect(updatePage.locator("#composition"))
+        .toHaveValue("ಕಾವ್ಯ ಇನ್ನೂ ಮುಗಿದಿಲ್ಲ");
+    await expect(updatePage.locator("#app-update")).toBeHidden();
+    await context.close();
 });
 
 test("opens the concise public roadmap from the footer and keeps it offline", async ({

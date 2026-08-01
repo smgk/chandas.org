@@ -333,9 +333,12 @@ recommended, and optional behavior.
 4. After an accidental refresh, browser restart, or Android process restart,
    the user MUST be offered or shown the most recent locally recovered draft.
 5. Recovery MUST work while the installed Android application is offline.
-6. A user MUST be able to clear the locally recovered draft.
-7. The UI MUST explain that anonymous recovery is device-local and is not
-   synchronized, backed up, or associated with an account.
+6. Choosing **New** MUST save meaningful current work into the on-device poem
+   library before opening a clean composition. It MUST NOT silently delete the
+   preceding poem.
+7. The UI MUST explain that recovery and the saved-poem library are
+   device-local and are not automatically synchronized or associated with an
+   account.
 8. Application updates MUST preserve compatible local drafts. Any incompatible
    migration MUST protect the original text and provide a recovery/export path.
 9. While the web application is open and online, it MUST check periodically,
@@ -361,19 +364,37 @@ recommended, and optional behavior.
 6. The source and license of synonym data MUST permit use in both the website
    and Android application.
 
-### FR-10: Accounts and saved work (post-MVP)
+### FR-10: Local saved work and user-owned backups
 
-1. Anonymous use MUST remain available unless a later product decision changes
-   this requirement.
-2. A signed-in user SHOULD be able to save both incomplete drafts and completed
-   compositions.
-3. Saved work SHOULD include original text, per-stanza selected meters, title,
-   timestamps, completion state, and sufficient version information to
-   reproduce analysis.
-4. Autosave SHOULD recover recent progress without interrupting typing.
-5. Users MUST be able to view, reopen, rename, and delete their own saved work.
-6. Sync conflict, privacy, retention, export, and account-deletion behavior
-   MUST be specified before account functionality is implemented.
+1. The product MUST remain usable without an account and MUST NOT require a
+   Chandas-hosted poem database, Firebase, Google login, Drive API, or another
+   recurring paid cloud service.
+2. Incomplete and completed compositions MUST be saved automatically in an
+   on-device poem library without interrupting typing.
+3. Saved work MUST include original text, per-stanza selected meters, title,
+   timestamps, caret, Ghost/Strong modes, and Strong slot state sufficient to
+   reconstruct intentionally blank positions.
+4. Users MUST be able to search, view, reopen, rename, duplicate, and delete
+   locally saved work. Opening or creating a poem MUST flush the current work
+   first.
+5. Existing single-draft recovery data MUST migrate into the library without
+   losing text or template state. If the library API is unavailable, the
+   single-current-draft fallback MUST keep composition usable.
+6. Users MUST be able to export all poems as a versioned, portable UTF-8 JSON
+   backup and import it again. Import MUST validate the complete file before
+   mutation, skip identical duplicates, and preserve both versions of a
+   differing ID collision rather than overwriting either.
+7. The web app SHOULD offer the operating-system file share/save sheet when it
+   supports files and MUST fall back to a direct JSON download. This lets the
+   user choose Files, Google Drive, or another destination without granting
+   Chandas access to that service.
+8. Saved poems MUST remain usable offline. All storage, backup, and import code
+   MUST be shipped in the offline application shell and MUST make no network
+   request.
+9. The UI and privacy notice MUST warn that clearing browser/app data can erase
+   local poems and that exported JSON may contain private writing in plain text.
+10. Chandas MUST NOT incur cloud database, object-storage, authentication, or
+    per-user synchronization charges for this feature.
 
 ### FR-11: Guided composition templates
 

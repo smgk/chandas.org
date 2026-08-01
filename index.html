@@ -16,6 +16,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <link rel="stylesheet" href="styles.css">
     <script src="meter_analysis.js" defer></script>
     <script src="strong_template.js" defer></script>
+    <script src="poem_store.js" defer></script>
     <script src="app.js" defer></script>
 </head>
 <body>
@@ -35,6 +36,9 @@ SPDX-License-Identifier: GPL-3.0-only
 
         <div class="header-actions">
             <a class="header-link" href="documentation.html" data-i18n="learn">Learn</a>
+            <button class="quiet-button" id="saved-poems" type="button" data-i18n="savedPoems">
+                Saved poems
+            </button>
             <button class="quiet-button app-update-button" id="app-update"
                     type="button" data-i18n="updateAvailable"
                     aria-live="polite" hidden>
@@ -260,6 +264,41 @@ SPDX-License-Identifier: GPL-3.0-only
                 </button>
             </div>
         </form>
+    </dialog>
+
+    <dialog id="saved-poems-dialog" class="saved-poems-dialog" aria-labelledby="saved-poems-title">
+        <div class="dialog-heading">
+            <div>
+                <p class="eyebrow" data-i18n="onThisDevice">On this device</p>
+                <h2 id="saved-poems-title" data-i18n="savedPoems">Saved poems</h2>
+            </div>
+            <button id="close-saved-poems" class="close-button" type="button" aria-label="Close">×</button>
+        </div>
+        <p class="local-storage-note" data-i18n="savedPoemsNote">
+            These poems never leave this device unless you export or share them. Keep a backup before clearing browser or app data.
+        </p>
+        <div class="saved-poems-toolbar">
+            <label class="saved-poems-search">
+                <span class="sr-only" data-i18n="searchSavedPoems">Search saved poems</span>
+                <input id="saved-poems-search" type="search" autocomplete="off"
+                    data-i18n-placeholder="searchSavedPoems" placeholder="Search saved poems">
+            </label>
+            <button id="backup-share" type="button" class="primary-button" data-i18n="saveBackup">
+                Save / share backup
+            </button>
+            <button id="backup-download" type="button" class="destination-button" data-i18n="downloadBackup">
+                Download backup
+            </button>
+            <button id="backup-import" type="button" class="destination-button" data-i18n="importBackup">
+                Import backup
+            </button>
+            <input id="backup-file" class="sr-only" type="file" accept="application/json,.json">
+        </div>
+        <p id="saved-poems-count" class="saved-poems-count" aria-live="polite"></p>
+        <div id="saved-poems-list" class="saved-poems-list"></div>
+        <p id="saved-poems-empty" class="saved-poems-empty" data-i18n="noSavedPoems">
+            No saved poems yet. Your next line will fix that.
+        </p>
     </dialog>
 
     <div id="toast" class="toast" role="status" aria-live="polite"></div>

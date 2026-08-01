@@ -16,6 +16,30 @@
             skip: "Skip to composition",
             brandTagline: "say it in-verse",
             learn: "Learn",
+            savedPoems: "Saved poems",
+            onThisDevice: "On this device",
+            savedPoemsNote: "These poems never leave this device unless you export or share them. Keep a backup before clearing browser or app data.",
+            searchSavedPoems: "Search saved poems",
+            saveBackup: "Save / share backup",
+            downloadBackup: "Download backup",
+            importBackup: "Import backup",
+            noSavedPoems: "No saved poems yet. Your next line will fix that.",
+            savedPoemCount: "{count} saved poem(s)",
+            openPoem: "Open",
+            renamePoem: "Rename",
+            duplicatePoem: "Duplicate",
+            deletePoem: "Delete",
+            saveName: "Save name",
+            cancel: "Cancel",
+            activePoem: "Current",
+            untitledPoem: "Untitled poem",
+            poemCopySuffix: "copy",
+            deletePoemConfirm: "Delete this saved poem from this device?",
+            backupDownloaded: "Backup downloaded",
+            backupShared: "Backup share sheet opened",
+            backupImported: "Imported {added}; kept {conflicts} conflict copy/copies; skipped {skipped} duplicate(s).",
+            backupInvalid: "That file is not a valid Chandas backup.",
+            localStorageUnavailable: "Saved Poems is unavailable, but the current draft will still recover locally.",
             language: "Interface language",
             newDraft: "New",
             updateAvailable: "Update available",
@@ -128,6 +152,30 @@
             skip: "ರಚನೆಗೆ ಹೋಗಿ",
             brandTagline: "ಪದ್ಯದಲ್ಲಿ ಹೇಳಿ",
             learn: "ಕಲಿಯಿರಿ",
+            savedPoems: "ಉಳಿಸಿದ ಪದ್ಯಗಳು",
+            onThisDevice: "ಈ ಸಾಧನದಲ್ಲಿ",
+            savedPoemsNote: "ನೀವು ರಫ್ತು ಅಥವಾ ಹಂಚಿಕೆ ಮಾಡದ ಹೊರತು ಈ ಪದ್ಯಗಳು ಸಾಧನದಿಂದ ಹೊರಹೋಗುವುದಿಲ್ಲ. ಬ್ರೌಸರ್ ಅಥವಾ ಆ್ಯಪ್ ದತ್ತಾಂಶ ಅಳಿಸುವ ಮೊದಲು ಬ್ಯಾಕಪ್ ಇಟ್ಟುಕೊಳ್ಳಿ.",
+            searchSavedPoems: "ಉಳಿಸಿದ ಪದ್ಯಗಳನ್ನು ಹುಡುಕಿ",
+            saveBackup: "ಬ್ಯಾಕಪ್ ಉಳಿಸಿ / ಹಂಚಿ",
+            downloadBackup: "ಬ್ಯಾಕಪ್ ಡೌನ್‌ಲೋಡ್",
+            importBackup: "ಬ್ಯಾಕಪ್ ಆಮದು",
+            noSavedPoems: "ಇನ್ನೂ ಪದ್ಯಗಳು ಉಳಿದಿಲ್ಲ. ನಿಮ್ಮ ಮುಂದಿನ ಸಾಲು ಅದನ್ನು ಸರಿಪಡಿಸುತ್ತದೆ.",
+            savedPoemCount: "ಉಳಿಸಿದ ಪದ್ಯಗಳು: {count}",
+            openPoem: "ತೆರೆಯಿರಿ",
+            renamePoem: "ಹೆಸರು ಬದಲಿಸಿ",
+            duplicatePoem: "ಪ್ರತಿ ಮಾಡಿ",
+            deletePoem: "ಅಳಿಸಿ",
+            saveName: "ಹೆಸರು ಉಳಿಸಿ",
+            cancel: "ರದ್ದು",
+            activePoem: "ಪ್ರಸ್ತುತ",
+            untitledPoem: "ಹೆಸರಿಲ್ಲದ ಪದ್ಯ",
+            poemCopySuffix: "ಪ್ರತಿ",
+            deletePoemConfirm: "ಈ ಸಾಧನದಿಂದ ಈ ಪದ್ಯವನ್ನು ಅಳಿಸಬೇಕೆ?",
+            backupDownloaded: "ಬ್ಯಾಕಪ್ ಡೌನ್‌ಲೋಡ್ ಆಗಿದೆ",
+            backupShared: "ಬ್ಯಾಕಪ್ ಹಂಚಿಕೆ ತೆರೆಯಲಾಗಿದೆ",
+            backupImported: "{added} ಆಮದು; {conflicts} ಭಿನ್ನ ಪ್ರತಿಗಳು ಉಳಿದವು; {skipped} ನಕಲುಗಳನ್ನು ಬಿಟ್ಟಿದೆ.",
+            backupInvalid: "ಇದು ಸರಿಯಾದ ಛಂದಸ್ ಬ್ಯಾಕಪ್ ಅಲ್ಲ.",
+            localStorageUnavailable: "ಉಳಿಸಿದ ಪದ್ಯಗಳ ಪಟ್ಟಿ ಲಭ್ಯವಿಲ್ಲ; ಪ್ರಸ್ತುತ ಕರಡು ಸ್ಥಳೀಯವಾಗಿ ಮರುಪಡೆಯುತ್ತದೆ.",
             language: "ತೆರೆಯ ಭಾಷೆ",
             newDraft: "ಹೊಸದು",
             updateAvailable: "ನವೀಕರಣ ಲಭ್ಯ",
@@ -262,13 +310,21 @@
         serviceWorkerRegistration: null,
         waitingServiceWorker: null,
         updateCheckTimer: null,
-        updateRequested: false
+        updateRequested: false,
+        repository: null,
+        activePoemId: null,
+        activePoemTitle: "",
+        activePoemCreatedAt: null,
+        activePoemRevision: 0,
+        activePoemPersisted: false,
+        saveChain: Promise.resolve(),
+        savedPoems: []
     };
 
     function cacheElements() {
         [
             "composition", "highlight-layer", "editor-shell", "draft-state", "cursor-metrics",
-            "language", "new-draft", "app-update", "copy", "share", "analysis-title",
+            "language", "new-draft", "saved-poems", "app-update", "copy", "share", "analysis-title",
             "previous-stanza", "next-stanza", "empty-analysis", "analysis-content",
             "pattern-block", "active-pattern", "active-matras",
             "active-amsha-realization",
@@ -281,7 +337,10 @@
             "strong-template-editor", "strong-template-lines",
             "validation-summary", "prasa-summary", "share-dialog",
             "include-meter", "include-link", "system-share", "twitter-share",
-            "facebook-share", "dialog-copy", "copy-analysis-url", "toast"
+            "facebook-share", "dialog-copy", "copy-analysis-url", "toast",
+            "saved-poems-dialog", "close-saved-poems", "saved-poems-search",
+            "saved-poems-count", "saved-poems-list", "saved-poems-empty",
+            "backup-share", "backup-download", "backup-import", "backup-file"
         ].forEach((id) => {
             elements[id] = document.getElementById(id);
         });
@@ -313,6 +372,9 @@
         renderCursorMetrics();
         renderOverlay();
         renderAnalysisPanel();
+        if (elements["saved-poems-dialog"].open) {
+            renderSavedPoems();
+        }
     }
 
     function escapeHtml(value) {
@@ -1866,9 +1928,10 @@
         state.saveTimer = window.setTimeout(saveDraft, SAVE_DELAY_MS);
     }
 
-    function saveDraft() {
-        const draft = {
+    function currentDraftSnapshot() {
+        return {
             version: 3,
+            poemId: state.activePoemId,
             text: elements.composition.value,
             selections: state.selections,
             templates: state.templates,
@@ -1879,68 +1942,165 @@
             selectionEnd: elements.composition.selectionEnd,
             updatedAt: new Date().toISOString()
         };
+    }
+
+    function meaningfulDraft(draft) {
+        return Boolean(draft.text || Object.keys(draft.selections).length ||
+            Object.keys(draft.templates).length ||
+            Object.keys(draft.strongDrafts).length);
+    }
+
+    function saveDraft() {
+        const draft = currentDraftSnapshot();
 
         try {
             localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
-            elements["draft-state"].textContent = t("savedLocally");
         } catch (error) {
             elements["draft-state"].textContent = t("copyFailed");
         }
+
+        if (!state.repository || !state.activePoemId ||
+            (!state.activePoemPersisted && !meaningfulDraft(draft))) {
+            elements["draft-state"].textContent = t("savedLocally");
+            return Promise.resolve();
+        }
+
+        const record = {
+            ...draft,
+            id: state.activePoemId,
+            title: state.activePoemTitle,
+            createdAt: state.activePoemCreatedAt || draft.updatedAt
+        };
+        state.saveChain = state.saveChain.then(async () => {
+            const saved = await state.repository.put({
+                ...record,
+                revision: state.activePoemRevision + 1
+            });
+            state.activePoemCreatedAt = saved.createdAt;
+            state.activePoemRevision = saved.revision;
+            state.activePoemPersisted = true;
+            await state.repository.setMeta("activePoemId", saved.id);
+            elements["draft-state"].textContent = t("savedLocally");
+            if (elements["saved-poems-dialog"].open) {
+                await refreshSavedPoems();
+            }
+        }).catch((error) => {
+            console.warn("Saved Poems storage failed", error);
+            elements["draft-state"].textContent = t("savedLocally");
+        });
+        return state.saveChain;
     }
 
-    function restoreDraft() {
+    function parseLegacyDraft() {
         try {
             const raw = localStorage.getItem(DRAFT_KEY);
             if (!raw) {
-                return;
+                return null;
             }
             const draft = JSON.parse(raw);
             if (!draft || ![1, 2, 3].includes(draft.version) ||
                 typeof draft.text !== "string") {
-                return;
+                return null;
             }
-
-            elements.composition.value = draft.text;
-            state.selections = draft.selections && typeof draft.selections === "object"
-                ? draft.selections
-                : {};
-            state.templates = draft.version >= 2 &&
-                draft.templates && typeof draft.templates === "object"
-                ? draft.templates
-                : {};
-            state.templateModes = draft.version >= 3 &&
-                draft.templateModes && typeof draft.templateModes === "object"
-                ? draft.templateModes
-                : Object.fromEntries(
-                    Object.keys(state.templates).map((key) => [key, "ghost"])
-                );
-            state.strongDrafts = draft.version >= 3 &&
-                draft.strongDrafts && typeof draft.strongDrafts === "object"
-                ? draft.strongDrafts
-                : {};
-            if (draft.language && messages[draft.language]) {
-                state.language = draft.language;
-            }
-            state.restoreSelectionFrame = requestAnimationFrame(() => {
-                const start = Math.min(draft.selectionStart || 0, draft.text.length);
-                const end = Math.min(draft.selectionEnd || start, draft.text.length);
-                elements.composition.setSelectionRange(start, end);
-                state.restoreSelectionFrame = null;
-            });
-            if (draft.text) {
-                showToast(t("restored"));
-            }
+            return draft;
         } catch (error) {
-            localStorage.removeItem(DRAFT_KEY);
+            return null;
         }
     }
 
-    function clearDraft() {
-        if (authoredCompositionText() && !window.confirm(t("clearConfirm"))) {
-            return;
+    function applyStoredPoem(poem) {
+        elements.composition.value = poem.text || "";
+        state.selections = poem.selections && typeof poem.selections === "object"
+            ? poem.selections
+            : {};
+        state.templates = poem.templates && typeof poem.templates === "object"
+            ? poem.templates
+            : {};
+        state.templateModes = poem.templateModes &&
+            typeof poem.templateModes === "object"
+            ? poem.templateModes
+            : Object.fromEntries(Object.keys(state.templates).map((key) => [key, "ghost"]));
+        state.strongDrafts = poem.strongDrafts && typeof poem.strongDrafts === "object"
+            ? poem.strongDrafts
+            : {};
+        state.strongHistory = {};
+        state.strongFuture = {};
+        state.analysis = null;
+        state.activeStanzaIndex = 0;
+        if (poem.language && messages[poem.language]) {
+            state.language = poem.language;
         }
+        state.restoreSelectionFrame = requestAnimationFrame(() => {
+            const start = Math.min(poem.selectionStart || 0, elements.composition.value.length);
+            const end = Math.min(poem.selectionEnd || start, elements.composition.value.length);
+            elements.composition.setSelectionRange(start, end);
+            state.restoreSelectionFrame = null;
+        });
+    }
+
+    async function restoreDraft() {
+        const legacy = parseLegacyDraft();
+        try {
+            state.repository = new ChandasPoemStore.PoemRepository();
+            await state.repository.open();
+            let activeId = await state.repository.getMeta("activePoemId");
+            const migrated = await state.repository.getMeta("legacyDraftMigrated");
+            if (legacy && (!migrated || !activeId)) {
+                const migratedPoem = ChandasPoemStore.normalizePoem({
+                    ...legacy,
+                    language: legacy.language || state.language,
+                    id: legacy.poemId || ChandasPoemStore.createId()
+                });
+                await state.repository.put(migratedPoem);
+                activeId = migratedPoem.id;
+                await state.repository.setMeta("activePoemId", activeId);
+                await state.repository.setMeta("legacyDraftMigrated", true);
+            } else if (!migrated) {
+                await state.repository.setMeta("legacyDraftMigrated", true);
+            }
+            let poem = activeId ? await state.repository.get(activeId) : null;
+            if (!poem) {
+                poem = (await state.repository.list())[0] || null;
+            }
+            if (poem && legacy && legacy.poemId === poem.id &&
+                Date.parse(legacy.updatedAt || 0) > Date.parse(poem.updatedAt || 0)) {
+                poem = { ...poem, ...legacy, id: poem.id };
+            }
+            if (poem) {
+                state.activePoemId = poem.id;
+                state.activePoemTitle = poem.title || "";
+                state.activePoemCreatedAt = poem.createdAt;
+                state.activePoemRevision = poem.revision || 0;
+                state.activePoemPersisted = true;
+                applyStoredPoem(poem);
+            }
+            if (navigator.storage && navigator.storage.persist) {
+                navigator.storage.persist().catch(() => {});
+            }
+        } catch (error) {
+            console.warn("Saved Poems is unavailable", error);
+            state.repository = null;
+            if (legacy) {
+                state.activePoemId = legacy.poemId || ChandasPoemStore.createId();
+                applyStoredPoem(legacy);
+            }
+        }
+        if (!state.activePoemId) {
+            state.activePoemId = ChandasPoemStore.createId();
+        }
+        if ((legacy && legacy.text) || elements.composition.value) {
+            showToast(t("restored"));
+        }
+    }
+
+    async function clearDraft() {
         window.clearTimeout(state.saveTimer);
-        localStorage.removeItem(DRAFT_KEY);
+        await saveDraft();
+        state.activePoemId = ChandasPoemStore.createId();
+        state.activePoemTitle = "";
+        state.activePoemCreatedAt = null;
+        state.activePoemRevision = 0;
+        state.activePoemPersisted = false;
         elements.composition.value = "";
         state.selections = {};
         state.templates = {};
@@ -1953,6 +2113,13 @@
         renderPlainOverlay();
         renderCursorMetrics();
         renderAnalysisPanel();
+        saveDraft();
+        if (state.repository) {
+            await state.repository.setMeta("activePoemId", state.activePoemId);
+        }
+        if (elements["saved-poems-dialog"].open) {
+            elements["saved-poems-dialog"].close();
+        }
         elements["draft-state"].textContent = t("savedLocally");
         elements.composition.focus();
     }
@@ -2079,6 +2246,260 @@
         }
     }
 
+    function poemDisplayTitle(poem) {
+        if (poem.title) {
+            return poem.title;
+        }
+        const generated = ChandasPoemStore.defaultTitle(poem.text);
+        return generated === "Untitled poem" ? t("untitledPoem") : generated;
+    }
+
+    function poemPreview(poem) {
+        return poem.text.split("\n").map((line) => line.trim())
+            .filter(Boolean).slice(0, 2).join("\n") || "—";
+    }
+
+    async function openStoredPoem(id) {
+        if (!state.repository || id === state.activePoemId) {
+            elements["saved-poems-dialog"].close();
+            elements.composition.focus();
+            return;
+        }
+        window.clearTimeout(state.saveTimer);
+        await saveDraft();
+        const poem = await state.repository.get(id);
+        if (!poem) {
+            await refreshSavedPoems();
+            return;
+        }
+        state.activePoemId = poem.id;
+        state.activePoemTitle = poem.title || "";
+        state.activePoemCreatedAt = poem.createdAt;
+        state.activePoemRevision = poem.revision || 0;
+        state.activePoemPersisted = true;
+        applyStoredPoem(poem);
+        await state.repository.setMeta("activePoemId", poem.id);
+        updateLanguage();
+        runAnalysis();
+        elements["saved-poems-dialog"].close();
+        elements.composition.focus();
+    }
+
+    async function renameStoredPoem(poem, card) {
+        const actions = card.querySelector(".saved-poem-actions");
+        const form = document.createElement("div");
+        form.className = "saved-poem-rename";
+        const input = document.createElement("input");
+        input.type = "text";
+        input.maxLength = 160;
+        input.value = poem.title || poemDisplayTitle(poem);
+        input.setAttribute("aria-label", t("renamePoem"));
+        const save = document.createElement("button");
+        save.type = "button";
+        save.textContent = t("saveName");
+        const cancel = document.createElement("button");
+        cancel.type = "button";
+        cancel.textContent = t("cancel");
+        form.append(input, save, cancel);
+        actions.replaceWith(form);
+        input.focus();
+        input.select();
+        const commit = async () => {
+            const updated = {
+                ...poem,
+                title: input.value.trim(),
+                updatedAt: new Date().toISOString(),
+                revision: poem.revision + 1
+            };
+            await state.repository.put(updated);
+            if (poem.id === state.activePoemId) {
+                state.activePoemTitle = updated.title;
+                state.activePoemRevision = updated.revision;
+            }
+            await refreshSavedPoems();
+        };
+        save.addEventListener("click", commit);
+        input.addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                commit();
+            } else if (event.key === "Escape") {
+                refreshSavedPoems();
+            }
+        });
+        cancel.addEventListener("click", refreshSavedPoems);
+    }
+
+    function savedPoemButton(label, handler) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.textContent = label;
+        button.addEventListener("click", handler);
+        return button;
+    }
+
+    function renderSavedPoems() {
+        const query = elements["saved-poems-search"].value.trim().toLocaleLowerCase();
+        const poems = state.savedPoems.filter((poem) =>
+            !query || `${poem.title}\n${poem.text}`.toLocaleLowerCase().includes(query));
+        elements["saved-poems-list"].replaceChildren();
+        elements["saved-poems-count"].textContent = t("savedPoemCount", {
+            count: poems.length
+        });
+        elements["saved-poems-empty"].hidden = poems.length > 0;
+        for (const poem of poems) {
+            const card = document.createElement("article");
+            card.className = "saved-poem-card";
+            if (poem.id === state.activePoemId) {
+                card.classList.add("active");
+            }
+            const title = document.createElement("h3");
+            title.textContent = poemDisplayTitle(poem);
+            const time = document.createElement("time");
+            time.dateTime = poem.updatedAt;
+            time.textContent = new Intl.DateTimeFormat(state.language, {
+                dateStyle: "medium",
+                timeStyle: "short"
+            }).format(new Date(poem.updatedAt));
+            const preview = document.createElement("p");
+            preview.className = "saved-poem-preview";
+            preview.textContent = poemPreview(poem);
+            const actions = document.createElement("div");
+            actions.className = "saved-poem-actions";
+            actions.append(
+                savedPoemButton(
+                    poem.id === state.activePoemId ? t("activePoem") : t("openPoem"),
+                    () => openStoredPoem(poem.id)
+                ),
+                savedPoemButton(t("renamePoem"), () => renameStoredPoem(poem, card)),
+                savedPoemButton(t("duplicatePoem"), async () => {
+                    const now = new Date().toISOString();
+                    await state.repository.put({
+                        ...poem,
+                        id: ChandasPoemStore.createId(),
+                        title: `${poemDisplayTitle(poem)} (${t("poemCopySuffix")})`,
+                        createdAt: now,
+                        updatedAt: now,
+                        revision: 0
+                    });
+                    await refreshSavedPoems();
+                }),
+                savedPoemButton(t("deletePoem"), async () => {
+                    if (!window.confirm(t("deletePoemConfirm"))) {
+                        return;
+                    }
+                    await state.repository.remove(poem.id);
+                    if (poem.id === state.activePoemId) {
+                        window.clearTimeout(state.saveTimer);
+                        elements.composition.value = "";
+                        state.selections = {};
+                        state.templates = {};
+                        state.templateModes = {};
+                        state.strongDrafts = {};
+                        state.activePoemPersisted = false;
+                        await clearDraft();
+                        elements["saved-poems-dialog"].showModal();
+                    }
+                    await refreshSavedPoems();
+                })
+            );
+            card.append(title, time, preview, actions);
+            elements["saved-poems-list"].append(card);
+        }
+    }
+
+    async function refreshSavedPoems() {
+        if (!state.repository) {
+            state.savedPoems = [];
+            renderSavedPoems();
+            return;
+        }
+        state.savedPoems = await state.repository.list();
+        renderSavedPoems();
+    }
+
+    async function showSavedPoems() {
+        window.clearTimeout(state.saveTimer);
+        await saveDraft();
+        await refreshSavedPoems();
+        elements["saved-poems-dialog"].showModal();
+        elements["saved-poems-search"].focus();
+    }
+
+    function backupFile(poems) {
+        const json = JSON.stringify(ChandasPoemStore.makeBackup(poems), null, 2);
+        const date = new Date().toISOString().slice(0, 10);
+        return new File([json], `chandas-backup-${date}.json`, {
+            type: "application/json"
+        });
+    }
+
+    function downloadBackupFile(file) {
+        const url = URL.createObjectURL(file);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = file.name;
+        document.body.append(link);
+        link.click();
+        link.remove();
+        window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+        showToast(t("backupDownloaded"));
+    }
+
+    async function exportBackup(preferShare) {
+        if (!state.repository) {
+            showToast(t("localStorageUnavailable"));
+            return;
+        }
+        await saveDraft();
+        const file = backupFile(await state.repository.list());
+        if (preferShare && navigator.share && navigator.canShare &&
+            navigator.canShare({ files: [file] })) {
+            try {
+                await navigator.share({
+                    files: [file],
+                    title: "Chandas poems backup"
+                });
+                showToast(t("backupShared"));
+                return;
+            } catch (error) {
+                if (error && error.name === "AbortError") {
+                    return;
+                }
+            }
+        }
+        downloadBackupFile(file);
+    }
+
+    async function importBackupFile(file) {
+        if (!state.repository || !file || file.size > ChandasPoemStore.MAX_BACKUP_BYTES) {
+            showToast(t("backupInvalid"));
+            return;
+        }
+        try {
+            const result = await state.repository.import(await file.text());
+            await refreshSavedPoems();
+            showToast(t("backupImported", result));
+        } catch (error) {
+            console.warn("Backup import rejected", error);
+            showToast(t("backupInvalid"));
+        } finally {
+            elements["backup-file"].value = "";
+        }
+    }
+
+    function dismissSavedPoemsFromBackdrop(event) {
+        const dialog = elements["saved-poems-dialog"];
+        if (event.target !== dialog) {
+            return;
+        }
+        const bounds = dialog.getBoundingClientRect();
+        if (event.clientX < bounds.left || event.clientX > bounds.right ||
+            event.clientY < bounds.top || event.clientY > bounds.bottom) {
+            dialog.close();
+        }
+    }
+
     function dismissShareDialogFromBackdrop(event) {
         const dialog = elements["share-dialog"];
         if (event.target !== dialog) {
@@ -2131,7 +2552,7 @@
         }
     }
 
-    function activateAppUpdate() {
+    async function activateAppUpdate() {
         const worker = state.waitingServiceWorker ||
             (state.serviceWorkerRegistration &&
                 state.serviceWorkerRegistration.waiting);
@@ -2139,7 +2560,7 @@
             checkForAppUpdate();
             return;
         }
-        saveDraft();
+        await saveDraft();
         state.updateRequested = true;
         elements["app-update"].disabled = true;
         elements["app-update"].textContent = t("updating");
@@ -2396,6 +2817,20 @@
         });
 
         elements["new-draft"].addEventListener("click", clearDraft);
+        elements["saved-poems"].addEventListener("click", showSavedPoems);
+        elements["close-saved-poems"].addEventListener("click", () =>
+            elements["saved-poems-dialog"].close());
+        elements["saved-poems-dialog"].addEventListener(
+            "click",
+            dismissSavedPoemsFromBackdrop
+        );
+        elements["saved-poems-search"].addEventListener("input", renderSavedPoems);
+        elements["backup-share"].addEventListener("click", () => exportBackup(true));
+        elements["backup-download"].addEventListener("click", () => exportBackup(false));
+        elements["backup-import"].addEventListener("click", () =>
+            elements["backup-file"].click());
+        elements["backup-file"].addEventListener("change", () =>
+            importBackupFile(elements["backup-file"].files[0]));
         elements["app-update"].addEventListener("click", activateAppUpdate);
         elements.copy.addEventListener("click", () => copyText(authoredCompositionText()));
         elements.share.addEventListener("click", () => elements["share-dialog"].showModal());
@@ -2565,6 +3000,12 @@
             }
         });
         window.addEventListener("beforeunload", saveDraft);
+        window.addEventListener("pagehide", saveDraft);
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === "hidden") {
+                saveDraft();
+            }
+        });
     }
 
     async function initialize() {
@@ -2577,7 +3018,7 @@
         }
 
         bindEvents();
-        restoreDraft();
+        await restoreDraft();
         updateLanguage();
         renderPlainOverlay();
 

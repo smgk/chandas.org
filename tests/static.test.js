@@ -27,7 +27,22 @@ test("the web shell has no external runtime asset dependencies", () => {
     assert.match(html, /manifest\.webmanifest/);
     assert.match(html, /meter_analysis\.js/);
     assert.match(html, /strong_template\.js/);
+    assert.match(html, /poem_store\.js/);
     assert.match(html, /app\.js/);
+});
+
+test("saved poems use only on-device storage and user-owned backups", () => {
+    const store = read("poem_store.js");
+    const app = read("app.js");
+    const manifest = read("android/app/src/main/AndroidManifest.xml");
+
+    assert.match(store, /indexedDB/);
+    assert.match(app, /navigator\.storage\.persist/);
+    assert.match(app, /navigator\.canShare\(\{ files: \[file\] \}\)/);
+    assert.doesNotMatch(store, /fetch\(|XMLHttpRequest|WebSocket|https?:\/\//);
+    assert.doesNotMatch(app, /firebase|firestore|googleapis|supabase/i);
+    assert.match(manifest, /android:allowBackup="false"/);
+    assert.match(read("requirements.md"), /MUST NOT incur cloud database/);
 });
 
 test("original source declares Ganesh Krishna Shankarathota under GPLv3 only", () => {
@@ -37,6 +52,7 @@ test("original source declares Ganesh Krishna Shankarathota under GPLv3 only", (
         "app.js",
         "meter_analysis.js",
         "strong_template.js",
+        "poem_store.js",
         "documentation.js",
         "service-worker.js",
         "styles.css",
@@ -82,6 +98,7 @@ test("service worker pre-caches every core web asset", () => {
         "app.js",
         "meter_analysis.js",
         "strong_template.js",
+        "poem_store.js",
         "mishra.json",
         "structural_meters.json",
         "manifest.webmanifest",
@@ -128,6 +145,8 @@ test("the composition control and live regions have accessible labels", () => {
     assert.match(html, /id="show-template"[^>]*type="checkbox"/);
     assert.match(html, /id="template-mode-strong"[^>]*type="radio"/);
     assert.match(html, /id="copy-analysis-url"[^>]*type="button"/);
+    assert.match(html, /id="saved-poems-dialog"[^>]*aria-labelledby="saved-poems-title"/);
+    assert.match(html, /id="saved-poems-count"[^>]*aria-live="polite"/);
     assert.match(
         html,
         /id="strong-template-editor"[^>]*aria-labelledby="strong-template-title"/
@@ -224,7 +243,8 @@ test("the public roadmap is concise, forward-looking, and available offline", ()
     assert.match(roadmap, /Android distribution/);
     assert.match(roadmap, /Synonym suggestions/);
     assert.match(roadmap, /Short analysis links/);
-    assert.match(roadmap, /Optional accounts and sync/);
+    assert.match(roadmap, /Better user-owned backups/);
+    assert.match(roadmap, /never need a paid/);
     assert.match(roadmap, /Anonymous composition/);
     assert.doesNotMatch(roadmap, /Estimate:|weeks|Target:/);
 });

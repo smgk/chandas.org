@@ -1411,7 +1411,8 @@ textarea:focus-visible {
     margin: 0;
 }
 
-.share-dialog {
+.share-dialog,
+.saved-poems-dialog {
     width: min(440px, calc(100% - 2rem));
     border: 1px solid var(--line);
     border-radius: 1rem;
@@ -1421,15 +1422,135 @@ textarea:focus-visible {
     box-shadow: var(--shadow);
 }
 
-.share-dialog::backdrop {
+.share-dialog::backdrop,
+.saved-poems-dialog::backdrop {
     background: rgba(36, 29, 22, 0.48);
     backdrop-filter: blur(3px);
 }
 
-.share-dialog h2 {
+.share-dialog h2,
+.saved-poems-dialog h2 {
     margin: 0.25rem 0 1rem;
     font-family: Georgia, "Times New Roman", serif;
     font-weight: 500;
+}
+
+.saved-poems-dialog {
+    width: min(720px, calc(100% - 2rem));
+    max-height: calc(100dvh - 2rem);
+    overflow: auto;
+}
+
+.local-storage-note {
+    margin: 0 0 1rem;
+    padding: 0.8rem 0.9rem;
+    border-radius: 0.7rem;
+    color: var(--muted);
+    background: var(--paper-deep);
+    font-size: 0.84rem;
+    line-height: 1.5;
+}
+
+.saved-poems-toolbar {
+    display: grid;
+    grid-template-columns: minmax(12rem, 1fr) auto auto;
+    gap: 0.55rem;
+}
+
+.saved-poems-search {
+    grid-column: 1 / -1;
+}
+
+.saved-poems-search input {
+    width: 100%;
+    min-height: 2.55rem;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid var(--line);
+    border-radius: 0.55rem;
+    color: var(--ink);
+    background: #fffdf8;
+    font: inherit;
+}
+
+.saved-poems-count {
+    min-height: 1.2rem;
+    margin: 0.8rem 0 0.35rem;
+    color: var(--muted);
+    font-size: 0.78rem;
+}
+
+.saved-poems-list {
+    display: grid;
+    gap: 0.65rem;
+}
+
+.saved-poem-card {
+    padding: 0.85rem;
+    border: 1px solid var(--line);
+    border-radius: 0.75rem;
+    background: #fffdf8;
+}
+
+.saved-poem-card.active {
+    border-color: var(--saffron);
+    box-shadow: inset 3px 0 var(--saffron);
+}
+
+.saved-poem-card h3 {
+    margin: 0;
+    font-size: 1rem;
+}
+
+.saved-poem-card time {
+    color: var(--muted);
+    font-size: 0.75rem;
+}
+
+.saved-poem-preview {
+    display: -webkit-box;
+    margin: 0.45rem 0 0.7rem;
+    overflow: hidden;
+    color: var(--muted);
+    font-size: 0.86rem;
+    line-height: 1.45;
+    white-space: pre-line;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+.saved-poem-actions,
+.saved-poem-rename {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.saved-poem-actions button,
+.saved-poem-rename button {
+    min-height: 2.1rem;
+    padding: 0.35rem 0.65rem;
+    border: 1px solid var(--line);
+    border-radius: 0.5rem;
+    color: var(--ink);
+    background: var(--paper-deep);
+}
+
+.saved-poem-rename input {
+    flex: 1 1 14rem;
+    min-width: 0;
+    padding: 0.4rem 0.55rem;
+    border: 1px solid var(--saffron);
+    border-radius: 0.5rem;
+    font: inherit;
+}
+
+.saved-poems-empty {
+    margin: 1rem 0 0;
+    padding: 1.5rem;
+    border: 1px dashed var(--line);
+    border-radius: 0.75rem;
+    color: var(--muted);
+    text-align: center;
 }
 
 .close-button {
@@ -1626,6 +1747,20 @@ textarea:focus-visible {
     }
 
     .share-destinations .primary-button {
+        grid-column: auto;
+    }
+
+    .saved-poems-dialog {
+        width: calc(100% - 1rem);
+        max-height: calc(100dvh - 1rem);
+        padding: 0.9rem;
+    }
+
+    .saved-poems-toolbar {
+        grid-template-columns: 1fr;
+    }
+
+    .saved-poems-search {
         grid-column: auto;
     }
 

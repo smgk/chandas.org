@@ -5,6 +5,7 @@
 
 "use strict";
 
+const fs = require("node:fs/promises");
 const { expect, test } = require("@playwright/test");
 
 test.beforeEach(async ({ page }) => {
@@ -864,6 +865,111 @@ test("migrates a version-two ghost draft into the template-mode model", async ({
     await expect(page.locator("#show-template")).toBeChecked();
     await expect(page.locator("#template-mode-ghost")).toBeChecked();
     await expect(page.locator("#strong-template-editor")).toBeHidden();
+});
+
+test("New shelves the current poem and Saved poems reopens it", async ({ page }) => {
+    const editor = page.locator("#composition");
+    await editor.fill("ಮೊದಲ ಸಾಲು\nಎರಡನೆಯ ಸಾಲು");
+    await page.waitForTimeout(400);
+    await page.locator("#new-draft").click();
+    await expect(editor).toHaveValue("");
+
+    await page.locator("#saved-poems").click();
+    await expect(page.locator("#saved-poems-dialog")).toBeVisible();
+    await expect(page.locator(".saved-poem-card h3")).toHaveText("ಮೊದಲ ಸಾಲು");
+    await expect(page.locator(".saved-poem-preview"))
+        .toContainText("ಎರಡನೆಯ ಸಾಲು");
+    await page.locator(".saved-poem-card button").filter({ hasText: /Open|ತೆರೆಯಿರಿ/ }).click();
+    await expect(editor).toHaveValue("ಮೊದಲ ಸಾಲು\nಎರಡನೆಯ ಸಾಲು");
+    await expect(page.locator("#saved-poems-dialog")).toBeHidden();
+});
+
+test("Saved poems search, rename, duplicate, and delete stay on-device", async ({ page }) => {
+    await page.locator("#composition").fill("ಕಾವ್ಯ ಹುಡುಕು\nಪದ್ಯ");
+    await page.waitForTimeout(400);
+    await page.locator("#saved-poems").click();
+    await page.locator("#saved-poems-search").fill("ಹುಡುಕು");
+    await expect(page.locator(".saved-poem-card")).toHaveCount(1);
+
+    await page.getByRole("button", { name: "Rename" }).click();
+    await page.locator(".saved-poem-rename input").fill("ನನ್ನ ಕಾವ್ಯ");
+    await page.getByRole("button", { name: "Save name" }).click();
+    await page.locator("#saved-poems-search").fill("");
+    await expect(page.locator(".saved-poem-card h3")).toHaveText("ನನ್ನ ಕಾವ್ಯ");
+
+    await page.getByRole("button", { name: "Duplicate" }).click();
+    await expect(page.locator(".saved-poem-card")).toHaveCount(2);
+    page.once("dialog", (dialog) => dialog.accept());
+    await page.locator(".saved-poem-card").last()
+        .getByRole("button", { name: "Delete" }).click();
+    await expect(page.locator(".saved-poem-card")).toHaveCount(1);
+});
+
+test("downloads a portable local backup with Unicode and template state", async ({ page }) => {
+    await page.locator("#composition").fill("\nಕಾವ್ಯ\nಪದ್ಯ");
+    await page.locator("#meter-picker summary").click();
+    await page.locator("#meter-search").fill("madhu");
+    await page.locator("#meter-select").selectOption("madhu");
+    await page.locator("#show-template").check();
+    await page.waitForTimeout(400);
+    await page.locator("#saved-poems").click();
+
+    const downloadPromise = page.waitForEvent("download");
+    await page.locator("#backup-download").click();
+    const download = await downloadPromise;
+    const contents = JSON.parse(await fs.readFile(await download.path(), "utf8"));
+    expect(contents.format).toBe("chandas-poems-backup");
+    expect(contents.version).toBe(1);
+    expect(contents.poems).toHaveLength(1);
+    expect(contents.poems[0].text).toBe("\nಕಾವ್ಯ\nಪದ್ಯ");
+    expect(contents.poems[0].selections[0]).toBe("madhu");
+    expect(contents.poems[0].templateModes[0]).toBe("ghost");
+});
+
+test("imports backups without overwriting or multiplying conflicts", async ({ page }) => {
+    await page.locator("#composition").fill("ಸ್ಥಳೀಯ ಪದ್ಯ");
+    await page.waitForTimeout(400);
+    await page.locator("#saved-poems").click();
+
+    const imported = {
+        id: "shared-poem-id",
+        schemaVersion: 1,
+        title: "ಆಮದು ಪದ್ಯ",
+        text: "ಆಮದು ಸಾಲು\nಎರಡು",
+        selections: {},
+        templates: {},
+        templateModes: {},
+        strongDrafts: {},
+        language: "kn",
+        selectionStart: 0,
+        selectionEnd: 0,
+        createdAt: "2026-07-30T10:00:00.000Z",
+        updatedAt: "2026-07-30T10:00:00.000Z",
+        revision: 1
+    };
+    const backup = (poem) => JSON.stringify({
+        format: "chandas-poems-backup",
+        version: 1,
+        exportedAt: "2026-07-31T10:00:00.000Z",
+        poems: [poem]
+    });
+    const upload = async (contents) => page.locator("#backup-file").setInputFiles({
+        name: "chandas-backup.json",
+        mimeType: "application/json",
+        buffer: Buffer.from(contents)
+    });
+
+    await upload(backup(imported));
+    await expect(page.locator(".saved-poem-card")).toHaveCount(2);
+    await expect(page.locator(".saved-poem-card h3", { hasText: "ಆಮದು ಪದ್ಯ" }))
+        .toHaveCount(1);
+    await upload(backup(imported));
+    await expect(page.locator(".saved-poem-card")).toHaveCount(2);
+
+    await upload(backup({ ...imported, text: "ಬದಲಾದ ಆಮದು ಸಾಲು" }));
+    await expect(page.locator(".saved-poem-card")).toHaveCount(3);
+    await upload(backup({ ...imported, text: "ಬದಲಾದ ಆಮದು ಸಾಲು" }));
+    await expect(page.locator(".saved-poem-card")).toHaveCount(3);
 });
 
 test("switches to the Kannada interface", async ({ page }) => {

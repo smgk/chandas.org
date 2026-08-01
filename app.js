@@ -20,9 +20,10 @@
             onThisDevice: "On this device",
             savedPoemsNote: "These poems never leave this device unless you export or share them. Keep a backup before clearing browser or app data.",
             searchSavedPoems: "Search saved poems",
-            saveBackup: "Save / share backup",
-            downloadBackup: "Download backup",
-            importBackup: "Import backup",
+            saveBackup: "Save / share poems",
+            downloadBackup: "Full backup",
+            importBackup: "Restore full backup",
+            exportHelp: "The text export is for reading and copying. Use Full backup to restore your complete Chandas workspace.",
             noSavedPoems: "No saved poems yet. Your next line will fix that.",
             savedPoemCount: "{count} saved poem(s)",
             openPoem: "Open",
@@ -35,8 +36,15 @@
             untitledPoem: "Untitled poem",
             poemCopySuffix: "copy",
             deletePoemConfirm: "Delete this saved poem from this device?",
-            backupDownloaded: "Backup downloaded",
-            backupShared: "Backup share sheet opened",
+            backupDownloaded: "Full backup downloaded",
+            backupShared: "Full backup share sheet opened",
+            poemsDownloaded: "Readable poems downloaded",
+            poemsShared: "Readable poems share sheet opened",
+            poemsFileTitle: "CHANDAS POEMS",
+            exportedAtLabel: "Exported",
+            lastEditedLabel: "Last edited",
+            metersLabel: "Selected meters",
+            noSelectedMeters: "None",
             backupImported: "Imported {added}; kept {conflicts} conflict copy/copies; skipped {skipped} duplicate(s).",
             backupInvalid: "That file is not a valid Chandas backup.",
             localStorageUnavailable: "Saved Poems is unavailable, but the current draft will still recover locally.",
@@ -156,9 +164,10 @@
             onThisDevice: "ಈ ಸಾಧನದಲ್ಲಿ",
             savedPoemsNote: "ನೀವು ರಫ್ತು ಅಥವಾ ಹಂಚಿಕೆ ಮಾಡದ ಹೊರತು ಈ ಪದ್ಯಗಳು ಸಾಧನದಿಂದ ಹೊರಹೋಗುವುದಿಲ್ಲ. ಬ್ರೌಸರ್ ಅಥವಾ ಆ್ಯಪ್ ದತ್ತಾಂಶ ಅಳಿಸುವ ಮೊದಲು ಬ್ಯಾಕಪ್ ಇಟ್ಟುಕೊಳ್ಳಿ.",
             searchSavedPoems: "ಉಳಿಸಿದ ಪದ್ಯಗಳನ್ನು ಹುಡುಕಿ",
-            saveBackup: "ಬ್ಯಾಕಪ್ ಉಳಿಸಿ / ಹಂಚಿ",
-            downloadBackup: "ಬ್ಯಾಕಪ್ ಡೌನ್‌ಲೋಡ್",
-            importBackup: "ಬ್ಯಾಕಪ್ ಆಮದು",
+            saveBackup: "ಪದ್ಯಗಳನ್ನು ಉಳಿಸಿ / ಹಂಚಿ",
+            downloadBackup: "ಸಂಪೂರ್ಣ ಬ್ಯಾಕಪ್",
+            importBackup: "ಸಂಪೂರ್ಣ ಬ್ಯಾಕಪ್ ಮರುಸ್ಥಾಪಿಸಿ",
+            exportHelp: "ಓದಲು ಮತ್ತು ನಕಲಿಸಲು ಪಠ್ಯ ರಫ್ತು ಬಳಸಿ. ನಿಮ್ಮ ಸಂಪೂರ್ಣ ಛಂದಸ್ ಕೆಲಸವನ್ನು ಮರುಸ್ಥಾಪಿಸಲು ಸಂಪೂರ್ಣ ಬ್ಯಾಕಪ್ ಬಳಸಿ.",
             noSavedPoems: "ಇನ್ನೂ ಪದ್ಯಗಳು ಉಳಿದಿಲ್ಲ. ನಿಮ್ಮ ಮುಂದಿನ ಸಾಲು ಅದನ್ನು ಸರಿಪಡಿಸುತ್ತದೆ.",
             savedPoemCount: "ಉಳಿಸಿದ ಪದ್ಯಗಳು: {count}",
             openPoem: "ತೆರೆಯಿರಿ",
@@ -171,8 +180,15 @@
             untitledPoem: "ಹೆಸರಿಲ್ಲದ ಪದ್ಯ",
             poemCopySuffix: "ಪ್ರತಿ",
             deletePoemConfirm: "ಈ ಸಾಧನದಿಂದ ಈ ಪದ್ಯವನ್ನು ಅಳಿಸಬೇಕೆ?",
-            backupDownloaded: "ಬ್ಯಾಕಪ್ ಡೌನ್‌ಲೋಡ್ ಆಗಿದೆ",
-            backupShared: "ಬ್ಯಾಕಪ್ ಹಂಚಿಕೆ ತೆರೆಯಲಾಗಿದೆ",
+            backupDownloaded: "ಸಂಪೂರ್ಣ ಬ್ಯಾಕಪ್ ಡೌನ್‌ಲೋಡ್ ಆಗಿದೆ",
+            backupShared: "ಸಂಪೂರ್ಣ ಬ್ಯಾಕಪ್ ಹಂಚಿಕೆ ತೆರೆಯಲಾಗಿದೆ",
+            poemsDownloaded: "ಓದಲು ಸುಲಭವಾದ ಪದ್ಯಗಳು ಡೌನ್‌ಲೋಡ್ ಆಗಿವೆ",
+            poemsShared: "ಪದ್ಯಗಳ ಹಂಚಿಕೆ ತೆರೆಯಲಾಗಿದೆ",
+            poemsFileTitle: "ಛಂದಸ್ ಪದ್ಯಗಳು",
+            exportedAtLabel: "ರಫ್ತು ಮಾಡಿದ ಸಮಯ",
+            lastEditedLabel: "ಕೊನೆಯ ಬದಲಾವಣೆ",
+            metersLabel: "ಆಯ್ದ ಛಂದಸ್ಸುಗಳು",
+            noSelectedMeters: "ಯಾವುದೂ ಇಲ್ಲ",
             backupImported: "{added} ಆಮದು; {conflicts} ಭಿನ್ನ ಪ್ರತಿಗಳು ಉಳಿದವು; {skipped} ನಕಲುಗಳನ್ನು ಬಿಟ್ಟಿದೆ.",
             backupInvalid: "ಇದು ಸರಿಯಾದ ಛಂದಸ್ ಬ್ಯಾಕಪ್ ಅಲ್ಲ.",
             localStorageUnavailable: "ಉಳಿಸಿದ ಪದ್ಯಗಳ ಪಟ್ಟಿ ಲಭ್ಯವಿಲ್ಲ; ಪ್ರಸ್ತುತ ಕರಡು ಸ್ಥಳೀಯವಾಗಿ ಮರುಪಡೆಯುತ್ತದೆ.",
@@ -1971,15 +1987,18 @@
             title: state.activePoemTitle,
             createdAt: state.activePoemCreatedAt || draft.updatedAt
         };
+        const baseRevision = state.activePoemRevision;
         state.saveChain = state.saveChain.then(async () => {
             const saved = await state.repository.put({
                 ...record,
-                revision: state.activePoemRevision + 1
+                revision: baseRevision + 1
             });
-            state.activePoemCreatedAt = saved.createdAt;
-            state.activePoemRevision = saved.revision;
-            state.activePoemPersisted = true;
-            await state.repository.setMeta("activePoemId", saved.id);
+            if (saved.id === state.activePoemId) {
+                state.activePoemCreatedAt = saved.createdAt;
+                state.activePoemRevision = saved.revision;
+                state.activePoemPersisted = true;
+                await state.repository.setMeta("activePoemId", saved.id);
+            }
             elements["draft-state"].textContent = t("savedLocally");
             if (elements["saved-poems-dialog"].open) {
                 await refreshSavedPoems();
@@ -2095,7 +2114,7 @@
 
     async function clearDraft() {
         window.clearTimeout(state.saveTimer);
-        await saveDraft();
+        const pendingSave = saveDraft();
         state.activePoemId = ChandasPoemStore.createId();
         state.activePoemTitle = "";
         state.activePoemCreatedAt = null;
@@ -2114,6 +2133,7 @@
         renderCursorMetrics();
         renderAnalysisPanel();
         saveDraft();
+        await pendingSave;
         if (state.repository) {
             await state.repository.setMeta("activePoemId", state.activePoemId);
         }
@@ -2434,7 +2454,50 @@
         });
     }
 
-    function downloadBackupFile(file) {
+    function readablePoemsText(poems) {
+        const dateFormatter = new Intl.DateTimeFormat(state.language, {
+            dateStyle: "long",
+            timeStyle: "short"
+        });
+        const divider = "=".repeat(64);
+        const rule = "-".repeat(64);
+        const sections = poems.map((poem, index) => {
+            const meterNames = Array.from(new Set(Object.values(poem.selections || {})))
+                .filter(Boolean)
+                .map((meterId) => {
+                    const meter = meterForId(meterId);
+                    return meter ? meter.name : meterId;
+                });
+            const edited = Number.isFinite(Date.parse(poem.updatedAt))
+                ? dateFormatter.format(new Date(poem.updatedAt))
+                : "—";
+            return [
+                divider,
+                `${index + 1}. ${poemDisplayTitle(poem)}`,
+                `${t("lastEditedLabel")}: ${edited}`,
+                `${t("metersLabel")}: ${meterNames.join(", ") || t("noSelectedMeters")}`,
+                rule,
+                poem.text
+            ].join("\n");
+        });
+        return [
+            t("poemsFileTitle"),
+            `${t("exportedAtLabel")}: ${dateFormatter.format(new Date())}`,
+            "",
+            ...sections,
+            ""
+        ].join("\n");
+    }
+
+    function readablePoemsFile(poems) {
+        const date = new Date().toISOString().slice(0, 10);
+        return new File(["\uFEFF", readablePoemsText(poems)],
+            `chandas-poems-${date}.txt`, {
+                type: "text/plain;charset=utf-8"
+            });
+    }
+
+    function downloadFile(file, messageKey) {
         const url = URL.createObjectURL(file);
         const link = document.createElement("a");
         link.href = url;
@@ -2443,24 +2506,24 @@
         link.click();
         link.remove();
         window.setTimeout(() => URL.revokeObjectURL(url), 1000);
-        showToast(t("backupDownloaded"));
+        showToast(t(messageKey));
     }
 
-    async function exportBackup(preferShare) {
+    async function exportReadablePoems() {
         if (!state.repository) {
             showToast(t("localStorageUnavailable"));
             return;
         }
         await saveDraft();
-        const file = backupFile(await state.repository.list());
-        if (preferShare && navigator.share && navigator.canShare &&
+        const file = readablePoemsFile(await state.repository.list());
+        if (navigator.share && navigator.canShare &&
             navigator.canShare({ files: [file] })) {
             try {
                 await navigator.share({
                     files: [file],
-                    title: "Chandas poems backup"
+                    title: t("poemsFileTitle")
                 });
-                showToast(t("backupShared"));
+                showToast(t("poemsShared"));
                 return;
             } catch (error) {
                 if (error && error.name === "AbortError") {
@@ -2468,7 +2531,16 @@
                 }
             }
         }
-        downloadBackupFile(file);
+        downloadFile(file, "poemsDownloaded");
+    }
+
+    async function exportFullBackup() {
+        if (!state.repository) {
+            showToast(t("localStorageUnavailable"));
+            return;
+        }
+        await saveDraft();
+        downloadFile(backupFile(await state.repository.list()), "backupDownloaded");
     }
 
     async function importBackupFile(file) {
@@ -2825,8 +2897,8 @@
             dismissSavedPoemsFromBackdrop
         );
         elements["saved-poems-search"].addEventListener("input", renderSavedPoems);
-        elements["backup-share"].addEventListener("click", () => exportBackup(true));
-        elements["backup-download"].addEventListener("click", () => exportBackup(false));
+        elements["backup-share"].addEventListener("click", exportReadablePoems);
+        elements["backup-download"].addEventListener("click", exportFullBackup);
         elements["backup-import"].addEventListener("click", () =>
             elements["backup-file"].click());
         elements["backup-file"].addEventListener("change", () =>

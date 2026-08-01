@@ -147,6 +147,9 @@ test("the composition control and live regions have accessible labels", () => {
     assert.match(html, /id="copy-analysis-url"[^>]*type="button"/);
     assert.match(html, /id="saved-poems-dialog"[^>]*aria-labelledby="saved-poems-title"/);
     assert.match(html, /id="saved-poems-count"[^>]*aria-live="polite"/);
+    assert.match(html, /Save \/ share poems/);
+    assert.match(html, /Full backup/);
+    assert.match(html, /Restore full backup/);
     assert.match(
         html,
         /id="strong-template-editor"[^>]*aria-labelledby="strong-template-title"/

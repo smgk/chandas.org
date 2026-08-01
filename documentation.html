@@ -156,10 +156,13 @@ SPDX-License-Identifier: GPL-3.0-only
         </p>
         <p>
             This library has no cloud database and no account. Browser or app
-            data can still be cleared, so use <em>Save / share backup</em> to
-            send one portable JSON file to Files, Drive, or another destination
-            offered by your device. <em>Download backup</em> saves the same file
-            directly. Importing a backup preserves both versions when an ID
+            data can still be cleared. <em>Save / share poems</em> creates a
+            readable UTF-8 text file containing every title, edit time,
+            selected meter, and poem; send it to Files, Drive, or another
+            destination offered by your device. It is for reading and copying,
+            not exact restoration. <em>Full backup</em> downloads the JSON file
+            that preserves templates and editor state, and <em>Restore full
+            backup</em> imports it. Restore preserves both versions when an ID
             collision contains different writing. Poetry may clash; backups
             need not.
         </p>

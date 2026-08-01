@@ -284,16 +284,19 @@ SPDX-License-Identifier: GPL-3.0-only
                     data-i18n-placeholder="searchSavedPoems" placeholder="Search saved poems">
             </label>
             <button id="backup-share" type="button" class="primary-button" data-i18n="saveBackup">
-                Save / share backup
+                Save / share poems
             </button>
             <button id="backup-download" type="button" class="destination-button" data-i18n="downloadBackup">
-                Download backup
+                Full backup
             </button>
             <button id="backup-import" type="button" class="destination-button" data-i18n="importBackup">
-                Import backup
+                Restore full backup
             </button>
             <input id="backup-file" class="sr-only" type="file" accept="application/json,.json">
         </div>
+        <p class="backup-format-help" data-i18n="exportHelp">
+            The text export is for reading and copying. Use Full backup to restore your complete Chandas workspace.
+        </p>
         <p id="saved-poems-count" class="saved-poems-count" aria-live="polite"></p>
         <div id="saved-poems-list" class="saved-poems-list"></div>
         <p id="saved-poems-empty" class="saved-poems-empty" data-i18n="noSavedPoems">

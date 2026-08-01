@@ -926,6 +926,34 @@ test("downloads a portable local backup with Unicode and template state", async 
     expect(contents.poems[0].templateModes[0]).toBe("ghost");
 });
 
+test("saves and shares every poem as readable UTF-8 text", async ({ page }) => {
+    await page.locator("#composition").fill("ಮೊದಲ ಸಾಲು\nಎರಡನೆಯ ಸಾಲು");
+    await page.locator("#meter-picker summary").click();
+    await page.locator("#meter-search").fill("madhu");
+    await page.locator("#meter-select").selectOption("madhu");
+    await page.waitForTimeout(400);
+    await page.locator("#new-draft").click();
+    await page.locator("#composition").fill("ಇನ್ನೊಂದು ಪದ್ಯ");
+    await page.waitForTimeout(400);
+    await page.locator("#saved-poems").click();
+    await page.evaluate(() => Object.defineProperty(navigator, "canShare", {
+        configurable: true,
+        value: () => false
+    }));
+
+    const downloadPromise = page.waitForEvent("download");
+    await page.locator("#backup-share").click();
+    const download = await downloadPromise;
+    expect(download.suggestedFilename()).toMatch(/^chandas-poems-\d{4}-\d{2}-\d{2}\.txt$/);
+    const contents = await fs.readFile(await download.path(), "utf8");
+    expect(contents).toContain("CHANDAS POEMS");
+    expect(contents).toContain("ಮೊದಲ ಸಾಲು\nಎರಡನೆಯ ಸಾಲು");
+    expect(contents).toContain("ಇನ್ನೊಂದು ಪದ್ಯ");
+    expect(contents).toContain("Selected meters: madhu");
+    expect(contents).not.toContain("strongDrafts");
+    expect(contents).not.toContain('"format": "chandas-poems-backup"');
+});
+
 test("imports backups without overwriting or multiplying conflicts", async ({ page }) => {
     await page.locator("#composition").fill("ಸ್ಥಳೀಯ ಪದ್ಯ");
     await page.waitForTimeout(400);

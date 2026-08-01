@@ -81,6 +81,8 @@
             chooseMeterFirst: "Choose a meter or begin writing",
             pattern: "Current pattern",
             matras: "Mātrās by pāda",
+            detectShithilaDvitva: "Detect shithila dvitva",
+            shithilaApplied: "{count} śithila-dvitva realization(s) marked *.",
             realizedAmsha: "Realized aṃśa: {scan}",
             recitalSubstitutions: "{count} reviewed recital-dependent gaṇa substitution(s) are shown in the realized aṃśa scan.",
             selectedMeterReference: "Selected meter",
@@ -225,6 +227,8 @@
             chooseMeterFirst: "ಛಂದಸ್ಸನ್ನು ಆರಿಸಿ ಅಥವಾ ಬರೆಯಲು ಆರಂಭಿಸಿ",
             pattern: "ಪ್ರಸ್ತುತ ಗಣ ವಿನ್ಯಾಸ",
             matras: "ಪಾದದ ಮಾತ್ರೆಗಳು",
+            detectShithilaDvitva: "ಶಿಥಿಲ ದ್ವಿತ್ವವನ್ನು ಗುರುತಿಸಿ",
+            shithilaApplied: "{count} ಶಿಥಿಲ ದ್ವಿತ್ವ ಪ್ರಯೋಗವನ್ನು * ಗುರುತಿಸಿದೆ.",
             realizedAmsha: "ಬಳಕೆಯಾದ ಅಂಶಗಣ: {scan}",
             recitalSubstitutions: "ಬಳಕೆಯಾದ ಅಂಶಗಣದ ವಿನ್ಯಾಸದಲ್ಲಿ ಪರಿಶೀಲಿತ {count} ಗಾಯನಾಧಾರಿತ ಪರ್ಯಾಯ ಗಣಗಳಿವೆ.",
             selectedMeterReference: "ಆಯ್ದ ಛಂದಸ್ಸು",
@@ -312,6 +316,7 @@
         templates: {},
         templateModes: {},
         strongDrafts: {},
+        detectShithilaDvitva: false,
         strongHistory: {},
         strongFuture: {},
         activeStanzaIndex: 0,
@@ -345,6 +350,7 @@
             "previous-stanza", "next-stanza", "empty-analysis", "analysis-content",
             "pattern-block", "active-pattern", "active-matras",
             "active-amsha-realization",
+            "detect-shithila-dvitva",
             "selected-meter-reference", "selected-meter-name",
             "selected-meter-signature", "candidate-list", "meter-picker",
             "suggestion-heading",
@@ -524,10 +530,21 @@
             }
         }
 
+        const hasShithilaOption = params.has("sd") ||
+            params.has("shithilaDvitva");
+        const rawShithilaOption = params.has("sd")
+            ? params.get("sd")
+            : params.get("shithilaDvitva");
+        const detectShithilaDvitva = hasShithilaOption
+            ? !["0", "false", "off", "no"].includes(
+                String(rawShithilaOption || "1").trim().toLocaleLowerCase()
+            )
+            : null;
         const consumed = verse !== null || meter !== null || hasTemplate ||
+            hasShithilaOption ||
             Object.keys(stanzaOptions).length > 0;
         return consumed
-            ? { verse, meter, guideMode, stanzaOptions }
+            ? { verse, meter, guideMode, stanzaOptions, detectShithilaDvitva }
             : null;
     }
 
@@ -605,6 +622,13 @@
                 appended.text.length,
                 appended.text.length
             );
+            runAnalysis();
+        }
+
+        if (payload.detectShithilaDvitva !== null) {
+            state.detectShithilaDvitva = payload.detectShithilaDvitva;
+            elements["detect-shithila-dvitva"].checked =
+                state.detectShithilaDvitva;
             runAnalysis();
         }
 
@@ -1316,15 +1340,23 @@
         const highlighted = `<span class="${range.className}">${
             escapeHtml(text.slice(range.start, range.end))
         }</span>`;
-        if (!range.recitalMarker) {
+        if (!range.recitalMarker && !range.shithilaMarker) {
             return highlighted;
         }
         const markerClass = range.extensionKind === "sung"
             ? "sung-extension-marker"
             : "amsha-karshana-marker";
-        return `<span class="recital-extension-anchor">${highlighted}` +
-            `<span class="recital-extension-marker ${markerClass}" ` +
-            `aria-hidden="true">${escapeHtml(range.recitalMarker)}</span></span>`;
+        const recital = range.recitalMarker
+            ? `<span class="recital-extension-marker ${markerClass}" ` +
+                `aria-hidden="true">${escapeHtml(range.recitalMarker)}</span>`
+            : "";
+        const shithila = range.shithilaMarker
+            ? `<span class="shithila-dvitva-marker" aria-hidden="true">${
+                escapeHtml(range.shithilaMarker)
+            }</span>`
+            : "";
+        return `<span class="recital-extension-anchor">${highlighted}${
+            recital}${shithila}</span>`;
     }
 
     function renderCursorMetrics() {
@@ -1383,6 +1415,9 @@
                         ? (extension.marker || "ಽ").repeat(
                             Math.max(1, Number(extension.matras) || 1)
                         )
+                        : "",
+                    shithilaMarker: segment.shithilaDvitva
+                        ? segment.shithilaDvitva.marker || "*"
                         : "",
                     extensionKind: segment.recitalExtension
                         ? "karshana"
@@ -1551,7 +1586,14 @@
         const parsedStanzas = Chandas.parseStanzas(text);
         reconcileSelections(oldStanzas, parsedStanzas, elements.composition.selectionStart);
 
-        state.analysis = Chandas.analyzeComposition(text, state.catalog, state.selections);
+        state.analysis = state.detectShithilaDvitva
+            ? ChandasShithilaDvitva.analyzeComposition(
+                text,
+                state.catalog,
+                state.selections,
+                { detect: true }
+            )
+            : Chandas.analyzeComposition(text, state.catalog, state.selections);
         state.activeStanzaIndex = stanzaAtOffset(
             state.analysis.stanzas,
             elements.composition.selectionStart
@@ -1634,6 +1676,9 @@
     function renderAnalysisPanel() {
         const stanzas = state.analysis ? state.analysis.stanzas : [];
         const hasStanzas = stanzas.length > 0;
+
+        elements["detect-shithila-dvitva"].checked =
+            state.detectShithilaDvitva;
 
         elements["empty-analysis"].hidden = hasStanzas;
         elements["analysis-content"].hidden = false;
@@ -1823,6 +1868,11 @@
                 count: stanza.substitutionCount
             })}`);
         }
+        if (stanza.shithilaDvitvaCount) {
+            summary.append(` ${t("shithilaApplied", {
+                count: stanza.shithilaDvitvaCount
+            })}`);
+        }
         renderPrasaSummary(stanza);
         renderWholeVerseTemplate();
         renderStrongTemplate();
@@ -1947,13 +1997,14 @@
 
     function currentDraftSnapshot() {
         return {
-            version: 3,
+            version: 4,
             poemId: state.activePoemId,
             text: elements.composition.value,
             selections: state.selections,
             templates: state.templates,
             templateModes: state.templateModes,
             strongDrafts: state.strongDrafts,
+            detectShithilaDvitva: state.detectShithilaDvitva,
             language: state.language,
             selectionStart: elements.composition.selectionStart,
             selectionEnd: elements.composition.selectionEnd,
@@ -1964,7 +2015,8 @@
     function meaningfulDraft(draft) {
         return Boolean(draft.text || Object.keys(draft.selections).length ||
             Object.keys(draft.templates).length ||
-            Object.keys(draft.strongDrafts).length);
+            Object.keys(draft.strongDrafts).length ||
+            draft.detectShithilaDvitva);
     }
 
     function saveDraft() {
@@ -2018,7 +2070,7 @@
                 return null;
             }
             const draft = JSON.parse(raw);
-            if (!draft || ![1, 2, 3].includes(draft.version) ||
+            if (!draft || ![1, 2, 3, 4].includes(draft.version) ||
                 typeof draft.text !== "string") {
                 return null;
             }
@@ -2043,6 +2095,7 @@
         state.strongDrafts = poem.strongDrafts && typeof poem.strongDrafts === "object"
             ? poem.strongDrafts
             : {};
+        state.detectShithilaDvitva = poem.detectShithilaDvitva === true;
         state.strongHistory = {};
         state.strongFuture = {};
         state.analysis = null;
@@ -2126,6 +2179,7 @@
         state.templates = {};
         state.templateModes = {};
         state.strongDrafts = {};
+        state.detectShithilaDvitva = false;
         state.strongHistory = {};
         state.strongFuture = {};
         state.analysis = null;
@@ -2152,6 +2206,9 @@
         const url = new URL("https://chandas.org/");
         url.searchParams.set("v", "3");
         url.searchParams.set("verse", authoredCompositionText());
+        if (state.detectShithilaDvitva) {
+            url.searchParams.set("sd", "1");
+        }
         const stanzas = state.analysis ? state.analysis.stanzas : [];
         if (!stanzas.length && state.selections[0]) {
             url.searchParams.set("meter", state.selections[0]);
@@ -2185,6 +2242,9 @@
         const url = new URL("https://chandas.org/");
         url.searchParams.set("v", "3");
         url.searchParams.set("verse", poem.text);
+        if (poem.detectShithilaDvitva === true) {
+            url.searchParams.set("sd", "1");
+        }
         const stanzaIndexes = new Set([
             ...Object.keys(poem.selections || {}),
             ...Object.keys(poem.templateModes || {}),
@@ -3011,6 +3071,11 @@
         elements["meter-select"].addEventListener("change", () =>
             selectMeter(elements["meter-select"].value));
         elements["clear-meter"].addEventListener("click", () => selectMeter(""));
+        elements["detect-shithila-dvitva"].addEventListener("change", () => {
+            state.detectShithilaDvitva =
+                elements["detect-shithila-dvitva"].checked;
+            runAnalysis();
+        });
         elements["show-template"].addEventListener("change", () => {
             if (!state.analysis ||
                 !state.analysis.stanzas[state.activeStanzaIndex] ||

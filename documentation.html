@@ -255,6 +255,36 @@ SPDX-License-Identifier: GPL-3.0-only
             detectors.
         </p>
 
+        <h2>Optional śithila-dvitva detection</h2>
+        <p>
+            Old Kannada poetry may pronounce some written conjuncts lightly:
+            a preceding short syllable that would ordinarily become Guru can
+            remain Laghu. Enable <em>Detect śithila-dvitva</em> in the analysis
+            panel when you want Chandas to test that reading. It is deliberately
+            off for every new poem; the ordinary analyzer is not feeling
+            adventurous without permission.
+        </p>
+        <p>
+            The first conservative pass recognizes reviewed repha and lateral
+            environments involving <code>ರ್</code>, <code>ಱ್</code>,
+            <code>ಳ್</code>, and historical <code>ೞ್</code> before eligible
+            simple consonants. It adopts a Laghu realization only when that
+            improves the metrical fit, recomputes the complete analysis, and
+            marks the used conjunct with a faint <code>*</code>. Similar-looking
+            conjuncts are not automatically equivalent; lexical and historical
+            exceptions remain a matter for corpus review. The initial rule is
+            informed by Venkatachala Shastry's
+            <a href="https://vishvasa.github.io/kannaDa/vyAkaraNa/Halagannada-Vyakarana-Praveshike_Venkatachala-Shastry/03_haLagannaDa_shabdarachane/"
+               rel="noopener noreferrer">Old Kannada grammar discussion</a>;
+            it remains deliberately conservative rather than pretending every
+            repha has received a tiny poetic pardon.
+        </p>
+        <p>
+            The choice is remembered with that saved poem. An analysis link
+            includes <code>sd=1</code> only when detection is enabled. Neither
+            the asterisk nor the alternate analysis changes the authored poem,
+            copy output, or readable text export.
+        </p>
         <h2>Read the prāsa colors</h2>
         <p>
             Whenever a stanza is written in Kannada script, Chandas

@@ -26,6 +26,7 @@ test("the web shell has no external runtime asset dependencies", () => {
     assert.deepEqual(externalAssets, []);
     assert.match(html, /manifest\.webmanifest/);
     assert.match(html, /meter_analysis\.js/);
+    assert.match(html, /shithila_dvitva\.js/);
     assert.match(html, /strong_template\.js/);
     assert.match(html, /poem_store\.js/);
     assert.match(html, /app\.js/);
@@ -143,6 +144,7 @@ test("the composition control and live regions have accessible labels", () => {
     assert.match(html, /id="toast"[^>]*role="status"[^>]*aria-live="polite"/);
     assert.match(html, /id="cursor-metrics"/);
     assert.match(html, /id="show-template"[^>]*type="checkbox"/);
+    assert.match(html, /id="detect-shithila-dvitva"[^>]*type="checkbox"/);
     assert.match(html, /id="template-mode-strong"[^>]*type="radio"/);
     assert.match(html, /id="copy-analysis-url"[^>]*type="button"/);
     assert.match(html, /id="saved-poems-dialog"[^>]*aria-labelledby="saved-poems-title"/);

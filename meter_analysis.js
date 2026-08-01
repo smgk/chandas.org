@@ -2294,7 +2294,46 @@
         return selectedMeters[index] || selectedMeters[String(index)] || "";
     }
 
-    function analyzeComposition(text, catalog, selectedMeters) {
+    function weightOverrideFor(syllable, options) {
+        const overrides = options && options.weightOverrides;
+        if (!overrides || typeof overrides !== "object") {
+            return null;
+        }
+        return overrides[syllable.start] || overrides[String(syllable.start)] || null;
+    }
+
+    function applyWeightOverride(syllable, options) {
+        const override = weightOverrideFor(syllable, options);
+        if (!override || ![LAGHU, GURU].includes(override.classification)) {
+            return syllable;
+        }
+        return {
+            ...syllable,
+            orthographicClassification: syllable.classification,
+            classification: override.classification,
+            actual: override.classification,
+            reasons: Array.from(new Set([
+                ...(syllable.reasons || []),
+                override.reason || "alternate-realization"
+            ])),
+            shithilaDvitva: override.reason === "shithila-dvitva"
+                ? {
+                    conjunctStart: override.conjunctStart,
+                    conjunctEnd: override.conjunctEnd,
+                    evidence: override.evidence || "metrical",
+                    marker: override.marker || "*"
+                }
+                : null
+        };
+    }
+
+    function unsupportedIsSuppressed(range, options) {
+        const suppressed = options && options.suppressedUnsupportedRanges;
+        return Array.isArray(suppressed) && suppressed.some((item) =>
+            item && item.start === range.start && item.end === range.end);
+    }
+
+    function analyzeComposition(text, catalog, selectedMeters, options) {
         const originalText = String(text || "");
         const meters = normalizeCatalog(catalog);
         const meterById = new Map(meters.map((meter) => [meter.id, meter]));
@@ -2316,7 +2355,10 @@
                 }
 
                 const expectedPattern = expectedForLine(selectedFixedMeter, lineIndex);
-                const syllables = segmented.syllables.map((syllable, syllableIndex) => {
+                const syllables = segmented.syllables.map((rawSyllable, syllableIndex) => {
+                    const syllable = options
+                        ? applyWeightOverride(rawSyllable, options)
+                        : rawSyllable;
                     const expected = expectedPattern[syllableIndex] || "";
                     const violation = Boolean(selectedFixedMeter) &&
                         (!expected || expected !== syllable.classification);
@@ -2333,7 +2375,10 @@
                     allSegments.push(result);
                     return result;
                 });
-                unsupported.push(...segmented.unsupported);
+                unsupported.push(...(options
+                    ? segmented.unsupported.filter((range) =>
+                        !unsupportedIsSuppressed(range, options))
+                    : segmented.unsupported));
 
                 return {
                     ...line,
@@ -2501,6 +2546,12 @@
                     id: detectedAmshaMeter.id,
                     name: detectedAmshaMeter.name
                 } : null,
+                ...(options ? {
+                    shithilaDvitvaCount: lines.reduce((count, line) =>
+                        count + line.syllables.filter((syllable) =>
+                            Boolean(syllable.shithilaDvitva)).length,
+                    0)
+                } : {}),
                 violationCount,
                 missingCount
             };
@@ -2508,7 +2559,7 @@
 
         return {
             text: originalText,
-            analysisVersion: "2.10.0",
+            analysisVersion: "2.11.0",
             catalogVersion: catalog && catalog.structuralCatalogVersion
                 ? String(catalog.structuralCatalogVersion)
                 : "",

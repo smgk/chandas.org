@@ -15,6 +15,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <link rel="icon" href="icon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="styles.css">
     <script src="meter_analysis.js" defer></script>
+    <script src="shithila_dvitva.js" defer></script>
     <script src="strong_template.js" defer></script>
     <script src="poem_store.js" defer></script>
     <script src="app.js" defer></script>
@@ -171,6 +172,11 @@ SPDX-License-Identifier: GPL-3.0-only
                         <output id="active-amsha-realization"
                             class="amsha-realization-output" hidden></output>
                     </div>
+
+                    <label class="analysis-option" title="Optional alternate realization; ordinary analysis remains the default.">
+                        <input id="detect-shithila-dvitva" type="checkbox">
+                        <span data-i18n="detectShithilaDvitva">Detect shithila dvitva</span>
+                    </label>
 
                     <div id="selected-meter-reference" class="selected-meter-reference" aria-live="polite" hidden>
                         <span class="mini-label" data-i18n="selectedMeterReference">Selected meter</span>

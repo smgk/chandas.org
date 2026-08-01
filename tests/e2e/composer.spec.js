@@ -60,6 +60,35 @@ test("allows choosing a meter before the first syllable is typed", async ({ page
     await expect(page.locator("#active-pattern")).toHaveText("L");
 });
 
+test("keeps śithila-dvitva optional, isolated, and shareable", async ({ page }) => {
+    const option = page.locator("#detect-shithila-dvitva");
+    await expect(option).not.toBeChecked();
+    await page.locator("#meter-picker summary").click();
+    await page.locator("#meter-search").fill("madhu");
+    await page.locator("#meter-select").selectOption("madhu");
+    await page.locator("#composition").fill("ಎರ್ದೆ");
+
+    await expect(page.locator("#active-pattern")).toHaveText("GL");
+    await expect(page.locator("#validation-summary")).toContainText("1 mismatched");
+    await option.check();
+    await expect(page.locator("#active-pattern")).toHaveText("LL");
+    await expect(page.locator("#validation-summary"))
+        .toContainText("1 śithila-dvitva realization");
+    await expect(page.locator("#highlight-layer .shithila-dvitva-marker"))
+        .toHaveText("*");
+
+    await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
+    await page.locator("#share").click();
+    await page.locator("#copy-analysis-url").click();
+    const copied = new URL(await page.evaluate(() => navigator.clipboard.readText()));
+    expect(copied.searchParams.get("sd")).toBe("1");
+
+    await option.uncheck();
+    await expect(page.locator("#active-pattern")).toHaveText("GL");
+    await expect(page.locator("#highlight-layer .shithila-dvitva-marker"))
+        .toHaveCount(0);
+});
+
 test("shows advisory Kannada prāsa with no meter and with a fixed vṛtta", async ({
     page
 }) => {

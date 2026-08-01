@@ -84,6 +84,7 @@
             templates: objectOrEmpty(value.templates),
             templateModes: objectOrEmpty(value.templateModes),
             strongDrafts: objectOrEmpty(value.strongDrafts),
+            detectShithilaDvitva: value.detectShithilaDvitva === true,
             language: value.language === "kn" ? "kn" : "en",
             selectionStart,
             selectionEnd,

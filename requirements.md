@@ -556,6 +556,37 @@ analysis result.
 6. Diagnostics MAY be enabled in development but MUST NOT expose noisy console
    logs or user composition text in production telemetry.
 
+### 6.2.1 Optional śithila-dvitva realization
+
+1. The writing slate MUST offer a small **Detect śithila-dvitva** checkbox.
+   It MUST be unchecked for a new poem.
+2. When the option is unchecked, the application MUST call the existing
+   analysis path directly. Candidate discovery, alternate weights, meter
+   ranking, violations, and performance MUST remain unchanged.
+3. When enabled, śithila-dvitva MUST run as an isolated second pass over an
+   immutable ordinary analysis. It MUST NOT mutate the baseline result.
+4. The initial conservative detector MAY propose a written Guru as realized
+   Laghu only for reviewed Old Kannada repha or lateral environments involving
+   `ರ್`, `ಱ್`, `ಳ್`, or historical `ೞ್` before an eligible simple consonant.
+   The presence of one of those letters alone MUST NOT establish the rule.
+5. The ordinary realization MUST remain preferred. An alternate realization
+   MUST be retained only when it improves selected-meter validation or
+   unselected meter detection, and the evaluator MUST remove every relaxation
+   not needed for the best retained fit.
+6. After applying an alternate realization, the engine MUST recompute the
+   syllable pattern, mātrā totals, gaṇa division, meter candidates, validation,
+   and violation ranges. It MUST NOT merely hide a red violation.
+7. Every retained realization MUST keep its orthographic Guru weight as
+   provenance, expose a `shithila-dvitva` reason, and place a faint superscript
+   `*` over the relevant conjunct. The marker is an analysis overlay and MUST
+   NOT enter the authored, copied, exported, or shared poem text.
+8. The option MUST work with or without a selected meter. It MUST be saved per
+   poem, included in full backup/restore state, and represented in an analysis
+   URL only by an explicit opt-in parameter. It MUST NOT become a global
+   browser preference.
+9. Historical `ೞ` recognition in this optional layer MUST NOT silently broaden
+   the baseline Kannada consonant range while the option is disabled.
+
 ### 6.3 Structural, mātrā, and aṃśa catalog
 
 1. `structural_meters.json` is the versioned extension catalog for meters that

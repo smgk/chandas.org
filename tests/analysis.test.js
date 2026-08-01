@@ -567,7 +567,7 @@ test("keeps an incomplete structural meter compatible without red violations", (
 
     assert.equal(stanza.violationCount, 0);
     assert.ok(stanza.missingCount > 0);
-    assert.equal(result.analysisVersion, "2.10.0");
+    assert.equal(result.analysisVersion, "2.11.0");
     assert.equal(result.catalogVersion, structuralCatalog.catalogVersion);
 });
 
@@ -662,7 +662,7 @@ test("recognizes the provisional Kannada Kanda characterization fixture", () => 
     );
     assert.equal(stanza.selectedMeter.ruleCompleteness, "provisional-rhythm");
     assert.deepEqual(stanza.selectedMeter.uncheckedRules, ["historical prāsa variants"]);
-    assert.equal(result.analysisVersion, "2.10.0");
+    assert.equal(result.analysisVersion, "2.11.0");
     assert.equal(result.catalogVersion, "4.1.0");
 });
 

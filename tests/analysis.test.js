@@ -98,6 +98,56 @@ test("a following conjunct closes the preceding syllable", () => {
     assert.ok(devanagari.syllables[0].reasons.includes("closed-by-conjunct"));
 });
 
+test("recognizes historical Kannada ೞ as a consonant in vowels and conjuncts", () => {
+    const closed = Chandas.segmentLine("ಕೞ್ದ", 0);
+    const onset = Chandas.segmentLine("ೞ್ದೆ", 0);
+    const vowels = Chandas.segmentLine("ೞಿ ೞಾ", 0);
+    const displayRanges = Chandas.projectHighlightRanges(
+        "ಕೞ್ದ",
+        closed.syllables.map((syllable) => ({
+            start: syllable.start,
+            end: syllable.end,
+            className: syllable.classification
+        }))
+    );
+
+    assert.deepEqual(
+        closed.syllables.map((syllable) => [syllable.text, syllable.classification]),
+        [["ಕೞ್", "G"], ["ದ", "L"]]
+    );
+    assert.deepEqual(closed.unsupported, []);
+    assert.deepEqual(
+        onset.syllables.map((syllable) => [syllable.text, syllable.classification]),
+        [["ೞ್ದೆ", "L"]]
+    );
+    assert.deepEqual(
+        vowels.syllables.map((syllable) => syllable.classification),
+        ["L", "G"]
+    );
+    assert.deepEqual(
+        displayRanges.map((range) => "ಕೞ್ದ".slice(range.start, range.end)),
+        ["ಕ", "ೞ್ದ"]
+    );
+    for (const comparison of ["ಕಲ್ದ", "ಕಳ್ದ", "ಕಱ್ದ", "ಕರ್ದೆ"]) {
+        const segmented = Chandas.segmentLine(comparison, 0);
+        assert.equal(segmented.syllables[0].classification, "G", comparison);
+        assert.deepEqual(segmented.unsupported, [], comparison);
+    }
+});
+
+test("uses historical Kannada ೞ in automatic dvitīyākṣara-prāsa", () => {
+    const stanza = Chandas.analyzeComposition(
+        "ಕೞಿ\nಜೞಿ",
+        { metres: [] },
+        {}
+    ).stanzas[0];
+    const check = stanza.prasa.checks[0];
+
+    assert.equal(check.status, "match");
+    assert.equal(check.key, "ೞ");
+    assert.equal(check.provenance, "automatic-kannada");
+});
+
 test("projects highlight spans away from Kannada and Devanagari conjuncts", () => {
     for (const text of ["ನಿಶ್ಚಲ", "निश्चल"]) {
         const segmented = Chandas.segmentLine(text, 0);
@@ -567,7 +617,7 @@ test("keeps an incomplete structural meter compatible without red violations", (
 
     assert.equal(stanza.violationCount, 0);
     assert.ok(stanza.missingCount > 0);
-    assert.equal(result.analysisVersion, "2.11.0");
+    assert.equal(result.analysisVersion, "2.11.1");
     assert.equal(result.catalogVersion, structuralCatalog.catalogVersion);
 });
 
@@ -662,7 +712,7 @@ test("recognizes the provisional Kannada Kanda characterization fixture", () => 
     );
     assert.equal(stanza.selectedMeter.ruleCompleteness, "provisional-rhythm");
     assert.deepEqual(stanza.selectedMeter.uncheckedRules, ["historical prāsa variants"]);
-    assert.equal(result.analysisVersion, "2.11.0");
+    assert.equal(result.analysisVersion, "2.11.1");
     assert.equal(result.catalogVersion, "4.1.0");
 });
 

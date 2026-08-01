@@ -51,60 +51,19 @@ function createShithilaDvitvaApi(Chandas) {
         return {
             id: `shithila:${segment.start}`,
             segmentStart: segment.start,
-            stanzaIndex: segment.stanzaIndex,
             classification: Chandas.LAGHU,
             conjunctStart: Math.max(segment.start, segment.end - 2),
             conjunctEnd: segment.end + follower.length,
-            evidence: "repha-lateral-rule",
-            suppressUnsupported: null
+            evidence: points.at(-2) === HISTORICAL_LATERAL
+                ? "historical-lateral"
+                : "repha-lateral-rule"
         };
     }
 
-    function historicalCandidates(text, analysis) {
-        const candidates = [];
-        const source = String(text || "");
-        const expression = /ೞ್([ಕಗಚಜತದಪಬಮಯರಲವ])/gu;
-        let match;
-        while ((match = expression.exec(source)) !== null) {
-            const previous = analysis.segments.find((segment) =>
-                segment.script === "kannada" &&
-                segment.end === match.index &&
-                segment.classification === Chandas.LAGHU);
-            if (!previous) {
-                continue;
-            }
-            const unsupported = analysis.unsupported.find((range) =>
-                range.start === match.index && range.end === match.index + 2);
-            candidates.push({
-                id: `shithila-historical:${previous.start}`,
-                segmentStart: previous.start,
-                stanzaIndex: previous.stanzaIndex,
-                classification: Chandas.LAGHU,
-                conjunctStart: match.index,
-                conjunctEnd: match.index + match[0].length,
-                evidence: "historical-lateral",
-                suppressUnsupported: unsupported || null,
-                inherent: true
-            });
-        }
-        return candidates;
-    }
-
     function findCandidates(text, analysis) {
-        const stanzaByOffset = [];
-        for (const stanza of analysis.stanzas || []) {
-            stanzaByOffset.push(stanza);
-        }
-        const annotatedSegments = (analysis.segments || []).map((segment) => {
-            const stanza = stanzaByOffset.find((item) =>
-                segment.start >= item.start && segment.start <= item.end);
-            return { ...segment, stanzaIndex: stanza ? stanza.index : 0 };
-        });
-        const modern = annotatedSegments
+        return (analysis.segments || [])
             .map((segment) => codaCandidate(text, segment))
             .filter(Boolean);
-        const withAnnotatedSegments = { ...analysis, segments: annotatedSegments };
-        return modern.concat(historicalCandidates(text, withAnnotatedSegments));
     }
 
     function analysisScore(analysis) {
@@ -128,7 +87,6 @@ function createShithilaDvitvaApi(Chandas) {
 
     function coreOptions(candidates) {
         const weightOverrides = {};
-        const suppressedUnsupportedRanges = [];
         for (const candidate of candidates) {
             weightOverrides[candidate.segmentStart] = {
                 classification: candidate.classification,
@@ -138,11 +96,8 @@ function createShithilaDvitvaApi(Chandas) {
                 evidence: candidate.evidence,
                 marker: "*"
             };
-            if (candidate.suppressUnsupported) {
-                suppressedUnsupportedRanges.push(candidate.suppressUnsupported);
-            }
         }
-        return { weightOverrides, suppressedUnsupportedRanges };
+        return { weightOverrides };
     }
 
     function analyzeWith(text, catalog, selectedMeters, candidates) {
@@ -177,16 +132,12 @@ function createShithilaDvitvaApi(Chandas) {
             return finalize(baseline, 0);
         }
 
-        const inherent = candidates.filter((candidate) => candidate.inherent);
-        const metrical = candidates.filter((candidate) => !candidate.inherent)
-            .slice(0, MAX_METRICAL_CANDIDATES);
-        let chosen = inherent.slice();
-        let best = chosen.length
-            ? analyzeWith(text, catalog, selectedMeters, chosen)
-            : baseline;
+        const metrical = candidates.slice(0, MAX_METRICAL_CANDIDATES);
+        let chosen = [];
+        let best = baseline;
         let bestScore = analysisScore(best);
 
-        const all = chosen.concat(metrical);
+        const all = metrical.slice();
         const allAnalysis = analyzeWith(text, catalog, selectedMeters, all);
         const allScore = analysisScore(allAnalysis);
         if (allScore < bestScore) {

@@ -584,8 +584,13 @@ analysis result.
    poem, included in full backup/restore state, and represented in an analysis
    URL only by an explicit opt-in parameter. It MUST NOT become a global
    browser preference.
-9. Historical `ೞ` recognition in this optional layer MUST NOT silently broaden
-   the baseline Kannada consonant range while the option is disabled.
+9. The baseline Kannada script model MUST recognize historical `ೞ` (U+0CDE,
+   Unicode alias KANNADA LETTER LLLA) as a consonant alongside `ಲ`, `ಳ`, and
+   `ಱ`. In ordinary analysis, a short syllable closed by `ೞ್` MUST become Guru;
+   the optional pass MAY then realize it as Laghu under the preceding rules.
+   Consonant recognition MUST use an explicit additional-code-point set rather
+   than widening the modern consonant range across intervening vowel signs,
+   virāma, avagraha, and length marks.
 
 ### 6.3 Structural, mātrā, and aṃśa catalog
 

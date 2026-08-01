@@ -265,6 +265,15 @@ SPDX-License-Identifier: GPL-3.0-only
             adventurous without permission.
         </p>
         <p>
+            Historical <code>ೞ</code> is a real Kannada consonant despite its
+            mistaken original Unicode name “KANNADA LETTER FA” (its formal
+            alias is KANNADA LETTER LLLA). Chandas recognizes it alongside
+            <code>ಲ</code>, <code>ಳ</code>, and <code>ಱ</code> even when this
+            option is off. Thus <code>ಕೞ್ದ</code> ordinarily scans Guru–Laghu;
+            the optional pass may realize it as Laghu–Laghu when the meter
+            supports śithila-dvitva.
+        </p>
+        <p>
             The first conservative pass recognizes reviewed repha and lateral
             environments involving <code>ರ್</code>, <code>ಱ್</code>,
             <code>ಳ್</code>, and historical <code>ೞ್</code> before eligible

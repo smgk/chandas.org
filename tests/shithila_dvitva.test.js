@@ -111,7 +111,7 @@ test("aspirated followers are not relaxed by the conservative rule", () => {
     assert.equal(result.shithilaDvitva.candidateCount, 0);
 });
 
-test("historical Kannada ೞ is recognized only inside the optional layer", () => {
+test("historical Kannada ೞ is Guru ordinarily and optionally realizes as Laghu", () => {
     const text = "ಕೞ್ದ";
     const baseline = Chandas.analyzeComposition(text, twoSyllableCatalog, "two-light");
     const enabled = Shithila.analyzeComposition(
@@ -121,8 +121,13 @@ test("historical Kannada ೞ is recognized only inside the optional layer", () =
         { detect: true }
     );
 
-    assert.equal(baseline.unsupported.length, 1);
+    assert.equal(baseline.unsupported.length, 0);
+    assert.deepEqual(baseline.stanzas[0].patterns, ["GL"]);
+    assert.equal(baseline.segments[0].classification, Chandas.GURU);
     assert.equal(enabled.unsupported.length, 0);
+    assert.deepEqual(enabled.stanzas[0].patterns, ["LL"]);
+    assert.equal(enabled.segments[0].classification, Chandas.LAGHU);
+    assert.equal(enabled.segments[0].orthographicClassification, Chandas.GURU);
     assert.equal(enabled.stanzas[0].shithilaDvitvaCount, 1);
     assert.equal(enabled.segments[0].shithilaDvitva.evidence, "historical-lateral");
 });

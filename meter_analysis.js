@@ -39,6 +39,7 @@
             label: "Devanagari",
             block: [0x0900, 0x097f],
             consonant: [0x0915, 0x0939],
+            additionalConsonants: new Set(),
             independentShort: new Set([0x0905, 0x0907, 0x0909, 0x090b, 0x090c, 0x090f, 0x0913]),
             independentLong: new Set([0x0906, 0x0908, 0x090a, 0x0960, 0x0961, 0x0910, 0x0914]),
             dependentShort: new Set([0x093f, 0x0941, 0x0943, 0x0944, 0x0946, 0x094a]),
@@ -51,6 +52,10 @@
             label: "Kannada",
             block: [0x0c80, 0x0cff],
             consonant: [0x0c95, 0x0cb9],
+            // U+0CDE is the historical Kannada LLLA. Its immutable formal
+            // Unicode name says "FA", but it is a consonant and collates
+            // after modern LLA (ಳ).
+            additionalConsonants: new Set([0x0cde]),
             independentShort: new Set([0x0c85, 0x0c87, 0x0c89, 0x0c8b, 0x0c8c, 0x0c8e, 0x0c92]),
             independentLong: new Set([0x0c86, 0x0c88, 0x0c8a, 0x0ce0, 0x0ce1, 0x0c90, 0x0c94]),
             dependentShort: new Set([0x0cbf, 0x0cc1, 0x0cc3, 0x0cc4, 0x0cc6, 0x0cca]),
@@ -87,8 +92,15 @@
         return cp >= range[0] && cp <= range[1];
     }
 
+    function isConsonantCodePoint(cp, config) {
+        return Boolean(config) && (
+            inRange(cp, config.consonant) ||
+            config.additionalConsonants.has(cp)
+        );
+    }
+
     function isConsonant(point, config) {
-        return Boolean(point) && inRange(point.cp, config.consonant);
+        return Boolean(point) && isConsonantCodePoint(point.cp, config);
     }
 
     function isIndependentVowel(point, config) {
@@ -136,7 +148,7 @@
 
         const cp = text.codePointAt(index);
         return Object.values(SCRIPT_CONFIG).find((config) =>
-            inRange(cp, config.consonant)) || null;
+            isConsonantCodePoint(cp, config)) || null;
     }
 
     function shapingSafeBoundary(text, offset) {
@@ -170,7 +182,7 @@
                 cursor -= 1;
             }
             if (cursor < 0 ||
-                !inRange(text.codePointAt(cursor), config.consonant)) {
+                !isConsonantCodePoint(text.codePointAt(cursor), config)) {
                 break;
             }
 
@@ -526,7 +538,7 @@
         const points = codePoints(String(syllable.text || "").normalize("NFC"));
         const consonants = points
             .map((point, index) => ({ point, index }))
-            .filter(({ point }) => inRange(point.cp, config.consonant));
+            .filter(({ point }) => isConsonantCodePoint(point.cp, config));
         if (consonantPosition === "initial") {
             return consonants[0] ? consonants[0].point.char : "";
         }
@@ -2327,12 +2339,6 @@
         };
     }
 
-    function unsupportedIsSuppressed(range, options) {
-        const suppressed = options && options.suppressedUnsupportedRanges;
-        return Array.isArray(suppressed) && suppressed.some((item) =>
-            item && item.start === range.start && item.end === range.end);
-    }
-
     function analyzeComposition(text, catalog, selectedMeters, options) {
         const originalText = String(text || "");
         const meters = normalizeCatalog(catalog);
@@ -2375,10 +2381,7 @@
                     allSegments.push(result);
                     return result;
                 });
-                unsupported.push(...(options
-                    ? segmented.unsupported.filter((range) =>
-                        !unsupportedIsSuppressed(range, options))
-                    : segmented.unsupported));
+                unsupported.push(...segmented.unsupported);
 
                 return {
                     ...line,
@@ -2559,7 +2562,7 @@
 
         return {
             text: originalText,
-            analysisVersion: "2.11.0",
+            analysisVersion: "2.11.1",
             catalogVersion: catalog && catalog.structuralCatalogVersion
                 ? String(catalog.structuralCatalogVersion)
                 : "",

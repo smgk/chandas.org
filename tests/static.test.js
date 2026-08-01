@@ -147,7 +147,7 @@ test("the composition control and live regions have accessible labels", () => {
     assert.match(html, /id="copy-analysis-url"[^>]*type="button"/);
     assert.match(html, /id="saved-poems-dialog"[^>]*aria-labelledby="saved-poems-title"/);
     assert.match(html, /id="saved-poems-count"[^>]*aria-live="polite"/);
-    assert.match(html, /Save \/ share poems/);
+    assert.match(html, /Save all to \.txt/);
     assert.match(html, /Full backup/);
     assert.match(html, /Restore full backup/);
     assert.match(
@@ -155,6 +155,23 @@ test("the composition control and live regions have accessible labels", () => {
         /id="strong-template-editor"[^>]*aria-labelledby="strong-template-title"/
     );
     assert.match(html, /id="whole-verse-template"[^>]*aria-label="Meter template"/);
+});
+
+test("compact header and composer actions use the approved placement", () => {
+    const html = read("index.html");
+    const headerActionsStart = html.indexOf('class="header-actions"');
+    const headerActionsEnd = html.indexOf("</div>", headerActionsStart);
+    const composerActionsStart = html.indexOf('class="composer-actions"');
+    const composerActionsEnd = html.indexOf("</div>", composerActionsStart);
+    const newDraft = html.indexOf('id="new-draft"');
+
+    assert.match(
+        html,
+        /class="release-badge">PRE-BETA<\/span>\s*<button[^>]+id="app-update"/
+    );
+    assert.ok(newDraft > composerActionsStart && newDraft < composerActionsEnd);
+    assert.ok(newDraft < 0 || newDraft < headerActionsStart || newDraft > headerActionsEnd);
+    assert.match(read("styles.css"), /\.app-update-button\s*\{[\s\S]*?font-size:\s*0\.52rem/);
 });
 
 test("selected-meter actions remain outside the full meter picker", () => {

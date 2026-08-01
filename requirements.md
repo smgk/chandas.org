@@ -385,9 +385,9 @@ recommended, and optional behavior.
    mutation, skip identical duplicates, and preserve both versions of a
    differing ID collision rather than overwriting either.
 7. The web app SHOULD offer the operating-system file share/save sheet when it
-   supports files and MUST fall back to a direct download. **Save / share
-   poems** MUST produce a readable UTF-8 `.txt` collection containing every
-   poem's title, edit time, selected meter names, and exact authored text. The
+   supports files and MUST fall back to a direct download. **Save all to .txt**
+   MUST produce a readable UTF-8 `.txt` collection containing every poem's
+   title, edit time, selected meter names, and exact authored text. The
    UI MUST explain that this human-readable export cannot restore full editor
    state. **Full backup** MUST retain the versioned JSON recovery format, and
    **Restore full backup** MUST accept that format. This lets the user choose

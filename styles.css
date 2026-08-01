@@ -96,6 +96,11 @@ textarea:focus-visible {
     gap: 0.8rem;
     align-items: center;
     color: inherit;
+}
+
+.brand-mark,
+.brand-title {
+    color: inherit;
     text-decoration: none;
 }
 
@@ -201,10 +206,15 @@ textarea:focus-visible {
 }
 
 .app-update-button {
+    min-height: auto;
+    padding: 0.13rem 0.34rem;
     border-color: color-mix(in srgb, var(--green) 55%, var(--line));
+    border-radius: 999px;
     color: var(--green);
     background: color-mix(in srgb, var(--green) 10%, #fffdf8);
+    font-size: 0.52rem;
     font-weight: 750;
+    line-height: 1.2;
 }
 
 .app-update-button:hover {

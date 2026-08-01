@@ -23,26 +23,26 @@ SPDX-License-Identifier: GPL-3.0-only
     <a class="skip-link" href="#composition" data-i18n="skip">Skip to composition</a>
 
     <header class="site-header">
-        <a class="brand" href="./" aria-label="Chandas home">
-            <span class="brand-mark" aria-hidden="true">ಛಂ</span>
+        <div class="brand">
+            <a class="brand-mark" href="./" aria-label="Chandas home">ಛಂ</a>
             <span>
                 <span class="brand-name">
-                    <strong>chandas</strong>
+                    <a class="brand-title" href="./"><strong>chandas</strong></a>
                     <span class="release-badge">PRE-BETA</span>
+                    <button class="quiet-button app-update-button" id="app-update"
+                            type="button" data-i18n="updateAvailable"
+                            aria-live="polite" hidden>
+                        Update available
+                    </button>
                 </span>
                 <small data-i18n="brandTagline">say it in-verse</small>
             </span>
-        </a>
+        </div>
 
         <div class="header-actions">
             <a class="header-link" href="documentation.html" data-i18n="learn">Learn</a>
             <button class="quiet-button" id="saved-poems" type="button" data-i18n="savedPoems">
                 Saved poems
-            </button>
-            <button class="quiet-button app-update-button" id="app-update"
-                    type="button" data-i18n="updateAvailable"
-                    aria-live="polite" hidden>
-                Update available
             </button>
             <label class="language-control">
                 <span class="sr-only" data-i18n="language">Interface language</span>
@@ -51,7 +51,6 @@ SPDX-License-Identifier: GPL-3.0-only
                     <option value="kn">ಕನ್ನಡ</option>
                 </select>
             </label>
-            <button class="quiet-button" id="new-draft" type="button" data-i18n="newDraft">New</button>
         </div>
     </header>
 
@@ -75,6 +74,10 @@ SPDX-License-Identifier: GPL-3.0-only
                         </p>
                     </div>
                     <div class="composer-actions">
+                        <button id="new-draft" class="icon-button" type="button">
+                            <span aria-hidden="true">＋</span>
+                            <span data-i18n="newDraft">New</span>
+                        </button>
                         <button id="copy" class="icon-button" type="button">
                             <span aria-hidden="true">⧉</span>
                             <span data-i18n="copy">Copy</span>
@@ -284,7 +287,7 @@ SPDX-License-Identifier: GPL-3.0-only
                     data-i18n-placeholder="searchSavedPoems" placeholder="Search saved poems">
             </label>
             <button id="backup-share" type="button" class="primary-button" data-i18n="saveBackup">
-                Save / share poems
+                Save all to .txt
             </button>
             <button id="backup-download" type="button" class="destination-button" data-i18n="downloadBackup">
                 Full backup

@@ -29,6 +29,7 @@ test("the web shell has no external runtime asset dependencies", () => {
     assert.match(html, /shithila_dvitva\.js/);
     assert.match(html, /strong_template\.js/);
     assert.match(html, /poem_store\.js/);
+    assert.match(html, /analytics\.js/);
     assert.match(html, /app\.js/);
 });
 
@@ -51,6 +52,7 @@ test("original source declares Ganesh Krishna Shankarathota under GPLv3 only", (
         "Copyright © 2025–2026 Ganesh Krishna Shankarathota";
     const sourceFiles = [
         "app.js",
+        "analytics.js",
         "meter_analysis.js",
         "strong_template.js",
         "poem_store.js",
@@ -97,6 +99,7 @@ test("service worker pre-caches every core web asset", () => {
         "index.html",
         "styles.css",
         "app.js",
+        "analytics.js",
         "meter_analysis.js",
         "strong_template.js",
         "poem_store.js",

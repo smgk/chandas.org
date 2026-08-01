@@ -808,6 +808,17 @@ analysis result.
 - Any future transmission for sync, synonym services, diagnostics, or AI
   features MUST be disclosed and protected in transit.
 - Telemetry MUST avoid composition text and other sensitive content by default.
+- Production website analytics MAY record aggregate page visits and coarse
+  writing-script presence (`kannada`, `devanagari`, `mixed`, and later stable
+  script identifiers). They MUST NOT send composition text, shared-analysis
+  query parameters, meter choices, draft identifiers, counts, caret state, or
+  other authored-content metadata. The analytics request MUST suppress its
+  referrer and MUST use only the query-free page pathname.
+- Writing-script presence MUST be derived from the existing on-device analysis,
+  emitted only after at least three supported syllables and a short idle delay,
+  and limited to one event per category per loaded editing session. It MUST NOT
+  generate a request for every keystroke. Analytics MUST run only on the
+  production website and failures or offline use MUST not affect composition.
 - Authentication and saved-work features require a threat model, access
   controls, encryption decisions, retention policy, and account deletion flow
   before release.
@@ -828,6 +839,10 @@ analysis result.
 
 - Production monitoring SHOULD capture availability, performance, application
   errors, and analysis failure reason codes without recording composition text.
+- Aggregate website page and writing-script counts SHOULD use the configured
+  GoatCounter site without API keys or administrative credentials in the
+  client. Mixed-script counts are advisory and may overlap the individual
+  script-presence totals.
 - Every release MUST expose an application version and analysis/catalog version
   for support and reproducibility.
 

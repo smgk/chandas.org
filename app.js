@@ -1599,6 +1599,10 @@
             elements.composition.selectionStart
         );
 
+        if (window.ChandasAnalytics) {
+            window.ChandasAnalytics.trackCompositionScripts(state.analysis);
+        }
+
         renderOverlay();
         renderCursorMetrics();
         renderAnalysisPanel();

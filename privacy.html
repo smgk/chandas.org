@@ -11,12 +11,13 @@ SPDX-License-Identifier: GPL-3.0-only
     <title>Privacy — Chandas</title>
     <link rel="icon" href="icon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="styles.css">
+    <script src="analytics.js" defer></script>
 </head>
 <body>
     <main class="legal-page">
         <a href="./">← Return to Chandas</a>
         <h1>Privacy</h1>
-        <p><strong>Effective July 26, 2026.</strong></p>
+        <p><strong>Effective August 1, 2026.</strong></p>
         <p>
             Chandas analyzes your composition on your device. The website and
             Android app do not send composition text to a Chandas server.
@@ -44,12 +45,38 @@ SPDX-License-Identifier: GPL-3.0-only
             operating system, browser, or chosen social destination, whose own
             privacy policy then applies.
         </p>
+        <h2>Anonymous website counts</h2>
+        <p>
+            On the production website only, Chandas uses
+            <a href="https://www.goatcounter.com/help/privacy">GoatCounter</a>
+            for aggregate page and writing-script counts. After at least three
+            supported syllables have been present and typing pauses briefly,
+            Chandas may count that the editing session used Kannada script,
+            Devanagari script, or both. It never sends the composition,
+            selected meter, draft identifier, syllable count, or editor
+            position.
+        </p>
+        <p>
+            Shared-analysis links can contain composition text in their query
+            string. Chandas removes every query string from the page path sent
+            to GoatCounter and suppresses the referrer on its counting
+            requests. Script-use events are sent at most once per category per
+            loaded editing session. GoatCounter receives the ordinary network
+            request, but stores aggregate statistics without cookies, browser
+            identifiers, raw IP addresses, or full user-agent strings. Counts
+            may be absent when Chandas is offline or analytics is blocked.
+        </p>
+        <p>
+            Website analytics do not run on localhost, GitHub Pages previews,
+            or in the Android application.
+        </p>
         <h2>No Chandas cloud account</h2>
         <p>
             Chandas has no poem server, hosted database, Google login, Drive
-            API, or composition telemetry. It does not upload or synchronize
-            saved poems. A file leaves Chandas only when you explicitly share,
-            download, or export it to a destination you choose.
+            API, or composition-content telemetry. It does not upload or
+            synchronize saved poems. A file leaves Chandas only when you
+            explicitly share, download, or export it to a destination you
+            choose.
         </p>
         <h2>Support</h2>
         <p>

@@ -15,8 +15,8 @@ android {
         applicationId "org.chandas.app"
         minSdk 24
         targetSdk 36
-        versionCode 31
-        versionName "1.15.1"
+        versionCode 32
+        versionName "1.16.0"
     }
 
     buildFeatures {
@@ -58,6 +58,7 @@ tasks.register("syncWebAssets", Copy) {
     include "index.html"
     include "styles.css"
     include "app.js"
+    include "analytics.js"
     include "poem_store.js"
     include "meter_analysis.js"
     include "shithila_dvitva.js"

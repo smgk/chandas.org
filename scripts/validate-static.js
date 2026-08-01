@@ -13,6 +13,7 @@ const required = [
     "index.html",
     "styles.css",
     "app.js",
+    "analytics.js",
     "poem_store.js",
     "meter_analysis.js",
     "shithila_dvitva.js",

@@ -1,6 +1,6 @@
 {
   "name": "chandas-org",
-  "version": "1.15.1",
+  "version": "1.16.0",
   "private": true,
   "description": "Offline-first Kannada and Devanagari meter composer",
   "author": "Ganesh Krishna Shankarathota",
@@ -8,7 +8,7 @@
   "scripts": {
     "build": "node scripts/build-static.js",
     "test": "node --test tests/*.test.js",
-    "check": "node --check meter_analysis.js && node --check shithila_dvitva.js && node --check strong_template.js && node --check poem_store.js && node --check app.js && node --check documentation.js && node --check service-worker.js && node scripts/validate-static.js",
+    "check": "node --check meter_analysis.js && node --check shithila_dvitva.js && node --check strong_template.js && node --check poem_store.js && node --check analytics.js && node --check app.js && node --check documentation.js && node --check service-worker.js && node scripts/validate-static.js",
     "test:e2e": "playwright test",
     "serve": "node scripts/static-server.js"
   },

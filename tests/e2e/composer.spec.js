@@ -905,6 +905,49 @@ test("Saved poems search, rename, duplicate, and delete stay on-device", async (
     await expect(page.locator(".saved-poem-card")).toHaveCount(1);
 });
 
+test("shares a saved poem with every composer Share action without opening it", async ({
+    page
+}) => {
+    const editor = page.locator("#composition");
+    await editor.fill("ಉಳಿಸಿದ ಮೊದಲ ಪದ್ಯ");
+    await page.locator("#meter-picker summary").click();
+    await page.locator("#meter-search").fill("madhu");
+    await page.locator("#meter-select").selectOption("madhu");
+    await page.waitForTimeout(400);
+    await page.locator("#new-draft").click();
+    await editor.fill("ಈಗ ಬರೆಯುತ್ತಿರುವ ಪದ್ಯ");
+    await page.waitForTimeout(400);
+    await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
+
+    const shareSavedPoem = async () => {
+        await page.locator("#saved-poems").click();
+        const card = page.locator(".saved-poem-card", {
+            hasText: "ಉಳಿಸಿದ ಮೊದಲ ಪದ್ಯ"
+        });
+        await expect(card).toHaveCount(1);
+        await card.getByRole("button", { name: "Share", exact: true }).click();
+        await expect(page.locator("#saved-poems-dialog")).toBeHidden();
+        await expect(page.locator("#share-dialog")).toBeVisible();
+    };
+
+    await shareSavedPoem();
+    await page.locator("#include-meter").check();
+    await page.locator("#include-link").check();
+    await page.locator("#dialog-copy").click();
+    const sharedText = await page.evaluate(() => navigator.clipboard.readText());
+    expect(sharedText).toContain("ಉಳಿಸಿದ ಮೊದಲ ಪದ್ಯ");
+    expect(sharedText).toContain("madhu");
+    expect(sharedText).toContain("https://chandas.org");
+    expect(sharedText).not.toContain("ಈಗ ಬರೆಯುತ್ತಿರುವ ಪದ್ಯ");
+
+    await shareSavedPoem();
+    await page.locator("#copy-analysis-url").click();
+    const copiedUrl = new URL(await page.evaluate(() => navigator.clipboard.readText()));
+    expect(copiedUrl.searchParams.get("verse")).toBe("ಉಳಿಸಿದ ಮೊದಲ ಪದ್ಯ");
+    expect(copiedUrl.searchParams.get("meter1")).toBe("madhu");
+    await expect(editor).toHaveValue("ಈಗ ಬರೆಯುತ್ತಿರುವ ಪದ್ಯ");
+});
+
 test("downloads a portable local backup with Unicode and template state", async ({ page }) => {
     await page.locator("#composition").fill("\nಕಾವ್ಯ\nಪದ್ಯ");
     await page.locator("#meter-picker summary").click();

@@ -334,7 +334,8 @@
         activePoemRevision: 0,
         activePoemPersisted: false,
         saveChain: Promise.resolve(),
-        savedPoems: []
+        savedPoems: [],
+        sharingPoem: null
     };
 
     function cacheElements() {
@@ -2145,6 +2146,9 @@
     }
 
     function analysisUrl() {
+        if (state.sharingPoem) {
+            return savedPoemAnalysisUrl(state.sharingPoem);
+        }
         const url = new URL("https://chandas.org/");
         url.searchParams.set("v", "3");
         url.searchParams.set("verse", authoredCompositionText());
@@ -2177,6 +2181,42 @@
         return url.toString();
     }
 
+    function savedPoemAnalysisUrl(poem) {
+        const url = new URL("https://chandas.org/");
+        url.searchParams.set("v", "3");
+        url.searchParams.set("verse", poem.text);
+        const stanzaIndexes = new Set([
+            ...Object.keys(poem.selections || {}),
+            ...Object.keys(poem.templateModes || {}),
+            ...Object.keys(poem.templates || {}),
+            ...Object.keys(poem.strongDrafts || {}).map((key) => key.split(":")[0])
+        ]);
+        Array.from(stanzaIndexes).map(Number).filter(Number.isInteger)
+            .sort((a, b) => a - b).forEach((index) => {
+                const meterId = poem.selections && poem.selections[index];
+                if (meterId) {
+                    url.searchParams.set(`meter${index + 1}`, meterId);
+                }
+                const mode = poem.templateModes && poem.templateModes[index] ||
+                    (poem.templates && poem.templates[index] ? "ghost" : "off");
+                if (mode !== "off") {
+                    url.searchParams.set(`template${index + 1}`, mode);
+                }
+                if (mode === "strong" && meterId) {
+                    const draft = poem.strongDrafts && poem.strongDrafts[
+                        strongDraftKey(index, meterId)
+                    ];
+                    if (draft) {
+                        url.searchParams.set(
+                            `slots${index + 1}`,
+                            JSON.stringify(ChandasStrongTemplate.cloneSlots(draft))
+                        );
+                    }
+                }
+            });
+        return url.toString();
+    }
+
     async function copyText(text, successMessage) {
         try {
             if (navigator.clipboard && window.isSecureContext) {
@@ -2203,11 +2243,22 @@
     }
 
     function shareText() {
-        let text = authoredCompositionText();
-        if (elements["include-meter"].checked && state.analysis) {
-            const meterNames = Array.from(new Set(state.analysis.stanzas
-                .map((stanza) => stanza.selectedMeter && stanza.selectedMeter.name)
-                .filter(Boolean)));
+        const savedPoem = state.sharingPoem;
+        let text = savedPoem ? savedPoem.text : authoredCompositionText();
+        if (elements["include-meter"].checked) {
+            const meterNames = savedPoem
+                ? Array.from(new Set(Object.values(savedPoem.selections || {})))
+                    .filter(Boolean)
+                    .map((meterId) => {
+                        const meter = meterForId(meterId);
+                        return meter ? meter.name : meterId;
+                    })
+                : state.analysis
+                    ? Array.from(new Set(state.analysis.stanzas
+                        .map((stanza) =>
+                            stanza.selectedMeter && stanza.selectedMeter.name)
+                        .filter(Boolean)))
+                    : [];
             if (meterNames.length) {
                 text += `\n\n— ${meterNames.join(", ")}`;
             }
@@ -2264,6 +2315,17 @@
         if (dialog && dialog.open) {
             dialog.close();
         }
+    }
+
+    function openComposerShare() {
+        state.sharingPoem = null;
+        elements["share-dialog"].showModal();
+    }
+
+    function openSavedPoemShare(poem) {
+        state.sharingPoem = poem;
+        elements["saved-poems-dialog"].close();
+        elements["share-dialog"].showModal();
     }
 
     function poemDisplayTitle(poem) {
@@ -2350,10 +2412,13 @@
         cancel.addEventListener("click", refreshSavedPoems);
     }
 
-    function savedPoemButton(label, handler) {
+    function savedPoemButton(label, handler, className) {
         const button = document.createElement("button");
         button.type = "button";
         button.textContent = label;
+        if (className) {
+            button.classList.add(className);
+        }
         button.addEventListener("click", handler);
         return button;
     }
@@ -2390,6 +2455,11 @@
                 savedPoemButton(
                     poem.id === state.activePoemId ? t("activePoem") : t("openPoem"),
                     () => openStoredPoem(poem.id)
+                ),
+                savedPoemButton(
+                    t("share"),
+                    () => openSavedPoemShare(poem),
+                    "saved-poem-share"
                 ),
                 savedPoemButton(t("renamePoem"), () => renameStoredPoem(poem, card)),
                 savedPoemButton(t("duplicatePoem"), async () => {
@@ -2905,7 +2975,7 @@
             importBackupFile(elements["backup-file"].files[0]));
         elements["app-update"].addEventListener("click", activateAppUpdate);
         elements.copy.addEventListener("click", () => copyText(authoredCompositionText()));
-        elements.share.addEventListener("click", () => elements["share-dialog"].showModal());
+        elements.share.addEventListener("click", openComposerShare);
         elements["share-dialog"].addEventListener(
             "click",
             dismissShareDialogFromBackdrop

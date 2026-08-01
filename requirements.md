@@ -377,6 +377,8 @@ recommended, and optional behavior.
 4. Users MUST be able to search, view, reopen, rename, duplicate, and delete
    locally saved work. Opening or creating a poem MUST flush the current work
    first.
+   Every saved poem MUST also expose the writing slate's complete Share dialog
+   and actions without first opening that poem or replacing current work.
 5. Existing single-draft recovery data MUST migrate into the library without
    losing text or template state. If the library API is unavailable, the
    single-current-draft fallback MUST keep composition usable.

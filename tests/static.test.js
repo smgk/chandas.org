@@ -150,6 +150,8 @@ test("the composition control and live regions have accessible labels", () => {
     assert.match(html, /Save all to \.txt/);
     assert.match(html, /Full backup/);
     assert.match(html, /Restore full backup/);
+    assert.match(read("app.js"), /openSavedPoemShare\(poem\)/);
+    assert.match(read("app.js"), /"saved-poem-share"/);
     assert.match(
         html,
         /id="strong-template-editor"[^>]*aria-labelledby="strong-template-title"/

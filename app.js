@@ -111,6 +111,14 @@
             templateLine: "Line {number}",
             repeatableLine: "Each line",
             exact: "Exact",
+            exactPada: "Exact pāda",
+            exactUnit: "Unit fits",
+            strongPrefix: "Strong prefix",
+            earlyPossibility: "Early possibility",
+            commonMeter: "Common",
+            syllableProgress: "{observed}/{expected} syllables",
+            padaProgress: "{completed}/{expected} pādas",
+            unitProgress: "{completed}/{expected} units",
             compatible: "Possible",
             approximate: "Closest",
             selected: "Selected",
@@ -257,6 +265,14 @@
             templateLine: "ಸಾಲು {number}",
             repeatableLine: "ಪ್ರತಿ ಸಾಲು",
             exact: "ಸರಿಯಾಗಿ",
+            exactPada: "ಪಾದ ಸರಿಯಾಗಿ",
+            exactUnit: "ಘಟಕ ಸರಿಯಾಗಿ",
+            strongPrefix: "ಬಲವಾದ ಆರಂಭ",
+            earlyPossibility: "ಆರಂಭಿಕ ಸಾಧ್ಯತೆ",
+            commonMeter: "ಪ್ರಚಲಿತ",
+            syllableProgress: "{observed}/{expected} ಅಕ್ಷರಗಳು",
+            padaProgress: "{completed}/{expected} ಪಾದಗಳು",
+            unitProgress: "{completed}/{expected} ಘಟಕಗಳು",
             compatible: "ಸಾಧ್ಯ",
             approximate: "ಸಮೀಪ",
             selected: "ಆಯ್ಕೆ",
@@ -1645,11 +1661,58 @@
         }
     }
 
-    function candidateButton(candidate, selectedMeterId) {
+    function candidateStatus(candidate, selectedMeterId) {
+        if (candidate.id === selectedMeterId) {
+            return t("selected");
+        }
+        if (candidate.matchLevel === "exact-verse") {
+            return t("exact");
+        }
+        if (candidate.matchLevel === "exact-unit") {
+            return t(candidate.kind === "fixed" ? "exactPada" : "exactUnit");
+        }
+        if (candidate.matchLevel === "strong-prefix") {
+            return t("strongPrefix");
+        }
+        if (candidate.matchLevel === "structural-partial") {
+            return t("earlyPossibility");
+        }
+        return t(candidate.status);
+    }
+
+    function candidateDetails(candidate) {
+        const details = [];
+        if (candidate.kind === "fixed" && candidate.expectedSyllables) {
+            details.push(t("syllableProgress", {
+                observed: candidate.observedSyllables,
+                expected: candidate.expectedSyllables
+            }));
+            if (candidate.completedUnitCount > 0) {
+                details.push(t("padaProgress", {
+                    completed: candidate.completedUnitCount,
+                    expected: candidate.expectedUnitCount
+                }));
+            }
+        } else {
+            if (candidate.completedUnitCount > 0 && candidate.expectedUnitCount) {
+                details.push(t("unitProgress", {
+                    completed: candidate.completedUnitCount,
+                    expected: candidate.expectedUnitCount
+                }));
+            }
+            if (candidate.patterns[0]) {
+                details.push(candidate.patterns[0]);
+            }
+        }
+        return details;
+    }
+
+    function candidateButton(candidate, selectedMeterId, index) {
         const button = document.createElement("button");
         button.type = "button";
-        button.className = `candidate${candidate.id === selectedMeterId ? " selected" : ""}`;
+        button.className = `candidate${candidate.id === selectedMeterId ? " selected" : ""}${index === 0 ? " best-candidate" : ""}`;
         button.dataset.status = candidate.status;
+        button.dataset.matchLevel = candidate.matchLevel || candidate.status;
         button.dataset.meterId = candidate.id;
         button.setAttribute("aria-pressed", candidate.id === selectedMeterId ? "true" : "false");
 
@@ -1658,19 +1721,27 @@
         const name = document.createElement("span");
         name.className = "candidate-name";
         name.textContent = candidate.name;
-        identity.append(name);
-        if (candidate.kind !== "fixed" && candidate.patterns[0]) {
+        const nameRow = document.createElement("span");
+        nameRow.className = "candidate-name-row";
+        nameRow.append(name);
+        if (candidate.prominence >= 3) {
+            const prominence = document.createElement("small");
+            prominence.className = "candidate-prominence";
+            prominence.textContent = t("commonMeter");
+            nameRow.append(prominence);
+        }
+        identity.append(nameRow);
+        const details = candidateDetails(candidate);
+        if (details.length) {
             const detail = document.createElement("small");
             detail.className = "candidate-detail";
-            detail.textContent = candidate.patterns[0];
+            detail.textContent = details.join(" · ");
             identity.append(detail);
         }
 
         const status = document.createElement("span");
         status.className = "candidate-status";
-        status.textContent = candidate.id === selectedMeterId
-            ? t("selected")
-            : t(candidate.status);
+        status.textContent = candidateStatus(candidate, selectedMeterId);
 
         button.append(identity, status);
         button.addEventListener("click", () => selectMeter(candidate.id));
@@ -1792,10 +1863,16 @@
             elements["template-mode-picker"].hidden = true;
         }
 
+        const candidateScroll = elements["candidate-list"].scrollTop;
         elements["candidate-list"].replaceChildren(
-            ...stanza.candidates.slice(0, 4)
-                .map((candidate) => candidateButton(candidate, stanza.selectedMeterId))
+            ...stanza.candidates.slice(0, 8)
+                .map((candidate, index) => candidateButton(
+                    candidate,
+                    stanza.selectedMeterId,
+                    index
+                ))
         );
+        elements["candidate-list"].scrollTop = candidateScroll;
 
         filterMeterOptions(elements["meter-search"].value);
         elements["meter-select"].value = stanza.selectedMeterId;
@@ -2837,6 +2914,7 @@
                 ...(structuralCatalog.fixedMeters || [])
             ],
             structuralMeters: structuralCatalog.meters,
+            meterProminence: structuralCatalog.meterProminence || {},
             structuralCatalogVersion: structuralCatalog.catalogVersion
         };
         state.meters = Chandas.normalizeCatalog(state.catalog)

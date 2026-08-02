@@ -230,11 +230,31 @@ recommended, and optional behavior.
 11. A pāda boundary MUST be recognized at a non-empty line break, danda,
     double danda, single Roman bar, or double Roman bar. Other punctuation
     remains metrically transparent and MUST NOT create a pāda.
+12. Live ranking MUST distinguish a complete-verse match, an exact completed
+    pāda or structural unit, a clean fixed-pattern prefix, an unfinished
+    structural possibility, and an observed mismatch. Merely remaining
+    possible while most structural units are absent MUST NOT outrank stronger
+    positive evidence.
+13. Untyped suffix positions in a clean fixed-vṛtta prefix MUST be shown as
+    remaining progress and MUST NOT be scored as observed mismatches. An exact
+    completed pāda in an unfinished stanza MUST be labeled **Exact pāda** rather
+    than either claiming an exact complete verse or reducing it to a generic
+    possibility.
+14. Optional editorial prominence metadata MAY break ties between candidates
+    with the same observed evidence and constraint strength. It MUST NOT make a
+    mismatch or weaker evidence outrank an exact or stronger metrical fit, and
+    MUST remain independent of the composition's writing script.
+15. Incomplete permissive syllable-structural, mātrā, and aṃśa meters MUST be
+    treated as early possibilities until at least one complete applicable unit
+    supplies positive evidence. The UI SHOULD expose concise progress such as
+    syllables in the current pāda and completed units in the stanza.
 
 ### FR-5: Meter selection
 
 1. Meter suggestions MUST appear in a compact, keyboard-accessible dropdown
    that does not obscure the composition.
+   The highest-ranked result SHOULD remain visible while additional candidates
+   occupy a bounded, vertically scrollable region.
 2. The user MUST be able to select any supported meter, including one not in
    the current short list of closest matches.
 3. Meter detection, suggestions, and selection MUST operate independently for
@@ -909,6 +929,10 @@ The MVP is acceptable when:
   diacritics while unaccented and common Roman spellings find them.
 - Include every supported meter, exact matches, near matches, ties, allowed
   variations, wrong line counts, extra/missing syllables, and ambiguous cases.
+- Include incremental prefixes and exact single-pāda/full-stanza fixtures for
+  prominent fixed vṛttas. Verify that permissive unfinished structural meters
+  stay below stronger fixed-pattern evidence and that prominence resolves only
+  otherwise comparable prefixes.
 - Include pathyā Anuṣṭubh fixtures using both one-pāda-per-line and
   danda-delimited two-pāda lines, plus wrong cadence, forbidden positions,
   missing pādas, and extra syllables.

@@ -27,7 +27,8 @@ const kandaFixture = JSON.parse(fs.readFileSync(
 const combinedCatalog = {
     ...catalog,
     metres: [...catalog.metres, ...(structuralCatalog.fixedMeters || [])],
-    structuralMeters: structuralCatalog.meters
+    structuralMeters: structuralCatalog.meters,
+    meterProminence: structuralCatalog.meterProminence
 };
 
 function textForPattern(pattern) {
@@ -480,6 +481,59 @@ test("ranks exact patterns above compatible and approximate patterns", () => {
     assert.equal(ranked[1].status, "compatible");
 });
 
+test("ranks observed evidence before permissive structural possibilities", () => {
+    const partial = "ಪಾರ್ಥಾಯ ಪ್ರತಿಭೋದಿತಾಂ ಭಗವತಾ ನಾರಾಯ";
+    const completedPada =
+        "ಪಾರ್ಥಾಯ ಪ್ರತಿಭೋದಿತಾಂ ಭಗವತಾ ನಾರಾಯಣೇನ ಸ್ವಯಂ";
+
+    const partialCandidate = Chandas.analyzeComposition(
+        partial,
+        combinedCatalog,
+        {}
+    ).stanzas[0].candidates[0];
+    assert.equal(partialCandidate.id, "śārdūlavikrīḍitam");
+    assert.equal(partialCandidate.matchLevel, "strong-prefix");
+    assert.equal(partialCandidate.observedSyllables, 15);
+    assert.equal(partialCandidate.expectedSyllables, 19);
+
+    const completedCandidate = Chandas.analyzeComposition(
+        completedPada,
+        combinedCatalog,
+        {}
+    ).stanzas[0].candidates[0];
+    assert.equal(completedCandidate.id, "śārdūlavikrīḍitam");
+    assert.equal(completedCandidate.matchLevel, "exact-unit");
+    assert.equal(completedCandidate.completedUnitCount, 1);
+    assert.equal(completedCandidate.expectedUnitCount, 4);
+    assert.equal(completedCandidate.distance, 0);
+});
+
+test("uses prominence only to break equally clean prefixes", () => {
+    const meters = Chandas.normalizeCatalog({
+        metres: [
+            ["specialist-short", "GGGLLGLGLLLGGGLGGL"],
+            ["common-long", "GGGLLGLGLLLGGGLGGLG"],
+            ["common-wrong", "LLLLLLLLLLLLLLLLLLL"]
+        ],
+        meterProminence: {
+            "specialist-short": "specialist",
+            "common-long": "common",
+            "common-wrong": "common"
+        }
+    });
+    const prefix = "GGGLLGLGLLLGGGL";
+    const prefixRanking = Chandas.rankMeters([prefix], meters);
+    assert.equal(prefixRanking[0].name, "common-long");
+    assert.equal(prefixRanking[0].matchLevel, "strong-prefix");
+
+    const exactRanking = Chandas.rankMeters(
+        ["GGGLLGLGLLLGGGLGGL"],
+        meters
+    );
+    assert.equal(exactRanking[0].name, "specialist-short");
+    assert.equal(exactRanking[0].matchLevel, "exact-unit");
+});
+
 test("expands one, two, and four fixed-vṛtta patterns to four-line verses", () => {
     const tinyCatalog = {
         metres: [
@@ -617,7 +671,7 @@ test("keeps an incomplete structural meter compatible without red violations", (
 
     assert.equal(stanza.violationCount, 0);
     assert.ok(stanza.missingCount > 0);
-    assert.equal(result.analysisVersion, "2.11.1");
+    assert.equal(result.analysisVersion, "2.12.0");
     assert.equal(result.catalogVersion, structuralCatalog.catalogVersion);
 });
 
@@ -712,8 +766,8 @@ test("recognizes the provisional Kannada Kanda characterization fixture", () => 
     );
     assert.equal(stanza.selectedMeter.ruleCompleteness, "provisional-rhythm");
     assert.deepEqual(stanza.selectedMeter.uncheckedRules, ["historical prāsa variants"]);
-    assert.equal(result.analysisVersion, "2.11.1");
-    assert.equal(result.catalogVersion, "4.1.0");
+    assert.equal(result.analysisVersion, "2.12.0");
+    assert.equal(result.catalogVersion, "4.2.0");
 });
 
 test("loads and validates the Pañcamātrā Chaupadi Kagga form", () => {

@@ -185,6 +185,39 @@ test("keeps Kannada and Devanagari conjuncts joined across highlight changes", a
     expect(editorTracking).toBe("normal");
 });
 
+test("prioritizes strong vritta evidence in a compact scrollable list", async ({
+    page
+}) => {
+    const editor = page.locator("#composition");
+    await editor.fill("ಪಾರ್ಥಾಯ ಪ್ರತಿಭೋದಿತಾಂ ಭಗವತಾ ನಾರಾಯ");
+
+    const candidates = page.locator("#candidate-list .candidate");
+    await expect(candidates).toHaveCount(8);
+    await expect(candidates.first().locator(".candidate-name"))
+        .toHaveText("śārdūlavikrīḍitam");
+    await expect(candidates.first().locator(".candidate-status"))
+        .toHaveText("Strong prefix");
+    await expect(candidates.first().locator(".candidate-detail"))
+        .toContainText("15/19 syllables");
+    await expect(candidates.first().locator(".candidate-prominence"))
+        .toHaveText("Common");
+    const scrolling = await page.locator("#candidate-list").evaluate((list) => ({
+        overflowY: getComputedStyle(list).overflowY,
+        scrollHeight: list.scrollHeight,
+        clientHeight: list.clientHeight
+    }));
+    expect(scrolling.overflowY).toBe("auto");
+    expect(scrolling.scrollHeight).toBeGreaterThan(scrolling.clientHeight);
+
+    await editor.fill("ಪಾರ್ಥಾಯ ಪ್ರತಿಭೋದಿತಾಂ ಭಗವತಾ ನಾರಾಯಣೇನ ಸ್ವಯಂ");
+    await expect(candidates.first().locator(".candidate-name"))
+        .toHaveText("śārdūlavikrīḍitam");
+    await expect(candidates.first().locator(".candidate-status"))
+        .toHaveText("Exact pāda");
+    await expect(candidates.first().locator(".candidate-detail"))
+        .toContainText("19/19 syllables · 1/4 pādas");
+});
+
 test("loads a raw-query verse once and appends it to a recovered draft", async ({ page }) => {
     const imported = "ಕಾವ್ಯ\nಪದ್ಯ";
     await page.locator("#composition").fill("ಮೊದಲ ಪದ್ಯ");

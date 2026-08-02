@@ -663,6 +663,22 @@
             return [];
         }
 
+        const prominenceCatalog = !Array.isArray(catalog) &&
+            catalog.meterProminence && typeof catalog.meterProminence === "object"
+            ? catalog.meterProminence
+            : {};
+        const prominenceScore = (id) => {
+            const value = prominenceCatalog[id];
+            if (typeof value === "number" && Number.isFinite(value)) {
+                return Math.max(0, Math.min(3, value));
+            }
+            return {
+                specialist: 0,
+                neutral: 1,
+                established: 2,
+                common: 3
+            }[String(value || "neutral")] ?? 1;
+        };
         const rawEntries = Array.isArray(catalog) ? catalog : catalog.metres;
         const fixedMeters = (Array.isArray(rawEntries) ? rawEntries : [])
             .filter((entry) => Array.isArray(entry) && entry.length >= 2)
@@ -675,6 +691,7 @@
                     name: String(entry[0]),
                     sourceIndex: index,
                     kind: "fixed",
+                    prominence: prominenceScore(String(entry[0])),
                     aliases: [],
                     patterns,
                     linePolicy,
@@ -696,6 +713,7 @@
                 id: String(entry.id),
                 name: String(entry.name),
                 aliases: Array.isArray(entry.aliases) ? entry.aliases.map(String) : [],
+                prominence: prominenceScore(String(entry.id)),
                 sourceIndex: index,
                 patterns: Array.isArray(entry.signatureLines)
                     ? entry.signatureLines.map(String)
@@ -769,6 +787,8 @@
         let comparedLength = 0;
         let prefixCompatible = linePatterns.length > 0;
         let exactLines = linePatterns.length > 0;
+        let completedUnitCount = 0;
+        let observedDistance = 0;
 
         for (let index = 0; index < linePatterns.length; index += 1) {
             const actual = linePatterns[index];
@@ -786,6 +806,11 @@
             comparedLength += Math.max(actual.length, expected.length, 1);
             prefixCompatible = prefixCompatible && expected.startsWith(actual);
             exactLines = exactLines && actual === expected;
+            completedUnitCount += actual === expected ? 1 : 0;
+            observedDistance += sanitizedEditDistance(
+                actual,
+                expected.slice(0, Math.min(actual.length, expected.length))
+            );
         }
 
         if (linePatterns.length > expectedLines.length) {
@@ -799,30 +824,78 @@
             : prefixCompatible
                 ? "compatible"
                 : "approximate";
+        const matchLevel = status === "exact"
+            ? "exact-verse"
+            : prefixCompatible && completedUnitCount > 0
+                ? "exact-unit"
+                : prefixCompatible
+                    ? "strong-prefix"
+                    : "approximate";
+        const activeLineIndex = Math.max(0, linePatterns.length - 1);
+        const activeExpected = expectedForLine(meter, activeLineIndex);
+        const activeActual = linePatterns[activeLineIndex] || "";
 
         return {
             status,
             distance,
-            score: comparedLength ? distance / comparedLength : 1
+            score: prefixCompatible
+                ? 0
+                : observedDistance / Math.max(
+                    1,
+                    linePatterns.reduce((sum, pattern) => sum + pattern.length, 0)
+                ),
+            matchLevel,
+            evidenceRank: {
+                "exact-verse": 0,
+                "exact-unit": 1,
+                "strong-prefix": 2,
+                approximate: 5
+            }[matchLevel],
+            constraintRank: 0,
+            completedUnitCount,
+            expectedUnitCount: expectedLines.length,
+            observedSyllables: activeActual.length,
+            expectedSyllables: activeExpected.length,
+            comparedLength
         };
     }
 
+    function compareCandidates(left, right) {
+        const evidenceDifference = (left.evidenceRank ?? 5) -
+            (right.evidenceRank ?? 5);
+        if (evidenceDifference) {
+            return evidenceDifference;
+        }
+
+        const evidenceRank = left.evidenceRank ?? 5;
+        if (evidenceRank >= 5) {
+            return left.score - right.score ||
+                (left.violationCount || 0) - (right.violationCount || 0) ||
+                left.distance - right.distance ||
+                (left.constraintRank ?? 3) - (right.constraintRank ?? 3) ||
+                (right.prominence ?? 1) - (left.prominence ?? 1) ||
+                left.name.localeCompare(right.name);
+        }
+
+        return (left.constraintRank ?? 3) - (right.constraintRank ?? 3) ||
+            (right.prominence ?? 1) - (left.prominence ?? 1) ||
+            (left.substitutionCount || 0) - (right.substitutionCount || 0) ||
+            left.score - right.score ||
+            left.distance - right.distance ||
+            left.name.localeCompare(right.name);
+    }
+
     function rankMeters(linePatterns, meters, limit) {
-        const statusRank = { exact: 0, compatible: 1, approximate: 2 };
         const scored = meters.filter((meter) => meter.kind === "fixed").map((meter) => ({
             id: meter.id,
             name: meter.name,
             kind: meter.kind,
             patterns: meter.patterns,
+            prominence: meter.prominence,
             ...scoreMeter(linePatterns, meter)
         }));
 
-        scored.sort((left, right) =>
-            statusRank[left.status] - statusRank[right.status] ||
-            left.score - right.score ||
-            left.distance - right.distance ||
-            left.name.localeCompare(right.name)
-        );
+        scored.sort(compareCandidates);
 
         return scored.slice(0, limit || 8);
     }
@@ -1500,6 +1573,7 @@
             missingCount,
             expectedUnits
         );
+        setStructuralProgress(result, completePadas, expectedPadas.length, padas.length);
         if (result.status === "exact" && meter.ruleCompleteness !== "complete") {
             result.status = "compatible";
         }
@@ -2099,6 +2173,7 @@
             missingCount,
             expectedPadas.reduce((sum, rule) => sum + rule.syllables, 0)
         );
+        setStructuralProgress(result, completePadas, expectedPadas.length, padas.length);
         result.prasa = prasa;
         return result;
     }
@@ -2202,6 +2277,12 @@
             expectedUnits,
             lineCountComplete
         );
+        setStructuralProgress(
+            result,
+            completePadas,
+            isRepeating ? Math.max(minimumLines, padas.length) : expectedPadas.length,
+            padas.length
+        );
         if (result.status === "exact" && meter.ruleCompleteness !== "complete") {
             result.status = "compatible";
         }
@@ -2231,12 +2312,25 @@
 
         return {
             status,
+            complete,
             distance: ruleFailures + missingCount,
             score: (ruleFailures + (missingCount * 0.05)) /
                 Math.max(comparedLength, expectedUnits || 1),
             missingCount,
             violationCount: ruleFailures
         };
+    }
+
+    function setStructuralProgress(
+        result,
+        completeUnits,
+        expectedUnitCount,
+        observedUnitCount
+    ) {
+        result.completedUnitCount = completeUnits.filter(Boolean).length;
+        result.expectedUnitCount = expectedUnitCount;
+        result.observedUnitCount = observedUnitCount;
+        return result;
     }
 
     function scoreStructuralMeter(padas, meter, shouldMark) {
@@ -2255,33 +2349,45 @@
     function rankStructuralMeters(padas, meters) {
         return meters
             .filter((meter) => meter.kind !== "fixed")
-            .map((meter) => ({
-                id: meter.id,
-                name: meter.name,
-                kind: meter.kind,
-                patterns: meter.patterns,
-                ruleCompleteness: meter.ruleCompleteness || "",
-                ...scoreStructuralMeter(padas, meter, false)
-            }));
+            .map((meter) => {
+                const result = scoreStructuralMeter(padas, meter, false);
+                const clean = result.violationCount === 0;
+                const matchLevel = result.complete && clean
+                    ? result.status === "exact"
+                        ? "exact-verse"
+                        : "complete-structure"
+                    : result.completedUnitCount > 0 && clean
+                        ? "exact-unit"
+                        : clean
+                            ? "structural-partial"
+                            : "approximate";
+                return {
+                    id: meter.id,
+                    name: meter.name,
+                    kind: meter.kind,
+                    patterns: meter.patterns,
+                    prominence: meter.prominence,
+                    ruleCompleteness: meter.ruleCompleteness || "",
+                    matchLevel,
+                    evidenceRank: {
+                        "exact-verse": 0,
+                        "complete-structure": 0,
+                        "exact-unit": 1,
+                        "structural-partial": 4,
+                        approximate: 5
+                    }[matchLevel],
+                    constraintRank: {
+                        "syllable-structural": 1,
+                        matra: 2,
+                        amsha: 3
+                    }[meter.kind] ?? 3,
+                    ...result
+                };
+            });
     }
 
     function sortCandidates(candidates, limit, selectedMeterId) {
-        const statusRank = { exact: 0, compatible: 1, approximate: 2 };
-        const completenessRank = {
-            complete: 0,
-            pathyā: 0,
-            "provisional-rhythm": 1,
-            "group-totals": 2
-        };
-        const ranked = candidates.sort((left, right) =>
-            statusRank[left.status] - statusRank[right.status] ||
-            (completenessRank[left.ruleCompleteness] ?? 1) -
-                (completenessRank[right.ruleCompleteness] ?? 1) ||
-            (left.substitutionCount || 0) -
-                (right.substitutionCount || 0) ||
-            left.score - right.score ||
-            left.distance - right.distance ||
-            left.name.localeCompare(right.name));
+        const ranked = candidates.sort(compareCandidates);
         const visible = ranked.slice(0, limit || 8);
         const selected = selectedMeterId
             ? ranked.find((candidate) => candidate.id === selectedMeterId)
@@ -2562,7 +2668,7 @@
 
         return {
             text: originalText,
-            analysisVersion: "2.11.1",
+            analysisVersion: "2.12.0",
             catalogVersion: catalog && catalog.structuralCatalogVersion
                 ? String(catalog.structuralCatalogVersion)
                 : "",

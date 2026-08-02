@@ -65,6 +65,12 @@ if (!structuralCatalog.catalogVersion ||
     structuralCatalog.meters.length === 0) {
     throw new Error("structural_meters.json does not contain a versioned meter list");
 }
+const prominenceValues = new Set(["specialist", "neutral", "established", "common"]);
+if (!structuralCatalog.meterProminence ||
+    Object.values(structuralCatalog.meterProminence)
+        .some((value) => !prominenceValues.has(value))) {
+    throw new Error("structural_meters.json contains invalid prominence metadata");
+}
 if (!Array.isArray(structuralCatalog.fixedMeters) ||
     structuralCatalog.fixedMeters.some((entry) =>
         !Array.isArray(entry) || entry.length < 2 || !/^[GL]+$/.test(entry[1]))) {

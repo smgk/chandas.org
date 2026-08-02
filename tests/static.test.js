@@ -33,6 +33,22 @@ test("the web shell has no external runtime asset dependencies", () => {
     assert.match(html, /app\.js/);
 });
 
+test("meter suggestions stay compact and explain evidence rather than absence", () => {
+    const styles = read("styles.css");
+    const app = read("app.js");
+    const catalog = JSON.parse(read("structural_meters.json"));
+
+    assert.match(styles, /\.candidate-list\s*\{[\s\S]*?max-height:/);
+    assert.match(styles, /\.candidate-list\s*\{[\s\S]*?overflow-y:\s*auto/);
+    assert.match(styles, /\.candidate\.best-candidate\s*\{[\s\S]*?position:\s*sticky/);
+    assert.match(app, /exactPada: "Exact pāda"/);
+    assert.match(app, /strongPrefix: "Strong prefix"/);
+    assert.match(app, /earlyPossibility: "Early possibility"/);
+    assert.match(app, /slice\(0, 8\)/);
+    assert.equal(catalog.meterProminence["śārdūlavikrīḍitam"], "common");
+    assert.equal(catalog.meterProminence["structural:naduvanakkara"], "specialist");
+});
+
 test("saved poems use only on-device storage and user-owned backups", () => {
     const store = read("poem_store.js");
     const app = read("app.js");
@@ -305,7 +321,7 @@ test("the provisional Kanda rule packet and attribution are retained", () => {
     const kanda = catalog.meters.find((meter) =>
         meter.id === "structural:kanda-kannada");
 
-    assert.equal(catalog.catalogVersion, "4.1.0");
+    assert.equal(catalog.catalogVersion, "4.2.0");
     assert.equal(kanda.ruleCompleteness, "provisional-rhythm");
     assert.deepEqual(kanda.uncheckedRules, ["historical prāsa variants"]);
     assert.deepEqual(kanda.lineRelations, [{ type: "dvitiyakshara-prasa" }]);
@@ -319,7 +335,7 @@ test("the provisional Kagga-form Chaupadi packet and references are retained", (
     const chaupadi = catalog.meters.find((meter) =>
         meter.id === "structural:panchamatra-chaupadi-kagga");
 
-    assert.equal(catalog.catalogVersion, "4.1.0");
+    assert.equal(catalog.catalogVersion, "4.2.0");
     assert.equal(chaupadi.ruleCompleteness, "provisional-rhythm");
     assert.deepEqual(chaupadi.padaGroups, [
         [5, 5, 5, 5],
@@ -363,7 +379,7 @@ test("the Ṣaṭpadi and aṃśa milestones retain their catalogs and rule pack
         meter.id.endsWith("-shatpadi"));
     const amsha = catalog.meters.filter((meter) => meter.kind === "amsha");
 
-    assert.equal(catalog.catalogVersion, "4.1.0");
+    assert.equal(catalog.catalogVersion, "4.2.0");
     assert.equal(shatpadis.length, 8);
     assert.equal(amsha.length, 15);
     shatpadis.forEach((meter) => {

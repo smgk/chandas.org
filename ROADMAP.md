@@ -23,7 +23,8 @@ post-MVP track**, not a distant “more meters someday” item.
 ## What works today
 
 - Fixed Guru/Laghu vṛttas from `mishra.json`.
-- Pathyā Anuṣṭubh, without vipulā variants.
+- Pathyā Anuṣṭubh in both four one-pāda lines and conservative two-line
+  `8 + 8 / 8 + 8` form, without vipulā variants.
 - Initial Āryā-family detection using published mātrā-group totals.
 - First-class provisional Kannada Kanda validation, kept separate from
   Āryāgīti.

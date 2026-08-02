@@ -748,6 +748,12 @@ test("loads the versioned structural catalog without changing mishra entries", (
     assert.equal(anushtubh.name, "anuṣṭubh (pathyā)");
     assert.ok(anushtubh.aliases.includes("anushtup"));
     assert.equal(anushtubh.kind, "syllable-structural");
+    assert.deepEqual(anushtubh.compactPadaLayout, {
+        sourceUnitCount: 2,
+        padasPerSourceUnit: 2,
+        syllablesPerPada: 8,
+        automatic: "complete-only"
+    });
 });
 
 test("splits pādas at newlines, danda, double danda, and Roman bars", () => {
@@ -790,6 +796,174 @@ test("detects and validates pathyā Anuṣṭubh across four pādas", () => {
             candidate.id === "structural:anushtubh-pathya").status,
         "exact"
     );
+    assert.equal(
+        stanza.candidates.find((candidate) =>
+            candidate.id === "structural:anushtubh-pathya").compactPadaLayout,
+        undefined
+    );
+});
+
+test("keeps two separately authored beginner pādas on the canonical path", () => {
+    const text = [
+        textForPattern("GLGGLGGG"),
+        textForPattern("GLGGLGLG")
+    ].join("\n");
+    const stanza = Chandas.analyzeComposition(
+        text,
+        combinedCatalog,
+        "structural:anushtubh-pathya"
+    ).stanzas[0];
+
+    assert.deepEqual(stanza.padas.map((pada) => pada.syllables.length), [8, 8]);
+    assert.equal(stanza.violationCount, 0);
+    assert.equal(stanza.missingCount, 16);
+});
+
+test("detects complete pathyā Anuṣṭubh with two pādas on each authored line", () => {
+    const patterns = [
+        "GLGGLGGG",
+        "GLGGLGLG",
+        "GLGGLGGG",
+        "GLGGLGLG"
+    ];
+    const text = [
+        textForPattern(patterns[0] + patterns[1]),
+        textForPattern(patterns[2] + patterns[3])
+    ].join("\n");
+    const stanza = Chandas.analyzeComposition(text, combinedCatalog, "").stanzas[0];
+    const candidate = stanza.candidates.find((item) =>
+        item.id === "structural:anushtubh-pathya");
+
+    assert.deepEqual(stanza.padas.map((pada) => pada.syllables.length), [16, 16]);
+    assert.equal(candidate.status, "exact");
+    assert.equal(candidate.matchLevel, "exact-verse");
+    assert.equal(candidate.compactPadaLayout, true);
+    assert.equal(candidate.inferredPadaBoundaryCount, 2);
+});
+
+test("accepts danda-delimited complete Anuṣṭubh half-verses", () => {
+    const patterns = [
+        "GLGGLGGG",
+        "GLGGLGLG",
+        "GLGGLGGG",
+        "GLGGLGLG"
+    ];
+    const text = [
+        textForPattern(patterns[0] + patterns[1]),
+        textForPattern(patterns[2] + patterns[3])
+    ].join(" । ") + " ॥";
+    const stanza = Chandas.analyzeComposition(text, combinedCatalog, "").stanzas[0];
+    const candidate = stanza.candidates.find((item) =>
+        item.id === "structural:anushtubh-pathya");
+
+    assert.equal(stanza.lines.length, 1);
+    assert.deepEqual(stanza.padas.map((pada) => pada.syllables.length), [16, 16]);
+    assert.equal(candidate.status, "exact");
+    assert.equal(candidate.compactPadaLayout, true);
+});
+
+test("maps a compact Anuṣṭubh cadence error to the correct half-line syllable", () => {
+    const patterns = [
+        "GLGGLGGG",
+        "GLGGLGGG",
+        "GLGGLGGG",
+        "GLGGLGLG"
+    ];
+    const text = [
+        textForPattern(patterns[0] + patterns[1]),
+        textForPattern(patterns[2] + patterns[3])
+    ].join("\n");
+    const stanza = Chandas.analyzeComposition(
+        text,
+        combinedCatalog,
+        "structural:anushtubh-pathya"
+    ).stanzas[0];
+    const wrong = stanza.padas[0].syllables[14];
+
+    assert.equal(stanza.violationCount, 1);
+    assert.equal(wrong.violationReason, "weight-mismatch");
+    assert.equal(wrong.expected, "L");
+    assert.equal(text.slice(wrong.start, wrong.end), wrong.text);
+});
+
+test("validates an incomplete second Anuṣṭubh half-line without inventing text", () => {
+    const patterns = [
+        "GLGGLGGG",
+        "GLGGLGLG",
+        "GLGGLGGG",
+        "GLGGLGLG"
+    ];
+    const text = [
+        textForPattern(patterns[0] + patterns[1]),
+        textForPattern(patterns[2] + patterns[3].slice(0, 4))
+    ].join("\n");
+    const stanza = Chandas.analyzeComposition(
+        text,
+        combinedCatalog,
+        "structural:anushtubh-pathya"
+    ).stanzas[0];
+
+    assert.deepEqual(stanza.padas.map((pada) => pada.syllables.length), [16, 12]);
+    assert.equal(stanza.violationCount, 0);
+    assert.equal(stanza.missingCount, 4);
+    assert.notEqual(
+        stanza.candidates.find((candidate) =>
+            candidate.id === "structural:anushtubh-pathya").matchLevel,
+        "exact-verse"
+    );
+});
+
+test("marks a seventeenth syllable locally in a selected compact Anuṣṭubh line", () => {
+    const patterns = [
+        "GLGGLGGG",
+        "GLGGLGLG",
+        "GLGGLGGG",
+        "GLGGLGLG"
+    ];
+    const text = [
+        textForPattern(patterns[0] + patterns[1] + "L"),
+        textForPattern(patterns[2] + patterns[3])
+    ].join("\n");
+    const stanza = Chandas.analyzeComposition(
+        text,
+        combinedCatalog,
+        "structural:anushtubh-pathya"
+    ).stanzas[0];
+    const extra = stanza.padas[0].syllables[16];
+
+    assert.equal(stanza.violationCount, 1);
+    assert.equal(stanza.missingCount, 0);
+    assert.equal(extra.violationReason, "extra-syllable");
+    assert.equal(text.slice(extra.start, extra.end), extra.text);
+});
+
+test("does not infer Anuṣṭubh from one ambiguous sixteen-syllable line", () => {
+    const halfVersePattern = "GLGGLGGGGLGGLGLG";
+    const anushtubh = structuralCatalog.meters.find((meter) =>
+        meter.id === "structural:anushtubh-pathya");
+    const tinyCatalog = {
+        metres: [["authored sixteen", halfVersePattern]],
+        structuralMeters: [anushtubh]
+    };
+    const oneLine = Chandas.analyzeComposition(
+        textForPattern(halfVersePattern),
+        tinyCatalog,
+        ""
+    ).stanzas[0];
+    const twoLines = Chandas.analyzeComposition(
+        [textForPattern(halfVersePattern), textForPattern(halfVersePattern)].join("\n"),
+        tinyCatalog,
+        ""
+    ).stanzas[0];
+
+    assert.equal(oneLine.candidates[0].name, "authored sixteen");
+    assert.notEqual(
+        oneLine.candidates.find((candidate) =>
+            candidate.id === "structural:anushtubh-pathya").matchLevel,
+        "exact-verse"
+    );
+    assert.equal(twoLines.candidates[0].id, "structural:anushtubh-pathya");
+    assert.equal(twoLines.candidates[0].matchLevel, "exact-verse");
 });
 
 test("marks an Anuṣṭubh cadence violation at its original syllable", () => {
@@ -827,7 +1001,7 @@ test("keeps an incomplete structural meter compatible without red violations", (
 
     assert.equal(stanza.violationCount, 0);
     assert.ok(stanza.missingCount > 0);
-    assert.equal(result.analysisVersion, "2.13.0");
+    assert.equal(result.analysisVersion, "2.14.0");
     assert.equal(result.catalogVersion, structuralCatalog.catalogVersion);
 });
 
@@ -922,8 +1096,8 @@ test("recognizes the provisional Kannada Kanda characterization fixture", () => 
     );
     assert.equal(stanza.selectedMeter.ruleCompleteness, "provisional-rhythm");
     assert.deepEqual(stanza.selectedMeter.uncheckedRules, ["historical prāsa variants"]);
-    assert.equal(result.analysisVersion, "2.13.0");
-    assert.equal(result.catalogVersion, "4.2.0");
+    assert.equal(result.analysisVersion, "2.14.0");
+    assert.equal(result.catalogVersion, "4.3.0");
 });
 
 test("loads and validates the Pañcamātrā Chaupadi Kagga form", () => {

@@ -2368,6 +2368,76 @@
         return lines;
     }
 
+    function compactPadaProjection(padas, meter, mode) {
+        const layout = meter && meter.compactPadaLayout;
+        if (!layout || mode === "none" || padas.length !== layout.sourceUnitCount) {
+            return null;
+        }
+
+        const padasPerUnit = Number(layout.padasPerSourceUnit) || 0;
+        const syllablesPerPada = Number(layout.syllablesPerPada) || 0;
+        const sourceUnitCount = Number(layout.sourceUnitCount) || 0;
+        const expectedRules = Array.isArray(meter.padas) ? meter.padas : [];
+        if (padasPerUnit < 2 || syllablesPerPada < 1 || sourceUnitCount < 1 ||
+            expectedRules.length !== sourceUnitCount * padasPerUnit ||
+            !expectedRules.every((rule) => rule.syllables === syllablesPerPada)) {
+            return null;
+        }
+
+        const expectedPerSourceUnit = padasPerUnit * syllablesPerPada;
+        if (mode === "automatic" && !padas.every((pada) =>
+            pada.syllables.length === expectedPerSourceUnit)) {
+            return null;
+        }
+        if (mode === "selected" && (
+            padas[0].syllables.length < expectedPerSourceUnit ||
+            padas[0].syllables.length > expectedPerSourceUnit + 1 ||
+            padas.slice(1).some((pada) =>
+                pada.syllables.length < 1 ||
+                pada.syllables.length > expectedPerSourceUnit + 1))) {
+            return null;
+        }
+
+        const projected = [];
+        for (const sourcePada of padas) {
+            for (let partIndex = 0; partIndex < padasPerUnit; partIndex += 1) {
+                const startIndex = partIndex * syllablesPerPada;
+                const endIndex = partIndex === padasPerUnit - 1
+                    ? sourcePada.syllables.length
+                    : Math.min(
+                        sourcePada.syllables.length,
+                        startIndex + syllablesPerPada
+                    );
+                const syllables = sourcePada.syllables.slice(startIndex, endIndex);
+                if (!syllables.length) {
+                    continue;
+                }
+                const start = syllables[0].start;
+                const end = syllables[syllables.length - 1].end;
+                projected.push({
+                    ...sourcePada,
+                    index: projected.length,
+                    start,
+                    end,
+                    text: sourcePada.sourceLineText.slice(
+                        start - sourcePada.sourceLineStart,
+                        end - sourcePada.sourceLineStart
+                    ),
+                    syllables,
+                    pattern: syllables
+                        .map((syllable) => syllable.classification).join(""),
+                    matras: syllables.reduce(
+                        (sum, syllable) => sum + matraValue(syllable),
+                        0
+                    ),
+                    inferredPadaBoundary: partIndex > 0,
+                    sourcePadaIndex: sourcePada.index
+                });
+            }
+        }
+        return projected;
+    }
+
     function evaluateSyllableStructuralMeter(padas, meter, shouldMark) {
         let ruleFailures = 0;
         let missingCount = 0;
@@ -2609,12 +2679,31 @@
         return result;
     }
 
-    function scoreStructuralMeter(padas, meter, shouldMark) {
+    function scoreStructuralMeter(padas, meter, shouldMark, options) {
         const metricUnits = meter.linePolicy && meter.linePolicy.unit === "line"
             ? mergePadasByLine(padas)
             : padas;
         if (meter.kind === "syllable-structural") {
-            return evaluateSyllableStructuralMeter(metricUnits, meter, shouldMark);
+            const compactMode = options && options.compactMode
+                ? options.compactMode
+                : "none";
+            const compactPadas = compactPadaProjection(
+                metricUnits,
+                meter,
+                compactMode
+            );
+            const result = evaluateSyllableStructuralMeter(
+                compactPadas || metricUnits,
+                meter,
+                shouldMark
+            );
+            if (compactPadas) {
+                result.compactPadaLayout = true;
+                result.authoredUnitCount = metricUnits.length;
+                result.inferredPadaBoundaryCount = compactPadas.filter((pada) =>
+                    pada.inferredPadaBoundary).length;
+            }
+            return result;
         }
         if (meter.kind === "amsha") {
             return evaluateAmshaMeter(metricUnits, meter, shouldMark);
@@ -2626,7 +2715,12 @@
         return meters
             .filter((meter) => meter.kind !== "fixed")
             .map((meter) => {
-                const result = scoreStructuralMeter(padas, meter, false);
+                const result = scoreStructuralMeter(
+                    padas,
+                    meter,
+                    false,
+                    { compactMode: "automatic" }
+                );
                 const clean = result.violationCount === 0;
                 const matchLevel = result.complete && clean
                     ? result.status === "exact"
@@ -2793,7 +2887,12 @@
                 );
             }
             if (selectedMeter && selectedMeter.kind !== "fixed") {
-                structuralValidation = scoreStructuralMeter(padas, selectedMeter, true);
+                structuralValidation = scoreStructuralMeter(
+                    padas,
+                    selectedMeter,
+                    true,
+                    { compactMode: "selected" }
+                );
                 lines.forEach((line) => {
                     line.violationCount = line.syllables
                         .filter((item) => item.violation).length;
@@ -2944,7 +3043,7 @@
 
         return {
             text: originalText,
-            analysisVersion: "2.13.0",
+            analysisVersion: "2.14.0",
             catalogVersion: catalog && catalog.structuralCatalogVersion
                 ? String(catalog.structuralCatalogVersion)
                 : "",

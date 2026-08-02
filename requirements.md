@@ -245,21 +245,30 @@ recommended, and optional behavior.
     one ambiguous authored line, an exact longer pāda MUST outrank a shorter
     pattern that requires an inferred repetition. Consistent later pādas or
     explicit boundaries MAY promote the repeated interpretation.
-14. Live ranking MUST distinguish a complete-verse match, an exact completed
+14. Pathyā Anuṣṭubh MUST continue to accept four authored eight-syllable
+    pādas without inference. It MUST also accept two complete sixteen-syllable
+    half-verses by projecting each one as `8 + 8` for its odd/even rules while
+    preserving the authored text and line breaks. Automatic detection MUST use
+    this projection only after both half-verses are complete; a single
+    ambiguous sixteen-syllable line MUST NOT be promoted as exact Anuṣṭubh.
+    Selected-meter validation MAY guide an incomplete second half-verse and
+    MUST attach cadence or extra-syllable errors to their original source
+    ranges. The four-pāda template remains canonical in both layouts.
+15. Live ranking MUST distinguish a complete-verse match, an exact completed
     pāda or structural unit, a clean fixed-pattern prefix, an unfinished
     structural possibility, and an observed mismatch. Merely remaining
     possible while most structural units are absent MUST NOT outrank stronger
     positive evidence.
-15. Untyped suffix positions in a clean fixed-vṛtta prefix MUST be shown as
+16. Untyped suffix positions in a clean fixed-vṛtta prefix MUST be shown as
     remaining progress and MUST NOT be scored as observed mismatches. An exact
     completed pāda in an unfinished stanza MUST be labeled **Exact pāda** rather
     than either claiming an exact complete verse or reducing it to a generic
     possibility.
-16. Optional editorial prominence metadata MAY break ties between candidates
+17. Optional editorial prominence metadata MAY break ties between candidates
     with the same observed evidence and constraint strength. It MUST NOT make a
     mismatch or weaker evidence outrank an exact or stronger metrical fit, and
     MUST remain independent of the composition's writing script.
-17. Incomplete permissive syllable-structural, mātrā, and aṃśa meters MUST be
+18. Incomplete permissive syllable-structural, mātrā, and aṃśa meters MUST be
     treated as early possibilities until at least one complete applicable unit
     supplies positive evidence. The UI SHOULD expose concise progress such as
     syllables in the current pāda and completed units in the stanza.
@@ -640,6 +649,8 @@ analysis result.
    pāda rules, rule-completeness label, and source reference.
 3. The initial structural release MUST include pathyā Anuṣṭubh as four
    eight-syllable pādas with its odd/even cadence and forbidden-position rules.
+   It MUST recognize both four one-pāda lines and the common two-half-verse
+   `8 + 8 / 8 + 8` layout through the isolated compact projection in FR-4.
    Vipulā variations are explicitly deferred until an expert-reviewed rule set
    and corpus are available.
 4. The initial mātrā release MUST include the core Āryā-family patterns:
@@ -956,9 +967,11 @@ The MVP is acceptable when:
   two-two-pāda-line layouts, alternate-pāda signatures, inferred-boundary
   ranking against an exact longer pāda, and source-local error accounting for
   insertions, substitutions, and omissions.
-- Include pathyā Anuṣṭubh fixtures using both one-pāda-per-line and
-  danda-delimited two-pāda lines, plus wrong cadence, forbidden positions,
-  missing pādas, and extra syllables.
+- Include pathyā Anuṣṭubh fixtures using one-pāda-per-line and compact `8 + 8`
+  half-verses separated by newlines or danda. Cover complete automatic
+  detection, selected-meter partial guidance, ambiguous single half-verses,
+  wrong cadence, forbidden positions, missing pādas, and source-local extra
+  syllables.
 - Include each Āryā-family mātrā signature, exact group boundaries, a Guru that
   crosses a four-mātrā boundary, incomplete pādas, and extra mātrās.
 - Use `mishra.json` as the initial meter inventory and create coverage proving

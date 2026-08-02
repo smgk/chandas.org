@@ -557,6 +557,23 @@ test("finds Anuṣṭubh as anushtup and shows structural and mātrā references
         .toHaveText("Mātrās by pāda: 14 | 13 | 14 | 13");
     await expect(page.locator("#validation-summary"))
         .toHaveText("This stanza follows anuṣṭubh (pathyā).");
+
+    const compactPathya = [
+        "ಕಾ ಕ ಕಾ ಕಾ ಕ ಕಾ ಕಾ ಕಾ ಕಾ ಕ ಕಾ ಕಾ ಕ ಕಾ ಕ ಕಾ",
+        "ಕಾ ಕ ಕಾ ಕಾ ಕ ಕಾ ಕಾ ಕಾ ಕಾ ಕ ಕಾ ಕಾ ಕ ಕಾ ಕ ಕಾ"
+    ].join("\n");
+    await page.locator("#composition").fill(compactPathya);
+    const compactCandidate = page.locator("#candidate-list .candidate")
+        .filter({ hasText: "anuṣṭubh (pathyā)" });
+    await expect(compactCandidate).toHaveAttribute("data-match-level", "exact-verse");
+    await expect(compactCandidate.locator(".candidate-status")).toHaveText("Selected");
+    await expect(compactCandidate.locator(".candidate-detail"))
+        .toContainText("4/4 units");
+    await expect(page.locator("#validation-summary"))
+        .toHaveText("This stanza follows anuṣṭubh (pathyā).");
+    await page.locator("#show-template").check();
+    await expect(page.locator("#whole-verse-template .whole-template-line"))
+        .toHaveCount(4);
 });
 
 test("finds and validates provisional Kannada Kanda independently", async ({ page }) => {

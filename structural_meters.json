@@ -1,5 +1,5 @@
 {
-  "catalogVersion": "4.2.0",
+  "catalogVersion": "4.3.0",
   "copyright": "Copyright © 2025–2026 Ganesh Krishna Shankarathota",
   "license": "GPL-3.0-only",
   "description": "Structural, mātrā, and aṃśa meter rules that cannot be represented as one fixed Guru/Laghu string.",
@@ -50,6 +50,12 @@
         "even pādas: positions 5–7 = LGL"
       ],
       "ruleCompleteness": "pathyā",
+      "compactPadaLayout": {
+        "sourceUnitCount": 2,
+        "padasPerSourceUnit": 2,
+        "syllablesPerPada": 8,
+        "automatic": "complete-only"
+      },
       "padas": [
         {
           "syllables": 8,
@@ -72,7 +78,7 @@
           "forbidden": [{ "start": 2, "patterns": ["LLL", "LLG", "GLG"] }]
         }
       ],
-      "notes": "This first rule set recognizes pathyā Anuṣṭubh. Vipulā variations are not yet accepted.",
+      "notes": "This rule set recognizes pathyā Anuṣṭubh in four one-pāda lines or two complete 8+8 half-verse units. Vipulā variations are not yet accepted.",
       "source": {
         "title": "A Study on the Sanskrit Meter: Anuṣṭubh",
         "url": "https://www.kci.go.kr/kciportal/ci/sereArticleSearch/ciSereArtiView.kci?sereArticleSearchBean.artiId=ART001963953"

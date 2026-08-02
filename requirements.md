@@ -2,7 +2,7 @@
 
 **Status:** Draft for stakeholder review
 
-**Last updated:** 2026-07-30
+**Last updated:** 2026-08-02
 
 **Products:** `chandas.org` website and Android application
 
@@ -177,6 +177,11 @@ recommended, and optional behavior.
    - unsupported script or character sequence; and
    - input the engine cannot classify with confidence.
 9. Empty and partially typed lines MUST NOT be reported as meter violations.
+10. Script-specific vowel quantity MUST be explicit. In particular,
+    Devanagari independent `ए` and `ओ` and Kannada independent `ಏ` and `ಓ`
+    MUST be Guru; Kannada independent `ಎ` and `ಒ` remain Laghu. Independent
+    vowels and their corresponding dependent signs MUST receive consistent
+    quantities.
 
 ### FR-3: Inline Guru/Laghu presentation
 
@@ -227,24 +232,34 @@ recommended, and optional behavior.
    spellings, including `sh` for `ś`/`ṣ` and `ri` for `ṛ`.
 10. Detection MUST support both fixed Guru/Laghu vṛttas and meters expressed
     through pāda structure or mātrā-group totals.
-11. A pāda boundary MUST be recognized at a non-empty line break, danda,
-    double danda, single Roman bar, or double Roman bar. Other punctuation
-    remains metrically transparent and MUST NOT create a pāda.
-12. Live ranking MUST distinguish a complete-verse match, an exact completed
+11. For structural meters and automatic Kannada prāsa, a pāda boundary MUST
+    be recognized at a non-empty line break, danda, double danda, single Roman
+    bar, or double Roman bar. Other punctuation remains metrically transparent
+    and MUST NOT create a pāda.
+12. Fixed-vṛtta detection MUST also accept the same four logical pādas written
+    as four one-pāda lines, two two-pāda half-verse lines, or another compact
+    authored layout. It MUST preserve the authored line breaks while aligning
+    the syllable stream against the meter's bounded four-pāda sequence.
+13. Inferred fixed-vṛtta boundaries MUST be candidate-specific and MUST NOT
+    repeat a matched pattern beyond the meter's four expected pādas. With only
+    one ambiguous authored line, an exact longer pāda MUST outrank a shorter
+    pattern that requires an inferred repetition. Consistent later pādas or
+    explicit boundaries MAY promote the repeated interpretation.
+14. Live ranking MUST distinguish a complete-verse match, an exact completed
     pāda or structural unit, a clean fixed-pattern prefix, an unfinished
     structural possibility, and an observed mismatch. Merely remaining
     possible while most structural units are absent MUST NOT outrank stronger
     positive evidence.
-13. Untyped suffix positions in a clean fixed-vṛtta prefix MUST be shown as
+15. Untyped suffix positions in a clean fixed-vṛtta prefix MUST be shown as
     remaining progress and MUST NOT be scored as observed mismatches. An exact
     completed pāda in an unfinished stanza MUST be labeled **Exact pāda** rather
     than either claiming an exact complete verse or reducing it to a generic
     possibility.
-14. Optional editorial prominence metadata MAY break ties between candidates
+16. Optional editorial prominence metadata MAY break ties between candidates
     with the same observed evidence and constraint strength. It MUST NOT make a
     mismatch or weaker evidence outrank an exact or stronger metrical fit, and
     MUST remain independent of the composition's writing script.
-15. Incomplete permissive syllable-structural, mātrā, and aṃśa meters MUST be
+17. Incomplete permissive syllable-structural, mātrā, and aṃśa meters MUST be
     treated as early possibilities until at least one complete applicable unit
     supplies positive evidence. The UI SHOULD expose concise progress such as
     syllables in the current pāda and completed units in the stanza.
@@ -299,6 +314,10 @@ recommended, and optional behavior.
    selected for another stanza.
 8. Where one source range causes multiple rule failures, the UI SHOULD combine
    them without stacking unreadable decoration.
+9. Fixed-vṛtta validation MUST preserve original syllable ranges while
+   aligning insertions, omissions, and substitutions. One inserted or omitted
+   syllable MUST NOT shift every later highlight, and inferred pāda boundaries
+   MUST NOT modify the authored text.
 
 ### FR-7: Copy and sharing
 
@@ -933,6 +952,10 @@ The MVP is acceptable when:
   prominent fixed vṛttas. Verify that permissive unfinished structural meters
   stay below stronger fixed-pattern evidence and that prominence resolves only
   otherwise comparable prefixes.
+- For fixed vṛttas, compare equivalent four-one-pāda-line and
+  two-two-pāda-line layouts, alternate-pāda signatures, inferred-boundary
+  ranking against an exact longer pāda, and source-local error accounting for
+  insertions, substitutions, and omissions.
 - Include pathyā Anuṣṭubh fixtures using both one-pāda-per-line and
   danda-delimited two-pāda lines, plus wrong cadence, forbidden positions,
   missing pādas, and extra syllables.

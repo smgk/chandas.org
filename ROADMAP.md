@@ -2,7 +2,7 @@
 
 **Status:** Active post-MVP plan
 
-**Updated:** 2026-07-30
+**Updated:** 2026-08-02
 
 **Baseline:** `mvp-baseline`
 
@@ -44,6 +44,8 @@ post-MVP track**, not a distant “more meters someday” item.
 - Fixed-vṛtta Strong templates with arbitrary-position entry, local recovery,
   authored-text-only copy/share, preserved blank-row placement, and
   Ghost/Strong switching.
+- Candidate-specific fixed-vṛtta alignment across four one-pāda lines and two
+  two-pāda half-verse lines, with bounded inference and source-local errors.
 - One-shot URL verse import with exact line-break preservation,
   recovered-draft appending, and optional per-stanza meter/template selection.
 

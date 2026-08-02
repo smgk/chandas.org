@@ -89,6 +89,20 @@ test("classifies short, long, anusvara, and visarga syllables", () => {
     );
 });
 
+test("classifies independent e and o vowels by script-specific length", () => {
+    const devanagari = Chandas.segmentLine("ऍ ऎ ए ऑ ऒ ओ ये वो", 0);
+    assert.deepEqual(
+        devanagari.syllables.map((item) => item.classification),
+        ["L", "L", "G", "L", "L", "G", "G", "G"]
+    );
+
+    const kannada = Chandas.segmentLine("ಎ ಏ ಒ ಓ ಕೇ ಕೋ", 0);
+    assert.deepEqual(
+        kannada.syllables.map((item) => item.classification),
+        ["L", "G", "L", "G", "G", "G"]
+    );
+});
+
 test("a following conjunct closes the preceding syllable", () => {
     const kannada = Chandas.segmentLine("ಪದ್ಯ", 0);
     const devanagari = Chandas.segmentLine("पद्य", 0);
@@ -565,6 +579,148 @@ test("expands one, two, and four fixed-vṛtta patterns to four-line verses", ()
     assert.equal(ranked[0].status, "exact");
 });
 
+test("detects a four-pāda fixed vṛtta written as two half-verse lines", () => {
+    const pattern = "GLGLLLGLGLG";
+    const halfVerse = [pattern, pattern]
+        .map(devanagariTextForPattern)
+        .join(" ");
+    const text = [halfVerse, halfVerse].join("\n");
+    const stanza = Chandas.analyzeComposition(
+        text,
+        combinedCatalog,
+        "rathoddhatā"
+    ).stanzas[0];
+    const candidate = stanza.candidates.find((item) =>
+        item.id === "rathoddhatā");
+
+    assert.equal(stanza.lines.length, 2);
+    assert.equal(stanza.padas.length, 2);
+    assert.equal(candidate.status, "exact");
+    assert.equal(candidate.matchLevel, "exact-verse");
+    assert.equal(candidate.completedUnitCount, 4);
+    assert.equal(candidate.expectedUnitCount, 4);
+    assert.equal(candidate.inferredBoundaryCount, 2);
+    assert.equal(stanza.violationCount, 0);
+    assert.equal(stanza.missingCount, 0);
+});
+
+test("keeps four one-pāda lines equivalent to a two-line fixed-vṛtta layout", () => {
+    const pattern = "GLGLLLGLGLG";
+    const text = Array(4).fill(devanagariTextForPattern(pattern)).join("\n");
+    const stanza = Chandas.analyzeComposition(
+        text,
+        combinedCatalog,
+        "rathoddhatā"
+    ).stanzas[0];
+    const candidate = stanza.candidates.find((item) =>
+        item.id === "rathoddhatā");
+
+    assert.equal(candidate.matchLevel, "exact-verse");
+    assert.equal(candidate.inferredBoundaryCount, 0);
+    assert.equal(stanza.violationCount, 0);
+    assert.equal(stanza.missingCount, 0);
+});
+
+test("prefers an authored exact long pāda over an inferred short repetition", () => {
+    const meters = Chandas.normalizeCatalog({
+        metres: [
+            ["short-repeat", "GL"],
+            ["authored-long", "GLGL"]
+        ]
+    });
+    const oneLine = Chandas.rankMeters(["GLGL"], meters);
+    assert.equal(oneLine[0].id, "authored-long");
+    assert.equal(oneLine[0].inferredBoundaryCount, 0);
+    assert.equal(
+        oneLine.find((candidate) => candidate.id === "short-repeat")
+            .inferredBoundaryCount,
+        1
+    );
+
+    const confirmedRepeat = Chandas.rankMeters(["GLGL", "GLGL"], meters);
+    assert.equal(confirmedRepeat[0].id, "short-repeat");
+    assert.equal(confirmedRepeat[0].matchLevel, "exact-verse");
+});
+
+test("infers bounded half-verse layouts for alternating fixed pādas", () => {
+    const meters = Chandas.normalizeCatalog({
+        metres: [["alternating", ["LG", "GL"]]]
+    });
+    const candidate = Chandas.rankMeters(["LGGL", "LGGL"], meters)[0];
+
+    assert.equal(candidate.status, "exact");
+    assert.equal(candidate.matchLevel, "exact-verse");
+    assert.equal(candidate.completedUnitCount, 4);
+    assert.equal(candidate.inferredBoundaryCount, 2);
+});
+
+test("reports a completed fixed pāda followed by the next pāda prefix", () => {
+    const pattern = "GLGLLLGLGLG";
+    const text = devanagariTextForPattern(pattern + pattern.slice(0, 4));
+    const stanza = Chandas.analyzeComposition(text, combinedCatalog, {}).stanzas[0];
+    const candidate = stanza.candidates.find((item) =>
+        item.id === "rathoddhatā");
+
+    assert.equal(candidate.matchLevel, "exact-unit");
+    assert.equal(candidate.completedUnitCount, 1);
+    assert.equal(candidate.observedSyllables, 4);
+    assert.equal(candidate.expectedSyllables, 11);
+});
+
+test("maps one fixed-vṛtta substitution to only its source syllable", () => {
+    const pattern = "GLGLLLGLGLG";
+    const firstHalf = pattern + pattern;
+    const changed = `${firstHalf.slice(0, 14)}${
+        firstHalf[14] === "G" ? "L" : "G"
+    }${firstHalf.slice(15)}`;
+    const text = [
+        devanagariTextForPattern(changed),
+        devanagariTextForPattern(firstHalf)
+    ].join("\n");
+    const stanza = Chandas.analyzeComposition(
+        text,
+        combinedCatalog,
+        "rathoddhatā"
+    ).stanzas[0];
+    const violations = stanza.lines.flatMap((line) => line.syllables)
+        .filter((syllable) => syllable.violation);
+
+    assert.equal(violations.length, 1);
+    assert.equal(violations[0].violationReason, "weight-mismatch");
+    assert.equal(
+        text.slice(violations[0].start, violations[0].end),
+        violations[0].text
+    );
+});
+
+test("does not shift later fixed-vṛtta syllables after an omission", () => {
+    const tinyCatalog = { metres: [["three-syllable", "LGL"]] };
+    const stanza = Chandas.analyzeComposition(
+        textForPattern("LL"),
+        tinyCatalog,
+        "three-syllable"
+    ).stanzas[0];
+
+    assert.equal(stanza.violationCount, 0);
+    assert.equal(stanza.missingCount, 10);
+    assert.ok(stanza.lines[0].syllables.every((syllable) => !syllable.violation));
+});
+
+test("does not infer more than four fixed-vṛtta pādas", () => {
+    const tinyCatalog = { metres: [["one-light", "L"]] };
+    const stanza = Chandas.analyzeComposition(
+        textForPattern("LLLLL"),
+        tinyCatalog,
+        "one-light"
+    ).stanzas[0];
+    const candidate = stanza.candidates.find((item) => item.id === "one-light");
+
+    assert.equal(candidate.assignedUnitCount, 4);
+    assert.equal(candidate.matchLevel, "approximate");
+    assert.equal(stanza.violationCount, 1);
+    assert.equal(stanza.missingCount, 0);
+});
+
 test("counts untyped fixed-vṛtta lines as missing without marking red violations", () => {
     const tinyCatalog = { metres: [["four-light-lines", "LL"]] };
     const stanza = Chandas.analyzeComposition(
@@ -671,7 +827,7 @@ test("keeps an incomplete structural meter compatible without red violations", (
 
     assert.equal(stanza.violationCount, 0);
     assert.ok(stanza.missingCount > 0);
-    assert.equal(result.analysisVersion, "2.12.0");
+    assert.equal(result.analysisVersion, "2.13.0");
     assert.equal(result.catalogVersion, structuralCatalog.catalogVersion);
 });
 
@@ -766,7 +922,7 @@ test("recognizes the provisional Kannada Kanda characterization fixture", () => 
     );
     assert.equal(stanza.selectedMeter.ruleCompleteness, "provisional-rhythm");
     assert.deepEqual(stanza.selectedMeter.uncheckedRules, ["historical prāsa variants"]);
-    assert.equal(result.analysisVersion, "2.12.0");
+    assert.equal(result.analysisVersion, "2.13.0");
     assert.equal(result.catalogVersion, "4.2.0");
 });
 
@@ -1821,14 +1977,14 @@ test("validates different selected meters independently per stanza", () => {
     assert.equal(result.stanzas[1].violationCount, 0);
 });
 
-test("marks weight mismatches and extra syllables at their original ranges", () => {
+test("aligns an inserted syllable without shifting later fixed-vṛtta highlights", () => {
     const tinyCatalog = { metres: [["one-light", "L"]] };
     const text = "ಕಾಂ ಕ";
     const result = Chandas.analyzeComposition(text, tinyCatalog, "one-light");
 
-    assert.equal(result.stanzas[0].violationCount, 2);
-    assert.equal(result.segments[0].violationReason, "weight-mismatch");
-    assert.equal(result.segments[1].violationReason, "extra-syllable");
+    assert.equal(result.stanzas[0].violationCount, 1);
+    assert.equal(result.segments[0].violationReason, "extra-syllable");
+    assert.equal(result.segments[1].violation, false);
     assert.equal(text.slice(result.segments[0].start, result.segments[0].end), "ಕಾಂ");
 });
 

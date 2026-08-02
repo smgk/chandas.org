@@ -40,9 +40,18 @@
             block: [0x0900, 0x097f],
             consonant: [0x0915, 0x0939],
             additionalConsonants: new Set(),
-            independentShort: new Set([0x0905, 0x0907, 0x0909, 0x090b, 0x090c, 0x090f, 0x0913]),
-            independentLong: new Set([0x0906, 0x0908, 0x090a, 0x0960, 0x0961, 0x0910, 0x0914]),
-            dependentShort: new Set([0x093f, 0x0941, 0x0943, 0x0944, 0x0946, 0x094a]),
+            independentShort: new Set([
+                0x0905, 0x0907, 0x0909, 0x090b, 0x090c,
+                0x090d, 0x090e, 0x0911, 0x0912
+            ]),
+            independentLong: new Set([
+                0x0906, 0x0908, 0x090a, 0x090f, 0x0910,
+                0x0913, 0x0914, 0x0960, 0x0961
+            ]),
+            dependentShort: new Set([
+                0x093f, 0x0941, 0x0943, 0x0944,
+                0x0945, 0x0946, 0x0949, 0x094a
+            ]),
             dependentLong: new Set([0x093e, 0x0940, 0x0942, 0x0947, 0x0948, 0x094b, 0x094c]),
             virama: 0x094d,
             heavyMarks: new Set([0x0902, 0x0903]),
@@ -57,7 +66,10 @@
             // after modern LLA (ಳ).
             additionalConsonants: new Set([0x0cde]),
             independentShort: new Set([0x0c85, 0x0c87, 0x0c89, 0x0c8b, 0x0c8c, 0x0c8e, 0x0c92]),
-            independentLong: new Set([0x0c86, 0x0c88, 0x0c8a, 0x0ce0, 0x0ce1, 0x0c90, 0x0c94]),
+            independentLong: new Set([
+                0x0c86, 0x0c88, 0x0c8a, 0x0c8f, 0x0c90,
+                0x0c93, 0x0c94, 0x0ce0, 0x0ce1
+            ]),
             dependentShort: new Set([0x0cbf, 0x0cc1, 0x0cc3, 0x0cc4, 0x0cc6, 0x0cca]),
             dependentLong: new Set([0x0cbe, 0x0cc0, 0x0cc2, 0x0cc7, 0x0cc8, 0x0ccb, 0x0ccc]),
             virama: 0x0ccd,
@@ -768,58 +780,144 @@
         return sanitizedEditDistance(sanitizePattern(left), sanitizePattern(right));
     }
 
-    function expectedForLine(meter, lineIndex) {
-        if (!meter) {
-            return "";
-        }
-        const versePatterns = meter.versePatterns ||
-            expandFixedVersePatterns(meter.patterns || [], 4);
-        if (lineIndex < 0 || lineIndex >= versePatterns.length) {
-            return "";
-        }
-        return versePatterns[lineIndex] || "";
+    function fixedUnitPattern(unit) {
+        return sanitizePattern(typeof unit === "string" ? unit : unit && unit.pattern);
     }
 
-    function scoreMeter(linePatterns, meter) {
+    function fixedPadaAllocations(unitCount, expectedCount) {
+        if (unitCount <= 0 || expectedCount <= 0 || unitCount > expectedCount) {
+            return [];
+        }
+        const plans = [];
+
+        function visit(unitIndex, consumed, allocation) {
+            if (unitIndex === unitCount) {
+                plans.push(allocation.slice());
+                return;
+            }
+            const unitsAfterThis = unitCount - unitIndex - 1;
+            const maximum = expectedCount - consumed - unitsAfterThis;
+            for (let count = 1; count <= maximum; count += 1) {
+                allocation.push(count);
+                visit(unitIndex + 1, consumed + count, allocation);
+                allocation.pop();
+            }
+        }
+
+        visit(0, 0, []);
+        return plans;
+    }
+
+    function fixedUnitProgress(actual, expectedPatterns) {
+        let completed = 0;
+        let offset = 0;
+        for (const pattern of expectedPatterns) {
+            const end = offset + pattern.length;
+            if (actual.length < end || actual.slice(offset, end) !== pattern) {
+                break;
+            }
+            completed += 1;
+            offset = end;
+        }
+
+        let inferredBoundaries = 0;
+        let boundary = 0;
+        for (let index = 0; index < expectedPatterns.length - 1; index += 1) {
+            boundary += expectedPatterns[index].length;
+            if (actual.length > boundary) {
+                inferredBoundaries += 1;
+            }
+        }
+
+        let observedSyllables = actual.length;
+        let expectedSyllables = expectedPatterns[0]
+            ? expectedPatterns[0].length
+            : 0;
+        offset = 0;
+        for (const pattern of expectedPatterns) {
+            const end = offset + pattern.length;
+            observedSyllables = Math.max(
+                0,
+                Math.min(pattern.length, actual.length - offset)
+            );
+            expectedSyllables = pattern.length;
+            if (actual.length <= end) {
+                break;
+            }
+            offset = end;
+        }
+
+        return {
+            completed,
+            inferredBoundaries,
+            observedSyllables,
+            expectedSyllables
+        };
+    }
+
+    function evaluateFixedPlan(unitPatterns, meter, allocation) {
         const expectedLines = meter.versePatterns ||
             expandFixedVersePatterns(meter.patterns || [], 4);
         let distance = 0;
         let comparedLength = 0;
-        let prefixCompatible = linePatterns.length > 0;
-        let exactLines = linePatterns.length > 0;
+        let prefixCompatible = unitPatterns.length > 0;
+        let exactUnits = unitPatterns.length > 0;
         let completedUnitCount = 0;
         let observedDistance = 0;
+        let inferredBoundaryCount = 0;
+        let expectedIndex = 0;
+        const unitAlignments = [];
 
-        for (let index = 0; index < linePatterns.length; index += 1) {
-            const actual = linePatterns[index];
-            const expected = expectedForLine(meter, index);
+        for (let index = 0; index < unitPatterns.length; index += 1) {
+            const actual = unitPatterns[index];
+            const expectedPatterns = expectedLines.slice(
+                expectedIndex,
+                expectedIndex + allocation[index]
+            );
+            const expected = expectedPatterns.join("");
             if (!expected) {
                 distance += Math.max(1, actual.length);
                 comparedLength += Math.max(1, actual.length);
                 prefixCompatible = false;
-                exactLines = false;
+                exactUnits = false;
+                observedDistance += actual.length;
+                unitAlignments.push({
+                    actual,
+                    expected: "",
+                    expectedPatterns: [],
+                    expectedStart: expectedIndex,
+                    completedUnitCount: 0,
+                    inferredBoundaryCount: 0,
+                    observedSyllables: actual.length,
+                    expectedSyllables: 0
+                });
                 continue;
             }
 
-            // Both values are already normalized to G/L-only strings.
             distance += sanitizedEditDistance(actual, expected);
             comparedLength += Math.max(actual.length, expected.length, 1);
             prefixCompatible = prefixCompatible && expected.startsWith(actual);
-            exactLines = exactLines && actual === expected;
-            completedUnitCount += actual === expected ? 1 : 0;
-            observedDistance += sanitizedEditDistance(
+            exactUnits = exactUnits && actual === expected;
+            const progress = fixedUnitProgress(actual, expectedPatterns);
+            completedUnitCount += progress.completed;
+            inferredBoundaryCount += progress.inferredBoundaries;
+            const observedExpected = expected.slice(0, actual.length);
+            observedDistance += sanitizedEditDistance(actual, observedExpected);
+            unitAlignments.push({
                 actual,
-                expected.slice(0, Math.min(actual.length, expected.length))
-            );
+                expected,
+                expectedPatterns,
+                expectedStart: expectedIndex,
+                completedUnitCount: progress.completed,
+                inferredBoundaryCount: progress.inferredBoundaries,
+                observedSyllables: progress.observedSyllables,
+                expectedSyllables: progress.expectedSyllables
+            });
+            expectedIndex += expectedPatterns.length;
         }
 
-        if (linePatterns.length > expectedLines.length) {
-            prefixCompatible = false;
-            exactLines = false;
-        }
-
-        const hasExpectedLineCount = linePatterns.length === expectedLines.length;
-        const status = exactLines && hasExpectedLineCount
+        const hasExpectedLineCount = expectedIndex === expectedLines.length;
+        const status = exactUnits && hasExpectedLineCount
             ? "exact"
             : prefixCompatible
                 ? "compatible"
@@ -831,9 +929,7 @@
                 : prefixCompatible
                     ? "strong-prefix"
                     : "approximate";
-        const activeLineIndex = Math.max(0, linePatterns.length - 1);
-        const activeExpected = expectedForLine(meter, activeLineIndex);
-        const activeActual = linePatterns[activeLineIndex] || "";
+        const active = unitAlignments[unitAlignments.length - 1] || {};
 
         return {
             status,
@@ -842,7 +938,7 @@
                 ? 0
                 : observedDistance / Math.max(
                     1,
-                    linePatterns.reduce((sum, pattern) => sum + pattern.length, 0)
+                    unitPatterns.reduce((sum, pattern) => sum + pattern.length, 0)
                 ),
             matchLevel,
             evidenceRank: {
@@ -854,10 +950,68 @@
             constraintRank: 0,
             completedUnitCount,
             expectedUnitCount: expectedLines.length,
-            observedSyllables: activeActual.length,
-            expectedSyllables: activeExpected.length,
-            comparedLength
+            observedSyllables: active.observedSyllables || 0,
+            expectedSyllables: active.expectedSyllables || 0,
+            comparedLength,
+            observedDistance,
+            inferredBoundaryCount,
+            assignedUnitCount: expectedIndex,
+            unitAlignments
         };
+    }
+
+    function compareFixedPlans(left, right) {
+        const evidenceDifference = left.evidenceRank - right.evidenceRank;
+        if (evidenceDifference) {
+            return evidenceDifference;
+        }
+        if (left.evidenceRank >= 5) {
+            return left.score - right.score ||
+                left.observedDistance - right.observedDistance ||
+                left.distance - right.distance ||
+                left.inferredBoundaryCount - right.inferredBoundaryCount ||
+                left.assignedUnitCount - right.assignedUnitCount;
+        }
+        return left.inferredBoundaryCount - right.inferredBoundaryCount ||
+            left.distance - right.distance ||
+            left.assignedUnitCount - right.assignedUnitCount ||
+            left.observedDistance - right.observedDistance;
+    }
+
+    function scoreMeter(fixedUnits, meter) {
+        const unitPatterns = (fixedUnits || []).map(fixedUnitPattern).filter(Boolean);
+        const expectedLines = meter.versePatterns ||
+            expandFixedVersePatterns(meter.patterns || [], 4);
+        const fullVerseLength = expectedLines.reduce(
+            (sum, pattern) => sum + pattern.length,
+            0
+        );
+
+        // A single authored unit longer than the meter's entire four-pāda
+        // frame cannot be rescued by inferred boundaries. Preserve the old
+        // bounded comparison cost for long prose/pastes instead of trying all
+        // four candidate allocations.
+        const longPasteThreshold = Math.max(
+            fullVerseLength * 2,
+            fullVerseLength + 64
+        );
+        if (unitPatterns.length === 1 &&
+            unitPatterns[0].length > longPasteThreshold) {
+            return evaluateFixedPlan(unitPatterns, meter, [1]);
+        }
+        const allocations = fixedPadaAllocations(
+            unitPatterns.length,
+            expectedLines.length
+        );
+
+        if (!allocations.length) {
+            const fallback = unitPatterns.map(() => 1);
+            return evaluateFixedPlan(unitPatterns, meter, fallback);
+        }
+
+        return allocations.map((allocation) =>
+            evaluateFixedPlan(unitPatterns, meter, allocation))
+            .sort(compareFixedPlans)[0];
     }
 
     function compareCandidates(left, right) {
@@ -878,6 +1032,10 @@
         }
 
         return (left.constraintRank ?? 3) - (right.constraintRank ?? 3) ||
+            (left.kind === "fixed" && right.kind === "fixed"
+                ? (left.inferredBoundaryCount || 0) -
+                    (right.inferredBoundaryCount || 0)
+                : 0) ||
             (right.prominence ?? 1) - (left.prominence ?? 1) ||
             (left.substitutionCount || 0) - (right.substitutionCount || 0) ||
             left.score - right.score ||
@@ -885,14 +1043,14 @@
             left.name.localeCompare(right.name);
     }
 
-    function rankMeters(linePatterns, meters, limit) {
+    function rankMeters(fixedUnits, meters, limit) {
         const scored = meters.filter((meter) => meter.kind === "fixed").map((meter) => ({
             id: meter.id,
             name: meter.name,
             kind: meter.kind,
             patterns: meter.patterns,
             prominence: meter.prominence,
-            ...scoreMeter(linePatterns, meter)
+            ...scoreMeter(fixedUnits, meter)
         }));
 
         scored.sort(compareCandidates);
@@ -909,6 +1067,124 @@
         if (expected) {
             syllable.expected = expected;
         }
+    }
+
+    function alignFixedPattern(actualPattern, expectedPattern) {
+        const actual = sanitizePattern(actualPattern);
+        const expected = sanitizePattern(expectedPattern);
+        const rows = Array.from({ length: actual.length + 1 }, () =>
+            new Uint16Array(expected.length + 1));
+
+        for (let actualIndex = 0; actualIndex <= actual.length; actualIndex += 1) {
+            rows[actualIndex][0] = actualIndex;
+        }
+        for (let expectedIndex = 0; expectedIndex <= expected.length;
+            expectedIndex += 1) {
+            rows[0][expectedIndex] = expectedIndex;
+        }
+        for (let actualIndex = 1; actualIndex <= actual.length; actualIndex += 1) {
+            for (let expectedIndex = 1; expectedIndex <= expected.length;
+                expectedIndex += 1) {
+                rows[actualIndex][expectedIndex] = Math.min(
+                    rows[actualIndex - 1][expectedIndex] + 1,
+                    rows[actualIndex][expectedIndex - 1] + 1,
+                    rows[actualIndex - 1][expectedIndex - 1] +
+                        (actual[actualIndex - 1] === expected[expectedIndex - 1]
+                            ? 0
+                            : 1)
+                );
+            }
+        }
+
+        const expectedByActual = Array(actual.length).fill("");
+        let missingCount = 0;
+        let actualIndex = actual.length;
+        let expectedIndex = expected.length;
+        while (actualIndex > 0 || expectedIndex > 0) {
+            if (actualIndex > 0 && expectedIndex > 0) {
+                const substitutionCost = actual[actualIndex - 1] ===
+                    expected[expectedIndex - 1] ? 0 : 1;
+                if (rows[actualIndex][expectedIndex] ===
+                    rows[actualIndex - 1][expectedIndex - 1] + substitutionCost) {
+                    expectedByActual[actualIndex - 1] = expected[expectedIndex - 1];
+                    actualIndex -= 1;
+                    expectedIndex -= 1;
+                    continue;
+                }
+            }
+            if (actualIndex > 0 && rows[actualIndex][expectedIndex] ===
+                rows[actualIndex - 1][expectedIndex] + 1) {
+                actualIndex -= 1;
+                continue;
+            }
+            expectedIndex -= 1;
+            missingCount += 1;
+        }
+
+        return { expectedByActual, missingCount };
+    }
+
+    function validateFixedMeter(padas, lines, meter, score) {
+        const versePatterns = meter.versePatterns ||
+            expandFixedVersePatterns(meter.patterns || [], 4);
+        const unitAlignments = score && Array.isArray(score.unitAlignments)
+            ? score.unitAlignments
+            : [];
+        let assignedUnitCount = 0;
+        let violationCount = 0;
+        let missingCount = 0;
+
+        lines.forEach((line) => {
+            line.expectedPattern = "";
+            line.missingCount = 0;
+            line.violationCount = 0;
+        });
+
+        padas.forEach((pada, padaIndex) => {
+            const unit = unitAlignments[padaIndex] || {
+                expected: "",
+                expectedPatterns: []
+            };
+            const expected = unit.expected || "";
+            const alignment = alignFixedPattern(pada.pattern, expected);
+            const line = lines[pada.lineIndex];
+            assignedUnitCount += unit.expectedPatterns.length;
+            missingCount += alignment.missingCount;
+            if (line) {
+                line.expectedPattern += expected;
+                line.missingCount += alignment.missingCount;
+            }
+
+            pada.syllables.forEach((syllable, syllableIndex) => {
+                const expectedWeight = alignment.expectedByActual[syllableIndex] || "";
+                const violation = !expectedWeight ||
+                    expectedWeight !== syllable.classification;
+                syllable.expected = expectedWeight;
+                syllable.violation = violation;
+                syllable.violationReason = !expectedWeight
+                    ? "extra-syllable"
+                    : violation
+                        ? "weight-mismatch"
+                        : "";
+                if (violation) {
+                    violationCount += 1;
+                    if (line) {
+                        line.violationCount += 1;
+                    }
+                }
+            });
+        });
+
+        missingCount += versePatterns.slice(assignedUnitCount)
+            .reduce((sum, pattern) => sum + pattern.length, 0);
+
+        return {
+            violationCount,
+            missingCount,
+            completedUnitCount: score ? score.completedUnitCount : 0,
+            expectedUnitCount: versePatterns.length,
+            inferredBoundaryCount: score ? score.inferredBoundaryCount : 0
+        };
     }
 
     function matraValue(syllable) {
@@ -2466,23 +2742,15 @@
                     scripts.add(segmented.script);
                 }
 
-                const expectedPattern = expectedForLine(selectedFixedMeter, lineIndex);
-                const syllables = segmented.syllables.map((rawSyllable, syllableIndex) => {
+                const syllables = segmented.syllables.map((rawSyllable) => {
                     const syllable = options
                         ? applyWeightOverride(rawSyllable, options)
                         : rawSyllable;
-                    const expected = expectedPattern[syllableIndex] || "";
-                    const violation = Boolean(selectedFixedMeter) &&
-                        (!expected || expected !== syllable.classification);
                     const result = {
                         ...syllable,
-                        expected,
-                        violation,
-                        violationReason: !expected
-                            ? "extra-syllable"
-                            : violation
-                                ? "weight-mismatch"
-                                : ""
+                        expected: "",
+                        violation: false,
+                        violationReason: ""
                     };
                     allSegments.push(result);
                     return result;
@@ -2500,11 +2768,9 @@
                             total + (item.classification === GURU ? 2 : 1),
                         0
                     ),
-                    expectedPattern,
-                    missingCount: selectedFixedMeter
-                        ? Math.max(0, expectedPattern.length - syllables.length)
-                        : 0,
-                    violationCount: syllables.filter((item) => item.violation).length
+                    expectedPattern: "",
+                    missingCount: 0,
+                    violationCount: 0
                 };
             });
 
@@ -2516,6 +2782,16 @@
                 ? mergePadasByLine(padas)
                 : padas;
             let structuralValidation = null;
+            let fixedValidation = null;
+            if (selectedFixedMeter) {
+                const fixedScore = scoreMeter(padas, selectedFixedMeter);
+                fixedValidation = validateFixedMeter(
+                    padas,
+                    lines,
+                    selectedFixedMeter,
+                    fixedScore
+                );
+            }
             if (selectedMeter && selectedMeter.kind !== "fixed") {
                 structuralValidation = scoreStructuralMeter(padas, selectedMeter, true);
                 lines.forEach((line) => {
@@ -2540,7 +2816,7 @@
                 }
             }
             const fixedCandidates = rankMeters(
-                linePatterns,
+                padas,
                 meters,
                 meters.length
             );
@@ -2578,14 +2854,14 @@
             }
             const violationCount = structuralValidation
                 ? structuralValidation.violationCount
-                : lines.reduce((sum, line) => sum + line.violationCount, 0);
+                : fixedValidation
+                    ? fixedValidation.violationCount
+                    : 0;
             const missingCount = structuralValidation
                 ? structuralValidation.missingCount
-                : lines.reduce((sum, line) => sum + line.missingCount, 0) +
-                    (selectedFixedMeter
-                        ? selectedFixedMeter.versePatterns.slice(lines.length)
-                            .reduce((sum, pattern) => sum + pattern.length, 0)
-                        : 0);
+                : fixedValidation
+                    ? fixedValidation.missingCount
+                    : 0;
 
             return {
                 ...stanza,
@@ -2668,7 +2944,7 @@
 
         return {
             text: originalText,
-            analysisVersion: "2.12.0",
+            analysisVersion: "2.13.0",
             catalogVersion: catalog && catalog.structuralCatalogVersion
                 ? String(catalog.structuralCatalogVersion)
                 : "",

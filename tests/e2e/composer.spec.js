@@ -218,6 +218,33 @@ test("prioritizes strong vritta evidence in a compact scrollable list", async ({
         .toContainText("19/19 syllables · 1/4 pādas");
 });
 
+test("recognizes Devanagari long vowels and two-line fixed-vṛtta verses", async ({
+    page
+}) => {
+    const editor = page.locator("#composition");
+    await editor.fill("ए ओ ये वो");
+    await expect(page.locator("#active-pattern")).toHaveText("GGGG");
+
+    const pattern = "GLGLLLGLGLG";
+    const writePattern = (value) => Array.from(value, (weight) =>
+        weight === "G" ? "का" : "क").join(" ");
+    const halfVerse = `${writePattern(pattern)} ${writePattern(pattern)}`;
+    await editor.fill(`${halfVerse}\n${halfVerse}`);
+
+    const rathoddhata = page.locator("#candidate-list .candidate")
+        .filter({ hasText: "rathoddhatā" });
+    await expect(rathoddhata.locator(".candidate-status")).toHaveText("Exact");
+    await expect(rathoddhata.locator(".candidate-detail"))
+        .toContainText("11/11 syllables · 4/4 pādas");
+
+    await page.locator("#meter-picker summary").click();
+    await page.locator("#meter-search").fill("rathoddhata");
+    await page.locator("#meter-select").selectOption("rathoddhatā");
+    await expect(page.locator("#validation-summary"))
+        .toHaveText("This stanza follows rathoddhatā.");
+    await expect(page.locator("#highlight-layer .violation")).toHaveCount(0);
+});
+
 test("loads a raw-query verse once and appends it to a recovered draft", async ({ page }) => {
     const imported = "ಕಾವ್ಯ\nಪದ್ಯ";
     await page.locator("#composition").fill("ಮೊದಲ ಪದ್ಯ");

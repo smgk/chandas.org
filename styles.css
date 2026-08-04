@@ -561,11 +561,11 @@ textarea:focus-visible {
 .scansion-group-label {
     position: absolute;
     z-index: 3;
-    top: -0.82em;
+    top: -0.76em;
     left: 50%;
-    color: color-mix(in srgb, var(--green) 48%, transparent);
+    color: color-mix(in srgb, var(--green) 72%, transparent);
     font-family: ui-sans-serif, system-ui, sans-serif;
-    font-size: 0.5rem;
+    font-size: 0.66em;
     font-weight: 750;
     line-height: 1;
     pointer-events: none;
@@ -580,11 +580,11 @@ textarea:focus-visible {
 }
 
 .scansion-group.crossed .scansion-group-label {
-    color: color-mix(in srgb, var(--muted) 43%, transparent);
+    color: color-mix(in srgb, var(--green) 60%, transparent);
 }
 
 .scansion-group.substituted .scansion-group-label {
-    color: color-mix(in srgb, var(--saffron) 55%, transparent);
+    color: color-mix(in srgb, var(--saffron) 72%, transparent);
 }
 
 .scansion-boundary.scansion-amsha {

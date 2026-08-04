@@ -79,12 +79,11 @@ test("keeps mātrā gait scansion advisory, exclusive, and shareable", async ({
         groups.map((group) => {
             const labelNode = group.querySelector(".scansion-group-label");
             const label = labelNode.getBoundingClientRect();
-            const range = document.createRange();
-            range.setStartBefore(labelNode.nextSibling);
-            range.setEnd(group, group.childNodes.length);
             const lines = [];
-            Array.from(range.getClientRects())
-                .filter((rect) => rect.width > 0 && rect.height > 0)
+            const textRects = Array.from(group.querySelectorAll(
+                ".guru, .laghu, .uncertain"
+            )).map((node) => node.getBoundingClientRect());
+            textRects
                 .forEach((rect) => {
                     let line = lines.find((item) =>
                         Math.abs(item.top - rect.top) < 1);
@@ -98,12 +97,19 @@ test("keeps mātrā gait scansion advisory, exclusive, and shareable", async ({
                 });
             const widest = lines.sort((left, right) =>
                 (right.right - right.left) - (left.right - left.left))[0];
-            return Math.abs(
-                (widest.left + widest.right) / 2 -
-                (label.left + label.width / 2)
-            );
+            return {
+                horizontal: Math.abs(
+                    (widest.left + widest.right) / 2 -
+                    (label.left + label.width / 2)
+                ),
+                superscript: Math.min(...textRects.map((rect) => rect.top)) -
+                    label.top
+            };
         }));
-    expect(Math.max(...gaitCenterOffsets)).toBeLessThanOrEqual(1);
+    expect(Math.max(...gaitCenterOffsets.map((item) => item.horizontal)))
+        .toBeLessThanOrEqual(1);
+    expect(Math.min(...gaitCenterOffsets.map((item) => item.superscript)))
+        .toBeGreaterThan(0);
     await expect(page.locator("#highlight-layer .scansion-boundary.scansion-matra"))
         .toHaveCount(7);
     await expect(page.locator("#highlight-layer .line-metrics-badge"))
@@ -910,19 +916,25 @@ test("shows classical aṃśa karṣaṇa after detection and selection", async 
         groups.map((group) => {
             const labelNode = group.querySelector(".scansion-group-label");
             const label = labelNode.getBoundingClientRect();
-            const range = document.createRange();
-            range.setStartBefore(labelNode.nextSibling);
-            range.setEnd(group, group.childNodes.length);
-            const fragments = Array.from(range.getClientRects())
-                .filter((rect) => rect.width > 0 && rect.height > 0);
+            const fragments = Array.from(group.querySelectorAll(
+                ".guru, .laghu, .uncertain"
+            )).map((node) => node.getBoundingClientRect());
             const left = Math.min(...fragments.map((rect) => rect.left));
             const right = Math.max(...fragments.map((rect) => rect.right));
-            return Math.abs(
-                (left + right) / 2 -
-                (label.left + label.width / 2)
-            );
+            const karshana = group.querySelector(".recital-extension-marker")
+                .getBoundingClientRect();
+            return {
+                horizontal: Math.abs(
+                    (left + right) / 2 -
+                    (label.left + label.width / 2)
+                ),
+                karshanaLevel: Math.abs(label.top - karshana.top)
+            };
         }));
-    expect(Math.max(...amshaCenterOffsets)).toBeLessThanOrEqual(1);
+    expect(Math.max(...amshaCenterOffsets.map((item) => item.horizontal)))
+        .toBeLessThanOrEqual(1);
+    expect(Math.max(...amshaCenterOffsets.map((item) => item.karshanaLevel)))
+        .toBeLessThanOrEqual(2);
     await expect(page.locator("#highlight-layer .scansion-boundary.scansion-amsha"))
         .toHaveCount(18);
 

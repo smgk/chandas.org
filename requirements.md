@@ -213,7 +213,8 @@ recommended, and optional behavior.
    these choices MUST NOT be presented as a row of independent checkboxes.
 10. Aṃśagaṇa scansion MUST draw faint, non-editable vertical group boundaries
     and center the superscript realized `V`, `B`, or `R` gaṇa name over its
-    complete group. Auto mode MUST use this
+    complete group. These labels MUST use the same superscript row as karṣaṇa
+    markers and remain readily visible against the writing slate. Auto mode MUST use this
     view for a selected aṃśa meter and MAY use it when exactly one complete
     aṃśa meter is detected.
 11. Mātrā-gait scansion MUST project alternating `3+5` or `5+3` time groups on

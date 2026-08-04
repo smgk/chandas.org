@@ -1543,10 +1543,9 @@
                     return;
                 }
                 label.style.transform = "";
-                const range = document.createRange();
-                range.setStartBefore(firstContent);
-                range.setEnd(group, group.childNodes.length);
-                const fragments = Array.from(range.getClientRects())
+                const fragments = Array.from(group.querySelectorAll(
+                    ".guru, .laghu, .uncertain"
+                )).map((node) => node.getBoundingClientRect())
                     .filter((rect) => rect.width > 0 && rect.height > 0);
                 if (!fragments.length) {
                     return;

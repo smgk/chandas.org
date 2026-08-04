@@ -42,6 +42,8 @@ post-MVP track**, not a distant “more meters someday” item.
   composed with the unchanged attributed `mishra.json` baseline.
 - Per-line syllable and mātrā totals, inline violations, meter ranking, and
   ghost templates.
+- A compact, mutually exclusive scansion view for Guru–Laghu, realized
+  aṃśagaṇa `V/B/R` boundaries, and advisory `3+5` / `5+3` mātrā gait.
 - Fixed-vṛtta Strong templates with arbitrary-position entry, local recovery,
   authored-text-only copy/share, preserved blank-row placement, and
   Ghost/Strong switching.

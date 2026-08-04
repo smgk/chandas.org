@@ -26,6 +26,7 @@ test("the web shell has no external runtime asset dependencies", () => {
     assert.deepEqual(externalAssets, []);
     assert.match(html, /manifest\.webmanifest/);
     assert.match(html, /meter_analysis\.js/);
+    assert.match(html, /scansion\.js/);
     assert.match(html, /shithila_dvitva\.js/);
     assert.match(html, /strong_template\.js/);
     assert.match(html, /poem_store\.js/);
@@ -70,6 +71,7 @@ test("original source declares Ganesh Krishna Shankarathota under GPLv3 only", (
         "app.js",
         "analytics.js",
         "meter_analysis.js",
+        "scansion.js",
         "strong_template.js",
         "poem_store.js",
         "documentation.js",
@@ -117,6 +119,7 @@ test("service worker pre-caches every core web asset", () => {
         "app.js",
         "analytics.js",
         "meter_analysis.js",
+        "scansion.js",
         "strong_template.js",
         "poem_store.js",
         "mishra.json",
@@ -164,6 +167,9 @@ test("the composition control and live regions have accessible labels", () => {
     assert.match(html, /id="cursor-metrics"/);
     assert.match(html, /id="show-template"[^>]*type="checkbox"/);
     assert.match(html, /id="detect-shithila-dvitva"[^>]*type="checkbox"/);
+    assert.match(html, /id="scansion-mode"/);
+    assert.match(html, /value="amsha"[^>]*data-i18n="scansionAmsha"/);
+    assert.match(html, /value="matra-35"[^>]*data-i18n="scansionMatra35"/);
     assert.match(html, /id="template-mode-strong"[^>]*type="radio"/);
     assert.match(html, /id="copy-analysis-url"[^>]*type="button"/);
     assert.match(html, /id="saved-poems-dialog"[^>]*aria-labelledby="saved-poems-title"/);

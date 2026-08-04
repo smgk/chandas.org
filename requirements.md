@@ -208,6 +208,20 @@ recommended, and optional behavior.
    the analysis offsets MUST remain unchanged while the display boundary is
    moved to a shaping-safe position. An explicit ZWNJ MUST continue to prevent
    joined shaping.
+9. A single compact **Scansion** selector MUST offer mutually exclusive Auto,
+   Guru–Laghu, Aṃśagaṇa, `3+5` mātrā gait, `5+3` mātrā gait, and Off modes;
+   these choices MUST NOT be presented as a row of independent checkboxes.
+10. Aṃśagaṇa scansion MUST draw faint, non-editable group boundaries and
+    superscript the realized `V`, `B`, or `R` gaṇa name. Auto mode MUST use this
+    view for a selected aṃśa meter and MAY use it when exactly one complete
+    aṃśa meter is detected.
+11. Mātrā-gait scansion MUST project alternating `3+5` or `5+3` time groups on
+    each authored line and show an `x=n` remainder with the line totals. A Guru
+    spanning a target time boundary MUST remain an intact Unicode syllable and
+    MUST NOT become a meter violation merely because of this advisory view.
+12. Scansion boundaries and labels MUST NOT modify text, source offsets,
+    wrapping, selection, copying, sharing, meter ranking, or validation. Only
+    one boundary system MUST be visible at a time.
 
 ### FR-4: Meter detection and suggestions
 

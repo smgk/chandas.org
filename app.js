@@ -81,6 +81,13 @@
             chooseMeterFirst: "Choose a meter or begin writing",
             pattern: "Current pattern",
             matras: "Mātrās by pāda",
+            scansion: "Scansion",
+            scansionAuto: "Auto",
+            scansionWeights: "Guru–laghu",
+            scansionAmsha: "Aṃśagaṇa · V/B/R",
+            scansionMatra35: "Mātrā gait · 3+5",
+            scansionMatra53: "Mātrā gait · 5+3",
+            scansionOff: "Off",
             detectShithilaDvitva: "Detect shithila dvitva",
             shithilaApplied: "{count} śithila-dvitva realization(s) marked *.",
             realizedAmsha: "Realized aṃśa: {scan}",
@@ -235,6 +242,13 @@
             chooseMeterFirst: "ಛಂದಸ್ಸನ್ನು ಆರಿಸಿ ಅಥವಾ ಬರೆಯಲು ಆರಂಭಿಸಿ",
             pattern: "ಪ್ರಸ್ತುತ ಗಣ ವಿನ್ಯಾಸ",
             matras: "ಪಾದದ ಮಾತ್ರೆಗಳು",
+            scansion: "ಛಂದೋವಿನ್ಯಾಸ",
+            scansionAuto: "ಸ್ವಯಂ",
+            scansionWeights: "ಗುರು–ಲಘು",
+            scansionAmsha: "ಅಂಶಗಣ · V/B/R",
+            scansionMatra35: "ಮಾತ್ರಾಗತಿ · 3+5",
+            scansionMatra53: "ಮಾತ್ರಾಗತಿ · 5+3",
+            scansionOff: "ಬೇಡ",
             detectShithilaDvitva: "ಶಿಥಿಲ ದ್ವಿತ್ವವನ್ನು ಗುರುತಿಸಿ",
             shithilaApplied: "{count} ಶಿಥಿಲ ದ್ವಿತ್ವ ಪ್ರಯೋಗವನ್ನು * ಗುರುತಿಸಿದೆ.",
             realizedAmsha: "ಬಳಕೆಯಾದ ಅಂಶಗಣ: {scan}",
@@ -332,6 +346,7 @@
         templates: {},
         templateModes: {},
         strongDrafts: {},
+        scansionMode: "auto",
         detectShithilaDvitva: false,
         strongHistory: {},
         strongFuture: {},
@@ -366,7 +381,7 @@
             "previous-stanza", "next-stanza", "empty-analysis", "analysis-content",
             "pattern-block", "active-pattern", "active-matras",
             "active-amsha-realization",
-            "detect-shithila-dvitva",
+            "scansion-mode", "detect-shithila-dvitva",
             "selected-meter-reference", "selected-meter-name",
             "selected-meter-signature", "candidate-list", "meter-picker",
             "suggestion-heading",
@@ -556,11 +571,24 @@
                 String(rawShithilaOption || "1").trim().toLocaleLowerCase()
             )
             : null;
+        const hasScansionMode = params.has("scan") || params.has("scansion");
+        const scansionMode = hasScansionMode
+            ? ChandasScansion.normalizeMode(
+                params.has("scan") ? params.get("scan") : params.get("scansion")
+            )
+            : null;
         const consumed = verse !== null || meter !== null || hasTemplate ||
-            hasShithilaOption ||
+            hasShithilaOption || hasScansionMode ||
             Object.keys(stanzaOptions).length > 0;
         return consumed
-            ? { verse, meter, guideMode, stanzaOptions, detectShithilaDvitva }
+            ? {
+                verse,
+                meter,
+                guideMode,
+                stanzaOptions,
+                detectShithilaDvitva,
+                scansionMode
+            }
             : null;
     }
 
@@ -646,6 +674,11 @@
             elements["detect-shithila-dvitva"].checked =
                 state.detectShithilaDvitva;
             runAnalysis();
+        }
+        if (payload.scansionMode !== null) {
+            state.scansionMode = payload.scansionMode;
+            elements["scansion-mode"].value = state.scansionMode;
+            renderOverlay();
         }
 
         const targetIndices = state.analysis
@@ -1305,6 +1338,27 @@
     function buildOverlayAnnotations() {
         const byPosition = new Map();
 
+        function annotationAt(position) {
+            const annotation = byPosition.get(position) || {
+                position,
+                metrics: "",
+                ghost: "",
+                scansion: []
+            };
+            if (!Array.isArray(annotation.scansion)) {
+                annotation.scansion = [];
+            }
+            byPosition.set(position, annotation);
+            return annotation;
+        }
+
+        function addScansionMarker(marker) {
+            if (!marker || !Number.isFinite(marker.position)) {
+                return;
+            }
+            annotationAt(marker.position).scansion.push(marker);
+        }
+
         for (const stanza of state.analysis ? state.analysis.stanzas : []) {
             const templateMeter = templateMode(stanza.index) === "ghost"
                 ? meterForId(stanza.selectedMeterId)
@@ -1315,26 +1369,47 @@
                 if (!lastSyllable) {
                     continue;
                 }
-                const annotation = byPosition.get(lastSyllable.end) || {
-                    position: lastSyllable.end,
-                    metrics: "",
-                    ghost: ""
-                };
+                const annotation = annotationAt(lastSyllable.end);
                 annotation.metrics =
                     `${t("syllableShort")}${line.syllables.length} · ` +
                     `${t("matraShort")}${line.matraCount}`;
-                byPosition.set(lastSyllable.end, annotation);
 
                 const ghost = ghostGuideForLine(stanza, line, templateMeter);
                 if (ghost) {
-                    const ghostAnnotation = byPosition.get(line.end) || {
-                        position: line.end,
-                        metrics: "",
-                        ghost: ""
-                    };
+                    const ghostAnnotation = annotationAt(line.end);
                     ghostAnnotation.ghost = ghost;
-                    byPosition.set(line.end, ghostAnnotation);
                 }
+            }
+
+            let mode = state.scansionMode;
+            if (mode === "auto") {
+                mode = (stanza.selectedMeter &&
+                    stanza.selectedMeter.kind === "amsha") ||
+                    (!stanza.selectedMeter && stanza.detectedAmshaMeter)
+                    ? "amsha"
+                    : "weights";
+            }
+            if (mode === "amsha") {
+                ChandasScansion.amshaBoundaries(stanza.amshaGroupRanges)
+                    .forEach(addScansionMarker);
+            } else if (mode === "matra-35" || mode === "matra-53") {
+                const cycle = mode === "matra-35" ? [3, 5] : [5, 3];
+                stanza.lines.forEach((line) => {
+                    const scan = ChandasScansion.scanMatraGait(
+                        line.syllables,
+                        cycle
+                    );
+                    scan.boundaries.forEach((boundary) => addScansionMarker({
+                        ...boundary,
+                        kind: "matra"
+                    }));
+                    const lastSyllable = line.syllables.at(-1);
+                    if (lastSyllable && scan.residual > 0) {
+                        const annotation = annotationAt(lastSyllable.end);
+                        annotation.metrics = `${annotation.metrics} · x=${
+                            scan.residual}`;
+                    }
+                });
             }
         }
 
@@ -1349,7 +1424,22 @@
         const ghost = annotation.ghost
             ? `<span class="ghost-template">${escapeHtml(annotation.ghost)}</span>`
             : "";
-        return `<span class="inline-metric-anchor">${metrics}${ghost}</span>`;
+        const scansion = (annotation.scansion || []).map((marker) => {
+            const classes = [
+                "scansion-boundary",
+                `scansion-${marker.kind || "boundary"}`,
+                marker.crossed ? "crossed" : "",
+                marker.substituted ? "substituted" : ""
+            ].filter(Boolean).join(" ");
+            const label = marker.label
+                ? `<span class="scansion-boundary-label">${
+                    escapeHtml(marker.label)
+                }</span>`
+                : "";
+            return `<span class="${classes}" aria-hidden="true">${label}</span>`;
+        }).join("");
+        return `<span class="inline-metric-anchor">${metrics}${ghost}${
+            scansion}</span>`;
     }
 
     function highlightedRangeHtml(range, text) {
@@ -1419,11 +1509,14 @@
                             : "prasa-mismatch");
                 const extension = segment.recitalExtension ||
                     segment.sungExtension;
+                const classificationClass = state.scansionMode === "off"
+                    ? ""
+                    : segment.classification === Chandas.GURU ? "guru" : "laghu";
                 return {
                     start: segment.start,
                     end: segment.end,
                     className: [
-                        segment.classification === Chandas.GURU ? "guru" : "laghu",
+                        classificationClass,
                         segment.violation ? "violation" : "",
                         ...prasaClasses
                     ].filter(Boolean).join(" "),
@@ -1754,6 +1847,7 @@
 
         elements["detect-shithila-dvitva"].checked =
             state.detectShithilaDvitva;
+        elements["scansion-mode"].value = state.scansionMode;
 
         elements["empty-analysis"].hidden = hasStanzas;
         elements["analysis-content"].hidden = false;
@@ -2078,13 +2172,14 @@
 
     function currentDraftSnapshot() {
         return {
-            version: 4,
+            version: 5,
             poemId: state.activePoemId,
             text: elements.composition.value,
             selections: state.selections,
             templates: state.templates,
             templateModes: state.templateModes,
             strongDrafts: state.strongDrafts,
+            scansionMode: state.scansionMode,
             detectShithilaDvitva: state.detectShithilaDvitva,
             language: state.language,
             selectionStart: elements.composition.selectionStart,
@@ -2097,6 +2192,7 @@
         return Boolean(draft.text || Object.keys(draft.selections).length ||
             Object.keys(draft.templates).length ||
             Object.keys(draft.strongDrafts).length ||
+            draft.scansionMode !== "auto" ||
             draft.detectShithilaDvitva);
     }
 
@@ -2151,7 +2247,7 @@
                 return null;
             }
             const draft = JSON.parse(raw);
-            if (!draft || ![1, 2, 3, 4].includes(draft.version) ||
+            if (!draft || ![1, 2, 3, 4, 5].includes(draft.version) ||
                 typeof draft.text !== "string") {
                 return null;
             }
@@ -2176,6 +2272,7 @@
         state.strongDrafts = poem.strongDrafts && typeof poem.strongDrafts === "object"
             ? poem.strongDrafts
             : {};
+        state.scansionMode = ChandasScansion.normalizeMode(poem.scansionMode);
         state.detectShithilaDvitva = poem.detectShithilaDvitva === true;
         state.strongHistory = {};
         state.strongFuture = {};
@@ -2260,6 +2357,7 @@
         state.templates = {};
         state.templateModes = {};
         state.strongDrafts = {};
+        state.scansionMode = "auto";
         state.detectShithilaDvitva = false;
         state.strongHistory = {};
         state.strongFuture = {};
@@ -2289,6 +2387,9 @@
         url.searchParams.set("verse", authoredCompositionText());
         if (state.detectShithilaDvitva) {
             url.searchParams.set("sd", "1");
+        }
+        if (state.scansionMode !== "auto") {
+            url.searchParams.set("scan", state.scansionMode);
         }
         const stanzas = state.analysis ? state.analysis.stanzas : [];
         if (!stanzas.length && state.selections[0]) {
@@ -2325,6 +2426,10 @@
         url.searchParams.set("verse", poem.text);
         if (poem.detectShithilaDvitva === true) {
             url.searchParams.set("sd", "1");
+        }
+        const scansionMode = ChandasScansion.normalizeMode(poem.scansionMode);
+        if (scansionMode !== "auto") {
+            url.searchParams.set("scan", scansionMode);
         }
         const stanzaIndexes = new Set([
             ...Object.keys(poem.selections || {}),
@@ -3157,6 +3262,13 @@
             state.detectShithilaDvitva =
                 elements["detect-shithila-dvitva"].checked;
             runAnalysis();
+        });
+        elements["scansion-mode"].addEventListener("change", () => {
+            state.scansionMode = ChandasScansion.normalizeMode(
+                elements["scansion-mode"].value
+            );
+            renderOverlay();
+            scheduleSave();
         });
         elements["show-template"].addEventListener("change", () => {
             if (!state.analysis ||

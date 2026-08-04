@@ -24,6 +24,7 @@ function poem(overrides) {
         templates: { 0: true },
         templateModes: { 0: "strong" },
         strongDrafts: { "0:madhu": { slots: [["ಕ", ""]] } },
+        scansionMode: "amsha",
         detectShithilaDvitva: true,
         language: "kn",
         selectionStart: 2,
@@ -40,6 +41,7 @@ test("normalizes Unicode poems without losing newlines or Strong blank slots", (
     assert.equal(value.text, "\nಕಾವ್ಯ\nಪದ್ಯ");
     assert.deepEqual(value.strongDrafts["0:madhu"].slots, [["ಕ", ""]]);
     assert.equal(value.detectShithilaDvitva, true);
+    assert.equal(value.scansionMode, "amsha");
     assert.equal(defaultTitle(value.text), "ಕಾವ್ಯ");
 });
 
@@ -52,6 +54,7 @@ test("exports and parses a portable versioned backup", () => {
     assert.equal(restored[0].text, "\nಕಾವ್ಯ\nಪದ್ಯ");
     assert.deepEqual(restored[0].selections, { 0: "madhu" });
     assert.equal(restored[0].detectShithilaDvitva, true);
+    assert.equal(restored[0].scansionMode, "amsha");
 });
 
 test("rejects foreign, malformed, and duplicate-id backups", () => {

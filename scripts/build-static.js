@@ -17,6 +17,7 @@ const assets = [
     "analytics.js",
     "poem_store.js",
     "meter_analysis.js",
+    "scansion.js",
     "shithila_dvitva.js",
     "strong_template.js",
     "mishra.json",

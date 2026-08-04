@@ -15,6 +15,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <link rel="icon" href="icon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="styles.css">
     <script src="meter_analysis.js" defer></script>
+    <script src="scansion.js" defer></script>
     <script src="shithila_dvitva.js" defer></script>
     <script src="strong_template.js" defer></script>
     <script src="poem_store.js" defer></script>
@@ -174,10 +175,23 @@ SPDX-License-Identifier: GPL-3.0-only
                             class="amsha-realization-output" hidden></output>
                     </div>
 
-                    <label class="analysis-option" title="Optional alternate realization; ordinary analysis remains the default.">
-                        <input id="detect-shithila-dvitva" type="checkbox">
-                        <span data-i18n="detectShithilaDvitva">Detect shithila dvitva</span>
-                    </label>
+                    <div class="analysis-tools">
+                        <label class="scansion-control" for="scansion-mode">
+                            <span data-i18n="scansion">Scansion</span>
+                            <select id="scansion-mode">
+                                <option value="auto" data-i18n="scansionAuto">Auto</option>
+                                <option value="weights" data-i18n="scansionWeights">Guru–laghu</option>
+                                <option value="amsha" data-i18n="scansionAmsha">Aṃśagaṇa · V/B/R</option>
+                                <option value="matra-35" data-i18n="scansionMatra35">Mātrā gait · 3+5</option>
+                                <option value="matra-53" data-i18n="scansionMatra53">Mātrā gait · 5+3</option>
+                                <option value="off" data-i18n="scansionOff">Off</option>
+                            </select>
+                        </label>
+                        <label class="analysis-option" title="Optional alternate realization; ordinary analysis remains the default.">
+                            <input id="detect-shithila-dvitva" type="checkbox">
+                            <span data-i18n="detectShithilaDvitva">Detect shithila dvitva</span>
+                        </label>
+                    </div>
 
                     <div id="selected-meter-reference" class="selected-meter-reference" aria-live="polite" hidden>
                         <span class="mini-label" data-i18n="selectedMeterReference">Selected meter</span>

@@ -60,6 +60,36 @@ test("allows choosing a meter before the first syllable is typed", async ({ page
     await expect(page.locator("#active-pattern")).toHaveText("L");
 });
 
+test("keeps mātrā gait scansion advisory, exclusive, and shareable", async ({
+    page,
+    context
+}) => {
+    const text = Array.from({ length: 25 }, () => "ಕ").join(" ");
+    const selector = page.locator("#scansion-mode");
+    await page.locator("#composition").fill(text);
+    await selector.selectOption("matra-35");
+
+    await expect(page.locator("#highlight-layer .scansion-matra .scansion-boundary-label"))
+        .toHaveText(["3", "5", "3", "5", "3", "5"]);
+    await expect(page.locator("#highlight-layer .line-metrics-badge"))
+        .toContainText("x=1");
+    await expect(page.locator("#highlight-layer .violation")).toHaveCount(0);
+    await expect(page.locator("#composition")).toHaveValue(text);
+
+    await selector.selectOption("off");
+    await expect(page.locator("#highlight-layer .scansion-boundary")).toHaveCount(0);
+    await expect(page.locator("#highlight-layer .laghu")).toHaveCount(0);
+    await selector.selectOption("weights");
+    await expect(page.locator("#highlight-layer .laghu")).toHaveCount(25);
+
+    await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+    await selector.selectOption("matra-53");
+    await page.locator("#share").click();
+    await page.locator("#copy-analysis-url").click();
+    const copied = new URL(await page.evaluate(() => navigator.clipboard.readText()));
+    expect(copied.searchParams.get("scan")).toBe("matra-53");
+});
+
 test("keeps śithila-dvitva optional, isolated, and shareable", async ({ page }) => {
     const option = page.locator("#detect-shithila-dvitva");
     await expect(option).not.toBeChecked();
@@ -834,6 +864,12 @@ test("shows classical aṃśa karṣaṇa after detection and selection", async 
     expect(Math.max(...markerOffsets)).toBeLessThanOrEqual(1);
     await expect(page.locator("#highlight-layer .violation")).toHaveCount(0);
     await expect(editor).toHaveValue(text);
+    await expect(page.locator(
+        "#highlight-layer .scansion-amsha .scansion-boundary-label"
+    )).toHaveCount(14);
+    await expect(page.locator(
+        "#highlight-layer .scansion-amsha .scansion-boundary-label"
+    ).first()).toHaveText("V");
 
     await page.locator("#meter-picker summary").click();
     await page.locator("#meter-search").fill("sangatya");

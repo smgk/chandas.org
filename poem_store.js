@@ -84,6 +84,9 @@
             templates: objectOrEmpty(value.templates),
             templateModes: objectOrEmpty(value.templateModes),
             strongDrafts: objectOrEmpty(value.strongDrafts),
+            scansionMode: [
+                "auto", "weights", "amsha", "matra-35", "matra-53", "off"
+            ].includes(value.scansionMode) ? value.scansionMode : "auto",
             detectShithilaDvitva: value.detectShithilaDvitva === true,
             language: value.language === "kn" ? "kn" : "en",
             selectionStart,

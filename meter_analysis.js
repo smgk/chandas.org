@@ -1867,6 +1867,19 @@
             slots.map(amshaGroupLabel).join(""));
         result.realizedAmshaScan = groupsByPada.map((groups) =>
             (groups || []).map((group) => group.actualClass).join(""));
+        result.amshaGroupRanges = groupsByPada.map((groups) =>
+            (groups || []).map((group) => {
+                const first = group.syllables[0];
+                const last = group.syllables.at(-1);
+                return {
+                    start: first ? first.start : 0,
+                    end: last ? last.end : first ? first.end : 0,
+                    expectedClass: group.expectedClass,
+                    actualClass: group.actualClass,
+                    isSubstitution: Boolean(group.isSubstitution),
+                    complete: group.complete !== false
+                };
+            }));
         result.amshaSubstitutions = amshaSubstitutions;
         result.substitutionCount = amshaSubstitutions.length;
         return result;
@@ -3002,6 +3015,13 @@
                         Array.isArray(detectedKarshana.realizedAmshaScan)
                         ? detectedKarshana.realizedAmshaScan
                         : [],
+                amshaGroupRanges: structuralValidation &&
+                    Array.isArray(structuralValidation.amshaGroupRanges)
+                    ? structuralValidation.amshaGroupRanges
+                    : detectedKarshana &&
+                        Array.isArray(detectedKarshana.amshaGroupRanges)
+                        ? detectedKarshana.amshaGroupRanges
+                        : [],
                 amshaSubstitutions: structuralValidation &&
                     Array.isArray(structuralValidation.amshaSubstitutions)
                     ? structuralValidation.amshaSubstitutions
@@ -3043,7 +3063,7 @@
 
         return {
             text: originalText,
-            analysisVersion: "2.14.0",
+            analysisVersion: "2.15.0",
             catalogVersion: catalog && catalog.structuralCatalogVersion
                 ? String(catalog.structuralCatalogVersion)
                 : "",

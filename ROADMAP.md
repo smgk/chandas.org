@@ -306,6 +306,8 @@ week per meter-family presentation
 
 ### M8 — Synonyms and script expansion
 
+- Preserve the researched implementation order and adapter prerequisites in
+  [Indic Script Expansion Research](docs/script-expansion.md).
 - Select synonym data whose license permits bundled web and Android use.
 - Prefer an offline-first index; label meaning, register, grammatical
   differences, and metrical fit.

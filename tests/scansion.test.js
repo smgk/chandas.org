@@ -25,13 +25,18 @@ test("projects the Rathoddhatā pattern onto an exact 3+5 gait", () => {
 
     assert.deepEqual(scan.boundaries.map((boundary) => ({
         position: boundary.position,
-        label: boundary.label,
         crossed: boundary.crossed
     })), [
-        { position: 2, label: "3", crossed: false },
-        { position: 6, label: "5", crossed: false },
-        { position: 8, label: "3", crossed: false },
-        { position: 11, label: "5", crossed: false }
+        { position: 2, crossed: false },
+        { position: 6, crossed: false },
+        { position: 8, crossed: false },
+        { position: 11, crossed: false }
+    ]);
+    assert.deepEqual(scan.groups, [
+        { start: 0, end: 2, label: "3", kind: "matra", crossed: false },
+        { start: 2, end: 6, label: "5", kind: "matra", crossed: false },
+        { start: 6, end: 8, label: "3", kind: "matra", crossed: false },
+        { start: 8, end: 11, label: "5", kind: "matra", crossed: false }
     ]);
     assert.equal(scan.totalMatras, 16);
     assert.equal(scan.residual, 0);
@@ -56,8 +61,8 @@ test("keeps a Guru intact when a rhythmic boundary crosses it", () => {
     assert.equal(scan.residual, 1);
 });
 
-test("turns realized aṃśagaṇa ranges into labelled boundaries", () => {
-    const boundaries = Scansion.amshaBoundaries([[
+test("turns realized aṃśagaṇa ranges into labelled groups", () => {
+    const groups = Scansion.amshaGroups([[
         { start: 0, end: 3, expectedClass: "V", actualClass: "V" },
         {
             start: 3,
@@ -68,24 +73,20 @@ test("turns realized aṃśagaṇa ranges into labelled boundaries", () => {
         }
     ]]);
 
-    assert.deepEqual(boundaries, [
+    assert.deepEqual(groups, [
         {
-            position: 0,
+            start: 0,
+            end: 3,
             label: "V",
             kind: "amsha",
             substituted: false
         },
         {
-            position: 3,
+            start: 3,
+            end: 7,
             label: "R",
             kind: "amsha",
             substituted: true
-        },
-        {
-            position: 7,
-            label: "",
-            kind: "amsha-end",
-            substituted: false
         }
     ]);
 });

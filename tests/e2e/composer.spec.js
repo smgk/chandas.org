@@ -69,8 +69,43 @@ test("keeps mātrā gait scansion advisory, exclusive, and shareable", async ({
     await page.locator("#composition").fill(text);
     await selector.selectOption("matra-35");
 
-    await expect(page.locator("#highlight-layer .scansion-matra .scansion-boundary-label"))
+    const gaitGroups = page.locator(
+        "#highlight-layer .scansion-group-matra"
+    );
+    await expect(gaitGroups.locator(".scansion-group-label"))
         .toHaveText(["3", "5", "3", "5", "3", "5"]);
+    await expect(gaitGroups).toHaveCount(6);
+    const gaitCenterOffsets = await gaitGroups.evaluateAll((groups) =>
+        groups.map((group) => {
+            const labelNode = group.querySelector(".scansion-group-label");
+            const label = labelNode.getBoundingClientRect();
+            const range = document.createRange();
+            range.setStartBefore(labelNode.nextSibling);
+            range.setEnd(group, group.childNodes.length);
+            const lines = [];
+            Array.from(range.getClientRects())
+                .filter((rect) => rect.width > 0 && rect.height > 0)
+                .forEach((rect) => {
+                    let line = lines.find((item) =>
+                        Math.abs(item.top - rect.top) < 1);
+                    if (!line) {
+                        line = { top: rect.top, left: rect.left, right: rect.right };
+                        lines.push(line);
+                    } else {
+                        line.left = Math.min(line.left, rect.left);
+                        line.right = Math.max(line.right, rect.right);
+                    }
+                });
+            const widest = lines.sort((left, right) =>
+                (right.right - right.left) - (left.right - left.left))[0];
+            return Math.abs(
+                (widest.left + widest.right) / 2 -
+                (label.left + label.width / 2)
+            );
+        }));
+    expect(Math.max(...gaitCenterOffsets)).toBeLessThanOrEqual(1);
+    await expect(page.locator("#highlight-layer .scansion-boundary.scansion-matra"))
+        .toHaveCount(7);
     await expect(page.locator("#highlight-layer .line-metrics-badge"))
         .toContainText("x=1");
     await expect(page.locator("#highlight-layer .violation")).toHaveCount(0);
@@ -865,11 +900,31 @@ test("shows classical aṃśa karṣaṇa after detection and selection", async 
     await expect(page.locator("#highlight-layer .violation")).toHaveCount(0);
     await expect(editor).toHaveValue(text);
     await expect(page.locator(
-        "#highlight-layer .scansion-amsha .scansion-boundary-label"
+        "#highlight-layer .scansion-group-amsha .scansion-group-label"
     )).toHaveCount(14);
     await expect(page.locator(
-        "#highlight-layer .scansion-amsha .scansion-boundary-label"
+        "#highlight-layer .scansion-group-amsha .scansion-group-label"
     ).first()).toHaveText("V");
+    const amshaGroups = page.locator("#highlight-layer .scansion-group-amsha");
+    const amshaCenterOffsets = await amshaGroups.evaluateAll((groups) =>
+        groups.map((group) => {
+            const labelNode = group.querySelector(".scansion-group-label");
+            const label = labelNode.getBoundingClientRect();
+            const range = document.createRange();
+            range.setStartBefore(labelNode.nextSibling);
+            range.setEnd(group, group.childNodes.length);
+            const fragments = Array.from(range.getClientRects())
+                .filter((rect) => rect.width > 0 && rect.height > 0);
+            const left = Math.min(...fragments.map((rect) => rect.left));
+            const right = Math.max(...fragments.map((rect) => rect.right));
+            return Math.abs(
+                (left + right) / 2 -
+                (label.left + label.width / 2)
+            );
+        }));
+    expect(Math.max(...amshaCenterOffsets)).toBeLessThanOrEqual(1);
+    await expect(page.locator("#highlight-layer .scansion-boundary.scansion-amsha"))
+        .toHaveCount(18);
 
     await page.locator("#meter-picker summary").click();
     await page.locator("#meter-search").fill("sangatya");

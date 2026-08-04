@@ -211,12 +211,16 @@ recommended, and optional behavior.
 9. A single compact **Scansion** selector MUST offer mutually exclusive Auto,
    Guru–Laghu, Aṃśagaṇa, `3+5` mātrā gait, `5+3` mātrā gait, and Off modes;
    these choices MUST NOT be presented as a row of independent checkboxes.
-10. Aṃśagaṇa scansion MUST draw faint, non-editable group boundaries and
-    superscript the realized `V`, `B`, or `R` gaṇa name. Auto mode MUST use this
+10. Aṃśagaṇa scansion MUST draw faint, non-editable vertical group boundaries
+    and center the superscript realized `V`, `B`, or `R` gaṇa name over its
+    complete group. Auto mode MUST use this
     view for a selected aṃśa meter and MAY use it when exactly one complete
     aṃśa meter is detected.
 11. Mātrā-gait scansion MUST project alternating `3+5` or `5+3` time groups on
-    each authored line and show an `x=n` remainder with the line totals. A Guru
+    each authored line, center each number above its complete letter group,
+    draw its vertical boundaries independently, and show an `x=n` remainder
+    with the line totals. The first group MUST receive the same centered label
+    as every later group. A Guru
     spanning a target time boundary MUST remain an intact Unicode syllable and
     MUST NOT become a meter violation merely because of this advisory view.
 12. Scansion boundaries and labels MUST NOT modify text, source offsets,

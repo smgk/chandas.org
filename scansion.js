@@ -44,7 +44,7 @@
             .map(Number)
             .filter((value) => Number.isInteger(value) && value > 0);
         if (!source.length || !capacities.length) {
-            return { boundaries: [], residual: 0, totalMatras: 0 };
+            return { boundaries: [], groups: [], residual: 0, totalMatras: 0 };
         }
 
         const cumulative = [];
@@ -55,9 +55,11 @@
         });
 
         const boundaries = [];
+        const groups = [];
         let target = 0;
         let cycleIndex = 0;
         let syllableIndex = 0;
+        let groupStartIndex = 0;
         while (true) {
             const capacity = capacities[cycleIndex % capacities.length];
             target += capacity;
@@ -72,51 +74,49 @@
             if (!syllable) {
                 break;
             }
-            boundaries.push({
+            const boundary = {
                 position: syllable.end,
-                label: String(capacity),
                 capacity,
                 target,
                 crossed: cumulative[syllableIndex] > target
+            };
+            boundaries.push(boundary);
+            groups.push({
+                start: source[groupStartIndex].start,
+                end: syllable.end,
+                label: String(capacity),
+                kind: "matra",
+                crossed: boundary.crossed
             });
+            groupStartIndex = syllableIndex + 1;
             cycleIndex += 1;
         }
 
         return {
             boundaries,
+            groups,
             residual: totalMatras - (boundaries.at(-1)?.target || 0),
             totalMatras
         };
     }
 
-    function amshaBoundaries(groupRanges) {
+    function amshaGroups(groupRanges) {
         const lines = Array.isArray(groupRanges) ? groupRanges : [];
         return lines.flatMap((groups) => (Array.isArray(groups) ? groups : []))
             .filter((group) => Number.isFinite(group.start) &&
-                Number.isFinite(group.end) && group.end >= group.start)
-            .flatMap((group, index, allGroups) => {
-                const markers = [{
-                    position: group.start,
-                    label: String(group.actualClass || group.expectedClass || "?"),
-                    kind: "amsha",
-                    substituted: Boolean(group.isSubstitution)
-                }];
-                const next = allGroups[index + 1];
-                if (!next || next.start !== group.end) {
-                    markers.push({
-                        position: group.end,
-                        label: "",
-                        kind: "amsha-end",
-                        substituted: false
-                    });
-                }
-                return markers;
-            });
+                Number.isFinite(group.end) && group.end > group.start)
+            .map((group) => ({
+                start: group.start,
+                end: group.end,
+                label: String(group.actualClass || group.expectedClass || "?"),
+                kind: "amsha",
+                substituted: Boolean(group.isSubstitution)
+            }));
     }
 
     return {
         MODES,
-        amshaBoundaries,
+        amshaGroups,
         matraValue,
         normalizeMode,
         scanMatraGait

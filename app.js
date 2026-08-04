@@ -1343,10 +1343,18 @@
                 position,
                 metrics: "",
                 ghost: "",
-                scansion: []
+                scansion: [],
+                groupStarts: [],
+                groupEnds: []
             };
             if (!Array.isArray(annotation.scansion)) {
                 annotation.scansion = [];
+            }
+            if (!Array.isArray(annotation.groupStarts)) {
+                annotation.groupStarts = [];
+            }
+            if (!Array.isArray(annotation.groupEnds)) {
+                annotation.groupEnds = [];
             }
             byPosition.set(position, annotation);
             return annotation;
@@ -1356,7 +1364,35 @@
             if (!marker || !Number.isFinite(marker.position)) {
                 return;
             }
-            annotationAt(marker.position).scansion.push(marker);
+            const markers = annotationAt(marker.position).scansion;
+            if (!markers.some((existing) =>
+                existing.kind === marker.kind &&
+                Boolean(existing.crossed) === Boolean(marker.crossed))) {
+                markers.push(marker);
+            }
+        }
+
+        function addScansionGroups(rawGroups) {
+            const groups = Chandas.projectHighlightRanges(
+                elements.composition.value,
+                rawGroups
+            );
+            groups.forEach((group) => {
+                annotationAt(group.start).groupStarts.push(group);
+                annotationAt(group.end).groupEnds.push(group);
+            });
+            if (groups.length) {
+                addScansionMarker({
+                    position: groups[0].start,
+                    kind: groups[0].kind,
+                    crossed: false
+                });
+            }
+            groups.forEach((group) => addScansionMarker({
+                position: group.end,
+                kind: group.kind,
+                crossed: Boolean(group.crossed)
+            }));
         }
 
         for (const stanza of state.analysis ? state.analysis.stanzas : []) {
@@ -1390,8 +1426,8 @@
                     : "weights";
             }
             if (mode === "amsha") {
-                ChandasScansion.amshaBoundaries(stanza.amshaGroupRanges)
-                    .forEach(addScansionMarker);
+                (stanza.amshaGroupRanges || []).forEach((lineGroups) =>
+                    addScansionGroups(ChandasScansion.amshaGroups([lineGroups])));
             } else if (mode === "matra-35" || mode === "matra-53") {
                 const cycle = mode === "matra-35" ? [3, 5] : [5, 3];
                 stanza.lines.forEach((line) => {
@@ -1399,10 +1435,7 @@
                         line.syllables,
                         cycle
                     );
-                    scan.boundaries.forEach((boundary) => addScansionMarker({
-                        ...boundary,
-                        kind: "matra"
-                    }));
+                    addScansionGroups(scan.groups);
                     const lastSyllable = line.syllables.at(-1);
                     if (lastSyllable && scan.residual > 0) {
                         const annotation = annotationAt(lastSyllable.end);
@@ -1428,18 +1461,23 @@
             const classes = [
                 "scansion-boundary",
                 `scansion-${marker.kind || "boundary"}`,
-                marker.crossed ? "crossed" : "",
-                marker.substituted ? "substituted" : ""
+                marker.crossed ? "crossed" : ""
             ].filter(Boolean).join(" ");
-            const label = marker.label
-                ? `<span class="scansion-boundary-label">${
-                    escapeHtml(marker.label)
-                }</span>`
-                : "";
-            return `<span class="${classes}" aria-hidden="true">${label}</span>`;
+            return `<span class="${classes}" aria-hidden="true"></span>`;
         }).join("");
         return `<span class="inline-metric-anchor">${metrics}${ghost}${
             scansion}</span>`;
+    }
+
+    function scansionGroupOpenHtml(group) {
+        const classes = [
+            "scansion-group",
+            `scansion-group-${group.kind || "unknown"}`,
+            group.crossed ? "crossed" : "",
+            group.substituted ? "substituted" : ""
+        ].filter(Boolean).join(" ");
+        return `<span class="${classes}"><span class="scansion-group-label" ` +
+            `aria-hidden="true">${escapeHtml(group.label)}</span>`;
     }
 
     function highlightedRangeHtml(range, text) {
@@ -1490,6 +1528,57 @@
         elements["highlight-layer"].innerHTML =
             `${escapeHtml(elements.composition.value)}\n`;
         syncScroll();
+    }
+
+    function positionScansionLabels() {
+        if (!elements["highlight-layer"]) {
+            return;
+        }
+        elements["highlight-layer"].querySelectorAll(".scansion-group")
+            .forEach((group) => {
+                const label = group.firstElementChild;
+                const firstContent = label && label.nextSibling;
+                if (!label || !label.classList.contains("scansion-group-label") ||
+                    !firstContent) {
+                    return;
+                }
+                label.style.transform = "";
+                const range = document.createRange();
+                range.setStartBefore(firstContent);
+                range.setEnd(group, group.childNodes.length);
+                const fragments = Array.from(range.getClientRects())
+                    .filter((rect) => rect.width > 0 && rect.height > 0);
+                if (!fragments.length) {
+                    return;
+                }
+
+                const lines = [];
+                fragments.forEach((rect) => {
+                    let line = lines.find((item) =>
+                        Math.abs(item.top - rect.top) < 1);
+                    if (!line) {
+                        line = {
+                            top: rect.top,
+                            left: rect.left,
+                            right: rect.right
+                        };
+                        lines.push(line);
+                    } else {
+                        line.left = Math.min(line.left, rect.left);
+                        line.right = Math.max(line.right, rect.right);
+                    }
+                });
+                const target = lines.sort((left, right) =>
+                    (right.right - right.left) - (left.right - left.left))[0];
+                const firstLine = lines.sort((left, right) => left.top - right.top)[0];
+                const labelRect = label.getBoundingClientRect();
+                const targetCenter = target.left + (target.right - target.left) / 2;
+                const currentCenter = labelRect.left + labelRect.width / 2;
+                const horizontalShift = targetCenter - currentCenter;
+                const verticalShift = target.top - firstLine.top;
+                label.style.transform = `translateX(-50%) translate(${
+                    horizontalShift}px, ${verticalShift}px)`;
+            });
     }
 
     function renderOverlay() {
@@ -1555,6 +1644,12 @@
                 }
                 html += escapeHtml(text.slice(cursor, annotation.position));
                 cursor = annotation.position;
+                for (const group of annotation.groupEnds || []) {
+                    html += "</span>";
+                }
+                for (const group of annotation.groupStarts || []) {
+                    html += scansionGroupOpenHtml(group);
+                }
                 html += annotationHtml(annotation);
             }
         }
@@ -1573,6 +1668,7 @@
         html += escapeHtml(text.slice(cursor));
         // A final newline ensures matching textarea height and scroll behavior.
         elements["highlight-layer"].innerHTML = `${html}\n`;
+        positionScansionLabels();
         syncScroll();
     }
 
@@ -3407,6 +3503,10 @@
                 saveDraft();
             }
         });
+        window.addEventListener("resize", positionScansionLabels);
+        if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(positionScansionLabels).catch(() => {});
+        }
     }
 
     async function initialize() {

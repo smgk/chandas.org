@@ -553,15 +553,23 @@ textarea:focus-visible {
     pointer-events: none;
 }
 
-.scansion-boundary-label {
+.scansion-group {
+    position: relative;
+    display: inline;
+}
+
+.scansion-group-label {
     position: absolute;
-    top: -0.68em;
-    left: 0.12rem;
+    z-index: 3;
+    top: -0.82em;
+    left: 50%;
     color: color-mix(in srgb, var(--green) 48%, transparent);
     font-family: ui-sans-serif, system-ui, sans-serif;
     font-size: 0.5rem;
     font-weight: 750;
     line-height: 1;
+    pointer-events: none;
+    transform: translateX(-50%);
     white-space: nowrap;
     text-shadow: 0 1px var(--paper);
 }
@@ -571,16 +579,16 @@ textarea:focus-visible {
     border-left-color: color-mix(in srgb, var(--muted) 30%, transparent);
 }
 
-.scansion-boundary.crossed .scansion-boundary-label {
+.scansion-group.crossed .scansion-group-label {
     color: color-mix(in srgb, var(--muted) 43%, transparent);
 }
 
-.scansion-boundary.substituted .scansion-boundary-label {
+.scansion-group.substituted .scansion-group-label {
     color: color-mix(in srgb, var(--saffron) 55%, transparent);
 }
 
-.scansion-amsha-end {
-    border-left-color: color-mix(in srgb, var(--green) 23%, transparent);
+.scansion-boundary.scansion-amsha {
+    border-left-color: color-mix(in srgb, var(--green) 28%, transparent);
 }
 
 .ghost-template {

@@ -54,7 +54,7 @@
             updating: "Updating…",
             eyebrow: "A live prosody companion",
             title: "Chandas - say it in-verse",
-            intro: "Type Kannada or Devanagari verse. Guru and Laghu appear in place, and the closest meters stay quietly within reach.",
+            intro: "Type Kannada, Telugu, or Devanagari verse. Guru and Laghu appear in place, and the closest meters stay quietly within reach.",
             composition: "Composition",
             savedLocally: "Saved privately on this device",
             saving: "Saving on this device…",
@@ -215,7 +215,7 @@
             updating: "ನವೀಕರಿಸಲಾಗುತ್ತಿದೆ…",
             eyebrow: "ಛಂದದ ಪದ್ಯದ ಸಂಗಾತಿ",
             title: "ಛಂದಸ್ - ಪದ್ಯದಲ್ಲಿ ಹೇಳಿ",
-            intro: "ಕನ್ನಡ ಅಥವಾ ದೇವನಾಗರಿ ಪದ್ಯವನ್ನು ಬರೆಯಿರಿ. ಗುರು–ಲಘು ಅದೇ ಪಠ್ಯದಲ್ಲಿ ಕಾಣುತ್ತದೆ; ಸಮೀಪದ ಛಂದಸ್ಸುಗಳು ಪಕ್ಕದಲ್ಲಿರುತ್ತವೆ.",
+            intro: "ಕನ್ನಡ, ತೆಲುಗು ಅಥವಾ ದೇವನಾಗರಿ ಪದ್ಯವನ್ನು ಬರೆಯಿರಿ. ಗುರು–ಲಘು ಅದೇ ಪಠ್ಯದಲ್ಲಿ ಕಾಣುತ್ತದೆ; ಸಮೀಪದ ಛಂದಸ್ಸುಗಳು ಪಕ್ಕದಲ್ಲಿರುತ್ತವೆ.",
             composition: "ರಚನೆ",
             savedLocally: "ಈ ಸಾಧನದಲ್ಲಿ ಖಾಸಗಿಯಾಗಿ ಉಳಿಸಲಾಗಿದೆ",
             saving: "ಈ ಸಾಧನದಲ್ಲಿ ಉಳಿಸಲಾಗುತ್ತಿದೆ…",
@@ -941,6 +941,9 @@
         if (script === "devanagari") {
             return { L: "ल", G: "गा", variable: "○" };
         }
+        if (script === "telugu") {
+            return { L: "ల", G: "గా", variable: "○" };
+        }
         return state.language === "kn"
             ? { L: "ಲ", G: "ಗಾ", variable: "○" }
             : { L: "L", G: "G", variable: "○" };
@@ -959,6 +962,9 @@
         }
         if (script === "devanagari") {
             return { B: "ब्र", V: "वि", R: "रु" };
+        }
+        if (script === "telugu") {
+            return { B: "బ్ర", V: "వి", R: "రు" };
         }
         return { B: "B", V: "V", R: "R" };
     }

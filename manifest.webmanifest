@@ -1,7 +1,7 @@
 {
   "name": "Chandas - say it in-verse",
   "short_name": "Chandas",
-  "description": "Live Guru/Laghu and meter guidance for Kannada and Devanagari verse.",
+  "description": "Live Guru/Laghu and meter guidance for Kannada, Telugu, and Devanagari verse.",
   "lang": "en",
   "start_url": "./",
   "scope": "./",

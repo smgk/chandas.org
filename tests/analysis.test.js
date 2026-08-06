@@ -66,11 +66,14 @@ test("splits stanzas only at blank lines and preserves source offsets", () => {
     assert.equal(text.slice(stanzas[1].start, stanzas[1].end), stanzas[1].text);
 });
 
-test("detects Kannada and Devanagari scripts independently of language", () => {
+test("detects Kannada, Telugu, and Devanagari independently of language", () => {
     assert.equal(Chandas.detectScript("ಕಾವ್ಯ"), "kannada");
     assert.equal(Chandas.detectScript("काव्य"), "devanagari");
+    assert.equal(Chandas.detectScript("కావ్యం"), "telugu");
     assert.equal(Chandas.detectScript("ಕ।॥೧॥"), "kannada");
     assert.equal(Chandas.detectScript("क।॥१॥"), "devanagari");
+    assert.equal(Chandas.detectScript("క।॥౧॥"), "telugu");
+    assert.equal(Chandas.detectScript("ౝ"), "telugu");
     assert.equal(Chandas.detectScript("।॥೧१॥"), "unknown");
     assert.equal(Chandas.detectScript("plain text"), "unknown");
 });
@@ -87,6 +90,12 @@ test("classifies short, long, anusvara, and visarga syllables", () => {
         devanagari.syllables.map((item) => item.classification),
         ["L", "G", "G", "G"]
     );
+
+    const telugu = Chandas.segmentLine("క కా కం కః", 0);
+    assert.deepEqual(
+        telugu.syllables.map((item) => item.classification),
+        ["L", "G", "G", "G"]
+    );
 });
 
 test("classifies independent e and o vowels by script-specific length", () => {
@@ -101,16 +110,82 @@ test("classifies independent e and o vowels by script-specific length", () => {
         kannada.syllables.map((item) => item.classification),
         ["L", "G", "L", "G", "G", "G"]
     );
+
+    const telugu = Chandas.segmentLine("ఎ ఏ ఒ ఓ కే కో", 0);
+    assert.deepEqual(
+        telugu.syllables.map((item) => item.classification),
+        ["L", "G", "L", "G", "G", "G"]
+    );
+});
+
+test("handles Telugu vowel signs, historic letters, and equivalent AI", () => {
+    const vowels = Chandas.segmentLine(
+        "అ ఆ ఇ ఈ ఉ ఊ ఋ ౠ ఌ ౡ ఎ ఏ ఐ ఒ ఓ ఔ",
+        0
+    );
+    assert.deepEqual(
+        vowels.syllables.map((item) => item.classification),
+        ["L", "G", "L", "G", "L", "G", "L", "G", "L", "G", "L", "G", "G", "L", "G", "G"]
+    );
+
+    const dependent = Chandas.segmentLine("కృ కౄ కౢ కౣ", 0);
+    assert.deepEqual(
+        dependent.syllables.map((item) => item.classification),
+        ["L", "G", "L", "G"]
+    );
+
+    const historic = Chandas.segmentLine("ౘి ౙా ౚు", 0);
+    assert.deepEqual(
+        historic.syllables.map((item) => item.classification),
+        ["L", "G", "L"]
+    );
+    assert.deepEqual(historic.unsupported, []);
+
+    const composed = Chandas.segmentLine("కై", 0);
+    const decomposedText = `కె${String.fromCodePoint(0x0c56)}`;
+    const decomposed = Chandas.segmentLine(decomposedText, 0);
+    assert.equal(composed.syllables[0].classification, "G");
+    assert.equal(decomposed.syllables[0].classification, "G");
+    assert.equal(decomposed.syllables[0].text, decomposedText);
+});
+
+test("handles Telugu nasal signs, avagraha, and atomic nakaara pollu", () => {
+    const marks = Chandas.segmentLine("కఁ కం కఄ", 0);
+    assert.deepEqual(
+        marks.syllables.map((item) => item.classification),
+        ["L", "G", "G"]
+    );
+
+    const avagraha = Chandas.segmentLine("కఽక", 0);
+    assert.deepEqual(
+        avagraha.syllables.map((item) => item.classification),
+        ["L", "L"]
+    );
+    assert.deepEqual(avagraha.unsupported, []);
+
+    const pollu = Chandas.segmentLine("కౝ", 0);
+    assert.deepEqual(
+        pollu.syllables.map((item) => [item.text, item.classification]),
+        [["కౝ", "G"]]
+    );
+    assert.ok(pollu.syllables[0].reasons.includes("closed-by-dead-consonant"));
+
+    const standalonePollu = Chandas.segmentLine("ౝ", 0);
+    assert.equal(standalonePollu.script, "telugu");
+    assert.equal(standalonePollu.unsupported.length, 1);
 });
 
 test("a following conjunct closes the preceding syllable", () => {
     const kannada = Chandas.segmentLine("ಪದ್ಯ", 0);
     const devanagari = Chandas.segmentLine("पद्य", 0);
+    const telugu = Chandas.segmentLine("పద్య", 0);
 
     assert.equal(kannada.syllables[0].classification, "G");
     assert.equal(devanagari.syllables[0].classification, "G");
+    assert.equal(telugu.syllables[0].classification, "G");
     assert.ok(kannada.syllables[0].reasons.includes("closed-by-conjunct"));
     assert.ok(devanagari.syllables[0].reasons.includes("closed-by-conjunct"));
+    assert.ok(telugu.syllables[0].reasons.includes("closed-by-conjunct"));
 });
 
 test("recognizes historical Kannada ೞ as a consonant in vowels and conjuncts", () => {
@@ -163,8 +238,13 @@ test("uses historical Kannada ೞ in automatic dvitīyākṣara-prāsa", () => {
     assert.equal(check.provenance, "automatic-kannada");
 });
 
-test("projects highlight spans away from Kannada and Devanagari conjuncts", () => {
-    for (const text of ["ನಿಶ್ಚಲ", "निश्चल"]) {
+test("projects highlight spans away from supported-script conjuncts", () => {
+    const expected = new Map([
+        ["ನಿಶ್ಚಲ", [["ನಿಶ್", "ಚ", "ಲ"], ["ನಿ", "ಶ್ಚ", "ಲ"]]],
+        ["निश्चल", [["निश्", "च", "ल"], ["नि", "श्च", "ल"]]],
+        ["నిశ్చల", [["నిశ్", "చ", "ల"], ["ని", "శ్చ", "ల"]]]
+    ]);
+    for (const text of expected.keys()) {
         const segmented = Chandas.segmentLine(text, 0);
         const logicalRanges = segmented.syllables.map((syllable) => ({
             start: syllable.start,
@@ -175,11 +255,11 @@ test("projects highlight spans away from Kannada and Devanagari conjuncts", () =
 
         assert.deepEqual(
             segmented.syllables.map((syllable) => syllable.text),
-            text === "ನಿಶ್ಚಲ" ? ["ನಿಶ್", "ಚ", "ಲ"] : ["निश्", "च", "ल"]
+            expected.get(text)[0]
         );
         assert.deepEqual(
             displayRanges.map((range) => text.slice(range.start, range.end)),
-            text === "ನಿಶ್ಚಲ" ? ["ನಿ", "ಶ್ಚ", "ಲ"] : ["नि", "श्च", "ल"]
+            expected.get(text)[1]
         );
         assert.deepEqual(
             displayRanges.map((range) => range.className),
@@ -211,6 +291,7 @@ test("preserves explicit ZWNJ breaks but protects ZWJ conjunct shaping", () => {
 test("a conjunct after whitespace or punctuation makes the preceding Laghu Guru", () => {
     const kannada = Chandas.segmentLine("ಕ,   ಕ್ರ", 0);
     const devanagari = Chandas.segmentLine("क।   क्र", 0);
+    const telugu = Chandas.segmentLine("క,   క్ర", 0);
     const ordinaryOnset = Chandas.segmentLine("ಕ,   ಕ", 0);
 
     assert.deepEqual(
@@ -221,9 +302,32 @@ test("a conjunct after whitespace or punctuation makes the preceding Laghu Guru"
         devanagari.syllables.map((item) => item.classification),
         ["G", "L"]
     );
+    assert.deepEqual(
+        telugu.syllables.map((item) => item.classification),
+        ["G", "L"]
+    );
     assert.ok(kannada.syllables[0].reasons.includes("followed-by-conjunct"));
     assert.ok(devanagari.syllables[0].reasons.includes("followed-by-conjunct"));
+    assert.ok(telugu.syllables[0].reasons.includes("followed-by-conjunct"));
     assert.equal(ordinaryOnset.syllables[0].classification, "L");
+});
+
+test("Telugu and Devanagari Sanskrit produce the same metrical pattern", () => {
+    const telugu = Chandas.segmentLine(
+        "పార్థాయ ప్రతిబోధితాం భగవతా నారాయణేన స్వయం",
+        0
+    );
+    const devanagari = Chandas.segmentLine(
+        "पार्थाय प्रतिबोधितां भगवता नारायणेन स्वयं",
+        0
+    );
+
+    assert.equal(telugu.script, "telugu");
+    assert.equal(
+        telugu.syllables.map((item) => item.classification).join(""),
+        devanagari.syllables.map((item) => item.classification).join("")
+    );
+    assert.deepEqual(telugu.unsupported, []);
 });
 
 test("matches dvitīyākṣara-prāsa through an ottu and highlights its whole cluster", () => {
@@ -520,6 +624,15 @@ test("ranks observed evidence before permissive structural possibilities", () =>
     assert.equal(completedCandidate.completedUnitCount, 1);
     assert.equal(completedCandidate.expectedUnitCount, 4);
     assert.equal(completedCandidate.distance, 0);
+
+    const teluguCandidate = Chandas.analyzeComposition(
+        "పార్థాయ ప్రతిబోధితాం భగవతా నారాయణేన స్వయం",
+        combinedCatalog,
+        {}
+    ).stanzas[0].candidates[0];
+    assert.equal(teluguCandidate.id, "śārdūlavikrīḍitam");
+    assert.equal(teluguCandidate.matchLevel, "exact-unit");
+    assert.equal(teluguCandidate.distance, 0);
 });
 
 test("uses prominence only to break equally clean prefixes", () => {

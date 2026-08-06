@@ -26,20 +26,39 @@ test.afterEach(async ({ page }) => {
     expect(page.__runtimeErrors || []).toEqual([]);
 });
 
-test("analyzes Kannada and Devanagari stanzas inline", async ({ page }) => {
+test("analyzes Kannada, Telugu, and Devanagari stanzas inline", async ({ page }) => {
     await expect(page.locator(".release-badge")).toHaveText("PRE-BETA");
-    await page.locator("#composition").fill("ಕ ಕಾ ಕಂ\n\nक का कं");
+    await page.locator("#composition").fill("ಕ ಕಾ ಕಂ\n\nक का कं\n\nక కా కం");
 
-    await expect(page.locator("#analysis-title")).toHaveText("Stanza 2 of 2");
+    await expect(page.locator("#analysis-title")).toHaveText("Stanza 3 of 3");
     await page.locator("#previous-stanza").click();
-    await expect(page.locator("#analysis-title")).toHaveText("Stanza 1 of 2");
+    await page.locator("#previous-stanza").click();
+    await expect(page.locator("#analysis-title")).toHaveText("Stanza 1 of 3");
     await expect(page.locator("#active-pattern")).toHaveText("LGG");
-    await expect(page.locator("#highlight-layer .laghu")).toHaveCount(2);
-    await expect(page.locator("#highlight-layer .guru")).toHaveCount(4);
+    await expect(page.locator("#highlight-layer .laghu")).toHaveCount(3);
+    await expect(page.locator("#highlight-layer .guru")).toHaveCount(6);
 
     await page.locator("#next-stanza").click();
-    await expect(page.locator("#analysis-title")).toHaveText("Stanza 2 of 2");
+    await page.locator("#next-stanza").click();
+    await expect(page.locator("#analysis-title")).toHaveText("Stanza 3 of 3");
     await expect(page.locator("#active-pattern")).toHaveText("LGG");
+});
+
+test("shows Telugu-native Guru and Laghu template symbols", async ({ page }) => {
+    await page.locator("#composition").fill("క");
+    await page.locator("#meter-picker summary").click();
+    await page.locator("#meter-search").fill("madhu");
+    await page.locator("#meter-select").selectOption("madhu");
+    await page.locator("#show-template").check();
+
+    await expect(page.locator("#highlight-layer .ghost-template")).toHaveText("ల");
+    await expect(page.locator("#whole-verse-template .whole-template-line-guide"))
+        .toHaveText(["ల ల", "ల ల", "ల ల", "ల ల"]);
+
+    await page.locator("#meter-search").fill("anushtup");
+    await page.locator("#meter-select").selectOption("structural:anushtubh-pathya");
+    await expect(page.locator("#highlight-layer .ghost-template"))
+        .toContainText("గా");
 });
 
 test("allows choosing a meter before the first syllable is typed", async ({ page }) => {
@@ -238,17 +257,19 @@ test("treats the trailing dead ರ್ in ಟರ್ as a coda for prāsa", async 
     await expect(page.locator("#highlight-layer .prasa-mismatch")).toHaveCount(0);
 });
 
-test("keeps Kannada and Devanagari conjuncts joined across highlight changes", async ({
+test("keeps supported-script conjuncts joined across highlight changes", async ({
     page
 }) => {
-    await page.locator("#composition").fill("ನಿಶ್ಚಲ\n\nनिश्चल");
+    await page.locator("#composition").fill("ನಿಶ್ಚಲ\n\nनिश्चल\n\nనిశ్చల");
 
-    await expect(page.locator("#highlight-layer .guru")).toHaveText(["ನಿ", "नि"]);
+    await expect(page.locator("#highlight-layer .guru")).toHaveText(["ನಿ", "नि", "ని"]);
     await expect(page.locator("#highlight-layer .laghu")).toHaveText([
         "ಶ್ಚ",
         "ಲ",
         "श्च",
-        "ल"
+        "ल",
+        "శ్చ",
+        "ల"
     ]);
 
     const editorTracking = await page.locator("#composition").evaluate((editor) =>

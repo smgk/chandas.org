@@ -26,7 +26,8 @@
         ]);
         const supportedScripts = new Set(settings.supportedScripts || [
             "kannada",
-            "devanagari"
+            "devanagari",
+            "telugu"
         ]);
         const minimumSyllables = settings.minimumSyllables || 3;
         const scriptDelayMs = settings.scriptDelayMs === undefined

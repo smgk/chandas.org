@@ -99,7 +99,7 @@ test("keeps leading empty verse lines when the first authored pāda is later", (
     assert.equal(StrongTemplate.serializeDraft(draft), "\n\n\nಕಾ");
 });
 
-test("keeps conjunct onsets intact in Kannada and Devanagari Strong slots", () => {
+test("keeps conjunct onsets intact in supported-script Strong slots", () => {
     assert.deepEqual(
         StrongTemplate.authoredUnits("ಪಾರ್ಥಾಯ ಪ್ರತಿಬೋಧಿತಾಂ"),
         ["ಪಾ", "ರ್ಥಾ", "ಯ ", "ಪ್ರ", "ತಿ", "ಬೋ", "ಧಿ", "ತಾಂ"]
@@ -115,6 +115,14 @@ test("keeps conjunct onsets intact in Kannada and Devanagari Strong slots", () =
     assert.deepEqual(
         StrongTemplate.authoredUnits("निश्चल"),
         ["नि", "श्च", "ल"]
+    );
+    assert.deepEqual(
+        StrongTemplate.authoredUnits("పార్థాయ ప్రతిబోధితాం"),
+        ["పా", "ర్థా", "య ", "ప్ర", "తి", "బో", "ధి", "తాం"]
+    );
+    assert.deepEqual(
+        StrongTemplate.authoredUnits("నిశ్చల"),
+        ["ని", "శ్చ", "ల"]
     );
 });
 

@@ -1,11 +1,12 @@
 # Indic Script Expansion Research
 
-**Status:** Planning note for roadmap M8  
-**Updated:** 2026-08-03
+**Status:** Active roadmap note; Telugu adapter implemented
+**Updated:** 2026-08-06
 
 This note records the initial assessment of which Indic scripts can reuse the
-current Kannada/Devanagari Guru/Laghu engine. It is research, not a claim that
-these scripts or their native prosody traditions are already supported.
+current Guru/Laghu engine. Telugu is now a supported first-class adapter; the
+remaining entries are research, not a claim that their scripts or native
+prosody traditions are already supported.
 
 ## Product boundary
 
@@ -46,14 +47,15 @@ code points.
 
 ### Telugu
 
-Telugu is the strongest first addition. Its block organization, vowel-length
-distinctions, virāma sequences, and subjoined conjunct representation closely
-match Kannada. Much of the Kannada characterization corpus can be transliterated
-to create paired tests.
+**Implemented in version 1.21.0.** Telugu was the strongest first addition.
+Its block organization, vowel-length distinctions, virāma sequences, and
+subjoined conjunct representation closely match Kannada. Much of the Kannada
+characterization corpus can be transliterated to create paired tests.
 
-The adapter must include historic consonants `ౘ`, `ౙ`, and `ౚ`, Telugu length
-marks, canonical and alternate vowel representations, native Ghost-template
-symbols, analytics identifiers, and rendering tests on Android and Safari.
+The adapter includes historic consonants `ౘ`, `ౙ`, and `ౚ`, Telugu length
+marks, canonical and alternate vowel representations, atomic nakaara pollu,
+native Ghost-template symbols, analytics identifiers, and shaping-safe source
+ranges. Android and Safari rendering remain part of release verification.
 
 ### Gujarati and Odia
 
@@ -151,9 +153,9 @@ assumption that one virāma is both vowel killer and conjunct operator.
 
 ## Proposed delivery slices
 
-1. Generalize the adapter while proving that Kannada and Devanagari results do
-   not change.
-2. Add Telugu with a reviewed Kannada/Telugu paired corpus.
+1. [x] Generalize script detection while proving that Kannada and Devanagari
+   results do not change.
+2. [x] Add Telugu with paired Telugu/Devanagari characterization tests.
 3. Add Gujarati and Odia.
 4. Add atomic dead-consonant support, then Bengali/Assamese.
 5. Choose Tamil or Sinhala next based on user demand and available reviewers.
@@ -170,4 +172,3 @@ assumption that one virāma is both vowel killer and conjunct operator.
 - [Telugu Unicode code chart](https://www.unicode.org/charts/PDF/U0C00.pdf)
 - [Grantha Unicode code chart](https://www.unicode.org/charts/PDF/U11300.pdf)
 - [Tulu-Tigalari Unicode code chart](https://www.unicode.org/charts/PDF/U11380.pdf)
-

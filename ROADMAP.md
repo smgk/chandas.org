@@ -310,10 +310,13 @@ week per meter-family presentation
 
 - Preserve the researched implementation order and adapter prerequisites in
   [Indic Script Expansion Research](docs/script-expansion.md).
+- [x] Add native, offline Telugu script detection, segmentation, Guru/Laghu
+  analysis, templates, analytics classification, and source-safe highlighting.
 - Select synonym data whose license permits bundled web and Android use.
 - Prefer an offline-first index; label meaning, register, grammatical
   differences, and metrical fit.
-- Add script modules one at a time with normalization and golden-corpus tests.
+- Add remaining script modules one at a time with normalization and
+  golden-corpus tests.
 - Treat transliteration as a separate, optional layer, never as a replacement
   for preserving the original text.
 

@@ -127,6 +127,18 @@ test("mixed writing emits individual presence and mixed events without text", ()
     });
 });
 
+test("Telugu writing emits its stable script event", () => {
+    const fake = environment();
+    const analytics = createAnalytics(fake.root);
+
+    analytics.trackCompositionScripts(analysisFor(
+        "telugu", "telugu", "telugu"
+    ));
+    fake.runTimers();
+
+    assert.deepEqual(requestPaths(fake.requests), ["writing-script-telugu"]);
+});
+
 test("analytics stays disabled outside the production website", () => {
     const fake = environment("smgk.github.io");
     const analytics = createAnalytics(fake.root);

@@ -75,6 +75,39 @@
             virama: 0x0ccd,
             heavyMarks: new Set([0x0c82, 0x0c83]),
             ignoredMarks: new Set([0x0c81, 0x0cbc])
+        },
+        telugu: {
+            label: "Telugu",
+            block: [0x0c00, 0x0c7f],
+            consonant: [0x0c15, 0x0c39],
+            // Historic phonetic consonants TSA, DZA, and RRRA sit outside
+            // Telugu's main consonant range.
+            additionalConsonants: new Set([0x0c58, 0x0c59, 0x0c5a]),
+            independentShort: new Set([
+                0x0c05, 0x0c07, 0x0c09, 0x0c0b,
+                0x0c0c, 0x0c0e, 0x0c12
+            ]),
+            independentLong: new Set([
+                0x0c06, 0x0c08, 0x0c0a, 0x0c0f, 0x0c10,
+                0x0c13, 0x0c14, 0x0c5c, 0x0c60, 0x0c61
+            ]),
+            dependentShort: new Set([
+                0x0c3f, 0x0c41, 0x0c43, 0x0c46,
+                0x0c4a, 0x0c62
+            ]),
+            dependentLong: new Set([
+                0x0c3e, 0x0c40, 0x0c42, 0x0c44, 0x0c47,
+                0x0c48, 0x0c4b, 0x0c4c, 0x0c63
+            ]),
+            // U+0C56 canonically completes decomposed AI (ె + ౖ); the
+            // Telugu length mark is also retained in older orthography.
+            lengtheningMarks: new Set([0x0c55, 0x0c56]),
+            virama: 0x0c4d,
+            heavyMarks: new Set([0x0c02, 0x0c03, 0x0c04]),
+            ignoredMarks: new Set([0x0c00, 0x0c01, 0x0c3c]),
+            ignoredCharacters: new Set([0x0c3d]),
+            // NAKAARA POLLU is an atomic dead consonant without a virama.
+            atomicDeadConsonants: new Set([0x0c5d])
         }
     };
 
@@ -120,17 +153,33 @@
             (config.independentShort.has(point.cp) || config.independentLong.has(point.cp));
     }
 
+    function isAtomicDeadConsonant(point, config) {
+        return Boolean(point && config && config.atomicDeadConsonants) &&
+            config.atomicDeadConsonants.has(point.cp);
+    }
+
+    function isScriptEvidence(point, config) {
+        return Boolean(point && config) && (
+            SCRIPT_EVIDENCE_RE.test(point.char) ||
+            isConsonant(point, config) ||
+            isIndependentVowel(point, config) ||
+            isAtomicDeadConsonant(point, config)
+        );
+    }
+
     function isJoiner(point) {
         return Boolean(point) && (point.cp === 0x200c || point.cp === 0x200d);
     }
 
     function detectScript(text) {
-        const counts = { devanagari: 0, kannada: 0 };
+        const counts = Object.fromEntries(
+            Object.keys(SCRIPT_CONFIG).map((name) => [name, 0])
+        );
 
         for (const point of codePoints(text)) {
             for (const [name, config] of Object.entries(SCRIPT_CONFIG)) {
                 if (inRange(point.cp, config.block) &&
-                    SCRIPT_EVIDENCE_RE.test(point.char)) {
+                    isScriptEvidence(point, config)) {
                     counts[name] += 1;
                 }
             }
@@ -145,7 +194,7 @@
         for (const point of codePoints(text)) {
             for (const [name, config] of Object.entries(SCRIPT_CONFIG)) {
                 if (inRange(point.cp, config.block) &&
-                    SCRIPT_EVIDENCE_RE.test(point.char)) {
+                    isScriptEvidence(point, config)) {
                     scripts.add(name);
                 }
             }
@@ -238,6 +287,14 @@
             }
 
             if (config.dependentShort.has(point.cp)) {
+                cursor += 1;
+                continue;
+            }
+
+            if (config.lengtheningMarks &&
+                config.lengtheningMarks.has(point.cp)) {
+                state.isLong = true;
+                state.reasons.add("long-vowel");
                 cursor += 1;
                 continue;
             }
@@ -355,7 +412,14 @@
                     points[unsupportedStart].start - absoluteOffset,
                     points[cursor - 1].end - absoluteOffset
                 );
-                if (raw.trim() && /[\p{Letter}\p{Number}]/u.test(raw)) {
+                const unsupportedPoints = points.slice(unsupportedStart, cursor);
+                const hasUnsupportedEvidence = unsupportedPoints.some((point) =>
+                    isAtomicDeadConsonant(point, config) ||
+                    (/[\p{Letter}\p{Number}]/u.test(point.char) &&
+                        !(config.ignoredCharacters &&
+                            config.ignoredCharacters.has(point.cp)))
+                );
+                if (raw.trim() && hasUnsupportedEvidence) {
                     unsupported.push({
                         start: points[unsupportedStart].start,
                         end: points[cursor - 1].end,
@@ -405,6 +469,12 @@
             if (closedByConjunct) {
                 state.isHeavy = true;
                 state.reasons.add("closed-by-conjunct");
+            }
+
+            while (isAtomicDeadConsonant(points[cursor], config)) {
+                cursor += 1;
+                state.isHeavy = true;
+                state.reasons.add("closed-by-dead-consonant");
             }
 
             const start = points[startCursor].start;

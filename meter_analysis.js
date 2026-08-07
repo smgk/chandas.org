@@ -860,6 +860,87 @@
         return sanitizedEditDistance(sanitizePattern(left), sanitizePattern(right));
     }
 
+    function fixedPadaEndIndexes(expectedPatterns) {
+        const boundaries = new Set();
+        let offset = 0;
+        for (const pattern of expectedPatterns || []) {
+            const sanitized = sanitizePattern(pattern);
+            offset += sanitized.length;
+            if (sanitized.length) {
+                boundaries.add(offset - 1);
+            }
+        }
+        return boundaries;
+    }
+
+    // A short syllable at the end of a pāda may occupy the final heavy
+    // position (pādāntal lengthening). Keep this exception tied to the
+    // meter's real/inferred pāda boundaries: an internal L never silently
+    // becomes G merely because the author wrapped the text differently.
+    function fixedWeightsMatch(actual, expected, expectedIndex, boundaries) {
+        return actual === expected ||
+            (actual === LAGHU && expected === GURU &&
+                boundaries.has(expectedIndex));
+    }
+
+    function flexibleFixedEditDistance(actualPattern, expectedPattern,
+        expectedPatterns) {
+        const actual = sanitizePattern(actualPattern);
+        const expected = sanitizePattern(expectedPattern);
+        if (actual === expected) {
+            return 0;
+        }
+        if (!actual.length || !expected.length) {
+            return Math.max(actual.length, expected.length);
+        }
+        // Very long prose/pastes are already outside the meter's bounded
+        // frame. The one-position pādānta exception cannot make them a
+        // compatible candidate, so retain the compact optimized distance path.
+        if (actual.length > expected.length + 64) {
+            return sanitizedEditDistance(actual, expected);
+        }
+        const boundaries = fixedPadaEndIndexes(expectedPatterns);
+        const row = new Uint32Array(expected.length + 1);
+        for (let index = 0; index <= expected.length; index += 1) {
+            row[index] = index;
+        }
+
+        for (let actualIndex = 1; actualIndex <= actual.length; actualIndex += 1) {
+            let diagonal = row[0];
+            row[0] = actualIndex;
+            for (let expectedIndex = 1; expectedIndex <= expected.length;
+                expectedIndex += 1) {
+                const above = row[expectedIndex];
+                const substitutionCost = fixedWeightsMatch(
+                    actual[actualIndex - 1],
+                    expected[expectedIndex - 1],
+                    expectedIndex - 1,
+                    boundaries
+                ) ? 0 : 1;
+                row[expectedIndex] = Math.min(
+                    row[expectedIndex - 1] + 1,
+                    above + 1,
+                    diagonal + substitutionCost
+                );
+                diagonal = above;
+            }
+        }
+        return row[expected.length];
+    }
+
+    function fixedPatternCompatible(actualPattern, expectedPattern,
+        expectedPatterns, requireSameLength) {
+        const actual = sanitizePattern(actualPattern);
+        const expected = sanitizePattern(expectedPattern);
+        if ((requireSameLength && actual.length !== expected.length) ||
+            actual.length > expected.length) {
+            return false;
+        }
+        const boundaries = fixedPadaEndIndexes(expectedPatterns);
+        return Array.from(actual).every((weight, index) =>
+            fixedWeightsMatch(weight, expected[index], index, boundaries));
+    }
+
     function fixedUnitPattern(unit) {
         return sanitizePattern(typeof unit === "string" ? unit : unit && unit.pattern);
     }
@@ -893,7 +974,12 @@
         let offset = 0;
         for (const pattern of expectedPatterns) {
             const end = offset + pattern.length;
-            if (actual.length < end || actual.slice(offset, end) !== pattern) {
+            if (actual.length < end || !fixedPatternCompatible(
+                actual.slice(offset, end),
+                pattern,
+                [pattern],
+                true
+            )) {
                 break;
             }
             completed += 1;
@@ -974,15 +1060,33 @@
                 continue;
             }
 
-            distance += sanitizedEditDistance(actual, expected);
+            distance += flexibleFixedEditDistance(
+                actual,
+                expected,
+                expectedPatterns
+            );
             comparedLength += Math.max(actual.length, expected.length, 1);
-            prefixCompatible = prefixCompatible && expected.startsWith(actual);
-            exactUnits = exactUnits && actual === expected;
+            prefixCompatible = prefixCompatible && fixedPatternCompatible(
+                actual,
+                expected,
+                expectedPatterns,
+                false
+            );
+            exactUnits = exactUnits && fixedPatternCompatible(
+                actual,
+                expected,
+                expectedPatterns,
+                true
+            );
             const progress = fixedUnitProgress(actual, expectedPatterns);
             completedUnitCount += progress.completed;
             inferredBoundaryCount += progress.inferredBoundaries;
             const observedExpected = expected.slice(0, actual.length);
-            observedDistance += sanitizedEditDistance(actual, observedExpected);
+            observedDistance += flexibleFixedEditDistance(
+                actual,
+                observedExpected,
+                expectedPatterns
+            );
             unitAlignments.push({
                 actual,
                 expected,
@@ -1151,9 +1255,10 @@
         }
     }
 
-    function alignFixedPattern(actualPattern, expectedPattern) {
+    function alignFixedPattern(actualPattern, expectedPattern, expectedPatterns) {
         const actual = sanitizePattern(actualPattern);
         const expected = sanitizePattern(expectedPattern);
+        const boundaries = fixedPadaEndIndexes(expectedPatterns);
         const rows = Array.from({ length: actual.length + 1 }, () =>
             new Uint16Array(expected.length + 1));
 
@@ -1171,24 +1276,36 @@
                     rows[actualIndex - 1][expectedIndex] + 1,
                     rows[actualIndex][expectedIndex - 1] + 1,
                     rows[actualIndex - 1][expectedIndex - 1] +
-                        (actual[actualIndex - 1] === expected[expectedIndex - 1]
-                            ? 0
-                            : 1)
+                        (fixedWeightsMatch(
+                            actual[actualIndex - 1],
+                            expected[expectedIndex - 1],
+                            expectedIndex - 1,
+                            boundaries
+                        ) ? 0 : 1)
                 );
             }
         }
 
         const expectedByActual = Array(actual.length).fill("");
+        const padantaLengtheningByActual = Array(actual.length).fill(false);
         let missingCount = 0;
         let actualIndex = actual.length;
         let expectedIndex = expected.length;
         while (actualIndex > 0 || expectedIndex > 0) {
             if (actualIndex > 0 && expectedIndex > 0) {
-                const substitutionCost = actual[actualIndex - 1] ===
-                    expected[expectedIndex - 1] ? 0 : 1;
+                const substitutionCost = fixedWeightsMatch(
+                    actual[actualIndex - 1],
+                    expected[expectedIndex - 1],
+                    expectedIndex - 1,
+                    boundaries
+                ) ? 0 : 1;
                 if (rows[actualIndex][expectedIndex] ===
                     rows[actualIndex - 1][expectedIndex - 1] + substitutionCost) {
                     expectedByActual[actualIndex - 1] = expected[expectedIndex - 1];
+                    padantaLengtheningByActual[actualIndex - 1] =
+                        actual[actualIndex - 1] === LAGHU &&
+                        expected[expectedIndex - 1] === GURU &&
+                        boundaries.has(expectedIndex - 1);
                     actualIndex -= 1;
                     expectedIndex -= 1;
                     continue;
@@ -1203,7 +1320,7 @@
             missingCount += 1;
         }
 
-        return { expectedByActual, missingCount };
+        return { expectedByActual, padantaLengtheningByActual, missingCount };
     }
 
     function validateFixedMeter(padas, lines, meter, score) {
@@ -1228,7 +1345,11 @@
                 expectedPatterns: []
             };
             const expected = unit.expected || "";
-            const alignment = alignFixedPattern(pada.pattern, expected);
+            const alignment = alignFixedPattern(
+                pada.pattern,
+                expected,
+                unit.expectedPatterns
+            );
             const line = lines[pada.lineIndex];
             assignedUnitCount += unit.expectedPatterns.length;
             missingCount += alignment.missingCount;
@@ -1239,9 +1360,17 @@
 
             pada.syllables.forEach((syllable, syllableIndex) => {
                 const expectedWeight = alignment.expectedByActual[syllableIndex] || "";
+                const padantaLengthening = Boolean(
+                    alignment.padantaLengtheningByActual[syllableIndex]
+                );
                 const violation = !expectedWeight ||
-                    expectedWeight !== syllable.classification;
+                    (expectedWeight !== syllable.classification &&
+                        !padantaLengthening);
                 syllable.expected = expectedWeight;
+                if (padantaLengthening) {
+                    syllable.effectiveClassification = GURU;
+                    syllable.metricalAdjustment = "padanta-lengthening";
+                }
                 syllable.violation = violation;
                 syllable.violationReason = !expectedWeight
                     ? "extra-syllable"

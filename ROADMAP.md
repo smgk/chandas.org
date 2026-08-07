@@ -318,6 +318,9 @@ week per meter-family presentation
   ten named Ragaḍa gaits.
 - [x] Add an offline, provenance-bearing Kannada/Telugu/Devanagari field-guide
   corpus and validate every bundled example in CI.
+- [x] Audit every catalog entry against a versioned public-domain Internet
+  Archive source set; keep OCR hits as research leads and expose verified
+  examples separately from unresolved gaps.
 - [ ] Obtain Telugu prosody review for full yati-maitri equivalence, historical
   Sīsa variants, specialist written-line conventions, and musical Ragaḍa
   licenses before promoting those rules beyond their catalog labels.

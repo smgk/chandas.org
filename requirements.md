@@ -350,6 +350,11 @@ recommended, and optional behavior.
    aligning insertions, omissions, and substitutions. One inserted or omitted
    syllable MUST NOT shift every later highlight, and inferred pāda boundaries
    MUST NOT modify the authored text.
+10. For fixed vṛttas, an orthographic Laghu MAY satisfy a final Guru only at
+    a real or confidently inferred pāda boundary (traditional pādānta
+    lengthening). The engine MUST retain the underlying Laghu, expose the
+    effective metrical Guru as an explicit adjustment, and MUST NOT apply the
+    exception to an internal position or in the reverse direction.
 
 ### FR-7: Copy and sharing
 
@@ -575,6 +580,11 @@ recommended, and optional behavior.
 6. The reference MUST be generated from the same catalog assets used by the
    analyzer, remain available offline, and avoid claiming support for rules
    that the catalog marks provisional, partial, or unchecked.
+7. Literary examples MUST retain source and reuse information, pass the
+   executable scansion corpus, and be reviewed for young readers. The project
+   MUST keep a catalog-wide research ledger so a missing verified example is
+   visible as a gap; OCR matches MUST be treated as page-finding leads rather
+   than meter attribution.
 
 ## 6. Analysis Engine Requirements
 

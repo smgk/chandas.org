@@ -337,6 +337,25 @@ test("recognizes Devanagari long vowels and two-line fixed-vṛtta verses", asyn
     await expect(page.locator("#highlight-layer .violation")).toHaveCount(0);
 });
 
+test("shows pādānta-lengthened Laghu as Guru in Mandākrāntā", async ({ page }) => {
+    const verse = [
+        "कश्चित्कान्ताविरहगुरुणा स्वाधिकारात्प्रमत्तः",
+        "शापेनास्तङ्गमितमहिमा वर्षभोग्येण भर्तुः ।",
+        "यक्षश्चक्रे जनकतनयास्नानपुण्योदकेषु",
+        "स्निग्धच्छायातरुषु वसतिं रामगिर्याश्रमेषु॥१.१॥"
+    ].join("\n");
+    await page.locator("#composition").fill(verse);
+    await page.locator("#meter-picker summary").click();
+    await page.locator("#meter-search").fill("mandakranta");
+    await page.locator("#meter-select").selectOption("mandākrāntā");
+
+    await expect(page.locator("#validation-summary"))
+        .toHaveText("This stanza follows mandākrāntā.");
+    await expect(page.locator("#highlight-layer .violation")).toHaveCount(0);
+    await expect(page.locator("#highlight-layer .guru").filter({ hasText: "षु" }))
+        .toHaveCount(2);
+});
+
 test("loads a raw-query verse once and appends it to a recovered draft", async ({ page }) => {
     const imported = "ಕಾವ್ಯ\nಪದ್ಯ";
     await page.locator("#composition").fill("ಮೊದಲ ಪದ್ಯ");
@@ -1473,11 +1492,11 @@ test("opens documentation and searches the complete prosody catalog", async ({ p
     await expect(page.locator("#meter-catalog-status"))
         .toHaveText("1,408 of 1,408 supported meters shown.");
     await expect(page.locator("#meter-catalog-example-count"))
-        .toHaveText("40 meters currently have authenticated, child-safe examples.");
+        .toHaveText("47 meters currently have authenticated, child-safe examples.");
 
     await page.locator("#meter-catalog-examples").selectOption("verified");
     await expect(page.locator("#meter-catalog-status"))
-        .toHaveText("40 of 1,408 supported meters shown.");
+        .toHaveText("47 of 1,408 supported meters shown.");
     await page.locator("#meter-catalog-examples").selectOption("all");
 
     await page.locator("#meter-catalog-search").fill("anushtup");
@@ -1521,6 +1540,15 @@ test("opens documentation and searches the complete prosody catalog", async ({ p
         .toContainText("गोष्ठे गिरिं");
     await expect(indravajra.locator(".meter-example-review"))
         .toHaveText("Source verified · reviewed for young readers");
+
+    await page.locator("#meter-catalog-search").fill("mandakranta");
+    const mandakranta = page.locator(".meter-catalog-item");
+    await expect(mandakranta).toHaveCount(1);
+    await mandakranta.locator("summary").click();
+    await expect(mandakranta.locator(".meter-example-text"))
+        .toContainText("कश्चित्कान्ताविरहगुरुणा");
+    await expect(mandakranta.locator(".meter-example-source"))
+        .toHaveAttribute("href", /archive\.org\/details\/kalidasas-meghaduta/);
 
     await page.getByText("Return to Chandas").click();
     await expect(page.locator("#composition")).toBeVisible();

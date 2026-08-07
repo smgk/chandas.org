@@ -119,14 +119,31 @@ repository license.
 
 ## Apte Sanskrit prosody examples
 
-`examples/apte_sanskrit_examples.json` contains thirty short Sanskrit meter
+`examples/apte_sanskrit_examples.json` contains thirty-six short Sanskrit meter
 illustrations transcribed from Vaman Shivram Apte's 1890 *Appendix A: Sanskrit
 Prosody*:
 
 <https://www.sanskrit-lexicon.uni-koeln.de/scans/csldev/csldoc/build/dictionaries/prefaces/ap90app1.html>
+
+The corresponding public-domain scan used for page verification is:
+
+<https://archive.org/details/standardsanskri00unkngoog>
 
 The underlying 1890 text and the classical or traditional verses it records
 are in the public domain. The source link, compiler attribution, and
 transcription attribution are retained with every example. Chandas.org's
 selection, child-safety review, scansion expectations, and corpus structure are
 repository work under GPL-3.0-only.
+
+## Internet Archive research sources
+
+`research/archive_sources.json` records the public-domain scans used for the
+catalog-wide meter audit. The source texts and OCR are not bundled with the
+application. Internet Archive is used as a scan host and page-finding resource;
+OCR matches are not treated as meter attribution.
+
+The Mandākrāntā example in `examples/field_guide_corpus.json` is the opening
+verse of Kālidāsa's public-domain *Meghadūta*, checked against K. B. Pathak's
+1916 edition:
+
+<https://archive.org/details/kalidasas-meghaduta-skt-eng-kb-pathak-1916>

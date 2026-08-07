@@ -81,6 +81,16 @@ Build the deployable static site into `dist/`:
 npm run build
 ```
 
+Audit authenticated-example coverage across the complete meter catalog:
+
+```sh
+npm run audit:meters
+```
+
+See [the Internet Archive audit](docs/research/archive-meter-audit.md) for the
+public-domain source set, OCR-assisted research workflow, and optional
+per-entry ledger output.
+
 ## Android
 
 The Android project wraps the same local web assets, so its analysis behavior
@@ -117,6 +127,8 @@ Android application is built and released separately.
 | `examples/field_guide_corpus.json` | Sourced Kannada, Telugu, and Devanagari examples used by tests and Learn |
 | `examples/apte_sanskrit_examples.json` | Public-domain Sanskrit vṛtta examples admitted through source, safety, and scansion checks |
 | `examples/README.md` | Example provenance and child-safety admission policy |
+| `research/archive_sources.json` | Versioned Internet Archive source inventory |
+| `scripts/audit-meter-sources.js` | Complete catalog coverage and optional OCR-lead audit |
 | `app.js` | Composer UI, templates, URL import/share, and local state orchestration |
 | `poem_store.js` | On-device saved poems, export, backup, and restore |
 | `strong_template.js` | Structured fixed-vṛtta composition model |

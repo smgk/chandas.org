@@ -599,6 +599,74 @@ test("ranks exact patterns above compatible and approximate patterns", () => {
     assert.equal(ranked[1].status, "compatible");
 });
 
+test("accepts final Laghu as Guru only at fixed-vṛtta pāda boundaries", () => {
+    const tinyCatalog = { metres: [["boundary-test", "GG"]] };
+    const accepted = Chandas.analyzeComposition(
+        "का क\nका क\nका क\nका क",
+        tinyCatalog,
+        "boundary-test"
+    ).stanzas[0];
+    const rejected = Chandas.analyzeComposition(
+        "क का\nका का\nका का\nका का",
+        tinyCatalog,
+        "boundary-test"
+    ).stanzas[0];
+
+    assert.equal(accepted.violationCount, 0);
+    assert.equal(accepted.candidates[0].status, "exact");
+    accepted.padas.forEach((pada) => {
+        const final = pada.syllables.at(-1);
+        assert.equal(final.classification, "L");
+        assert.equal(final.effectiveClassification, "G");
+        assert.equal(final.metricalAdjustment, "padanta-lengthening");
+    });
+    assert.equal(rejected.violationCount, 1);
+    assert.equal(rejected.padas[0].syllables[0].violationReason,
+        "weight-mismatch");
+    assert.equal(rejected.padas[0].syllables[0].effectiveClassification,
+        undefined);
+});
+
+test("keeps pādānta lengthening at inferred two-pādas-per-line boundaries", () => {
+    const tinyCatalog = { metres: [["compact-boundary-test", "G"]] };
+    const stanza = Chandas.analyzeComposition(
+        "क क\nक क",
+        tinyCatalog,
+        "compact-boundary-test"
+    ).stanzas[0];
+
+    assert.equal(stanza.violationCount, 0);
+    assert.equal(stanza.missingCount, 0);
+    assert.equal(stanza.candidates[0].status, "exact");
+    assert.equal(stanza.candidates[0].inferredBoundaryCount, 2);
+    assert.ok(stanza.padas.flatMap((pada) => pada.syllables).every((syllable) =>
+        syllable.metricalAdjustment === "padanta-lengthening"));
+});
+
+test("recognizes the Meghadūta opening as exact Mandākrāntā", () => {
+    const text = [
+        "कश्चित्कान्ताविरहगुरुणा स्वाधिकारात्प्रमत्तः",
+        "शापेनास्तङ्गमितमहिमा वर्षभोग्येण भर्तुः ।",
+        "यक्षश्चक्रे जनकतनयास्नानपुण्योदकेषु",
+        "स्निग्धच्छायातरुषु वसतिं रामगिर्याश्रमेषु॥१.१॥"
+    ].join("\n");
+    const stanza = Chandas.analyzeComposition(
+        text,
+        combinedCatalog,
+        "mandākrāntā"
+    ).stanzas[0];
+
+    assert.equal(stanza.violationCount, 0);
+    assert.equal(stanza.missingCount, 0);
+    assert.equal(stanza.candidates[0].id, "mandākrāntā");
+    assert.equal(stanza.candidates[0].status, "exact");
+    assert.deepEqual(stanza.padas.map((pada) => pada.syllables.length),
+        [17, 17, 17, 17]);
+    assert.deepEqual(stanza.padas.map((pada) =>
+        pada.syllables.at(-1).metricalAdjustment || ""),
+        ["", "", "padanta-lengthening", "padanta-lengthening"]);
+});
+
 test("ranks observed evidence before permissive structural possibilities", () => {
     const partial = "ಪಾರ್ಥಾಯ ಪ್ರತಿಭೋದಿತಾಂ ಭಗವತಾ ನಾರಾಯ";
     const completedPada =

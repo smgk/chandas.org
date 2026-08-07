@@ -11,10 +11,17 @@ defensible example says so explicitly.
 
 - Public-domain literary and traditional verses in
   `field_guide_corpus.json`, with the transcription source retained.
-- Thirty illustrations from V. S. Apte's public-domain 1890 *Appendix A:
+- Thirty-six illustrations from V. S. Apte's public-domain 1890 *Appendix A:
   Sanskrit Prosody* in `apte_sanskrit_examples.json`.
+- Kālidāsa's opening *Meghadūta* stanza, checked against K. B. Pathak's
+  public-domain 1916 edition on Internet Archive. It also exercises the
+  traditional pādānta-lengthening rule.
 
-Apte prints 99 examples. This first import omits damaged mixed-script
+The catalog-wide Internet Archive source inventory and reproducible gap audit
+are documented in `docs/research/archive-meter-audit.md`. OCR is used to find
+pages, never as sole authority for a verse or its meter.
+
+Apte prints 99 examples. The current import omits damaged mixed-script
 transcriptions, text that does not scan cleanly in the current engine, uncertain
 meter-name mappings, and material that is not clearly suitable for children.
 Those omissions are intentional; a plausible-looking verse is not the same as

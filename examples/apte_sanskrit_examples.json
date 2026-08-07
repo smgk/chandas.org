@@ -1,13 +1,14 @@
 {
-  "corpusVersion": "1.0.0",
+  "corpusVersion": "1.1.0",
   "description": "Source-verified, child-safe Sanskrit illustrations from V. S. Apte's public-domain Appendix A. Source spelling is retained except that line breaks expose metrical quarters more clearly.",
   "defaults": {
     "author": "Traditional example recorded by V. S. Apte",
     "script": "devanagari",
     "language": "Sanskrit",
     "source": {
-      "title": "V. S. Apte, Appendix A: Sanskrit Prosody (1890)",
-      "url": "https://www.sanskrit-lexicon.uni-koeln.de/scans/csldev/csldoc/build/dictionaries/prefaces/ap90app1.html"
+      "title": "V. S. Apte, Appendix A: Sanskrit Prosody (1890), Internet Archive scan",
+      "url": "https://archive.org/details/standardsanskri00unkngoog",
+      "transcriptionUrl": "https://www.sanskrit-lexicon.uni-koeln.de/scans/csldev/csldoc/build/dictionaries/prefaces/ap90app1.html"
     },
     "rights": "Public-domain original; source transcription attribution retained",
     "verificationStatus": "source-verified",
@@ -224,6 +225,49 @@
       "versePatterns": ["LLGLLGLLGLG", "LLLGLLGLLGLG", "LLGLLGLLGLG", "LLLGLLGLLGLG"],
       "text": "स्फुटफेनचया हरिणप्लुता\nबलिमनोज्ञतटा तरणेः सुता ।\nकलहंसकुलारवशालिनी\nविहरतो हरति स्म हरेर्मनः ॥",
       "expected": {"status": "exact", "violations": 0, "syllables": [11, 12, 11, 12]}
+    },
+    {
+      "id": "sa-apte-bhujagasisubhrta",
+      "meterId": "bhujagaśiśubhṛtā",
+      "title": "Traditional भुजगशिशुभृता illustration",
+      "text": "ह्रदतटनिकटक्षौणी भुजगशिशुभृता याऽसीत् ॥\nमुररिपुदलिते नागे व्रजजनसुखदा सा ऽ भूत् ॥",
+      "expected": {"status": "exact", "violations": 0, "syllables": [18, 18]}
+    },
+    {
+      "id": "sa-apte-vatormi",
+      "meterId": "vātormī",
+      "title": "Traditional वातोर्मी illustration",
+      "text": "ध्याता मूर्तिः क्षणमप्यच्युतस्य\nश्रेणी नाम्नां गदिता हेलयापि ।\nसंसारेऽस्मिन् दुरितं हंति पुंसां\nवातोर्मी पोतमिवांभोधिमध्ये ॥",
+      "expected": {"status": "exact", "violations": 0, "syllables": [11, 11, 11, 11]}
+    },
+    {
+      "id": "sa-apte-prabha",
+      "meterId": "prabhā",
+      "title": "Traditional प्रभा illustration",
+      "text": "अतिसुरमिरभाजि पुष्पश्रिया-\nमतनुत रतयेव संतानकः ।\nतरुणपरभृतः स्वनं रागिणा-\nमतनुत रतये वसंतानकः ॥",
+      "expected": {"status": "exact", "violations": 0, "syllables": [12, 12, 12, 12]}
+    },
+    {
+      "id": "sa-apte-mattamayura",
+      "meterId": "mattamayūraḥ",
+      "title": "Traditional मत्तमयूरी illustration",
+      "text": "दृष्ट्वा दृश्यान्याचरणीयानि विधाय\nप्रेक्षाकारी याति यदं मुक्तमपायैः ।\nसम्यग्दृष्टिस्तस्य परं पश्यति यस्त्वां\nयश्चोपास्ते साधु विधेयं स विधत्ते ॥",
+      "expected": {"status": "exact", "violations": 0, "syllables": [13, 13, 13, 13]}
+    },
+    {
+      "id": "sa-apte-vasantatilaka",
+      "meterId": "vasantatilakā",
+      "title": "Śakuntala वसन्ततिलका illustration",
+      "author": "Kālidāsa, recorded by V. S. Apte",
+      "text": "यात्येकतोऽस्तशिखरं पतिरोषधीना-\nमाविष्कृतारुणपुरःसर एकतोऽर्कः ।\nतेजोद्वयस्य युगपद् व्यसनोदयाभ्यां\nलोको नियम्यत इवात्मदशांतरेषु ॥",
+      "expected": {"status": "exact", "violations": 0, "syllables": [14, 14, 14, 14]}
+    },
+    {
+      "id": "sa-apte-kusumitalatavellita",
+      "meterId": "kusumitalatāvellitā",
+      "title": "Traditional कुसुमितलतावेल्लिता illustration",
+      "text": "क्रीडत्कालिंदीललितलहरीवारिभिर्दाक्षिणात्यै-\nर्वातैः खेलद्भिः कुसुमितलतावेल्लिता मंदमंदम् ।\nभृंगालीगीतैः किसलयकरोल्लासितैर्लास्यलक्ष्मीं\nतन्वाना चेतो रभसतरलं चक्रपाणेश्चकार ॥",
+      "expected": {"status": "exact", "violations": 0, "syllables": [18, 18, 18, 18]}
     }
   ]
 }

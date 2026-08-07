@@ -1,0 +1,79 @@
+{
+  "auditVersion": "1.0.0",
+  "checkedOn": "2026-08-06",
+  "scope": "Every fixed, structural, mātrā, aṃśa, and Telugu deśi meter exposed by the Chandas.org catalogs.",
+  "method": [
+    "Search Internet Archive metadata for public-domain prosody treatises, editions, and named literary works.",
+    "Use DJVU OCR and full-text search only to locate candidate pages.",
+    "Check the page image or a dependable transcription and cross-check the meter rule before admission.",
+    "Admit only attributable, reusable, child-safe text that passes the current analyzer without a violation."
+  ],
+  "limitations": [
+    "An OCR name hit is a lead, not meter attribution.",
+    "Many catalog names are rare, homonymous, OCR-hostile, or generated from classical combinatorial catalogs.",
+    "No example is synthesized to fill a gap; unverified entries remain explicitly pending."
+  ],
+  "ocrSweep": {
+    "catalogEntriesChecked": 1408,
+    "uniqueMeterIdsChecked": 1399,
+    "archiveSourcesChecked": 6,
+    "romanizedNameLeadMeters": 121,
+    "note": "Combined normalized Roman-name hits from downloaded DJVU OCR. These are unverified page-finding leads; Devanagari-only names and OCR damage make this deliberately incomplete."
+  },
+  "sources": [
+    {
+      "id": "apte-1890",
+      "archiveId": "standardsanskri00unkngoog",
+      "title": "The Student's Guide to Sanskrit Composition, Appendix A: Sanskrit Prosody",
+      "author": "Vaman Shivram Apte",
+      "year": 1890,
+      "url": "https://archive.org/details/standardsanskri00unkngoog",
+      "use": "Definitions and printed Sanskrit illustrations; checked against the cleaner Cologne transcription."
+    },
+    {
+      "id": "brown-1869",
+      "archiveId": "sanskritprosody00browgoog",
+      "title": "The Prosody of the Telugu and Sanskrit Languages Explained",
+      "author": "Charles Philip Brown",
+      "year": 1869,
+      "url": "https://archive.org/details/sanskritprosody00browgoog",
+      "use": "Sanskrit and Telugu rule cross-checks, meter indexes, and pādānta notes."
+    },
+    {
+      "id": "nagavarma-kittel-1875",
+      "archiveId": "nagavarmascanare00nagarich",
+      "title": "Nāgavarma's Canarese Prosody",
+      "author": "Nāgavarma; edited by Ferdinand Kittel",
+      "year": 1875,
+      "url": "https://archive.org/details/nagavarmascanare00nagarich",
+      "use": "Kannada akṣara-, mātrā-, and aṃśa-gaṇa rules and examples."
+    },
+    {
+      "id": "vrittaratnakara-chandomanjari-1915",
+      "archiveId": "ysnv_vrittaratnakara-chandomanjari-taranatha-tarkavachaspati-jivananda-vidyasagara-19",
+      "title": "Vṛttaratnākara and Chandomañjarī",
+      "author": "Kedārabhaṭṭa and Gaṅgādāsa; edited by Jīvānanda Vidyāsāgara",
+      "year": 1915,
+      "url": "https://archive.org/details/ysnv_vrittaratnakara-chandomanjari-taranatha-tarkavachaspati-jivananda-vidyasagara-19",
+      "use": "Primary Sanskrit definitions, examples, and the optional pādānta-lengthening rule."
+    },
+    {
+      "id": "vrittaratnakara-chandomanjari-1905",
+      "archiveId": "gDxJ_vritta-ratnakara-of-kedara-bhatta-with-vivritti-and-chhanda-manjari-with-explana",
+      "title": "Vṛttaratnākara with Vivṛti and Chandomañjarī",
+      "author": "Kedārabhaṭṭa and Gaṅgādāsa",
+      "year": 1905,
+      "url": "https://archive.org/details/gDxJ_vritta-ratnakara-of-kedara-bhatta-with-vivritti-and-chhanda-manjari-with-explana",
+      "use": "Independent edition for rule and example cross-checking; scan metadata warns of missing pages."
+    },
+    {
+      "id": "meghaduta-pathak-1916",
+      "archiveId": "kalidasas-meghaduta-skt-eng-kb-pathak-1916",
+      "title": "Kālidāsa's Meghadūta",
+      "author": "Kālidāsa; edited by K. B. Pathak",
+      "year": 1916,
+      "url": "https://archive.org/details/kalidasas-meghaduta-skt-eng-kb-pathak-1916",
+      "use": "Authenticated Mandākrāntā literary example."
+    }
+  ]
+}

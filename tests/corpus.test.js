@@ -17,6 +17,7 @@ const corpora = [
     require("../examples/apte_sanskrit_examples.json")
 ];
 const examples = corpora.flatMap(Documentation.corpusExamples);
+const ArchiveAudit = require("../scripts/audit-meter-sources.js");
 
 const catalog = {
     ...fixedCatalog,
@@ -28,7 +29,7 @@ const catalog = {
 
 test("the field-guide corpus has stable provenance and unique IDs", () => {
     corpora.forEach((corpus) => assert.match(corpus.corpusVersion, /^\d+\.\d+\.\d+$/));
-    assert.ok(examples.length >= 41);
+    assert.ok(examples.length >= 48);
     assert.equal(new Set(examples.map((example) => example.id)).size,
         examples.length);
     examples.forEach((example) => {
@@ -72,9 +73,27 @@ test("the authenticated example catalog never uses generated filler", () => {
     const verified = examples.filter((example) =>
         example.verificationStatus === "source-verified");
 
-    assert.ok(verified.length >= 40);
+    assert.ok(verified.length >= 47);
     verified.forEach((example) => {
         assert.doesNotMatch(example.author || "", /generated|synthetic/i, example.id);
         assert.doesNotMatch(example.rights, /unknown|pending/i, example.id);
     });
+});
+
+test("the Archive audit accounts for every supported catalog entry", () => {
+    const audit = ArchiveAudit.loadAudit();
+
+    assert.equal(audit.catalogEntries, 1408);
+    assert.equal(audit.uniqueMeterIds, 1399);
+    assert.equal(audit.duplicateCatalogEntries, 9);
+    assert.equal(audit.verifiedExampleMeters, 47);
+    assert.equal(audit.sourcePendingExampleMeters, 1);
+    assert.equal(audit.researchPendingMeters, 1351);
+    assert.equal(audit.recordedArchiveOcrLeadMeters, 121);
+    assert.equal(audit.ledger.length, audit.catalogEntries);
+    assert.ok(audit.ledger.every((entry) => [
+        "verified-example",
+        "source-pending-example",
+        "research-pending"
+    ].includes(entry.status)));
 });

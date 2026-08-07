@@ -1604,9 +1604,11 @@
                             : "prasa-mismatch");
                 const extension = segment.recitalExtension ||
                     segment.sungExtension;
+                const displayClassification = segment.effectiveClassification ||
+                    segment.classification;
                 const classificationClass = state.scansionMode === "off"
                     ? ""
-                    : segment.classification === Chandas.GURU ? "guru" : "laghu";
+                    : displayClassification === Chandas.GURU ? "guru" : "laghu";
                 return {
                     start: segment.start,
                     end: segment.end,

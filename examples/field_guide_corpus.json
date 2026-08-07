@@ -1,5 +1,5 @@
 {
-  "corpusVersion": "1.0.0",
+  "corpusVersion": "1.1.0",
   "description": "Curated, offline examples for regression tests and the Learn field guide. Classical works are public domain; linked Wikisource transcriptions retain their source attribution.",
   "defaults": {
     "verificationStatus": "source-verified",
@@ -156,6 +156,21 @@
       },
       "rights": "Public-domain original; Wikisource transcription attribution retained",
       "expected": {"status": "exact", "violations": 0, "syllables": [8, 8, 8, 8]}
+    },
+    {
+      "id": "sa-kalidasa-meghaduta-opening",
+      "meterId": "mandākrāntā",
+      "title": "Meghadūta, opening verse",
+      "author": "Kālidāsa",
+      "script": "devanagari",
+      "language": "Sanskrit",
+      "text": "कश्चित्कान्ताविरहगुरुणा स्वाधिकारात्प्रमत्तः\nशापेनास्तङ्गमितमहिमा वर्षभोग्येण भर्तुः ।\nयक्षश्चक्रे जनकतनयास्नानपुण्योदकेषु\nस्निग्धच्छायातरुषु वसतिं रामगिर्याश्रमेषु॥१.१॥",
+      "source": {
+        "title": "K. B. Pathak (ed.), Kālidāsa's Meghadūta (1916), Internet Archive",
+        "url": "https://archive.org/details/kalidasas-meghaduta-skt-eng-kb-pathak-1916"
+      },
+      "rights": "Public-domain original and 1916 edition; source attribution retained",
+      "expected": {"status": "exact", "violations": 0, "syllables": [17, 17, 17, 17]}
     },
     {
       "id": "sa-sarasvati-shardula",

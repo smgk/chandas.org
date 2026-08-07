@@ -11,7 +11,12 @@ const test = require("node:test");
 const Chandas = require("../meter_analysis.js");
 const fixedCatalog = require("../mishra.json");
 const structuralCatalog = require("../structural_meters.json");
-const corpus = require("../examples/field_guide_corpus.json");
+const Documentation = require("../documentation.js");
+const corpora = [
+    require("../examples/field_guide_corpus.json"),
+    require("../examples/apte_sanskrit_examples.json")
+];
+const examples = corpora.flatMap(Documentation.corpusExamples);
 
 const catalog = {
     ...fixedCatalog,
@@ -22,21 +27,27 @@ const catalog = {
 };
 
 test("the field-guide corpus has stable provenance and unique IDs", () => {
-    assert.match(corpus.corpusVersion, /^\d+\.\d+\.\d+$/);
-    assert.ok(corpus.examples.length >= 11);
-    assert.equal(new Set(corpus.examples.map((example) => example.id)).size,
-        corpus.examples.length);
-    corpus.examples.forEach((example) => {
+    corpora.forEach((corpus) => assert.match(corpus.corpusVersion, /^\d+\.\d+\.\d+$/));
+    assert.ok(examples.length >= 41);
+    assert.equal(new Set(examples.map((example) => example.id)).size,
+        examples.length);
+    examples.forEach((example) => {
         assert.ok(example.meterId, example.id);
         assert.ok(example.text.includes("\n"), example.id);
         assert.ok(example.source && example.source.title, example.id);
         assert.ok(example.rights, example.id);
+        assert.ok(["source-verified", "source-pending"].includes(
+            example.verificationStatus), example.id);
+        assert.equal(example.childSafety, "reviewed-safe", example.id);
+        if (example.verificationStatus === "source-verified") {
+            assert.ok(example.source.url, example.id);
+        }
         assert.ok(example.expected, example.id);
     });
 });
 
 test("every curated field-guide poem satisfies its stored scansion expectations", () => {
-    for (const example of corpus.examples) {
+    for (const example of examples) {
         const stanza = Chandas.analyzeComposition(
             example.text,
             catalog,
@@ -55,4 +66,15 @@ test("every curated field-guide poem satisfies its stored scansion expectations"
             );
         }
     }
+});
+
+test("the authenticated example catalog never uses generated filler", () => {
+    const verified = examples.filter((example) =>
+        example.verificationStatus === "source-verified");
+
+    assert.ok(verified.length >= 40);
+    verified.forEach((example) => {
+        assert.doesNotMatch(example.author || "", /generated|synthetic/i, example.id);
+        assert.doesNotMatch(example.rights, /unknown|pending/i, example.id);
+    });
 });

@@ -115,6 +115,8 @@ Android application is built and released separately.
 | `mishra.json` | Attributed baseline fixed-vṛtta catalog |
 | `structural_meters.json` | Versioned structural, mātrā, aṃśa, and sourced fixed-meter extensions |
 | `examples/field_guide_corpus.json` | Sourced Kannada, Telugu, and Devanagari examples used by tests and Learn |
+| `examples/apte_sanskrit_examples.json` | Public-domain Sanskrit vṛtta examples admitted through source, safety, and scansion checks |
+| `examples/README.md` | Example provenance and child-safety admission policy |
 | `app.js` | Composer UI, templates, URL import/share, and local state orchestration |
 | `poem_store.js` | On-device saved poems, export, backup, and restore |
 | `strong_template.js` | Structured fixed-vṛtta composition model |

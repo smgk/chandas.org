@@ -8,11 +8,28 @@
 const assert = require("node:assert/strict");
 const test = require("node:test");
 const {
+    exampleFitsFixedPatterns,
     fixedVersePatterns,
     foldSearch,
     ganaReading,
     structuralMeter
 } = require("../documentation.js");
+
+test("fixed examples attach only to the matching order of ardhasama pādas", () => {
+    const example = {
+        versePatterns: ["LLG", "LLLG", "LLG", "LLLG"]
+    };
+
+    assert.equal(exampleFitsFixedPatterns(
+        example,
+        ["LLG", "LLLG", "LLG", "LLLG"]
+    ), true);
+    assert.equal(exampleFitsFixedPatterns(
+        example,
+        ["LLLG", "LLG", "LLLG", "LLG"]
+    ), false);
+    assert.equal(exampleFitsFixedPatterns({}, ["LG", "LG", "LG", "LG"]), true);
+});
 
 test("documentation search accepts ordinary Roman spellings", () => {
     assert.equal(foldSearch("anuṣṭubh"), "anustubh");

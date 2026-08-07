@@ -1,0 +1,229 @@
+{
+  "corpusVersion": "1.0.0",
+  "description": "Source-verified, child-safe Sanskrit illustrations from V. S. Apte's public-domain Appendix A. Source spelling is retained except that line breaks expose metrical quarters more clearly.",
+  "defaults": {
+    "author": "Traditional example recorded by V. S. Apte",
+    "script": "devanagari",
+    "language": "Sanskrit",
+    "source": {
+      "title": "V. S. Apte, Appendix A: Sanskrit Prosody (1890)",
+      "url": "https://www.sanskrit-lexicon.uni-koeln.de/scans/csldev/csldoc/build/dictionaries/prefaces/ap90app1.html"
+    },
+    "rights": "Public-domain original; source transcription attribution retained",
+    "verificationStatus": "source-verified",
+    "childSafety": "reviewed-safe"
+  },
+  "examples": [
+    {
+      "id": "sa-apte-kanya",
+      "meterId": "kanyā",
+      "title": "Traditional कन्या illustration",
+      "text": "भास्वत्कन्या\nसैका धन्या\nयस्याः कूले\nकृष्णोऽखेलत् ॥",
+      "expected": {"status": "exact", "violations": 0, "syllables": [4, 4, 4, 4]}
+    },
+    {
+      "id": "sa-apte-tanumadhya",
+      "meterId": "tanumadhyā",
+      "title": "Traditional तनुमध्यमा illustration",
+      "text": "मूर्तिर्मुरशत्रोरत्यद्भुतरूपा ।\nआस्तां मम चित्ते नित्यं तनुमध्या ॥",
+      "expected": {"status": "exact", "violations": 0, "syllables": [12, 12]}
+    },
+    {
+      "id": "sa-apte-vidyullekha",
+      "meterId": "vidyullekhā",
+      "title": "Kāvyādarśa विद्युल्लेखा illustration",
+      "text": "श्रीदीप्ती थीकीर्ती धीनीती गीःप्रीती ।\nएधेते द्वे द्वे ते ये नेमे देवेशे ॥",
+      "expected": {"status": "exact", "violations": 0, "syllables": [12, 12]}
+    },
+    {
+      "id": "sa-apte-kumaralalita",
+      "meterId": "kumāralalitā",
+      "title": "Traditional कुमारललिता illustration",
+      "text": "मुरारितनुवल्ली कुमारललिता सा ।\nव्रजैणनयनानां ततान मुदमुच्चैः ॥",
+      "expected": {"status": "exact", "violations": 0, "syllables": [14, 14]}
+    },
+    {
+      "id": "sa-apte-madhumati",
+      "meterId": "madhumatī",
+      "title": "Traditional मधुमती illustration",
+      "text": "रविदुहितृतटे वनकुसुमततिः ।\nव्यधित मधुमती मधुमथनमुदम् ॥",
+      "expected": {"status": "exact", "violations": 0, "syllables": [14, 14]}
+    },
+    {
+      "id": "sa-apte-pramanika",
+      "meterId": "pramāṇikā",
+      "title": "Traditional प्रमाणिका illustration",
+      "text": "पुनातु भक्तिरच्युता सदाच्युतांघ्रिपद्मयोः ।\nश्रुतिस्मृतिप्रमाणिका भवांबुराशितारिका ॥",
+      "expected": {"status": "exact", "violations": 0, "syllables": [16, 16]}
+    },
+    {
+      "id": "sa-apte-manavakam",
+      "meterId": "māṇavakam",
+      "title": "Traditional माणवक illustration",
+      "text": "चंचलचूडं चपलैर्वत्सकुलैः केलिपरम् ।\nध्याय सखे स्मेरमुखं नंदसुतं माणवकम् ॥",
+      "expected": {"status": "exact", "violations": 0, "syllables": [16, 16]}
+    },
+    {
+      "id": "sa-apte-vidyunmala",
+      "meterId": "vidyunmālā",
+      "title": "Traditional विद्युन्माला illustration",
+      "text": "वासोवल्ली विद्युन्माला बर्हश्रेणी शाक्रश्चापः ।\nयस्मिन्नास्तां तापोच्छित्त्यै गोमध्यस्थः कृष्णांभोदः ॥",
+      "expected": {"status": "exact", "violations": 0, "syllables": [16, 16]}
+    },
+    {
+      "id": "sa-apte-samanika",
+      "meterId": "samānikā",
+      "title": "Traditional समानिका illustration",
+      "text": "यस्य कृष्णपादपद्ममस्ति हृत्तडागसद्म ।\nधीः समानिका परेण नोचितात्र मत्सरेण ॥",
+      "expected": {"status": "exact", "violations": 0, "syllables": [16, 16]}
+    },
+    {
+      "id": "sa-apte-bhujangasangata",
+      "meterId": "bhujaṅgasaṅgatā",
+      "title": "Traditional भुजंगसंगता illustration",
+      "text": "तरला तरंगिरिंगितैर्यमुना भुजंगसंगता ।\nकथमेति वत्सचारकश्चपलः सदैव तां हरिः ॥",
+      "expected": {"status": "exact", "violations": 0, "syllables": [18, 18]}
+    },
+    {
+      "id": "sa-apte-manimadhyam",
+      "meterId": "maṇimadhyam",
+      "title": "Traditional मणिमध्य illustration",
+      "text": "कालियभोगाभोगगतस्तन्मणिमध्यस्फीतरुचा ।\nचित्रपदाभो नंदसुतश्चारु ननर्त स्मेरमुखः ॥",
+      "expected": {"status": "exact", "violations": 0, "syllables": [18, 18]}
+    },
+    {
+      "id": "sa-apte-indravajra",
+      "meterId": "indravajrā",
+      "title": "Traditional इंद्रवज्रा illustration",
+      "text": "गोष्ठे गिरिं सव्यकरेण धृत्वा\nरुष्टेंद्रवज्राहतिमुक्तवृष्टौ!\nयो गोकुलं गोपकुलं च सुस्थं\nचक्रे स नो रक्षतु चक्रपाणिः ॥",
+      "expected": {"status": "exact", "violations": 0, "syllables": [11, 11, 11, 11]}
+    },
+    {
+      "id": "sa-apte-salini",
+      "meterId": "śālinī",
+      "title": "Traditional शालिनी illustration",
+      "text": "अंघो हंति ज्ञानवृद्धिं विधत्ते\nधर्मं दत्ते काममर्थं च सूते ।\nमुक्तिं दत्ते सर्वदोपास्यमाना\nपुंसां श्रद्धाशालिनी विष्णुभक्तिः ॥",
+      "expected": {"status": "exact", "violations": 0, "syllables": [11, 11, 11, 11]}
+    },
+    {
+      "id": "sa-apte-candravartma",
+      "meterId": "candravartma",
+      "title": "Traditional चंद्रवर्त्म illustration",
+      "text": "चंद्रवर्त्म विहितं घनतिमिरैः\nराजवर्त्म रहितं जनगमनैः ।\nइष्टवर्त्म तदलंकुरु सरसे\nकुंजवर्त्मनि हरिस्तव कुतुकी ॥",
+      "expected": {"status": "exact", "violations": 0, "syllables": [12, 12, 12, 12]}
+    },
+    {
+      "id": "sa-apte-jaladharamala",
+      "meterId": "jaladharamālā",
+      "title": "Traditional जलधरमाला illustration",
+      "text": "या भक्तानां कलिदुरितोत्तप्तानां\nतापच्छेदे जलधरमाला नव्या ।\nभव्याकारा दिनकरपुत्रीकूले\nकेलीलोला हरितनुरव्यात्सा वः ॥",
+      "expected": {"status": "exact", "violations": 0, "syllables": [12, 12, 12, 12]}
+    },
+    {
+      "id": "sa-apte-jaloddhatagatih",
+      "meterId": "jaloddhatagatiḥ",
+      "title": "Traditional जलोद्धतगति illustration",
+      "text": "समीरशिशिरः शिरस्सु वसतां\nसतां जवनिका निकामसुखिनाम् ।\nबिभर्ति जनयन्नयं मुदमपा-\nमपायधवला बलाहकततीः ॥",
+      "expected": {"status": "exact", "violations": 0, "syllables": [12, 12, 12, 12]}
+    },
+    {
+      "id": "sa-apte-totakam",
+      "meterId": "toṭakam",
+      "title": "Traditional तोटक illustration",
+      "text": "स तथेति विनेतुरुदारमतेः\nप्रतिगृह्य वचो विससर्ज मुनिम् ।\nतदलब्धपदं हृदि शोकघने\nप्रतियातमिवांतिकमस्य गुरोः ॥",
+      "expected": {"status": "exact", "violations": 0, "syllables": [12, 12, 12, 12]}
+    },
+    {
+      "id": "sa-apte-pramitaksara",
+      "meterId": "pramitākṣarā",
+      "title": "Traditional प्रमिताक्षरा illustration",
+      "text": "विहगाः कदंबसुरभाविह गाः\nकलयंत्यनुक्षणमनेकलयम् ।\nभ्रमयन्नपैति मुहुरभ्रमयं\nपवनश्च धूतनवनीपवनः ॥",
+      "expected": {"status": "exact", "violations": 0, "syllables": [12, 12, 12, 12]}
+    },
+    {
+      "id": "sa-apte-malati",
+      "meterId": "mālatī",
+      "title": "Traditional मालती illustration",
+      "text": "इह कलयाच्युतकेलिकानने\nमधुरससौरभसारलोलुपः ।\nकुसुमकृतस्मितचारुविभ्रमा-\nमलिरपि चुंबति मालतीं मुहुः ॥",
+      "expected": {"status": "exact", "violations": 0, "syllables": [12, 12, 12, 12]}
+    },
+    {
+      "id": "sa-apte-vaisvadevi",
+      "meterId": "vaiśvadevī",
+      "title": "Traditional वैश्वदेवी illustration",
+      "text": "अर्चामन्येषां त्वं विहायामराणा-\nमद्वैतेनैकं विष्णुमभ्यर्च्य भक्त्या ।\nतत्राशेषात्मन्यर्चिते भाविनी ते\nभ्रातः संपन्नाराधना वैश्वदेवी ॥",
+      "expected": {"status": "exact", "violations": 0, "syllables": [12, 12, 12, 12]}
+    },
+    {
+      "id": "sa-apte-sragvini",
+      "meterId": "sragviṇī",
+      "title": "Traditional स्रग्विणी illustration",
+      "text": "इंद्रनीलोपलीनेव या निर्मिता\nशातकुंभद्रवालंकृता शोभते ।\nनव्यमेघच्छविः पीतवासा हरे-\nमूर्तिरास्तां जयायोरसि स्रग्विणी ॥",
+      "expected": {"status": "exact", "violations": 0, "syllables": [12, 12, 12, 12]}
+    },
+    {
+      "id": "sa-apte-manjubhasini",
+      "meterId": "mañjubhāṣiṇī",
+      "title": "Traditional मंजुभाषिणी illustration",
+      "text": "यमुनामतीतमथ शुश्रुवानमुं\nतपसस्तनूज इति नाधुनोच्यते ।\nस यदाऽचलन्निजपुरादहर्निशं\nनृपतेस्तदादि समचारि वार्तया ॥",
+      "expected": {"status": "exact", "violations": 0, "syllables": [13, 13, 13, 13]}
+    },
+    {
+      "id": "sa-apte-pathya",
+      "meterId": "pathyā",
+      "title": "Traditional पथ्या illustration",
+      "text": "स्थगयंत्यमूः शमितचातकार्तस्वराः\nजलदास्तडित्तुलितकांतकार्तस्वराः ।\nजगतीरिह स्फुरितचारुचामीकराः\nसवितुः क्वचित्कपिशयंति चामी कराः ॥",
+      "expected": {"status": "exact", "violations": 0, "syllables": [14, 14, 14, 14]}
+    },
+    {
+      "id": "sa-apte-vasanti",
+      "meterId": "vāsantī",
+      "title": "Traditional वासंती illustration",
+      "text": "भ्राम्यद्भृंगीनिर्भरमधुरालापोद्गीतैः\nश्रीखंडाद्रेरद्भुतपवनैर्मंदांदोला ।\nलीलालोला पल्लवविलसद्धस्तोल्लासैः\nकंसारातौ नृत्यति सदृशी वासंतीयम् ॥",
+      "expected": {"status": "exact", "violations": 0, "syllables": [14, 14, 14, 14]}
+    },
+    {
+      "id": "sa-apte-malini",
+      "meterId": "mālinī",
+      "title": "Traditional मालिनी illustration",
+      "text": "शशिनमुपगतेयं कौमुदी मेघमुक्तं\nजलनिधिमनुरूपं जह्नुकन्यावतीर्णा ।\nइति समगुणयोगप्रीतयस्तत्र पौराः\nश्रवणकटु नृपाणामेकवाक्यं विवव्रुः ॥",
+      "expected": {"status": "exact", "violations": 0, "syllables": [15, 15, 15, 15]}
+    },
+    {
+      "id": "sa-apte-vanini",
+      "meterId": "vāṇinī",
+      "title": "Traditional वाणिनी illustration",
+      "text": "स्फुरतु ममाननेऽद्य ननु वाणि नीतिरम्यं\nतवचरणप्रसादपरिपाकतः कवित्वम् ।\nभवजलराशिपारकरणक्षमं मुकुंदं\nसततमहं स्तवैः स्वचरितैः स्तवामि नित्यम् ॥",
+      "expected": {"status": "exact", "violations": 0, "syllables": [16, 16, 16, 16]}
+    },
+    {
+      "id": "sa-apte-nandanam",
+      "meterId": "nandanam",
+      "title": "Traditional नंदन illustration",
+      "text": "तरणिसुतातरंगपवनैः सलीलमांदोलितं\nमधुरिपुपादपंकजरजःसुपूतपृथ्वीतलम् ।\nमुरहरचित्रचेष्टितकलाकलापसंस्मारकं\nक्षितितलनंदनं व्रज सखे सुखाय वृंदावनम् ॥",
+      "expected": {"status": "exact", "violations": 0, "syllables": [18, 18, 18, 18]}
+    },
+    {
+      "id": "sa-apte-naracam",
+      "meterId": "nārācam",
+      "title": "Traditional नाराच illustration",
+      "text": "रघुपतिरपि जातवेदोविशुद्धां प्रगृह्य प्रियां\nप्रियसुहृदि बिभीषणे संक्रमय्य श्रियं वैरिणः ।\nरविसुतसहितेन तेनानुयातः ससौमित्रिणा\nभुजविजितविमानरत्नाधिरूढः प्रतस्थे पुरीम् ॥",
+      "expected": {"status": "exact", "violations": 0, "syllables": [18, 18, 18, 18]}
+    },
+    {
+      "id": "sa-apte-meghavisphurjita",
+      "meterId": "meghavisphūrjitā",
+      "title": "Traditional मेघविस्फूर्जिता illustration",
+      "text": "कदंबामोदाढ्या विपिनपवनः केकिनः कांतकेकाः\nविनिद्राः कंदल्यो दिशि दिशि मुदा दर्दुरा दृप्तनादाः ।\nनिशा नृत्यद्विद्युद्विलसितलसन्मेघविस्फूर्जिता चेत्\nप्रियः स्वाधीनोऽसौ दनुजदलनो राज्यमस्मात्किमन्यत् ॥",
+      "expected": {"status": "exact", "violations": 0, "syllables": [19, 19, 19, 19]}
+    },
+    {
+      "id": "sa-apte-harinipluta",
+      "meterId": "hariṇīplutā",
+      "title": "Traditional हरिणप्लुता illustration",
+      "versePatterns": ["LLGLLGLLGLG", "LLLGLLGLLGLG", "LLGLLGLLGLG", "LLLGLLGLLGLG"],
+      "text": "स्फुटफेनचया हरिणप्लुता\nबलिमनोज्ञतटा तरणेः सुता ।\nकलहंसकुलारवशालिनी\nविहरतो हरति स्म हरेर्मनः ॥",
+      "expected": {"status": "exact", "violations": 0, "syllables": [11, 12, 11, 12]}
+    }
+  ]
+}

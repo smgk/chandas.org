@@ -1,6 +1,10 @@
 {
   "corpusVersion": "1.0.0",
   "description": "Curated, offline examples for regression tests and the Learn field guide. Classical works are public domain; linked Wikisource transcriptions retain their source attribution.",
+  "defaults": {
+    "verificationStatus": "source-verified",
+    "childSafety": "reviewed-safe"
+  },
   "examples": [
     {
       "id": "te-vemana-uppu-kappurambu",
@@ -135,6 +139,7 @@
         "url": ""
       },
       "rights": "Historical verse; bibliographic source still to be identified",
+      "verificationStatus": "source-pending",
       "expected": {"status": "exact", "violations": 0, "syllables": [20, 20, 20, 20]}
     },
     {

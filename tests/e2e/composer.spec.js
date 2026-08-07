@@ -1472,6 +1472,13 @@ test("opens documentation and searches the complete prosody catalog", async ({ p
     await expect(page.locator("main")).toContainText("tea break");
     await expect(page.locator("#meter-catalog-status"))
         .toHaveText("1,408 of 1,408 supported meters shown.");
+    await expect(page.locator("#meter-catalog-example-count"))
+        .toHaveText("40 meters currently have authenticated, child-safe examples.");
+
+    await page.locator("#meter-catalog-examples").selectOption("verified");
+    await expect(page.locator("#meter-catalog-status"))
+        .toHaveText("40 of 1,408 supported meters shown.");
+    await page.locator("#meter-catalog-examples").selectOption("all");
 
     await page.locator("#meter-catalog-search").fill("anushtup");
     await expect(page.locator(".meter-catalog-item")).toHaveCount(1);
@@ -1505,6 +1512,15 @@ test("opens documentation and searches the complete prosody catalog", async ({ p
     await expect(ataveladi.locator(".meter-definitions"))
         .toContainText("S = Sūrya (GL or LLL)");
     await expect(ataveladi.locator(".meter-example")).toContainText("Vemana");
+
+    await page.locator("#meter-catalog-search").fill("indravajra");
+    const indravajra = page.locator(".meter-catalog-item");
+    await expect(indravajra).toHaveCount(1);
+    await indravajra.locator("summary").click();
+    await expect(indravajra.locator(".meter-example-text"))
+        .toContainText("गोष्ठे गिरिं");
+    await expect(indravajra.locator(".meter-example-review"))
+        .toHaveText("Source verified · reviewed for young readers");
 
     await page.getByText("Return to Chandas").click();
     await expect(page.locator("#composition")).toBeVisible();

@@ -23,6 +23,7 @@ const assets = [
     "mishra.json",
     "structural_meters.json",
     "examples/field_guide_corpus.json",
+    "examples/apte_sanskrit_examples.json",
     "manifest.webmanifest",
     "service-worker.js",
     "icon.svg",

@@ -87,9 +87,35 @@
         );
     }
 
+    function corpusExamples(corpus) {
+        const defaults = corpus && typeof corpus.defaults === "object"
+            ? corpus.defaults
+            : {};
+        return Array.isArray(corpus && corpus.examples)
+            ? corpus.examples.map((example) => ({
+                ...defaults,
+                ...example,
+                source: example.source || defaults.source
+            }))
+            : [];
+    }
+
+    function exampleFitsFixedPatterns(example, versePatterns) {
+        if (!Array.isArray(example.versePatterns)) {
+            return true;
+        }
+        return example.versePatterns.length === versePatterns.length &&
+            example.versePatterns.every((pattern, index) =>
+                pattern === versePatterns[index]);
+    }
+
     function fixedMeter(entry, index, examples) {
         const name = String(entry[0] || `Meter ${index + 1}`);
         const versePatterns = fixedVersePatterns(entry[1]);
+        const matchingExamples = Array.isArray(examples)
+            ? examples.filter((example) =>
+                exampleFitsFixedPatterns(example, versePatterns))
+            : [];
         const syllableCounts = Array.from(new Set(versePatterns.map((pattern) => pattern.length)));
         return {
             id: `fixed:${index}`,
@@ -97,7 +123,7 @@
             kind: "fixed",
             kindLabel: "Fixed vṛtta",
             aliases: [],
-            examples: Array.isArray(examples) ? examples : [],
+            examples: matchingExamples,
             versePatterns,
             searchText: foldSearch(`${name} fixed vritta ${syllableCounts.join(" ")}`),
             summary: syllableCounts.length === 1
@@ -348,6 +374,12 @@
     function renderExamples(document, meter, body) {
         const examples = Array.isArray(meter.examples) ? meter.examples : [];
         if (!examples.length) {
+            body.append(node(
+                document,
+                "p",
+                "meter-example-missing",
+                "No authenticated, child-safe example has been added yet."
+            ));
             return;
         }
         const section = node(document, "section", "meter-examples");
@@ -361,6 +393,14 @@
                 "meter-example-byline",
                 [example.author, example.language, example.script]
                     .filter(Boolean).join(" · ")
+            );
+            const review = node(
+                document,
+                "p",
+                "meter-example-review",
+                example.verificationStatus === "source-verified"
+                    ? "Source verified · reviewed for young readers"
+                    : "Bibliographic source pending · reviewed for young readers"
             );
             const verse = node(document, "pre", "meter-example-text", example.text);
             const actions = node(document, "p", "meter-example-actions");
@@ -377,7 +417,7 @@
                 sourceLink.rel = "noreferrer";
                 actions.append(document.createTextNode(" · "), sourceLink);
             }
-            article.append(heading, byline, verse, actions);
+            article.append(heading, byline, review, verse, actions);
             section.append(article);
         });
         body.append(section);
@@ -414,12 +454,14 @@
         return details;
     }
 
-    function renderCatalog(document, meters, query, kind) {
+    function renderCatalog(document, meters, query, kind, exampleFilter) {
         const list = document.getElementById("meter-catalog-list");
         const status = document.getElementById("meter-catalog-status");
         const foldedQuery = foldSearch(query);
         const matching = meters.filter((meter) =>
             (!kind || kind === "all" || meter.kind === kind) &&
+            (exampleFilter !== "verified" || meter.hasVerifiedExample) &&
+            (exampleFilter !== "missing" || !meter.hasVerifiedExample) &&
             (!foldedQuery || meter.searchText.includes(foldedQuery))
         );
         const fragment = document.createDocumentFragment();
@@ -439,21 +481,34 @@
         const status = document.getElementById("meter-catalog-status");
         const search = document.getElementById("meter-catalog-search");
         const filter = document.getElementById("meter-catalog-kind");
+        const exampleFilter = document.getElementById("meter-catalog-examples");
 
         try {
-            const [fixedResponse, structuralResponse, corpusResponse] = await Promise.all([
+            const [
+                fixedResponse,
+                structuralResponse,
+                corpusResponse,
+                apteResponse
+            ] = await Promise.all([
                 fetch("mishra.json", { cache: "force-cache" }),
                 fetch("structural_meters.json", { cache: "force-cache" }),
-                fetch("examples/field_guide_corpus.json", { cache: "force-cache" })
+                fetch("examples/field_guide_corpus.json", { cache: "force-cache" }),
+                fetch("examples/apte_sanskrit_examples.json", { cache: "force-cache" })
             ]);
-            if (!fixedResponse.ok || !structuralResponse.ok || !corpusResponse.ok) {
+            if (!fixedResponse.ok || !structuralResponse.ok ||
+                    !corpusResponse.ok || !apteResponse.ok) {
                 throw new Error("Catalog request failed");
             }
             const fixedCatalog = await fixedResponse.json();
             const structuralCatalog = await structuralResponse.json();
             const corpus = await corpusResponse.json();
+            const apteCorpus = await apteResponse.json();
+            const allExamples = [
+                ...corpusExamples(corpus),
+                ...corpusExamples(apteCorpus)
+            ];
             const examplesByMeter = new Map();
-            (corpus.examples || []).forEach((example) => {
+            allExamples.forEach((example) => {
                 const examples = examplesByMeter.get(example.meterId) || [];
                 examples.push(example);
                 examplesByMeter.set(example.meterId, examples);
@@ -474,16 +529,34 @@
             ))
                 .sort((a, b) => a.name.localeCompare(b.name));
             const meters = [...structural, ...fixed];
+            meters.forEach((meter) => {
+                meter.hasVerifiedExample = meter.examples.some((example) =>
+                    example.verificationStatus === "source-verified" &&
+                    example.childSafety === "reviewed-safe");
+            });
             document.getElementById("meter-catalog-total").textContent =
                 `${meters.length.toLocaleString("en")} meters`;
             document.getElementById("meter-catalog-fixed-count").textContent =
                 `${fixed.length.toLocaleString("en")} fixed vṛttas`;
             document.getElementById("meter-catalog-structural-count").textContent =
                 `${structural.length.toLocaleString("en")} structural or mātrā meters`;
-            const update = () => renderCatalog(document, meters, search.value, filter.value);
+            const verifiedMeterCount = new Set(meters
+                .filter((meter) => meter.hasVerifiedExample)
+                .map((meter) => meter.name)).size;
+            document.getElementById("meter-catalog-example-count").textContent =
+                `${verifiedMeterCount.toLocaleString("en")} meters currently have ` +
+                "authenticated, child-safe examples.";
+            const update = () => renderCatalog(
+                document,
+                meters,
+                search.value,
+                filter.value,
+                exampleFilter.value
+            );
 
             search.addEventListener("input", update);
             filter.addEventListener("change", update);
+            exampleFilter.addEventListener("change", update);
             update();
         } catch (error) {
             status.textContent = "The meter catalog could not be loaded. " +
@@ -496,6 +569,8 @@
         fixedVersePatterns,
         foldSearch,
         ganaReading,
+        corpusExamples,
+        exampleFitsFixedPatterns,
         initializeMeterCatalog,
         structuralMeter
     };

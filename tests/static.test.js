@@ -124,6 +124,8 @@ test("service worker pre-caches every core web asset", () => {
         "poem_store.js",
         "mishra.json",
         "structural_meters.json",
+        "examples/field_guide_corpus.json",
+        "examples/apte_sanskrit_examples.json",
         "manifest.webmanifest",
         "icon.svg",
         "documentation.html",
@@ -319,7 +321,19 @@ test("documentation includes the searchable, offline meter catalog", () => {
     assert.match(documentation, /tea break/);
     assert.match(documentation, /id="meter-catalog-total"/);
     assert.match(documentation, /id="meter-catalog-search"/);
+    assert.match(documentation, /id="meter-catalog-examples"/);
+    assert.match(documentation, /id="meter-catalog-example-count"/);
     assert.match(documentation, /src="documentation\.js"/);
+});
+
+test("public-domain Apte examples retain visible source attribution", () => {
+    const notices = read("notices.html");
+    const thirdParty = read("THIRD_PARTY_NOTICES.md");
+
+    assert.match(notices, /Apte’s 1890/);
+    assert.match(notices, /apte_sanskrit_examples\.json/);
+    assert.match(thirdParty, /Apte Sanskrit prosody examples/);
+    assert.match(thirdParty, /public domain/);
 });
 
 test("the provisional Kanda rule packet and attribution are retained", () => {

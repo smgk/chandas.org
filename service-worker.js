@@ -5,7 +5,7 @@
 
 "use strict";
 
-const CACHE_NAME = "chandas-shell-v46";
+const CACHE_NAME = "chandas-shell-v47";
 const UPDATE_UI_BOOTSTRAP_CACHE = "chandas-shell-v30";
 const CORE_ASSETS = [
     "./",
@@ -21,6 +21,7 @@ const CORE_ASSETS = [
     "./mishra.json",
     "./structural_meters.json",
     "./examples/field_guide_corpus.json",
+    "./examples/apte_sanskrit_examples.json",
     "./manifest.webmanifest",
     "./icon.svg",
     "./documentation.html",

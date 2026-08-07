@@ -1441,7 +1441,7 @@ textarea:focus-visible {
 
 .meter-catalog-controls {
     display: grid;
-    grid-template-columns: minmax(0, 1.4fr) minmax(12rem, 0.8fr);
+    grid-template-columns: minmax(0, 1.35fr) repeat(2, minmax(11rem, 0.8fr));
     gap: 0.8rem;
     margin: 1.4rem 0 0.7rem;
 }
@@ -1463,6 +1463,15 @@ textarea:focus-visible {
     padding: 0.55rem 0.7rem;
     color: var(--ink);
     background: #fffdf8;
+}
+
+.meter-example-missing {
+    margin: 1rem 0 0;
+    padding-top: 0.8rem;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-style: italic;
 }
 
 .meter-catalog-status {
@@ -1596,10 +1605,15 @@ textarea:focus-visible {
 }
 
 .meter-example-byline,
-.meter-example-actions {
+.meter-example-actions,
+.meter-example-review {
     margin: 0.25rem 0;
     color: var(--muted);
     font-size: 0.76rem;
+}
+
+.meter-example-review {
+    color: var(--green);
 }
 
 .meter-example-text {

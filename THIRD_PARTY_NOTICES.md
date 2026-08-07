@@ -116,3 +116,17 @@ authors, titles, and rights notes are retained with each example; Chandas.org
 does not claim authorship of those poems. The corpus structure, expected
 analysis data, and original explanatory copy are Chandas.org work under the
 repository license.
+
+## Apte Sanskrit prosody examples
+
+`examples/apte_sanskrit_examples.json` contains thirty short Sanskrit meter
+illustrations transcribed from Vaman Shivram Apte's 1890 *Appendix A: Sanskrit
+Prosody*:
+
+<https://www.sanskrit-lexicon.uni-koeln.de/scans/csldev/csldoc/build/dictionaries/prefaces/ap90app1.html>
+
+The underlying 1890 text and the classical or traditional verses it records
+are in the public domain. The source link, compiler attribution, and
+transcription attribution are retained with every example. Chandas.org's
+selection, child-safety review, scansion expectations, and corpus structure are
+repository work under GPL-3.0-only.

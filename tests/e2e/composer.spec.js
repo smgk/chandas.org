@@ -1492,11 +1492,11 @@ test("opens documentation and searches the complete prosody catalog", async ({ p
     await expect(page.locator("#meter-catalog-status"))
         .toHaveText("1,408 of 1,408 supported meters shown.");
     await expect(page.locator("#meter-catalog-example-count"))
-        .toHaveText("47 meters currently have authenticated, child-safe examples.");
+        .toHaveText("49 meters currently have authenticated, child-safe examples.");
 
     await page.locator("#meter-catalog-examples").selectOption("verified");
     await expect(page.locator("#meter-catalog-status"))
-        .toHaveText("47 of 1,408 supported meters shown.");
+        .toHaveText("49 of 1,408 supported meters shown.");
     await page.locator("#meter-catalog-examples").selectOption("all");
 
     await page.locator("#meter-catalog-search").fill("anushtup");

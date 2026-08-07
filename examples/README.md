@@ -16,6 +16,9 @@ defensible example says so explicitly.
 - Kālidāsa's opening *Meghadūta* stanza, checked against K. B. Pathak's
   public-domain 1916 edition on Internet Archive. It also exercises the
   traditional pādānta-lengthening rule.
+- Pampa's source-labelled Utpalamālikā and Campakamāle stanzas, checked
+  against B. L. Rice's public-domain 1898 *Pampa Bhārata* edition.
+- A Vemana Āṭaveladi stanza from the page-linked 1911 C. P. Brown edition.
 
 The catalog-wide Internet Archive source inventory and reproducible gap audit
 are documented in `docs/research/archive-meter-audit.md`. OCR is used to find

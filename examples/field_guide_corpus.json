@@ -1,5 +1,5 @@
 {
-  "corpusVersion": "1.1.0",
+  "corpusVersion": "1.2.0",
   "description": "Curated, offline examples for regression tests and the Learn field guide. Classical works are public domain; linked Wikisource transcriptions retain their source attribution.",
   "defaults": {
     "verificationStatus": "source-verified",
@@ -7,19 +7,19 @@
   },
   "examples": [
     {
-      "id": "te-vemana-uppu-kappurambu",
+      "id": "te-vemana-good-company",
       "meterId": "structural:ataveladi-telugu",
-      "title": "Salt and camphor",
+      "title": "Good company transforms",
       "author": "Vemana",
       "script": "telugu",
       "language": "Telugu",
-      "text": "ఉప్పు కప్పురంబు నొక్కపోలికనుండుఁ\nజూడఁ జూడ రుచుల జాడ వేఱు\nపురుషులందు పుణ్య పురుషులు వేఱయా\nవిశ్వదాభిరామ వినర వేమ!",
+      "text": "పాలఁ గలయు నీరు' పాలెయై రాజిల్లు,\nనదియు సాంబ యోగ్యమై'న యట్లు'\nసాధు సజ్జనముల సాంగత్యముల చేత,\nమూఢ జనుడు ముక్తి మొనయు వేమ!",
       "source": {
-        "title": "Vemana Padyalu, Wikisource",
-        "url": "https://te.wikisource.org/wiki/వేమన_పద్యాలు/ఉ"
+        "title": "Vemana Padyamulu, C. P. Brown edition, part 1, verse 131 (1911 scan)",
+        "url": "https://te.wikisource.org/wiki/పుట:The_Verses_Of_Vemana_(1911).pdf/45"
       },
-      "rights": "Public-domain original; Wikisource transcription attribution retained",
-      "expected": {"status": "compatible", "violations": 0, "matras": [19, 15, 18, 15]}
+      "rights": "Public-domain original and 1911 edition; Wikisource transcription attribution retained",
+      "expected": {"status": "compatible", "violations": 0, "matras": [19, 15, 19, 15]}
     },
     {
       "id": "te-tetagiti-ravana",
@@ -130,17 +130,31 @@
       "id": "kn-utpalamalika-narayana",
       "meterId": "utpalamālikā",
       "title": "Nārāyaṇa verse",
-      "author": "Historical Kannada source",
+      "author": "Pampa",
       "script": "kannada",
       "language": "Kannada",
       "text": "ಶ್ರೀಯನರಾತಿ ಸಾಧನ ಪಯೋನಿಧಿಯೊಳ್ ಪಡೆದುಂ ಧರಿತ್ರಿಯಂ\nಜೀಯೆನೆ ಬೇಡಿಕೊಳ್ಳದೆ ವಿರೋಧಿ ನರೇಂದ್ರರನೊತ್ತಿಕೊಂಡುಮಾ।\nತ್ಮೀಯ ಸುಪುಷ್ಪಪಟ್ಟಮನೊಡಂಬಡೆ ತಾಳ್ದಿಯುಮಿಂತುದಾತ್ತ ನಾ\nರಾಯಣನಾದ ದೇವನೆಮಗೀಗರಿಕೇಸರಿ ಸೌಖ್ಯಕೋಟಿಯಂ ॥೧॥",
       "source": {
-        "title": "User-supplied historical example",
-        "url": ""
+        "title": "Pampa Bhārata 1.1, B. L. Rice edition (1898), p. 1",
+        "url": "https://archive.org/details/india.history.resource.111026/page/n40/mode/1up"
       },
-      "rights": "Historical verse; bibliographic source still to be identified",
-      "verificationStatus": "source-pending",
+      "rights": "Public-domain original and 1898 edition; source attribution retained",
       "expected": {"status": "exact", "violations": 0, "syllables": [20, 20, 20, 20]}
+    },
+    {
+      "id": "kn-pampa-campakamale-sarasvati",
+      "meterId": "campakamāle (Kannada)",
+      "title": "Invocation to Sarasvatī",
+      "author": "Pampa",
+      "script": "kannada",
+      "language": "Kannada",
+      "text": "ಕ್ಷಯಮಣಮಿಲ್ಲ ಕೇೞ್ದು ಕಡೆಗಂಡವನಾವನುಮಿಲ್ಲೆನಲ್ ತದ\nಕ್ಷಯನಿಧಿ ತಾನೆ ತನ್ನನೊಸೆದೋಲಗಿಪಂಗರಿದಿಲ್ಲೆನಿಪ್ಪ ವಾ।\nಙ್ಮಯಮನಿತರ್ಕಮಂಬಿಕೆ ಸರಸ್ವತಿ ಮನ್ಮುಖಪದ್ಮರಂಗದೇ\nೞ್ಗೆಯನೆಡೆಗೊಂಡು ಕೊಂಡುಕೊನೆದೀಗರಿಗಂಗೆ ವಿಶುದ್ಧ ಬುದ್ಧಿಯಂ",
+      "source": {
+        "title": "Pampa Bhārata 1.5, B. L. Rice edition (1898), p. 2",
+        "url": "https://archive.org/details/india.history.resource.111026/page/n41/mode/1up"
+      },
+      "rights": "Public-domain original and 1898 edition; source attribution retained",
+      "expected": {"status": "exact", "violations": 0, "syllables": [21, 21, 21, 21]}
     },
     {
       "id": "sa-raghuvamsa-vagarthau",
@@ -166,8 +180,8 @@
       "language": "Sanskrit",
       "text": "कश्चित्कान्ताविरहगुरुणा स्वाधिकारात्प्रमत्तः\nशापेनास्तङ्गमितमहिमा वर्षभोग्येण भर्तुः ।\nयक्षश्चक्रे जनकतनयास्नानपुण्योदकेषु\nस्निग्धच्छायातरुषु वसतिं रामगिर्याश्रमेषु॥१.१॥",
       "source": {
-        "title": "K. B. Pathak (ed.), Kālidāsa's Meghadūta (1916), Internet Archive",
-        "url": "https://archive.org/details/kalidasas-meghaduta-skt-eng-kb-pathak-1916"
+        "title": "K. B. Pathak (ed.), Kālidāsa's Meghadūta (1916), verse 1",
+        "url": "https://archive.org/details/kalidasas-meghaduta-skt-eng-kb-pathak-1916/page/n29/mode/1up"
       },
       "rights": "Public-domain original and 1916 edition; source attribution retained",
       "expected": {"status": "exact", "violations": 0, "syllables": [17, 17, 17, 17]}

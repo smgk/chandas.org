@@ -13,6 +13,37 @@ Do not repair a poem to make it scan. Detector disagreements are useful
 research findings and will be reviewed before an example is promoted to
 `examples/field_guide_corpus.json`.
 
+## Completed example — Bhāminī Ṣaṭpadi
+
+This is a formatting example only. It has already been reviewed and added to
+Learn, so no further Bhāminī research is required.
+
+- Meter ID: `structural:bhamini-shatpadi`
+- Signature: `3434 | 3434 | 343434+G`, repeated; 14, 14, 23, 14, 14, 23 performed mātrās
+
+### Candidate
+
+- Author: Kumāravyāsa
+- Work: *Kumāravyāsa Bhārata*
+- Location (chapter/verse): Droṇaparva, fifth sandhi, verse 20
+- Source title: ದ್ರೋಣಪರ್ವ: ೦೫. ಐದನೆಯ ಸಂಧಿ — Kannada Wikisource
+- Source URL: https://kn.wikisource.org/wiki/ದ್ರೋಣಪರ್ವ:_೦೫._ಐದನೆಯ_ಸಂಧಿ
+- Scan page/leaf: not applicable; verse 20 on the linked Wikisource page
+- Language: Kannada
+- Script: Kannada
+- Rights/edition information: Public-domain original; Wikisource transcription attribution retained
+- Child-safe: yes
+- Notes: Lines 3 and 6 have 22 written mātrās. Their final written Laghu fills the terminal Guru through pādānta lengthening, producing the performed 23-mātrā line.
+
+```text
+ಮಗುವು ನೀ ಕೆಡಬೇಡ ಹೋಗೆನು
+ತಗಣಿತಾಸ್ತ್ರವ ಸುರಿವುತೈತರೆ
+ನಗುತ ನಿಂದಭಿಮನ್ಯು ನುಡಿದನು ಕೌರವೇಶ್ವರನ
+ಮಗುವು ತಾನಹೆ ತನ್ನ ಬಾಣಕೆ
+ಮಗುವುತನ ಬೇರಿಲ್ಲ ನೋಡೆಂ
+ದಗಲದಲಿ ಕೂರಂಬ ಸುರಿದನು ಪಾರ್ಥನಂದನನು
+```
+
 ## Pañcamātrā Chaupadi (Kagga form)
 
 - Meter ID: `structural:panchamatra-chaupadi-kagga`

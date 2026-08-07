@@ -1,0 +1,171 @@
+{
+  "corpusVersion": "1.0.0",
+  "description": "Curated, offline examples for regression tests and the Learn field guide. Classical works are public domain; linked Wikisource transcriptions retain their source attribution.",
+  "examples": [
+    {
+      "id": "te-vemana-uppu-kappurambu",
+      "meterId": "structural:ataveladi-telugu",
+      "title": "Salt and camphor",
+      "author": "Vemana",
+      "script": "telugu",
+      "language": "Telugu",
+      "text": "ఉప్పు కప్పురంబు నొక్కపోలికనుండుఁ\nజూడఁ జూడ రుచుల జాడ వేఱు\nపురుషులందు పుణ్య పురుషులు వేఱయా\nవిశ్వదాభిరామ వినర వేమ!",
+      "source": {
+        "title": "Vemana Padyalu, Wikisource",
+        "url": "https://te.wikisource.org/wiki/వేమన_పద్యాలు/ఉ"
+      },
+      "rights": "Public-domain original; Wikisource transcription attribution retained",
+      "expected": {"status": "compatible", "violations": 0, "matras": [19, 15, 18, 15]}
+    },
+    {
+      "id": "te-tetagiti-ravana",
+      "meterId": "structural:tetagiti-telugu",
+      "title": "A Tēṭagīti teaching stanza",
+      "author": "Traditional",
+      "script": "telugu",
+      "language": "Telugu",
+      "text": "విని దశగ్రీవు డంగజ వివశు డగుచు\nనర్థి బంచిన బసిడిఱ్రి యై నటించు\nనీచు మారీచు రాముడు నెఱి వధించె\nనంతలో సీత గొనిపోయె నసురవిభుడు",
+      "source": {
+        "title": "Telugu Chandassu teaching examples",
+        "url": "https://telugugrammar.deltapublications.in/index.php/8-chandassu/"
+      },
+      "rights": "Traditional verse; source attribution retained",
+      "expected": {"status": "compatible", "violations": 0, "matras": [18, 18, 18, 19]}
+    },
+    {
+      "id": "te-sumati-opening",
+      "meterId": "structural:kandamu-telugu",
+      "title": "Opening of Sumati Śatakamu",
+      "author": "Baddena",
+      "script": "telugu",
+      "language": "Telugu",
+      "text": "శ్రీ రాముని దయచేతను\nనారూఢిగ సకల జనులు నౌరా యనగా\nధారాళమైన నీతులు\nనోరూరగ జవులు పుట్ట నుడివెద సుమతీ",
+      "source": {
+        "title": "Sumati Shatakamu, Wikisource scan",
+        "url": "https://te.wikisource.org/wiki/పుట:Sumati_Shatakamu.pdf/7"
+      },
+      "rights": "Public-domain original; Wikisource transcription attribution retained",
+      "expected": {"status": "exact", "violations": 0, "matras": [12, 20, 12, 20]}
+    },
+    {
+      "id": "te-basavapuranamu-dvipada",
+      "meterId": "structural:dvipada-telugu",
+      "title": "Basavapurāṇamu couplet",
+      "author": "Pālkuriki Somanātha",
+      "script": "telugu",
+      "language": "Telugu",
+      "text": "యనుచు బోయలు లేచి కనుకనిఁ బలుకఁ\nగనుఁగొని బసవయ్య గన్నుల నగుచు",
+      "source": {
+        "title": "Basavapurāṇamu, Wikisource scan, p. 239",
+        "url": "https://te.wikisource.org/wiki/పుట:Dvipada-basavapuraanamu.pdf/296"
+      },
+      "rights": "Public-domain original; Wikisource transcription attribution retained",
+      "expected": {"status": "compatible", "violations": 0, "matras": [17, 16]}
+    },
+    {
+      "id": "te-gurajada-mutyala-saralu",
+      "meterId": "structural:mutyala-saralu",
+      "title": "Mutyāla Saramulu, opening",
+      "author": "Gurajada Apparao",
+      "script": "telugu",
+      "language": "Telugu",
+      "text": "గుత్తునా ముత్యాల సరములు\nకూర్చుకొని తేటైన మాటల,\nకొత్త పాతల మేలు కలయిక\nక్రొమ్మెరుంగులు జిమ్మగా.",
+      "source": {
+        "title": "Mutyala Saralu, Wikisource",
+        "url": "https://te.wikisource.org/wiki/ముత్యాల_సరాలు/ముత్యాల_సరములు"
+      },
+      "rights": "Public-domain original; Wikisource transcription attribution retained",
+      "expected": {"status": "compatible", "violations": 0, "matras": [14, 14, 14, 12]}
+    },
+    {
+      "id": "te-surana-turagavalgana",
+      "meterId": "structural:ragada-turagavalgana-telugu",
+      "title": "A compact Rāmāyaṇa passage",
+      "author": "Piṅgaḷi Sūrana",
+      "script": "telugu",
+      "language": "Telugu",
+      "text": "దశరథావనీశ విమలతర తపఃఫలావతార\nనిశిత శర లఘు ప్రయోగ నిహత తాటకా విహార\nకపట పటు సుబాహు దశన ఘటిత గాధిసూను యాగ\nఅపరిమేయ గౌతమాంగనాఘ దమన పద పరాగ",
+      "source": {
+        "title": "Andhra Bharati: Ragaḍa forms and examples",
+        "url": "https://www.andhrabharati.com/bhAshha/ChaMdassu/ragaDalu.html"
+      },
+      "rights": "Public-domain original; source transcription attribution retained",
+      "expected": {"status": "compatible", "violations": 0, "matras": [24, 24, 24, 24]}
+    },
+    {
+      "id": "kn-kavirajamarga-kanda",
+      "meterId": "structural:kanda-kannada",
+      "title": "Kavirājamārga's Kannada country",
+      "author": "Śrīvijaya",
+      "script": "kannada",
+      "language": "Kannada",
+      "text": "ಕಾವೇರಿಯಿಂದ ಮಾಗೋ\nದಾವರಿವರ ಮಿರ್ಪ ನಾಡದಾ ಕನ್ನಡದೊಳ್\nಭಾವಿಸಿದ ಜನಪದಂ ವಸು\nಧಾವಳಯ ವಿಲೀನ ವಿಶದ ವಿಷಯ ವಿಶೇಷಂ",
+      "source": {
+        "title": "Kannada Kandapadya rule example",
+        "url": "https://chandassu.onrender.com/chandassu/kandapadya"
+      },
+      "rights": "Public-domain original",
+      "expected": {"status": "compatible", "violations": 0, "matras": [12, 20, 12, 20]}
+    },
+    {
+      "id": "kn-sarvajna-anna",
+      "meterId": "structural:tripadi-folk-kannada",
+      "title": "Food itself is divine",
+      "author": "Sarvajña",
+      "script": "kannada",
+      "language": "Kannada",
+      "text": "ಅನ್ನ ದೇವರ ಮುಂದೆ ಇನ್ನು ದೇವರು ಉಂಟೆ?\nಅನ್ನವಿರುವನಕ ಪ್ರಾಣವು; ಜಗದೊಳ\nಗನ್ನವೇ ದೈವ! ಸರ್ವಜ್ಞ",
+      "source": {
+        "title": "Sarvajña: Annāhāra–Vaidya, Wikisource",
+        "url": "https://kn.wikisource.org/wiki/ಅನ್ನಾಹಾರ-ವೈದ್ಯ"
+      },
+      "rights": "Public-domain original; Wikisource transcription attribution retained",
+      "expected": {"status": "compatible", "violations": 0, "matras": [20, 17, 13]}
+    },
+    {
+      "id": "kn-utpalamalika-narayana",
+      "meterId": "utpalamālikā",
+      "title": "Nārāyaṇa verse",
+      "author": "Historical Kannada source",
+      "script": "kannada",
+      "language": "Kannada",
+      "text": "ಶ್ರೀಯನರಾತಿ ಸಾಧನ ಪಯೋನಿಧಿಯೊಳ್ ಪಡೆದುಂ ಧರಿತ್ರಿಯಂ\nಜೀಯೆನೆ ಬೇಡಿಕೊಳ್ಳದೆ ವಿರೋಧಿ ನರೇಂದ್ರರನೊತ್ತಿಕೊಂಡುಮಾ।\nತ್ಮೀಯ ಸುಪುಷ್ಪಪಟ್ಟಮನೊಡಂಬಡೆ ತಾಳ್ದಿಯುಮಿಂತುದಾತ್ತ ನಾ\nರಾಯಣನಾದ ದೇವನೆಮಗೀಗರಿಕೇಸರಿ ಸೌಖ್ಯಕೋಟಿಯಂ ॥೧॥",
+      "source": {
+        "title": "User-supplied historical example",
+        "url": ""
+      },
+      "rights": "Historical verse; bibliographic source still to be identified",
+      "expected": {"status": "exact", "violations": 0, "syllables": [20, 20, 20, 20]}
+    },
+    {
+      "id": "sa-raghuvamsa-vagarthau",
+      "meterId": "structural:anushtubh-pathya",
+      "title": "Vāgarthāviva",
+      "author": "Kālidāsa",
+      "script": "devanagari",
+      "language": "Sanskrit",
+      "text": "वागर्थाविव संपृक्तौ\nवागर्थप्रतिपत्तये\nजगतः पितरौ वन्दे\nपार्वतीपरमेश्वरौ",
+      "source": {
+        "title": "Raghuvaṃśa 1.1",
+        "url": "https://sa.wikisource.org/wiki/रघुवंशम्/प्रथमः_सर्गः"
+      },
+      "rights": "Public-domain original; Wikisource transcription attribution retained",
+      "expected": {"status": "exact", "violations": 0, "syllables": [8, 8, 8, 8]}
+    },
+    {
+      "id": "sa-sarasvati-shardula",
+      "meterId": "śārdūlavikrīḍitam",
+      "title": "Sarasvatī prayer",
+      "author": "Traditional",
+      "script": "devanagari",
+      "language": "Sanskrit",
+      "text": "या कुन्देन्दुतुषारहारधवला या शुभ्रवस्त्रावृता\nया वीणावरदण्डमण्डितकरा या श्वेतपद्मासना ।\nया ब्रह्माच्युतशङ्करप्रभृतिभिर्देवैः सदा वन्दिता\nसा मां पातु सरस्वती भगवती निःशेषजाड्यापहा ॥",
+      "source": {
+        "title": "Traditional Sarasvatī vandanā",
+        "url": "https://sa.wikisource.org/wiki/सरस्वतीस्तोत्रम्"
+      },
+      "rights": "Public-domain traditional verse",
+      "expected": {"status": "exact", "violations": 0, "syllables": [19, 19, 19, 19]}
+    }
+  ]
+}

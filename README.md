@@ -19,7 +19,7 @@ runs locally; composing does not require an account, server, or cloud database.
 - Preserves the original text, punctuation, line breaks, caret, and Indic IME
   behavior.
 - Suggests and ranks fixed vṛttas, syllable-structural meters, mātrā meters,
-  and aṃśa meters.
+  aṃśa meters, and Telugu deśi-gaṇa meters.
 - Supports independent meter selection and validation for each stanza.
 - Shows source-local Guru/Laghu, prāsa, karṣaṇa, and violation markings.
 - Provides four-pāda and compact two-line handling for fixed vṛttas, plus
@@ -114,6 +114,7 @@ Android application is built and released separately.
 | `meter_analysis.js` | Unicode syllable analysis, meter scoring, validation, and prāsa |
 | `mishra.json` | Attributed baseline fixed-vṛtta catalog |
 | `structural_meters.json` | Versioned structural, mātrā, aṃśa, and sourced fixed-meter extensions |
+| `examples/field_guide_corpus.json` | Sourced Kannada, Telugu, and Devanagari examples used by tests and Learn |
 | `app.js` | Composer UI, templates, URL import/share, and local state orchestration |
 | `poem_store.js` | On-device saved poems, export, backup, and restore |
 | `strong_template.js` | Structured fixed-vṛtta composition model |

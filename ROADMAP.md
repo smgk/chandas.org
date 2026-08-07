@@ -2,7 +2,7 @@
 
 **Status:** Active post-MVP plan
 
-**Updated:** 2026-08-02
+**Updated:** 2026-08-06
 
 **Baseline:** `mvp-baseline`
 
@@ -312,6 +312,15 @@ week per meter-family presentation
   [Indic Script Expansion Research](docs/script-expansion.md).
 - [x] Add native, offline Telugu script detection, segmentation, Guru/Laghu
   analysis, templates, analytics classification, and source-safe highlighting.
+- [x] Add the isolated Telugu Sūrya/Indra-gaṇa engine and the first deśi
+  catalog: Āṭaveladi, Tēṭagīti, Telugu Kandamu, Dvipada, Mañjarī Dvipada,
+  Sīsamu with ettugīti layouts, Mutyāla Sarālu, Taruvoja, Madhyākkara, and
+  ten named Ragaḍa gaits.
+- [x] Add an offline, provenance-bearing Kannada/Telugu/Devanagari field-guide
+  corpus and validate every bundled example in CI.
+- [ ] Obtain Telugu prosody review for full yati-maitri equivalence, historical
+  Sīsa variants, specialist written-line conventions, and musical Ragaḍa
+  licenses before promoting those rules beyond their catalog labels.
 - Select synonym data whose license permits bundled web and Android use.
 - Prefer an offline-first index; label meaning, register, grammatical
   differences, and metrical fit.

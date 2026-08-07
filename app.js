@@ -84,13 +84,13 @@
             scansion: "Scansion",
             scansionAuto: "Auto",
             scansionWeights: "Guru–laghu",
-            scansionAmsha: "Aṃśagaṇa · V/B/R",
+            scansionAmsha: "Gaṇa groups · V/B/R/S/I",
             scansionMatra35: "Mātrā gait · 3+5",
             scansionMatra53: "Mātrā gait · 5+3",
             scansionOff: "Off",
             detectShithilaDvitva: "Detect shithila dvitva",
             shithilaApplied: "{count} śithila-dvitva realization(s) marked *.",
-            realizedAmsha: "Realized aṃśa: {scan}",
+            realizedAmsha: "Realized gaṇas: {scan}",
             recitalSubstitutions: "{count} reviewed recital-dependent gaṇa substitution(s) are shown in the realized aṃśa scan.",
             selectedMeterReference: "Selected meter",
             closestMeters: "Closest meters",
@@ -245,13 +245,13 @@
             scansion: "ಛಂದೋವಿನ್ಯಾಸ",
             scansionAuto: "ಸ್ವಯಂ",
             scansionWeights: "ಗುರು–ಲಘು",
-            scansionAmsha: "ಅಂಶಗಣ · V/B/R",
+            scansionAmsha: "ಗಣ ವಿಭಾಗ · V/B/R/S/I",
             scansionMatra35: "ಮಾತ್ರಾಗತಿ · 3+5",
             scansionMatra53: "ಮಾತ್ರಾಗತಿ · 5+3",
             scansionOff: "ಬೇಡ",
             detectShithilaDvitva: "ಶಿಥಿಲ ದ್ವಿತ್ವವನ್ನು ಗುರುತಿಸಿ",
             shithilaApplied: "{count} ಶಿಥಿಲ ದ್ವಿತ್ವ ಪ್ರಯೋಗವನ್ನು * ಗುರುತಿಸಿದೆ.",
-            realizedAmsha: "ಬಳಕೆಯಾದ ಅಂಶಗಣ: {scan}",
+            realizedAmsha: "ಬಳಕೆಯಾದ ಗಣಗಳು: {scan}",
             recitalSubstitutions: "ಬಳಕೆಯಾದ ಅಂಶಗಣದ ವಿನ್ಯಾಸದಲ್ಲಿ ಪರಿಶೀಲಿತ {count} ಗಾಯನಾಧಾರಿತ ಪರ್ಯಾಯ ಗಣಗಳಿವೆ.",
             selectedMeterReference: "ಆಯ್ದ ಛಂದಸ್ಸು",
             closestMeters: "ಸಮೀಪದ ಛಂದಸ್ಸುಗಳು",
@@ -964,9 +964,9 @@
             return { B: "ब्र", V: "वि", R: "रु" };
         }
         if (script === "telugu") {
-            return { B: "బ్ర", V: "వి", R: "రు" };
+            return { B: "బ్ర", V: "వి", R: "రు", I: "ఇం", S: "సూ" };
         }
-        return { B: "B", V: "V", R: "R" };
+        return { B: "B", V: "V", R: "R", I: "I", S: "S" };
     }
 
     function formatAmshaSlot(slot, script) {
@@ -998,12 +998,12 @@
                     groupGuide;
         }
 
-        if (meter.kind === "amsha") {
+        if (meter.kind === "amsha" || meter.kind === "telugu-gana") {
             const groups = meter.amshaGroups && meter.amshaGroups[padaIndex];
             if (!groups) {
                 return "";
             }
-            return `aṃśa · ${groups.map((slot) =>
+            return `${meter.kind === "telugu-gana" ? "gaṇa" : "aṃśa"} · ${groups.map((slot) =>
                 formatAmshaSlot(slot, script)).join("|")}`;
         }
 
@@ -1426,7 +1426,8 @@
             let mode = state.scansionMode;
             if (mode === "auto") {
                 mode = (stanza.selectedMeter &&
-                    stanza.selectedMeter.kind === "amsha") ||
+                    (stanza.selectedMeter.kind === "amsha" ||
+                        stanza.selectedMeter.kind === "telugu-gana")) ||
                     (!stanza.selectedMeter && stanza.detectedAmshaMeter)
                     ? "amsha"
                     : "weights";

@@ -33,6 +33,15 @@
             "GGLL", "LLGLL", "GLLL", "LLLLL"
         ])
     });
+    // Telugu deśi metres use named gaṇa seats rather than one fixed L/G
+    // string. Sūrya seats contain three mātrās; Indra seats admit the six
+    // traditional realizations named na, nala, naga, sala, bha, ra and ta in
+    // Telugu handbooks. Keep this table separate from Kannada aṃśa-gaṇas:
+    // their recitation and substitution rules are not interchangeable.
+    const TELUGU_GANA_PATTERNS = Object.freeze({
+        S: Object.freeze(["GL", "LLL"]),
+        I: Object.freeze(["LLLL", "LLLG", "LLGL", "GLL", "GLG", "GGL"])
+    });
 
     const SCRIPT_CONFIG = {
         devanagari: {
@@ -789,6 +798,7 @@
         const structuralMeters = structuralEntries
             .filter((entry) => entry && entry.id && entry.name &&
                 (entry.kind === "matra" || entry.kind === "amsha" ||
+                    entry.kind === "telugu-gana" ||
                     entry.kind === "syllable-structural"))
             .map((entry, index) => ({
                 ...entry,
@@ -1097,6 +1107,7 @@
                 (left.violationCount || 0) - (right.violationCount || 0) ||
                 left.distance - right.distance ||
                 (left.constraintRank ?? 3) - (right.constraintRank ?? 3) ||
+                (right.scriptAffinity || 0) - (left.scriptAffinity || 0) ||
                 (right.prominence ?? 1) - (left.prominence ?? 1) ||
                 left.name.localeCompare(right.name);
         }
@@ -1106,6 +1117,7 @@
                 ? (left.inferredBoundaryCount || 0) -
                     (right.inferredBoundaryCount || 0)
                 : 0) ||
+            (right.scriptAffinity || 0) - (left.scriptAffinity || 0) ||
             (right.prominence ?? 1) - (left.prominence ?? 1) ||
             (left.substitutionCount || 0) - (right.substitutionCount || 0) ||
             left.score - right.score ||
@@ -1408,11 +1420,18 @@
         return failures;
     }
 
-    function amshaSlotClasses(slot) {
+    function structuralGanaPatterns(meter) {
+        return meter && meter.kind === "telugu-gana"
+            ? TELUGU_GANA_PATTERNS
+            : AMSHA_PATTERNS;
+    }
+
+    function amshaSlotClasses(slot, meter) {
+        const patternTable = structuralGanaPatterns(meter);
         const classes = Array.isArray(slot) ? slot : [slot];
         return classes.map((item) => String(item || "").toUpperCase())
             .filter((item) =>
-                AMSHA_PATTERNS[item] || item === GURU || item === LAGHU);
+                patternTable[item] || item === GURU || item === LAGHU);
     }
 
     function metricalBoundaryScore(pada, syllableIndex) {
@@ -1442,8 +1461,9 @@
     }
 
     function amshaSlotPatternOptions(slot, meter, padaIndex, slotIndex) {
-        const canonical = amshaSlotClasses(slot).flatMap((amshaClass) => {
-            const patterns = AMSHA_PATTERNS[amshaClass] || [amshaClass];
+        const patternTable = structuralGanaPatterns(meter);
+        const canonical = amshaSlotClasses(slot, meter).flatMap((amshaClass) => {
+            const patterns = patternTable[amshaClass] || [amshaClass];
             return patterns.map((pattern) => ({
                 amshaClass,
                 canonicalClass: amshaClass,
@@ -1452,7 +1472,7 @@
                 pattern
             }));
         });
-        const substitutions = amshaSlotClasses(slot).flatMap((expectedClass) =>
+        const substitutions = amshaSlotClasses(slot, meter).flatMap((expectedClass) =>
             amshaSubstitutionRules(
                 meter,
                 expectedClass,
@@ -1461,7 +1481,7 @@
             )
                 .flatMap((rule) => {
                     const actualClass = String(rule.actualClass || "").toUpperCase();
-                    const patterns = AMSHA_PATTERNS[actualClass] || [];
+                    const patterns = patternTable[actualClass] || [];
                     return patterns.map((pattern) => ({
                         amshaClass: actualClass,
                         canonicalClass: expectedClass,
@@ -1485,8 +1505,8 @@
             .map((option) => option.pattern)));
     }
 
-    function amshaGroupLabel(slot) {
-        return amshaSlotClasses(slot).join("/") || "?";
+    function amshaGroupLabel(slot, meter) {
+        return amshaSlotClasses(slot, meter).join("/") || "?";
     }
 
     function amshaKarshanaSyllables(group) {
@@ -1594,7 +1614,7 @@
                     const group = {
                         localIndex: slotIndex + 1,
                         globalIndex: globalGroupOffset + slotIndex + 1,
-                        expectedClass: amshaGroupLabel(slots[slotIndex]),
+                        expectedClass: amshaGroupLabel(slots[slotIndex], meter),
                         canonicalClass: option.canonicalClass,
                         actualClass: option.amshaClass,
                         isSubstitution: option.isSubstitution,
@@ -1882,7 +1902,7 @@
                 setViolation(
                     syllable,
                     "invalid-amsha-gana",
-                    amshaGroupLabel(slots[matched.groups.length]),
+                    amshaGroupLabel(slots[matched.groups.length], meter),
                     true
                 );
             }
@@ -1934,7 +1954,7 @@
         result.karshanaExtensions = karshanaExtensions;
         result.karshanaAmbiguityCount = karshanaAmbiguityCount;
         result.canonicalAmshaScan = expectedPadas.map((slots) =>
-            slots.map(amshaGroupLabel).join(""));
+            slots.map((slot) => amshaGroupLabel(slot, meter)).join(""));
         result.realizedAmshaScan = groupsByPada.map((groups) =>
             (groups || []).map((group) => group.actualClass).join(""));
         result.amshaGroupRanges = groupsByPada.map((groups) =>
@@ -2182,7 +2202,9 @@
             relation.type === "antya-prasa"
             ? "antya"
             : "dvitiyakshara";
-        const pairSize = relation.type === "pairwise-antya-prasa"
+        const pairwise = relation.type === "pairwise-antya-prasa" ||
+            relation.type === "pairwise-dvitiyakshara-prasa";
+        const pairSize = pairwise
             ? (Number.isInteger(relation.pairSize) && relation.pairSize > 1
                 ? relation.pairSize
                 : 2)
@@ -2200,7 +2222,7 @@
             if (slice.length > 0) {
                 groups.push(slice);
             }
-            if (relation.type !== "pairwise-antya-prasa") {
+            if (!pairwise) {
                 break;
             }
         }
@@ -2359,6 +2381,7 @@
         for (const relation of meter.lineRelations || []) {
             if (![
                 "dvitiyakshara-prasa",
+                "pairwise-dvitiyakshara-prasa",
                 "antya-prasa",
                 "pairwise-antya-prasa"
             ].includes(relation.type)) {
@@ -2400,7 +2423,8 @@
 
     function hasDvitiyaksharaRelation(meter) {
         return Boolean(meter) && (meter.lineRelations || []).some((relation) =>
-            relation.type === "dvitiyakshara-prasa");
+            relation.type === "dvitiyakshara-prasa" ||
+            relation.type === "pairwise-dvitiyakshara-prasa");
     }
 
     function evaluateAutomaticKannadaPrasa(padas, stanzaText, shouldMark) {
@@ -2791,12 +2815,69 @@
         if (meter.kind === "amsha") {
             return evaluateAmshaMeter(metricUnits, meter, shouldMark);
         }
+        if (meter.kind === "telugu-gana") {
+            const layouts = [{
+                id: "default",
+                name: "default",
+                groups: meter.amshaGroups || []
+            }].concat((meter.ganaLayouts || []).map((layout, index) => ({
+                id: String(layout.id || `layout-${index + 1}`),
+                name: String(layout.name || layout.id || `layout ${index + 1}`),
+                groups: Array.isArray(layout.groups) ? layout.groups : []
+            }))).filter((layout, index, all) =>
+                layout.groups.length && all.findIndex((candidate) =>
+                    JSON.stringify(candidate.groups) === JSON.stringify(layout.groups)) === index);
+            const candidates = layouts.map((layout, index) => ({
+                layout,
+                index,
+                result: evaluateAmshaMeter(
+                    metricUnits,
+                    { ...meter, amshaGroups: layout.groups },
+                    false
+                )
+            })).sort((left, right) =>
+                left.result.violationCount - right.result.violationCount ||
+                left.result.missingCount - right.result.missingCount ||
+                Math.abs(left.layout.groups.length - metricUnits.length) -
+                    Math.abs(right.layout.groups.length - metricUnits.length) ||
+                left.result.score - right.result.score ||
+                left.index - right.index);
+            const selected = candidates[0];
+            if (!selected) {
+                return evaluateAmshaMeter(metricUnits, meter, shouldMark);
+            }
+            const result = shouldMark
+                ? evaluateAmshaMeter(
+                    metricUnits,
+                    { ...meter, amshaGroups: selected.layout.groups },
+                    true
+                )
+                : selected.result;
+            result.ganaLayout = selected.layout.id;
+            result.ganaLayoutName = selected.layout.name;
+            return result;
+        }
         return evaluateMatraMeter(metricUnits, meter, shouldMark);
+    }
+
+    function meterSupportsPadas(meter, padas) {
+        const supported = meter && Array.isArray(meter.scripts)
+            ? meter.scripts
+            : [];
+        if (!supported.length) {
+            return true;
+        }
+        const observed = new Set((padas || []).flatMap((pada) =>
+            (pada.syllables || []).map((syllable) => syllable.script)
+                .filter((script) => script && script !== "unknown")));
+        return observed.size === 0 ||
+            Array.from(observed).every((script) => supported.includes(script));
     }
 
     function rankStructuralMeters(padas, meters) {
         return meters
-            .filter((meter) => meter.kind !== "fixed")
+            .filter((meter) => meter.kind !== "fixed" &&
+                meterSupportsPadas(meter, padas))
             .map((meter) => {
                 const result = scoreStructuralMeter(
                     padas,
@@ -2820,6 +2901,8 @@
                     kind: meter.kind,
                     patterns: meter.patterns,
                     prominence: meter.prominence,
+                    scriptAffinity: Array.isArray(meter.scripts) &&
+                        meter.scripts.length ? 1 : 0,
                     ruleCompleteness: meter.ruleCompleteness || "",
                     matchLevel,
                     evidenceRank: {
@@ -2832,7 +2915,8 @@
                     constraintRank: {
                         "syllable-structural": 1,
                         matra: 2,
-                        amsha: 3
+                        amsha: 3,
+                        "telugu-gana": 3
                     }[meter.kind] ?? 3,
                     ...result
                 };
@@ -3178,6 +3262,7 @@
         GURU,
         LAGHU,
         AMSHA_PATTERNS,
+        TELUGU_GANA_PATTERNS,
         SCRIPT_CONFIG,
         analyzeComposition,
         analyzeMeter,

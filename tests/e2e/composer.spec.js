@@ -991,7 +991,7 @@ test("shows the reviewed Chandovatamsa realization without false gaṇa errors",
     await expect(page.locator("#selected-meter-signature"))
         .toContainText("VVVB | VVVB | VVVB | VVVB");
     await expect(page.locator("#active-amsha-realization")).toHaveText(
-        "Realized aṃśa: VVVB · VRVB · VVVV · VVVB"
+        "Realized gaṇas: VVVB · VRVB · VVVV · VVVB"
     );
     await expect(page.locator("#validation-summary"))
         .toContainText("2 reviewed recital-dependent gaṇa substitution(s)");
@@ -1155,7 +1155,10 @@ test("shares a saved poem with every composer Share action without opening it", 
             hasText: "ಉಳಿಸಿದ ಮೊದಲ ಪದ್ಯ"
         });
         await expect(card).toHaveCount(1);
-        await card.getByRole("button", { name: "Share", exact: true }).click();
+        const shareButton = card.getByRole("button", { name: "Share", exact: true });
+        await shareButton.scrollIntoViewIfNeeded();
+        await shareButton.focus();
+        await shareButton.press("Enter");
         await expect(page.locator("#saved-poems-dialog")).toBeHidden();
         await expect(page.locator("#share-dialog")).toBeVisible();
     };
@@ -1468,7 +1471,7 @@ test("opens documentation and searches the complete prosody catalog", async ({ p
     await expect(page.locator("h1")).toContainText("How to use Chandas");
     await expect(page.locator("main")).toContainText("tea break");
     await expect(page.locator("#meter-catalog-status"))
-        .toHaveText("1,389 of 1,389 supported meters shown.");
+        .toHaveText("1,408 of 1,408 supported meters shown.");
 
     await page.locator("#meter-catalog-search").fill("anushtup");
     await expect(page.locator(".meter-catalog-item")).toHaveCount(1);
@@ -1492,6 +1495,16 @@ test("opens documentation and searches the complete prosody catalog", async ({ p
     await page.locator(".meter-catalog-item summary").click();
     await expect(page.locator(".meter-definitions"))
         .toContainText("Line 4: 5 + 5 + 5 + 1 = 16 mātrās");
+
+    await page.locator("#meter-catalog-search").fill("ataveladi");
+    const ataveladi = page.locator(".meter-catalog-item").filter({
+        has: page.getByText("āṭaveladi (Telugu)", { exact: true })
+    });
+    await expect(ataveladi).toHaveCount(1);
+    await ataveladi.locator("summary").click();
+    await expect(ataveladi.locator(".meter-definitions"))
+        .toContainText("S = Sūrya (GL or LLL)");
+    await expect(ataveladi.locator(".meter-example")).toContainText("Vemana");
 
     await page.getByText("Return to Chandas").click();
     await expect(page.locator("#composition")).toBeVisible();

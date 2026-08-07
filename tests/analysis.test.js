@@ -1210,7 +1210,7 @@ test("recognizes the provisional Kannada Kanda characterization fixture", () => 
     assert.equal(stanza.selectedMeter.ruleCompleteness, "provisional-rhythm");
     assert.deepEqual(stanza.selectedMeter.uncheckedRules, ["historical prāsa variants"]);
     assert.equal(result.analysisVersion, "2.15.0");
-    assert.equal(result.catalogVersion, "4.3.0");
+    assert.equal(result.catalogVersion, "5.0.0");
 });
 
 test("loads and validates the Pañcamātrā Chaupadi Kagga form", () => {

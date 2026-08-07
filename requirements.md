@@ -619,6 +619,10 @@ analysis result.
    avagraha, historic `ౘ`/`ౙ`/`ౚ`, atomic nakaara pollu `ౝ`, and canonically
    decomposed `AI`, while preserving original source ranges. It MUST remain
    independent of transliteration services and work offline.
+2a. Telugu deśi analysis MUST keep Sūrya and Indra gaṇas separate from Kannada
+   Brahma/Viṣṇu/Rudra aṃśa-gaṇas. It MUST accept Sūrya `GL` or `LLL` and the
+   six cataloged Indra realizations `LLLL`, `LLLG`, `LLGL`, `GLL`, `GLG`, and
+   `GGL` without reducing every seat to a single mātrā total.
 3. `mishra.json` MUST be treated as the source list for the initial meter
    catalog. The runtime representation MAY be transformed during the build,
    provided tests prove that every source entry and pattern is retained.
@@ -835,6 +839,34 @@ analysis result.
     policy. When that policy is unmarked, the analyzer MUST NOT invent a
     karṣaṇa or modify the authored text. The reviewed four-line realization
     MUST display as `VVVB / VRVB / VVVV / VVVB`.
+40. The Telugu deśi catalog MUST include Āṭaveladi
+    (`SSSII / SSSSS / SSSII / SSSSS`) and Tēṭagīti (four `SIISS` pādas).
+    Both MUST be restricted to Telugu-script candidate detection and MUST NOT
+    require dvitīyākṣara-prāsa.
+41. Telugu Kandamu MUST be a distinct catalog entry even where its
+    `12 | 20 | 12 | 20` framework agrees with Kannada Kanda. Telugu aliases,
+    source provenance, yati, and required prāsa MUST NOT be inherited silently
+    from the Kannada entry.
+42. Telugu Dvipada MUST use two `IIIS` pādas and require opening
+    dvitīyākṣara-prāsa. Mañjarī Dvipada MUST use the same rhythmic frame as a
+    separate choice without compulsory prāsa.
+43. Sīsamu MUST recognize four long `IIIIIISS` pādas and their common
+    eight-half-line written layout. It MUST also recognize an attached
+    four-pāda Āṭaveladi or Tēṭagīti ettugīti without treating the extra lines
+    as violations.
+44. Mutyāla Sarālu MUST validate the common `14 | 14 | 14 | 7–14` mātrā
+    frame, with `3+4+3+4` on each of its first three lines. It MUST remain
+    labeled as a musical gait rather than claiming that mātrā totals alone
+    capture every performance feature.
+45. Taruvoja and Madhyākkara MUST accept their sourced long-line and half-line
+    layouts. Historically differing yati positions MUST be documented rather
+    than resolved through an unreviewed global exception.
+46. The Telugu Ragaḍa family MUST contain separate catalog entries for the ten
+    sourced gaits. Repeating lines MUST be evaluated in couplets, with both
+    pairwise dvitīyākṣara-prāsa and pairwise ending rhyme.
+47. The repository MUST bundle an offline, versioned field-guide corpus with
+    source and rights metadata. Every bundled poem MUST be analyzed in CI
+    against its stored meter, zero-violation expectation, and line totals.
 
 ## 7. User Experience and Accessibility
 

@@ -22,6 +22,7 @@ const assets = [
     "strong_template.js",
     "mishra.json",
     "structural_meters.json",
+    "examples/field_guide_corpus.json",
     "manifest.webmanifest",
     "service-worker.js",
     "icon.svg",
@@ -41,7 +42,9 @@ fs.rmSync(output, { recursive: true, force: true });
 fs.mkdirSync(output, { recursive: true });
 
 for (const asset of assets) {
-    fs.copyFileSync(path.join(root, asset), path.join(output, asset));
+    const destination = path.join(output, asset);
+    fs.mkdirSync(path.dirname(destination), { recursive: true });
+    fs.copyFileSync(path.join(root, asset), destination);
 }
 
 console.log(`Built ${assets.length} static assets in ${path.relative(root, output)}/.`);

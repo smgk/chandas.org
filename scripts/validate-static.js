@@ -21,6 +21,7 @@ const required = [
     "strong_template.js",
     "mishra.json",
     "structural_meters.json",
+    "examples/field_guide_corpus.json",
     "manifest.webmanifest",
     "service-worker.js",
     "icon.svg",
@@ -98,12 +99,12 @@ for (const meter of structuralCatalog.meters) {
     if (meter.sourceRef && !structuralCatalog[meter.sourceRef]) {
         throw new Error(`Unknown source reference for ${meter.id}: ${meter.sourceRef}`);
     }
-    if (!["matra", "amsha", "syllable-structural"].includes(meter.kind)) {
+    if (!["matra", "amsha", "telugu-gana", "syllable-structural"].includes(meter.kind)) {
         throw new Error(`${meter.id} has an unknown structural kind`);
     }
     const rules = meter.kind === "matra"
         ? meter.padaGroups
-        : meter.kind === "amsha"
+        : meter.kind === "amsha" || meter.kind === "telugu-gana"
             ? meter.amshaGroups
             : meter.padas;
     if (!Array.isArray(rules) || rules.length === 0) {
@@ -225,6 +226,9 @@ for (const meter of structuralCatalog.meters) {
             throw new Error(`${meter.id} mātrā-group options must match its line rules`);
         }
         meter.padaGroupOptions.forEach((options, lineIndex) => {
+            if (options === null) {
+                return;
+            }
             const primary = meter.padaGroups[lineIndex];
             const primaryTotal = primary.reduce((sum, value) => sum + value, 0);
             if (!Array.isArray(options) || options.length < 2) {
@@ -296,10 +300,12 @@ for (const meter of structuralCatalog.meters) {
     for (const relation of meter.lineRelations || []) {
         const supported = [
             "dvitiyakshara-prasa",
+            "pairwise-dvitiyakshara-prasa",
             "antya-prasa",
             "pairwise-antya-prasa"
         ];
-        const invalidPair = relation.type === "pairwise-antya-prasa" &&
+        const invalidPair = (relation.type === "pairwise-antya-prasa" ||
+            relation.type === "pairwise-dvitiyakshara-prasa") &&
             (!Number.isInteger(relation.pairSize) || relation.pairSize < 2);
         const invalidAnchors = (relation.internalAnchors || []).some((anchor) =>
             !Number.isInteger(anchor.pada) || anchor.pada < 1 ||

@@ -24,6 +24,8 @@ material. In particular:
   and license terms.
 - References cited by the meter rule documentation remain the work of their
   respective authors and publishers.
+- Poems in `examples/field_guide_corpus.json` retain their stated authorship,
+  public-domain status, and transcription/source attribution.
 
 Where a third-party license conflicts with this general notice, the
 third-party notice controls for that material.

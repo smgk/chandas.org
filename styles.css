@@ -1580,6 +1580,44 @@ textarea:focus-visible {
     margin: 0;
 }
 
+.meter-examples {
+    margin-top: 1rem;
+    padding-top: 0.8rem;
+    border-top: 1px solid var(--line);
+}
+
+.meter-examples h4,
+.meter-example h5 {
+    margin: 0 0 0.35rem;
+}
+
+.meter-example + .meter-example {
+    margin-top: 1rem;
+}
+
+.meter-example-byline,
+.meter-example-actions {
+    margin: 0.25rem 0;
+    color: var(--muted);
+    font-size: 0.76rem;
+}
+
+.meter-example-text {
+    overflow-x: auto;
+    margin: 0.55rem 0;
+    padding: 0.7rem;
+    border-radius: 0.55rem;
+    font: inherit;
+    line-height: 1.75;
+    white-space: pre-wrap;
+    background: var(--paper-deep);
+}
+
+.meter-example-actions a {
+    color: var(--green);
+    font-weight: 700;
+}
+
 .share-dialog,
 .saved-poems-dialog {
     width: min(440px, calc(100% - 2rem));

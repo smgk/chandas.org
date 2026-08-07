@@ -1,8 +1,8 @@
 {
-  "catalogVersion": "4.3.0",
+  "catalogVersion": "5.0.0",
   "copyright": "Copyright © 2025–2026 Ganesh Krishna Shankarathota",
   "license": "GPL-3.0-only",
-  "description": "Structural, mātrā, and aṃśa meter rules that cannot be represented as one fixed Guru/Laghu string.",
+  "description": "Structural, mātrā, Kannada aṃśa, and Telugu deśi-gaṇa meter rules that cannot be represented as one fixed Guru/Laghu string.",
   "prominenceNote": "Editorial prominence is only a tie-breaker between candidates with comparable observed metrical evidence; it never overrides an exact or stronger fit.",
   "meterProminence": {
     "śārdūlavikrīḍitam": "common",
@@ -27,7 +27,13 @@
     "structural:doreyakkara": "specialist",
     "structural:naduvanakkara": "specialist",
     "structural:edeyakkara": "specialist",
-    "structural:kiriyakkara": "specialist"
+    "structural:kiriyakkara": "specialist",
+    "structural:ataveladi-telugu": "common",
+    "structural:tetagiti-telugu": "common",
+    "structural:kandamu-telugu": "common",
+    "structural:dvipada-telugu": "common",
+    "structural:sisa-telugu": "common",
+    "structural:mutyala-saralu": "common"
   },
   "fixedMeters": [
     ["campakamāle (Kannada)", "LLLLGLGLLLGLLGLLGLGLG"],
@@ -1273,6 +1279,247 @@
       "notes": "Checks four five-mātrā gaṇas on every written line and pairwise end-rhyme. The entry remains provisional pending expert review."
     },
     {
+      "id": "structural:ataveladi-telugu",
+      "name": "āṭaveladi (Telugu)",
+      "aliases": ["ataveladi", "aataveladi", "ata veladi", "ఆటవెలది"],
+      "kind": "telugu-gana",
+      "scripts": ["telugu"],
+      "signatureLines": ["4 pādas: SSSII / SSSSS / SSSII / SSSSS", "S = Sūrya; I = Indra; yati joins gaṇas 1 and 4"],
+      "ruleCompleteness": "structure-and-yati-position",
+      "sourceRef": "teluguDesiSource",
+      "linePolicy": {"type": "fixed", "count": 4},
+      "amshaGroups": [["S", "S", "S", "I", "I"], ["S", "S", "S", "S", "S"], ["S", "S", "S", "I", "I"], ["S", "S", "S", "S", "S"]],
+      "yatiRelations": [{"padas": [1, 2, 3, 4], "anchorGroup": 1, "targetGroup": 4}],
+      "notes": "The canonical Vemana/śataka frame. Prāsa is not required; full traditional yati-maitri equivalence is reported conservatively."
+    },
+    {
+      "id": "structural:tetagiti-telugu",
+      "name": "tēṭagīti (Telugu)",
+      "aliases": ["tetagiti", "teta giti", "thetagiti", "తేటగీతి", "తేట గీతి"],
+      "kind": "telugu-gana",
+      "scripts": ["telugu"],
+      "signatureLines": ["4 pādas × S I I S S", "yati joins gaṇas 1 and 4"],
+      "ruleCompleteness": "structure-and-yati-position",
+      "sourceRef": "teluguDesiSource",
+      "linePolicy": {"type": "fixed", "count": 4},
+      "amshaGroups": [["S", "I", "I", "S", "S"], ["S", "I", "I", "S", "S"], ["S", "I", "I", "S", "S"], ["S", "I", "I", "S", "S"]],
+      "yatiRelations": [{"padas": [1, 2, 3, 4], "anchorGroup": 1, "targetGroup": 4}],
+      "notes": "One Sūrya, two Indra, and two Sūrya gaṇas in every pāda. Prāsa is not required."
+    },
+    {
+      "id": "structural:kandamu-telugu",
+      "name": "kandamu (Telugu)",
+      "aliases": ["kandamu", "kanda padyamu", "kanda padyam", "కందము", "కంద పద్యము", "కందపద్యం"],
+      "kind": "matra",
+      "scripts": ["telugu"],
+      "signatureLines": ["12 | 20 | 12 | 20 mātrās", "groups: 444 | 44444 | 444 | 44444", "gaṇas 6 & 14: LGL or LLLL; 8 & 16 end G"],
+      "ruleCompleteness": "complete",
+      "sourceRef": "teluguKandaSource",
+      "linePolicy": {"type": "fixed", "count": 4},
+      "padaGroups": [[4, 4, 4], [4, 4, 4, 4, 4], [4, 4, 4], [4, 4, 4, 4, 4]],
+      "groupRules": [
+        {"globalGroups": [1, 3, 5, 7, 9, 11, 13, 15], "forbiddenPatterns": ["LGL"], "violationReason": "forbidden-jagana"},
+        {"globalGroups": [6, 14], "allowedPatterns": ["LGL", "LLLL"], "violationReason": "required-jagana-or-all-laghu"},
+        {"globalGroups": [8, 16], "allowedPatterns": ["LLG", "GG"], "violationReason": "required-final-guru"}
+      ],
+      "boundaryRules": [{"globalGroups": [6, 14], "whenPatterns": ["LLLL"], "afterSyllable": 1, "violationReason": "required-yati"}],
+      "lineRelations": [{"type": "dvitiyakshara-prasa"}],
+      "notes": "A distinct Telugu rule entry: it shares the 3/5/3/5 four-mātrā skeleton with Kannada Kanda but retains Telugu terminology, yati, and prāsa provenance."
+    },
+    {
+      "id": "structural:dvipada-telugu",
+      "name": "dvipada (Telugu)",
+      "aliases": ["dwipada", "dvipada", "dvipad", "ద్విపద"],
+      "kind": "telugu-gana",
+      "scripts": ["telugu"],
+      "signatureLines": ["2 pādas × I I I S", "yati joins the openings of gaṇas 1 and 3; dvitīyākṣara-prāsa joins the pair"],
+      "ruleCompleteness": "structure-prasa-and-yati-position",
+      "sourceRef": "teluguDesiSource",
+      "linePolicy": {"type": "fixed", "count": 2},
+      "amshaGroups": [["I", "I", "I", "S"], ["I", "I", "I", "S"]],
+      "yatiRelations": [{"padas": [1, 2], "anchorGroup": 1, "targetGroup": 3}],
+      "lineRelations": [{"type": "dvitiyakshara-prasa"}],
+      "notes": "The regular Telugu narrative couplet. Manjari dvipada is the same rhythmic frame without compulsory dvitīyākṣara-prāsa."
+    },
+    {
+      "id": "structural:manjari-dvipada-telugu",
+      "name": "mañjarī dvipada (Telugu)",
+      "aliases": ["manjari dvipada", "manjari dwipada", "మంజరీ ద్విపద", "మంజరిద్విపద"],
+      "kind": "telugu-gana",
+      "scripts": ["telugu"],
+      "signatureLines": ["2 pādas × I I I S", "dvipada rhythm without compulsory prāsa"],
+      "ruleCompleteness": "structure-and-yati-position",
+      "sourceRef": "teluguDesiSource",
+      "linePolicy": {"type": "fixed", "count": 2},
+      "amshaGroups": [["I", "I", "I", "S"], ["I", "I", "I", "S"]],
+      "yatiRelations": [{"padas": [1, 2], "anchorGroup": 1, "targetGroup": 3}],
+      "notes": "The prāsa-free relative of dvipada; historical practice may use prāsa-yati."
+    },
+    {
+      "id": "structural:sisa-telugu",
+      "name": "sīsamu (Telugu)",
+      "aliases": ["sisa", "seesa", "sisamu", "సీసము", "సీస పద్యం", "సీసపద్యం"],
+      "kind": "telugu-gana",
+      "scripts": ["telugu"],
+      "signatureLines": ["4 long pādas × I I I I I I S S", "each long pāda may be written as 4+4 gaṇa half-lines", "normally followed by a 4-pāda āṭaveladi or tēṭagīti ettugīti"],
+      "ruleCompleteness": "canonical-layouts",
+      "sourceRef": "teluguSisaSource",
+      "linePolicy": {"type": "fixed", "count": 4},
+      "amshaGroups": [["I", "I", "I", "I", "I", "I", "S", "S"], ["I", "I", "I", "I", "I", "I", "S", "S"], ["I", "I", "I", "I", "I", "I", "S", "S"], ["I", "I", "I", "I", "I", "I", "S", "S"]],
+      "ganaLayouts": [
+        {"id": "eight-half-lines", "name": "8 written half-lines", "groups": [["I", "I", "I", "I"], ["I", "I", "S", "S"], ["I", "I", "I", "I"], ["I", "I", "S", "S"], ["I", "I", "I", "I"], ["I", "I", "S", "S"], ["I", "I", "I", "I"], ["I", "I", "S", "S"]]},
+        {"id": "four-lines-tetagiti", "name": "4 long lines + tēṭagīti", "groups": [["I", "I", "I", "I", "I", "I", "S", "S"], ["I", "I", "I", "I", "I", "I", "S", "S"], ["I", "I", "I", "I", "I", "I", "S", "S"], ["I", "I", "I", "I", "I", "I", "S", "S"], ["S", "I", "I", "S", "S"], ["S", "I", "I", "S", "S"], ["S", "I", "I", "S", "S"], ["S", "I", "I", "S", "S"]]},
+        {"id": "four-lines-ataveladi", "name": "4 long lines + āṭaveladi", "groups": [["I", "I", "I", "I", "I", "I", "S", "S"], ["I", "I", "I", "I", "I", "I", "S", "S"], ["I", "I", "I", "I", "I", "I", "S", "S"], ["I", "I", "I", "I", "I", "I", "S", "S"], ["S", "S", "S", "I", "I"], ["S", "S", "S", "S", "S"], ["S", "S", "S", "I", "I"], ["S", "S", "S", "S", "S"]]}
+      ],
+      "yatiRelations": [{"padas": [1, 2, 3, 4], "anchorGroup": 1, "targetGroup": 3}, {"padas": [1, 2, 3, 4], "anchorGroup": 5, "targetGroup": 7}],
+      "notes": "Recognizes the four-long-line and eight-half-line conventions, plus canonical āṭaveladi or tēṭagīti ettugīti layouts. Prāsa is optional."
+    },
+    {
+      "id": "structural:mutyala-saralu",
+      "name": "mutyāla sarālu (Telugu)",
+      "aliases": ["mutyala saralu", "muthyala saralu", "mutyala saram", "ముత్యాల సరాలు", "ముత్యాలసరము"],
+      "kind": "matra",
+      "scripts": ["telugu"],
+      "signatureLines": ["first 3 lines: 3+4+3+4 = 14 mātrās", "line 4: 7–14 mātrās"],
+      "ruleCompleteness": "canonical-modern-gait",
+      "sourceRef": "mutyalaSaraluSource",
+      "linePolicy": {"type": "fixed", "count": 4},
+      "padaGroups": [[3, 4, 3, 4], [3, 4, 3, 4], [3, 4, 3, 4], [7]],
+      "padaGroupOptions": [null, null, null, [[7], [8], [9], [10], [11], [12], [13], [14]]],
+      "allowDifferentOptionTotals": true,
+      "notes": "Gurajada's four-line song gait. The closing line may contain any total from seven through fourteen mātrās; word music remains an essential part of the form."
+    },
+    {
+      "id": "structural:taruvoja-telugu",
+      "name": "taruvoja (Telugu)",
+      "aliases": ["taruvoja", "taruvaja", "తరువోజ", "తరువోజు"],
+      "kind": "telugu-gana",
+      "scripts": ["telugu"],
+      "signatureLines": ["4 long pādas × (I I I S) + (I I I S)", "may be displayed as 8 dvipada-like half-lines"],
+      "ruleCompleteness": "canonical-layouts",
+      "sourceRef": "teluguSpecialistSource",
+      "linePolicy": {"type": "fixed", "count": 4},
+      "amshaGroups": [["I", "I", "I", "S", "I", "I", "I", "S"], ["I", "I", "I", "S", "I", "I", "I", "S"], ["I", "I", "I", "S", "I", "I", "I", "S"], ["I", "I", "I", "S", "I", "I", "I", "S"]],
+      "ganaLayouts": [{"id": "eight-half-lines", "name": "8 written half-lines", "groups": [["I", "I", "I", "S"], ["I", "I", "I", "S"], ["I", "I", "I", "S"], ["I", "I", "I", "S"], ["I", "I", "I", "S"], ["I", "I", "I", "S"], ["I", "I", "I", "S"], ["I", "I", "I", "S"]]}],
+      "lineRelations": [{"type": "dvitiyakshara-prasa"}],
+      "notes": "The traditional extended-dvipada frame. Historical descriptions differ in how the written long lines and prāsa-governed half-lines are counted."
+    },
+    {
+      "id": "structural:madhyakkara-telugu",
+      "name": "madhyākkara (Telugu)",
+      "aliases": ["madhyakkara", "madhyakkara", "మధ్యాక్కర"],
+      "kind": "telugu-gana",
+      "scripts": ["telugu"],
+      "signatureLines": ["4 long pādas × (I I S) + (I I S)", "yati at the fourth gaṇa; prāsa required"],
+      "ruleCompleteness": "canonical-layouts",
+      "sourceRef": "teluguSpecialistSource",
+      "linePolicy": {"type": "fixed", "count": 4},
+      "amshaGroups": [["I", "I", "S", "I", "I", "S"], ["I", "I", "S", "I", "I", "S"], ["I", "I", "S", "I", "I", "S"], ["I", "I", "S", "I", "I", "S"]],
+      "ganaLayouts": [{"id": "eight-half-lines", "name": "8 written half-lines", "groups": [["I", "I", "S"], ["I", "I", "S"], ["I", "I", "S"], ["I", "I", "S"], ["I", "I", "S"], ["I", "I", "S"], ["I", "I", "S"], ["I", "I", "S"]]}],
+      "lineRelations": [{"type": "dvitiyakshara-prasa"}],
+      "notes": "Nannaya's naturalized akkara form as described by Brown; later handbooks sometimes place the internal yati on the fifth rather than fourth gaṇa."
+    },
+    {
+      "id": "structural:ragada-hayaprachara-telugu",
+      "name": "hayapracāra ragaḍa (Telugu)",
+      "aliases": ["hayaprachara ragada", "హయప్రచార రగడ"],
+      "kind": "matra", "scripts": ["telugu"],
+      "signatureLines": ["each line: 3+3+3+3 mātrās; couplet prāsa and end-rhyme"],
+      "ruleCompleteness": "documented-ragada-gait", "sourceRef": "teluguRagadaSource",
+      "linePolicy": {"type": "repeating", "min": 2}, "padaGroups": [[3, 3, 3, 3]],
+      "lineRelations": [{"type": "pairwise-dvitiyakshara-prasa", "pairSize": 2}, {"type": "pairwise-antya-prasa", "pairSize": 2}]
+    },
+    {
+      "id": "structural:ragada-turagavalgana-telugu",
+      "name": "turagavalgana ragaḍa (Telugu)",
+      "aliases": ["turagavalgana ragada", "తురగవల్గన రగడ"],
+      "kind": "matra", "scripts": ["telugu"],
+      "signatureLines": ["each line: eight 3-mātrā gaṇas; couplet prāsa and end-rhyme"],
+      "ruleCompleteness": "documented-ragada-gait", "sourceRef": "teluguRagadaSource",
+      "linePolicy": {"type": "repeating", "min": 2}, "padaGroups": [[3, 3, 3, 3, 3, 3, 3, 3]],
+      "lineRelations": [{"type": "pairwise-dvitiyakshara-prasa", "pairSize": 2}, {"type": "pairwise-antya-prasa", "pairSize": 2}]
+    },
+    {
+      "id": "structural:ragada-vijayamangala-telugu",
+      "name": "vijayamaṅgala ragaḍa (Telugu)",
+      "aliases": ["vijayamangala ragada", "విజయమంగళ రగడ"],
+      "kind": "matra", "scripts": ["telugu"],
+      "signatureLines": ["each line: sixteen 3-mātrā gaṇas; couplet prāsa and end-rhyme"],
+      "ruleCompleteness": "documented-ragada-gait", "sourceRef": "teluguRagadaSource",
+      "linePolicy": {"type": "repeating", "min": 2}, "padaGroups": [[3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]],
+      "lineRelations": [{"type": "pairwise-dvitiyakshara-prasa", "pairSize": 2}, {"type": "pairwise-antya-prasa", "pairSize": 2}]
+    },
+    {
+      "id": "structural:ragada-madhuragati-telugu",
+      "name": "madhuragati ragaḍa (Telugu)",
+      "aliases": ["madhuragati ragada", "మధురగతి రగడ"],
+      "kind": "matra", "scripts": ["telugu"],
+      "signatureLines": ["each line: 4+4+4+4 mātrās; couplet prāsa and end-rhyme"],
+      "ruleCompleteness": "documented-ragada-gait", "sourceRef": "teluguRagadaSource",
+      "linePolicy": {"type": "repeating", "min": 2}, "padaGroups": [[4, 4, 4, 4]],
+      "lineRelations": [{"type": "pairwise-dvitiyakshara-prasa", "pairSize": 2}, {"type": "pairwise-antya-prasa", "pairSize": 2}]
+    },
+    {
+      "id": "structural:ragada-harigati-telugu",
+      "name": "harigati ragaḍa (Telugu)",
+      "aliases": ["harigati ragada", "హరిగతి రగడ"],
+      "kind": "matra", "scripts": ["telugu"],
+      "signatureLines": ["each line: eight 4-mātrā gaṇas; couplet prāsa and end-rhyme"],
+      "ruleCompleteness": "documented-ragada-gait", "sourceRef": "teluguRagadaSource",
+      "linePolicy": {"type": "repeating", "min": 2}, "padaGroups": [[4, 4, 4, 4, 4, 4, 4, 4]],
+      "lineRelations": [{"type": "pairwise-dvitiyakshara-prasa", "pairSize": 2}, {"type": "pairwise-antya-prasa", "pairSize": 2}]
+    },
+    {
+      "id": "structural:ragada-dviradagati-telugu",
+      "name": "dviradagati ragaḍa (Telugu)",
+      "aliases": ["dviradagati ragada", "ద్విరదగతి రగడ"],
+      "kind": "matra", "scripts": ["telugu"],
+      "signatureLines": ["each line: 5+5+5+5 mātrās; couplet prāsa and end-rhyme"],
+      "ruleCompleteness": "documented-ragada-gait", "sourceRef": "teluguRagadaSource",
+      "linePolicy": {"type": "repeating", "min": 2}, "padaGroups": [[5, 5, 5, 5]],
+      "lineRelations": [{"type": "pairwise-dvitiyakshara-prasa", "pairSize": 2}, {"type": "pairwise-antya-prasa", "pairSize": 2}]
+    },
+    {
+      "id": "structural:ragada-vijayabhadra-telugu",
+      "name": "vijayabhadra ragaḍa (Telugu)",
+      "aliases": ["vijayabhadra ragada", "విజయభద్ర రగడ"],
+      "kind": "matra", "scripts": ["telugu"],
+      "signatureLines": ["each line: eight 5-mātrā gaṇas; couplet prāsa and end-rhyme"],
+      "ruleCompleteness": "documented-ragada-gait", "sourceRef": "teluguRagadaSource",
+      "linePolicy": {"type": "repeating", "min": 2}, "padaGroups": [[5, 5, 5, 5, 5, 5, 5, 5]],
+      "lineRelations": [{"type": "pairwise-dvitiyakshara-prasa", "pairSize": 2}, {"type": "pairwise-antya-prasa", "pairSize": 2}]
+    },
+    {
+      "id": "structural:ragada-harinagati-telugu",
+      "name": "hariṇagati ragaḍa (Telugu)",
+      "aliases": ["harinagati ragada", "హరిణగతి రగడ"],
+      "kind": "matra", "scripts": ["telugu"],
+      "signatureLines": ["each line: 3+4+3+4 mātrās; couplet prāsa and end-rhyme"],
+      "ruleCompleteness": "documented-ragada-gait", "sourceRef": "teluguRagadaSource",
+      "linePolicy": {"type": "repeating", "min": 2}, "padaGroups": [[3, 4, 3, 4]],
+      "lineRelations": [{"type": "pairwise-dvitiyakshara-prasa", "pairSize": 2}, {"type": "pairwise-antya-prasa", "pairSize": 2}]
+    },
+    {
+      "id": "structural:ragada-vrishabhagati-telugu",
+      "name": "vṛṣabhagati ragaḍa (Telugu)",
+      "aliases": ["vrishabhagati ragada", "వృషభగతి రగడ"],
+      "kind": "matra", "scripts": ["telugu"],
+      "signatureLines": ["each line: 3+4+3+4+3+4+3+4 mātrās; couplet prāsa and end-rhyme"],
+      "ruleCompleteness": "documented-ragada-gait", "sourceRef": "teluguRagadaSource",
+      "linePolicy": {"type": "repeating", "min": 2}, "padaGroups": [[3, 4, 3, 4, 3, 4, 3, 4]],
+      "lineRelations": [{"type": "pairwise-dvitiyakshara-prasa", "pairSize": 2}, {"type": "pairwise-antya-prasa", "pairSize": 2}]
+    },
+    {
+      "id": "structural:ragada-hamsagati-telugu",
+      "name": "haṃsagati ragaḍa (Telugu)",
+      "aliases": ["hamsagati ragada", "హంసగతి రగడ"],
+      "kind": "matra", "scripts": ["telugu"],
+      "signatureLines": ["each line: 5+5+3+3 mātrās; couplet prāsa and end-rhyme"],
+      "ruleCompleteness": "documented-ragada-gait", "sourceRef": "teluguRagadaSource",
+      "linePolicy": {"type": "repeating", "min": 2}, "padaGroups": [[5, 5, 3, 3]],
+      "lineRelations": [{"type": "pairwise-dvitiyakshara-prasa", "pairSize": 2}, {"type": "pairwise-antya-prasa", "pairSize": 2}]
+    },
+    {
       "id": "structural:sugiti",
       "name": "sugīti",
       "aliases": ["sugiti", "sugeeti"],
@@ -1303,6 +1550,98 @@
       "padaGroups": [[4, 4, 4], [4, 4, 4, 4, 4], [4, 4, 4], [4, 4, 4, 4, 2]]
     }
   ],
+  "teluguDesiSource": {
+    "title": "Telugu deśi gaṇa and metre rule packet",
+    "references": [
+      {
+        "title": "C. P. Brown, A Grammar of the Telugu Language, Book XI",
+        "url": "https://te.wikisource.org/wiki/A_grammar_of_the_Telugu_language/BOOK_ELEVENTH"
+      },
+      {
+        "title": "C. P. Brown, The Prosody of the Telugu and Sanskrit Languages Explained, p. 47",
+        "url": "https://te.wikisource.org/wiki/పుట:The_Prosody_of_the_Telugu_and_Sanscrit_L.pdf/47"
+      },
+      {
+        "title": "AP Intermediate Telugu Chandassu teaching rules",
+        "url": "https://apboardsolutions.com/ap-inter-2nd-year-telugu-grammar-chandassu/"
+      }
+    ],
+    "notes": "The Sūrya/Indra pattern sets and the āṭaveladi, tēṭagīti, dvipada, and mañjarī frames follow Brown's public-domain grammar, checked against current school terminology."
+  },
+  "teluguKandaSource": {
+    "title": "Telugu Kandamu rule packet",
+    "references": [
+      {
+        "title": "C. P. Brown, A Grammar of the Telugu Language, Canda Padyamu",
+        "url": "https://te.wikisource.org/wiki/A_grammar_of_the_Telugu_language/BOOK_ELEVENTH"
+      },
+      {
+        "title": "Little Masters Sulabha Vyakaranamu, Kandamu",
+        "url": "https://te.wikisource.org/wiki/పుట:Little_Masters_Sulabha_Vyakaranamu.pdf/111"
+      }
+    ],
+    "notes": "The Telugu entry is intentionally distinct from Kannada Kanda even where their four-mātrā framework agrees."
+  },
+  "teluguSisaSource": {
+    "title": "Telugu Sīsamu rule packet",
+    "references": [
+      {
+        "title": "C. P. Brown, The Prosody of the Telugu and Sanskrit Languages Explained",
+        "url": "https://books.google.com/books?id=WMsYKi2jcgQC"
+      },
+      {
+        "title": "Telangana Class 10 Telugu: Sīsa rules",
+        "url": "https://tsboardsolutions.in/ts-10th-class-telugu-guide-11th-lesson/"
+      },
+      {
+        "title": "Sīsa and Telugu Indra/Sūrya gaṇas",
+        "url": "https://sanchika.com/prabandha-sahityamlo-salamulu/"
+      }
+    ],
+    "notes": "The catalog accepts four long lines or eight written half-lines and the two conventional ettugīti families. Other historical Sīsa subtypes remain future expert-review material."
+  },
+  "mutyalaSaraluSource": {
+    "title": "Mutyāla Sarālu rule and example packet",
+    "references": [
+      {
+        "title": "Gurajada Apparao, Mutyāla Saramulu",
+        "url": "https://te.wikisource.org/wiki/ముత్యాల_సరాలు/ముత్యాల_సరములు"
+      },
+      {
+        "title": "AP Intermediate Telugu: Mutyāla Saram closing range",
+        "url": "https://apboardsolutions.com/ap-inter-2nd-year-telugu-grammar-chandassu/"
+      }
+    ],
+    "notes": "The encoded 14/14/14/7–14 mātrā frame is the commonly taught modern form; musical phrasing still matters."
+  },
+  "teluguRagadaSource": {
+    "title": "Telugu Ragaḍa family rule packet",
+    "references": [
+      {
+        "title": "Andhra Bharati: Ragaḍa forms, gaits, yati and prāsa",
+        "url": "https://www.andhrabharati.com/bhAshha/ChaMdassu/ragaDalu.html"
+      },
+      {
+        "title": "C. P. Brown, A Grammar of the Telugu Language, On the Ragada Metre",
+        "url": "https://te.wikisource.org/wiki/A_grammar_of_the_Telugu_language/BOOK_ELEVENTH"
+      }
+    ],
+    "notes": "Ten documented rhythmic frames are encoded separately. Ragaḍa's compulsory opening and ending rhymes are checked pairwise; musical licenses still deserve expert review."
+  },
+  "teluguSpecialistSource": {
+    "title": "Telugu Taruvoja and Madhyākkara rule packet",
+    "references": [
+      {
+        "title": "C. P. Brown, A Grammar of the Telugu Language, Taruvaja and Accara",
+        "url": "https://te.wikisource.org/wiki/A_grammar_of_the_Telugu_language/BOOK_ELEVENTH"
+      },
+      {
+        "title": "Historical Telugu metre discussion and examples",
+        "url": "https://eemaata.com/em/issues/201203/1923.html?allinonepage=1"
+      }
+    ],
+    "notes": "The catalog records Brown's canonical line architectures and explicitly labels historically variable layout and yati practice."
+  },
   "matraSource": {
     "title": "DHARMA Prosodic Patterns",
     "url": "https://dharmalekha.info/prosody",

@@ -87,7 +87,7 @@
         );
     }
 
-    function fixedMeter(entry, index) {
+    function fixedMeter(entry, index, examples) {
         const name = String(entry[0] || `Meter ${index + 1}`);
         const versePatterns = fixedVersePatterns(entry[1]);
         const syllableCounts = Array.from(new Set(versePatterns.map((pattern) => pattern.length)));
@@ -97,6 +97,7 @@
             kind: "fixed",
             kindLabel: "Fixed vṛtta",
             aliases: [],
+            examples: Array.isArray(examples) ? examples : [],
             versePatterns,
             searchText: foldSearch(`${name} fixed vritta ${syllableCounts.join(" ")}`),
             summary: syllableCounts.length === 1
@@ -109,6 +110,7 @@
         const aliases = Array.isArray(entry.aliases) ? entry.aliases : [];
         const isMatra = entry.kind === "matra";
         const isAmsha = entry.kind === "amsha";
+        const isTeluguGana = entry.kind === "telugu-gana";
         const repeating = entry.linePolicy &&
             ["repeating", "variable"].includes(entry.linePolicy.type);
         return {
@@ -117,6 +119,8 @@
                 ? "Mātrā meter"
                 : isAmsha
                     ? "Aṃśa meter"
+                    : isTeluguGana
+                        ? "Telugu deśi-gaṇa meter"
                     : "Structural syllabic meter",
             searchText: foldSearch([
                 entry.name,
@@ -131,6 +135,8 @@
                     : `${entry.padaGroups.length} lines · mātrā groups`
                 : isAmsha
                     ? `${entry.amshaGroups.length} lines · aṃśa-gaṇas`
+                    : isTeluguGana
+                        ? `${entry.amshaGroups.length} lines · Sūrya/Indra gaṇas`
                 : `${entry.padas.length} lines · syllable rules`
         };
     }
@@ -213,18 +219,28 @@
                     `${patterns} = ${groups.reduce((sum, value) => sum + value, 0)} mātrās`;
             });
             addDefinition(document, definitions, "Line-by-line", lines.join(" · "));
-        } else if (meter.kind === "amsha") {
+        } else if (meter.kind === "amsha" || meter.kind === "telugu-gana") {
+            const formatGroups = (groups) => groups.map((slot) =>
+                (Array.isArray(slot) ? slot.join("/") : slot)).join(" · ");
             const lines = meter.amshaGroups.map((groups, index) =>
-                `Line ${index + 1}: ${groups.map((slot) =>
-                    (Array.isArray(slot) ? slot.join("/") : slot)).join(" · ")}`);
+                `Line ${index + 1}: ${formatGroups(groups)}`);
             addDefinition(document, definitions, "Line-by-line", lines.join(" · "));
-            addDefinition(
-                document,
-                definitions,
-                "Aṃśa key",
-                "B = Brahma, V = Viṣṇu, R = Rudra; a slash marks an accepted alternative"
-            );
-            if (Array.isArray(meter.amshaSubstitutions) &&
+            addDefinition(document, definitions, meter.kind === "telugu-gana"
+                ? "Telugu gaṇa key" : "Aṃśa key", meter.kind === "telugu-gana"
+                ? "S = Sūrya (GL or LLL); I = Indra (LLLL, LLLG, LLGL, GLL, GLG, or GGL)"
+                : "B = Brahma, V = Viṣṇu, R = Rudra; a slash marks an accepted alternative");
+            if (meter.kind === "telugu-gana" &&
+                Array.isArray(meter.ganaLayouts) && meter.ganaLayouts.length) {
+                addDefinition(
+                    document,
+                    definitions,
+                    "Accepted written layouts",
+                    meter.ganaLayouts.map((layout) =>
+                        `${layout.name}: ${layout.groups.map(formatGroups).join(" / ")}`
+                    ).join(" · ")
+                );
+            }
+            if (meter.kind === "amsha" && Array.isArray(meter.amshaSubstitutions) &&
                 meter.amshaSubstitutions.length) {
                 const substitutions = meter.amshaSubstitutions.map((rule) =>
                     `Line ${rule.padas.join("/")}, gaṇa ` +
@@ -280,6 +296,15 @@
                 `place yati after gaṇa ${rule.afterGroup}`
             );
         });
+        (meter.yatiRelations || []).forEach((rule) => {
+            addDefinition(
+                document,
+                definitions,
+                `Lines ${(rule.padas || []).join(", ")}`,
+                `yati joins gaṇa ${rule.anchorGroup} with gaṇa ${rule.targetGroup}; ` +
+                    "friendship equivalence is advisory pending expert review"
+            );
+        });
         (meter.lineRelations || []).forEach((relation) => {
             if (relation.type === "pairwise-antya-prasa") {
                 addDefinition(
@@ -287,6 +312,20 @@
                     definitions,
                     "Line relationship",
                     `Each group of ${relation.pairSize} adjacent lines shares its ending consonant`
+                );
+            } else if (relation.type === "pairwise-dvitiyakshara-prasa") {
+                addDefinition(
+                    document,
+                    definitions,
+                    "Line relationship",
+                    `Each group of ${relation.pairSize} adjacent lines shares dvitīyākṣara-prāsa`
+                );
+            } else if (relation.type === "dvitiyakshara-prasa") {
+                addDefinition(
+                    document,
+                    definitions,
+                    "Line relationship",
+                    "All applicable lines share dvitīyākṣara-prāsa"
                 );
             }
         });
@@ -303,6 +342,45 @@
                 `Not checked yet: ${meter.uncheckedRules.join(", ")}.`
             ));
         }
+        renderExamples(document, meter, body);
+    }
+
+    function renderExamples(document, meter, body) {
+        const examples = Array.isArray(meter.examples) ? meter.examples : [];
+        if (!examples.length) {
+            return;
+        }
+        const section = node(document, "section", "meter-examples");
+        section.append(node(document, "h4", "", "Example to scan"));
+        examples.forEach((example) => {
+            const article = node(document, "article", "meter-example");
+            const heading = node(document, "h5", "", example.title || "Example");
+            const byline = node(
+                document,
+                "p",
+                "meter-example-byline",
+                [example.author, example.language, example.script]
+                    .filter(Boolean).join(" · ")
+            );
+            const verse = node(document, "pre", "meter-example-text", example.text);
+            const actions = node(document, "p", "meter-example-actions");
+            const tryLink = node(document, "a", "meter-example-try", "Try in Chandas");
+            const query = new URLSearchParams({
+                verse: String(example.text || ""),
+                meter: String(example.meterId || meter.id || "")
+            });
+            tryLink.href = `index.html?${query.toString()}`;
+            actions.append(tryLink);
+            if (example.source && example.source.url) {
+                const sourceLink = node(document, "a", "meter-example-source", "Source");
+                sourceLink.href = example.source.url;
+                sourceLink.rel = "noreferrer";
+                actions.append(document.createTextNode(" · "), sourceLink);
+            }
+            article.append(heading, byline, verse, actions);
+            section.append(article);
+        });
+        body.append(section);
     }
 
     function meterCard(document, meter) {
@@ -326,6 +404,7 @@
             }
             if (meter.kind === "fixed") {
                 renderFixedDetails(document, meter, body);
+                renderExamples(document, meter, body);
             } else {
                 renderStructuralDetails(document, meter, body);
             }
@@ -362,21 +441,37 @@
         const filter = document.getElementById("meter-catalog-kind");
 
         try {
-            const [fixedResponse, structuralResponse] = await Promise.all([
+            const [fixedResponse, structuralResponse, corpusResponse] = await Promise.all([
                 fetch("mishra.json", { cache: "force-cache" }),
-                fetch("structural_meters.json", { cache: "force-cache" })
+                fetch("structural_meters.json", { cache: "force-cache" }),
+                fetch("examples/field_guide_corpus.json", { cache: "force-cache" })
             ]);
-            if (!fixedResponse.ok || !structuralResponse.ok) {
+            if (!fixedResponse.ok || !structuralResponse.ok || !corpusResponse.ok) {
                 throw new Error("Catalog request failed");
             }
             const fixedCatalog = await fixedResponse.json();
             const structuralCatalog = await structuralResponse.json();
-            const structural = structuralCatalog.meters.map(structuralMeter)
+            const corpus = await corpusResponse.json();
+            const examplesByMeter = new Map();
+            (corpus.examples || []).forEach((example) => {
+                const examples = examplesByMeter.get(example.meterId) || [];
+                examples.push(example);
+                examplesByMeter.set(example.meterId, examples);
+            });
+            const structural = structuralCatalog.meters.map((entry) =>
+                structuralMeter({
+                    ...entry,
+                    examples: examplesByMeter.get(entry.id) || []
+                }))
                 .sort((a, b) => a.name.localeCompare(b.name));
             const fixed = [
                 ...(fixedCatalog.metres || []),
                 ...(structuralCatalog.fixedMeters || [])
-            ].map(fixedMeter)
+            ].map((entry, index) => fixedMeter(
+                entry,
+                index,
+                examplesByMeter.get(String(entry[0])) || []
+            ))
                 .sort((a, b) => a.name.localeCompare(b.name));
             const meters = [...structural, ...fixed];
             document.getElementById("meter-catalog-total").textContent =

@@ -100,3 +100,19 @@ are documented in `docs/rules/folk-tripadi.md` against:
 
 These references supply rule facts and terminology. Their page content is not
 bundled with the application.
+
+## Telugu deśi rules and field-guide examples
+
+The Telugu Sūrya/Indra-gaṇa rules and meter frames are documented in
+`docs/rules/telugu-desi-meters.md`. Principal references include C. P. Brown's
+public-domain *A Grammar of the Telugu Language* and *The Prosody of the
+Telugu and Sanskrit Languages Explained*, along with the individually linked
+Telugu teaching references recorded in `structural_meters.json`.
+
+`examples/field_guide_corpus.json` bundles short, attributed examples for
+offline learning and regression testing. The classical and traditional poems
+are public-domain originals. Wikisource and other transcription/source links,
+authors, titles, and rights notes are retained with each example; Chandas.org
+does not claim authorship of those poems. The corpus structure, expected
+analysis data, and original explanatory copy are Chandas.org work under the
+repository license.

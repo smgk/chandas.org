@@ -1,5 +1,5 @@
 {
-  "catalogVersion": "5.0.0",
+  "catalogVersion": "5.1.0",
   "copyright": "Copyright © 2025–2026 Ganesh Krishna Shankarathota",
   "license": "GPL-3.0-only",
   "description": "Structural, mātrā, Kannada aṃśa, and Telugu deśi-gaṇa meter rules that cannot be represented as one fixed Guru/Laghu string.",
@@ -368,6 +368,7 @@
         [3, 4, 3, 4],
         [3, 4, 3, 4, 3, 4, 2]
       ],
+      "padantaLengtheningPadas": [3, 6],
       "groupRules": [
         {
           "everyGroup": true,
@@ -380,7 +381,7 @@
           "type": "dvitiyakshara-prasa"
         }
       ],
-      "notes": "Checks the alternating three/four-mātrā gaṇas across the complete six-line verse. Literary constraints remain provisional pending expert corpus review."
+      "notes": "Checks the alternating three/four-mātrā gaṇas across the complete six-line verse. On extended lines 3 and 6, a final written Laghu may fill the terminal Guru by pādānta lengthening. Literary constraints remain provisional pending expert corpus review."
     },
     {
       "id": "structural:parivardhini-shatpadi",

@@ -1,5 +1,5 @@
 {
-  "corpusVersion": "1.2.0",
+  "corpusVersion": "1.3.0",
   "description": "Curated, offline examples for regression tests and the Learn field guide. Classical works are public domain; linked Wikisource transcriptions retain their source attribution.",
   "defaults": {
     "verificationStatus": "source-verified",
@@ -125,6 +125,21 @@
       },
       "rights": "Public-domain original; Wikisource transcription attribution retained",
       "expected": {"status": "compatible", "violations": 0, "matras": [20, 17, 13]}
+    },
+    {
+      "id": "kn-kumaravyasa-bhamini-abhimanyu",
+      "meterId": "structural:bhamini-shatpadi",
+      "title": "Abhimanyu answers the Kaurava king",
+      "author": "Kumāravyāsa",
+      "script": "kannada",
+      "language": "Kannada",
+      "text": "ಮಗುವು ನೀ ಕೆಡಬೇಡ ಹೋಗೆನು\nತಗಣಿತಾಸ್ತ್ರವ ಸುರಿವುತೈತರೆ\nನಗುತ ನಿಂದಭಿಮನ್ಯು ನುಡಿದನು ಕೌರವೇಶ್ವರನ\nಮಗುವು ತಾನಹೆ ತನ್ನ ಬಾಣಕೆ\nಮಗುವುತನ ಬೇರಿಲ್ಲ ನೋಡೆಂ\nದಗಲದಲಿ ಕೂರಂಬ ಸುರಿದನು ಪಾರ್ಥನಂದನನು",
+      "source": {
+        "title": "Kumāravyāsa Bhārata, Droṇaparva, fifth sandhi, verse 20",
+        "url": "https://kn.wikisource.org/wiki/ದ್ರೋಣಪರ್ವ:_೦೫._ಐದನೆಯ_ಸಂಧಿ"
+      },
+      "rights": "Public-domain original; Wikisource transcription attribution retained",
+      "expected": {"status": "compatible", "violations": 0, "matras": [14, 14, 22, 14, 14, 22]}
     },
     {
       "id": "kn-utpalamalika-narayana",

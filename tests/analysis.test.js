@@ -1182,7 +1182,7 @@ test("keeps an incomplete structural meter compatible without red violations", (
 
     assert.equal(stanza.violationCount, 0);
     assert.ok(stanza.missingCount > 0);
-    assert.equal(result.analysisVersion, "2.15.0");
+    assert.equal(result.analysisVersion, "2.16.0");
     assert.equal(result.catalogVersion, structuralCatalog.catalogVersion);
 });
 
@@ -1277,8 +1277,8 @@ test("recognizes the provisional Kannada Kanda characterization fixture", () => 
     );
     assert.equal(stanza.selectedMeter.ruleCompleteness, "provisional-rhythm");
     assert.deepEqual(stanza.selectedMeter.uncheckedRules, ["historical prāsa variants"]);
-    assert.equal(result.analysisVersion, "2.15.0");
-    assert.equal(result.catalogVersion, "5.0.0");
+    assert.equal(result.analysisVersion, "2.16.0");
+    assert.equal(result.catalogVersion, "5.1.0");
 });
 
 test("loads and validates the Pañcamātrā Chaupadi Kagga form", () => {
@@ -1389,6 +1389,37 @@ test("loads and validates all six quantitative Ṣaṭpadi forms as six-line ver
             meter.name
         );
     }
+});
+
+test("accepts Kumāravyāsa Bhāminī with pādānta lengthening on extended lines", () => {
+    const text = [
+        "ಮಗುವು ನೀ ಕೆಡಬೇಡ ಹೋಗೆನು",
+        "ತಗಣಿತಾಸ್ತ್ರವ ಸುರಿವುತೈತರೆ",
+        "ನಗುತ ನಿಂದಭಿಮನ್ಯು ನುಡಿದನು ಕೌರವೇಶ್ವರನ",
+        "ಮಗುವು ತಾನಹೆ ತನ್ನ ಬಾಣಕೆ",
+        "ಮಗುವುತನ ಬೇರಿಲ್ಲ ನೋಡೆಂ",
+        "ದಗಲದಲಿ ಕೂರಂಬ ಸುರಿದನು ಪಾರ್ಥನಂದನನು"
+    ].join("\n");
+    const stanza = Chandas.analyzeComposition(
+        text,
+        combinedCatalog,
+        "structural:bhamini-shatpadi"
+    ).stanzas[0];
+    const candidate = stanza.candidates.find((item) =>
+        item.id === "structural:bhamini-shatpadi");
+
+    assert.equal(stanza.violationCount, 0);
+    assert.equal(stanza.missingCount, 0);
+    assert.equal(candidate.status, "compatible");
+    assert.deepEqual(stanza.matraPattern, [14, 14, 22, 14, 14, 22]);
+    assert.deepEqual(stanza.padas.map((pada) =>
+        pada.syllables.at(-1).metricalAdjustment || ""), [
+        "", "", "padanta-lengthening", "", "", "padanta-lengthening"
+    ]);
+    assert.deepEqual(stanza.padas.map((pada) =>
+        pada.syllables.at(-1).effectiveClassification || ""), [
+        "", "", "G", "", "", "G"
+    ]);
 });
 
 test("keeps an unfinished Ṣaṭpadi compatible and marks a written line overrun", () => {

@@ -1402,7 +1402,25 @@
         return syllable.classification === GURU ? 2 : 1;
     }
 
-    function collectMatraGroups(pada, capacities, globalOffset) {
+    function applyMatraPadantaLengthening(pada, meter, padaIndex, running, target,
+        shouldMark) {
+        const configuredPadas = Array.isArray(meter.padantaLengtheningPadas)
+            ? meter.padantaLengtheningPadas
+            : [];
+        const finalSyllable = pada.syllables[pada.syllables.length - 1];
+        const allowed = configuredPadas.includes(padaIndex + 1) &&
+            running === target - 1 &&
+            finalSyllable &&
+            finalSyllable.classification === LAGHU;
+        if (allowed && shouldMark) {
+            finalSyllable.expected = GURU;
+            finalSyllable.effectiveClassification = GURU;
+            finalSyllable.metricalAdjustment = "padanta-lengthening";
+        }
+        return allowed;
+    }
+
+    function collectMatraGroups(pada, capacities, globalOffset, useAdjustments) {
         const groups = [];
         let syllableIndex = 0;
 
@@ -1414,7 +1432,10 @@
             while (syllableIndex < pada.syllables.length && matras < capacity) {
                 const syllable = pada.syllables[syllableIndex];
                 syllables.push(syllable);
-                matras += matraValue(syllable);
+                matras += useAdjustments &&
+                    syllable.effectiveClassification === GURU
+                    ? 2
+                    : matraValue(syllable);
                 syllableIndex += 1;
             }
 
@@ -2280,6 +2301,18 @@
             }
         }
 
+        const padantaLengthening = applyMatraPadantaLengthening(
+            pada,
+            meter,
+            padaIndex,
+            running,
+            target,
+            shouldMark
+        );
+        if (padantaLengthening) {
+            running += 1;
+        }
+
         if (running < target) {
             missingCount += target - running;
         } else if (running > target && !hasExcessFailure) {
@@ -2288,7 +2321,12 @@
             setViolation(last, "extra-matra", `${target} mātrās`, shouldMark);
         }
 
-        const collectedGroups = collectMatraGroups(pada, groups, globalGroupOffset);
+        const collectedGroups = collectMatraGroups(
+            pada,
+            groups,
+            globalGroupOffset,
+            shouldMark
+        );
         for (const group of collectedGroups) {
             ruleFailures += evaluateMatraGroupRules(
                 group,
@@ -3346,7 +3384,7 @@
 
         return {
             text: originalText,
-            analysisVersion: "2.15.0",
+            analysisVersion: "2.16.0",
             catalogVersion: catalog && catalog.structuralCatalogVersion
                 ? String(catalog.structuralCatalogVersion)
                 : "",

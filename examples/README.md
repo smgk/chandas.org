@@ -18,6 +18,8 @@ defensible example says so explicitly.
   traditional pādānta-lengthening rule.
 - Pampa's source-labelled Utpalamālikā and Campakamāle stanzas, checked
   against B. L. Rice's public-domain 1898 *Pampa Bhārata* edition.
+- Kumāravyāsa's Bhāminī Ṣaṭpadi stanza from *Kumāravyāsa Bhārata*,
+  Droṇaparva 5.20; its extended lines exercise pādānta lengthening.
 - A Vemana Āṭaveladi stanza from the page-linked 1911 C. P. Brown edition.
 
 The catalog-wide Internet Archive source inventory and reproducible gap audit

@@ -71,9 +71,12 @@ Guru/Laghu weight of the first syllable are independent conditions.
 
 Eḷe also checks the yati after its first line's second gaṇa and the internal
 prāsa in the following gaṇa. Madanavatī's terminal `G` is a literal final Guru,
-not a fourth aṃśa class. Its equal-mātrā `4V+R` division is documented as an
-unchecked alternative until the evaluator can retain alternative whole-line
-aṃśa divisions without choosing one arbitrarily.
+not a fourth aṃśa class. A written final Laghu may satisfy that cadence through
+pādānta lengthening on each of its four pādas; the syllable remains visibly
+Laghu and receives an effective metrical value of Guru, not a karṣaṇa mark. Its
+equal-mātrā `4V+R` division is documented as an unchecked alternative until the
+evaluator can retain alternative whole-line aṃśa divisions without choosing
+one arbitrarily.
 
 ## Deliberately provisional
 

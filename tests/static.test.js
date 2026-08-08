@@ -366,9 +366,10 @@ test("the provisional Kanda rule packet and attribution are retained", () => {
     const kanda = catalog.meters.find((meter) =>
         meter.id === "structural:kanda-kannada");
 
-    assert.equal(catalog.catalogVersion, "5.1.0");
+    assert.equal(catalog.catalogVersion, "5.2.0");
     assert.equal(kanda.ruleCompleteness, "provisional-rhythm");
     assert.deepEqual(kanda.uncheckedRules, ["historical prāsa variants"]);
+    assert.deepEqual(kanda.padantaLengtheningPadas, [2, 4]);
     assert.deepEqual(kanda.lineRelations, [{ type: "dvitiyakshara-prasa" }]);
     assert.ok(fs.existsSync(path.join(root, "docs", "rules", "kanda.md")));
     assert.match(read("THIRD_PARTY_NOTICES.md"), /Chanda Nikasha/);
@@ -380,7 +381,7 @@ test("the provisional Kagga-form Chaupadi packet and references are retained", (
     const chaupadi = catalog.meters.find((meter) =>
         meter.id === "structural:panchamatra-chaupadi-kagga");
 
-    assert.equal(catalog.catalogVersion, "5.1.0");
+    assert.equal(catalog.catalogVersion, "5.2.0");
     assert.equal(chaupadi.ruleCompleteness, "provisional-rhythm");
     assert.deepEqual(chaupadi.padaGroups, [
         [5, 5, 5, 5],
@@ -424,7 +425,7 @@ test("the Ṣaṭpadi and aṃśa milestones retain their catalogs and rule pack
         meter.id.endsWith("-shatpadi"));
     const amsha = catalog.meters.filter((meter) => meter.kind === "amsha");
 
-    assert.equal(catalog.catalogVersion, "5.1.0");
+    assert.equal(catalog.catalogVersion, "5.2.0");
     assert.equal(shatpadis.length, 8);
     assert.equal(amsha.length, 15);
     shatpadis.forEach((meter) => {
@@ -438,9 +439,16 @@ test("the Ṣaṭpadi and aṃśa milestones retain their catalogs and rule pack
     const padantaMeters = shatpadis.filter((meter) =>
         Array.isArray(meter.padantaLengtheningPadas));
     assert.deepEqual(padantaMeters.map((meter) => meter.id), [
-        "structural:bhamini-shatpadi"
+        "structural:shara-shatpadi",
+        "structural:kusuma-shatpadi",
+        "structural:bhoga-shatpadi",
+        "structural:bhamini-shatpadi",
+        "structural:parivardhini-shatpadi",
+        "structural:vardhaka-shatpadi",
+        "structural:uddanda-shatpadi"
     ]);
-    assert.deepEqual(padantaMeters[0].padantaLengtheningPadas, [3, 6]);
+    padantaMeters.forEach((meter) =>
+        assert.deepEqual(meter.padantaLengtheningPadas, [3, 6]));
     const tripadi = amsha.find((meter) => meter.id === "structural:tripadi-kannada");
     const sangatya = amsha.find((meter) => meter.id === "structural:sangatya");
     amsha.forEach((meter) => {
@@ -514,6 +522,7 @@ test("the historical Kannada expansion retains explicit authorities and variants
     ]);
     assert.deepEqual(adivaraha.amshaGroups[0], ["V", "B", "B", "B", "B"]);
     assert.deepEqual(madanavati.amshaGroups[0], ["V", "V", "V", "V", "V", "G"]);
+    assert.deepEqual(madanavati.padantaLengtheningPadas, [1, 2, 3, 4]);
     assert.deepEqual(catalog.fixedMeters, [
         ["campakamāle (Kannada)", "LLLLGLGLLLGLLGLLGLGLG"],
         ["mahāsragdharā (Kannada)", "LLGGGLGGLLLLLLGGLGGLGG"]

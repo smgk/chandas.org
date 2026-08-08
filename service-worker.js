@@ -5,7 +5,7 @@
 
 "use strict";
 
-const CACHE_NAME = "chandas-shell-v51";
+const CACHE_NAME = "chandas-shell-v52";
 const UPDATE_UI_BOOTSTRAP_CACHE = "chandas-shell-v30";
 const CORE_ASSETS = [
     "./",

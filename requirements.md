@@ -350,11 +350,26 @@ recommended, and optional behavior.
    aligning insertions, omissions, and substitutions. One inserted or omitted
    syllable MUST NOT shift every later highlight, and inferred pāda boundaries
    MUST NOT modify the authored text.
-10. For fixed vṛttas, an orthographic Laghu MAY satisfy a final Guru only at
-    a real or confidently inferred pāda boundary (traditional pādānta
-    lengthening). The engine MUST retain the underlying Laghu, expose the
-    effective metrical Guru as an explicit adjustment, and MUST NOT apply the
-    exception to an internal position or in the reverse direction.
+10. An orthographic Laghu MAY satisfy a final Guru only at a real or
+    confidently inferred pāda boundary where the selected meter explicitly
+    permits traditional pādānta lengthening. The engine MUST retain the
+    underlying Laghu, expose the effective metrical Guru as an explicit
+    adjustment, and MUST NOT apply the exception to an internal position or
+    in the reverse direction.
+11. Every Sanskrit-derived fixed vṛtta MUST receive the same pādānta rule
+    independently of whether it is written in Kannada, Devanagari, or Telugu
+    script. The script MUST NOT determine the prosodic license.
+12. In the quantitative Kannada Ṣaṭpadis Śara, Kusuma, Bhoga, Bhāminī,
+    Parivardhinī, Vārdhaka, and Uddaṇḍa, pādānta lengthening MUST be available
+    only on lines 3 and 6. It MUST remain unavailable on lines 1, 2, 4, and 5.
+13. In Kannada Kanda, pādānta lengthening MUST be available only at the
+    required terminal-Guru positions on lines 2 and 4. The effective Guru MUST
+    participate in the final-gaṇa validation without replacing the displayed
+    underlying Laghu. Lines 1 and 3 MUST remain unchanged.
+14. Native Telugu jāti, upajāti, and deśi meters MUST NOT inherit a blanket
+    pādānta exception from the Telugu script. Each such meter requires an
+    explicit, sourced catalog rule. Terminal stretching in sung or gēya forms
+    MUST remain distinguishable from strict written-meter validation.
 
 ### FR-7: Copy and sharing
 

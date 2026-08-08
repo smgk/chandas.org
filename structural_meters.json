@@ -1,5 +1,5 @@
 {
-  "catalogVersion": "5.1.0",
+  "catalogVersion": "5.2.0",
   "copyright": "Copyright © 2025–2026 Ganesh Krishna Shankarathota",
   "license": "GPL-3.0-only",
   "description": "Structural, mātrā, Kannada aṃśa, and Telugu deśi-gaṇa meter rules that cannot be represented as one fixed Guru/Laghu string.",
@@ -162,6 +162,7 @@
       "sourceRef": "kandaSource",
       "linePolicy": { "type": "fixed", "count": 4 },
       "padaGroups": [[4, 4, 4], [4, 4, 4, 4, 4], [4, 4, 4], [4, 4, 4, 4, 4]],
+      "padantaLengtheningPadas": [2, 4],
       "groupRules": [
         {
           "globalGroups": [1, 3, 5, 7, 9, 11, 13, 15],
@@ -192,7 +193,7 @@
           "type": "dvitiyakshara-prasa"
         }
       ],
-      "notes": "Implements the rhythmic, yati, and dvitīyākṣara-prāsa rules in the cited rule packet. The entry remains provisional until the golden corpus is approved."
+      "notes": "Implements the rhythmic, yati, and dvitīyākṣara-prāsa rules in the cited rule packet. On lines 2 and 4 only, a final written Laghu may satisfy the required terminal Guru through pādānta lengthening. The entry remains provisional until the golden corpus is approved."
     },
     {
       "id": "structural:panchamatra-chaupadi-kagga",
@@ -263,6 +264,7 @@
         [4, 4],
         [4, 4, 4, 2]
       ],
+      "padantaLengtheningPadas": [3, 6],
       "groupRules": [
         {
           "everyGroup": true,
@@ -275,7 +277,7 @@
           "type": "dvitiyakshara-prasa"
         }
       ],
-      "notes": "Checks all six quantitative lines and their short/extended relationship. The final two-mātrā cadence may be a Guru or resolved Laghu pair. Literary constraints remain provisional."
+      "notes": "Checks all six quantitative lines and their short/extended relationship. On extended lines 3 and 6 only, a final written Laghu may fill the terminal Guru by pādānta lengthening; a resolved Laghu pair remains valid. Literary constraints remain provisional."
     },
     {
       "id": "structural:kusuma-shatpadi",
@@ -298,6 +300,7 @@
         [5, 5],
         [5, 5, 5, 2]
       ],
+      "padantaLengtheningPadas": [3, 6],
       "groupRules": [
         {
           "everyGroup": true,
@@ -310,7 +313,7 @@
           "type": "dvitiyakshara-prasa"
         }
       ],
-      "notes": "Checks all six quantitative lines and their short/extended relationship. The final two-mātrā cadence may be a Guru or resolved Laghu pair. Literary constraints remain provisional."
+      "notes": "Checks all six quantitative lines and their short/extended relationship. On extended lines 3 and 6 only, a final written Laghu may fill the terminal Guru by pādānta lengthening; a resolved Laghu pair remains valid. Literary constraints remain provisional."
     },
     {
       "id": "structural:bhoga-shatpadi",
@@ -333,6 +336,7 @@
         [3, 3, 3, 3],
         [3, 3, 3, 3, 3, 3, 2]
       ],
+      "padantaLengtheningPadas": [3, 6],
       "groupRules": [
         {
           "everyGroup": true,
@@ -345,7 +349,7 @@
           "type": "dvitiyakshara-prasa"
         }
       ],
-      "notes": "Checks all six quantitative lines and their short/extended relationship. The final two-mātrā cadence may be a Guru or resolved Laghu pair. Literary constraints remain provisional."
+      "notes": "Checks all six quantitative lines and their short/extended relationship. On extended lines 3 and 6 only, a final written Laghu may fill the terminal Guru by pādānta lengthening; a resolved Laghu pair remains valid. Literary constraints remain provisional."
     },
     {
       "id": "structural:bhamini-shatpadi",
@@ -404,6 +408,7 @@
         [4, 4, 4, 4],
         [4, 4, 4, 4, 4, 4, 2]
       ],
+      "padantaLengtheningPadas": [3, 6],
       "groupRules": [
         {
           "everyGroup": true,
@@ -416,7 +421,7 @@
           "type": "dvitiyakshara-prasa"
         }
       ],
-      "notes": "Checks all six quantitative lines, including the extended third and sixth lines. Literary constraints remain provisional pending expert corpus review."
+      "notes": "Checks all six quantitative lines, including the extended third and sixth lines. On lines 3 and 6 only, a final written Laghu may fill the terminal Guru by pādānta lengthening. Literary constraints remain provisional pending expert corpus review."
     },
     {
       "id": "structural:vardhaka-shatpadi",
@@ -439,6 +444,7 @@
         [5, 5, 5, 5],
         [5, 5, 5, 5, 5, 5, 2]
       ],
+      "padantaLengtheningPadas": [3, 6],
       "groupRules": [
         {
           "everyGroup": true,
@@ -451,7 +457,7 @@
           "type": "dvitiyakshara-prasa"
         }
       ],
-      "notes": "Checks four five-mātrā gaṇas in the short lines and six plus the final cadence in lines three and six. Literary constraints remain provisional."
+      "notes": "Checks four five-mātrā gaṇas in the short lines and six plus the final cadence in lines three and six. On lines 3 and 6 only, a final written Laghu may fill the terminal Guru by pādānta lengthening. Literary constraints remain provisional."
     },
     {
       "id": "structural:tripadi-kannada",
@@ -956,6 +962,7 @@
         [4, 4, 4, 4, 4],
         [4, 4, 4, 4, 4, 4, 4, 4]
       ],
+      "padantaLengtheningPadas": [3, 6],
       "groupRules": [
         {
           "everyGroup": true,
@@ -968,7 +975,7 @@
           "type": "dvitiyakshara-prasa"
         }
       ],
-      "notes": "Checks the five/five/eight four-mātrā-gaṇa arrangement over all six lines. Literary and recitational variants remain provisional."
+      "notes": "Checks the five/five/eight four-mātrā-gaṇa arrangement over all six lines. On lines 3 and 6 only, a final written Laghu may provide the thirty-second mātrā by pādānta lengthening. Literary and recitational variants remain provisional."
     },
     {
       "id": "structural:sobagina-sone",
@@ -1163,6 +1170,7 @@
         "matrasPerMark": 1
       },
       "linePolicy": { "type": "fixed", "unit": "line", "count": 4 },
+      "padantaLengtheningPadas": [1, 2, 3, 4],
       "amshaGroups": [
         ["V", "V", "V", "V", "V", "G"],
         ["V", "V", "V", "V", "V", "G"],
@@ -1174,7 +1182,7 @@
           "type": "dvitiyakshara-prasa"
         }
       ],
-      "notes": "Implements Nāgavarma's primary five-Viṣṇu-plus-Guru realization. The equal-mātrā 4V+R division is documented but remains unchecked until whole-line alternative aṃśa divisions are supported."
+      "notes": "Implements Nāgavarma's primary five-Viṣṇu-plus-Guru realization. A final written Laghu may fill the literal terminal Guru on each of the four pādas by pādānta lengthening. The equal-mātrā 4V+R division is documented but remains unchecked until whole-line alternative aṃśa divisions are supported."
     },
     {
       "id": "structural:mandanila-ragale",

@@ -67,6 +67,21 @@ historical exceptions, the analyser does not turn a merely non-identical yati
 pair red. This is deliberate: an incomplete yati table should not teach a
 false rule with great confidence.
 
+## Pādānta lengthening and Telugu
+
+The script does not decide whether a final Laghu may satisfy Guru. A
+Sanskrit-derived fixed vṛtta receives its traditional pādānta allowance when
+written in Telugu just as it does in Kannada or Devanagari. Native Telugu
+jāti, upajāti, and deśi entries do not inherit that allowance automatically.
+Their Sūrya/Indra endings and literal final-Guru requirements remain as each
+meter defines them. In particular, the current Telugu Kandamu entry continues
+to require its cataloged terminal Guru on lines 2 and 4; it does not borrow the
+separate Kannada Kanda exception.
+
+Terminal stretching in a song can make a final Laghu Guru-equivalent in
+performance. That recital realization remains separate from strict written
+meter validation until an individual sung form has an explicit sourced rule.
+
 ## Corpus policy
 
 `examples/field_guide_corpus.json` contains offline regression examples with
@@ -86,5 +101,9 @@ without pretending repeated test syllables are poetry.
   <https://te.wikisource.org/wiki/పుట:Little_Masters_Sulabha_Vyakaranamu.pdf/111>
 - Andhra Bharati, “Ragaḍa” rule packet:
   <https://www.andhrabharati.com/bhAshha/ChaMdassu/ragaDalu.html>
+- *Sukavi Manoranjanamu*, discussion of optional pādānta Laghu in vṛttas:
+  <https://te.wikisource.org/wiki/సుకవి_మనోరంజనము/పంచమాశ్వాసము>
+- J. K. Mohana Rao, “Pṛthvī Vṛttamu,” discussion of pādānta pause in Telugu
+  vṛttas: <https://eemaata.com/em/issues/202210/29701.html>
 - Gurajada Apparao, *Mutyāla Saramulu*:
   <https://te.wikisource.org/wiki/ముత్యాల_సరాలు/ముత్యాల_సరములు>

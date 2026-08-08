@@ -1182,7 +1182,7 @@ test("keeps an incomplete structural meter compatible without red violations", (
 
     assert.equal(stanza.violationCount, 0);
     assert.ok(stanza.missingCount > 0);
-    assert.equal(result.analysisVersion, "2.16.0");
+    assert.equal(result.analysisVersion, "2.17.0");
     assert.equal(result.catalogVersion, structuralCatalog.catalogVersion);
 });
 
@@ -1277,8 +1277,49 @@ test("recognizes the provisional Kannada Kanda characterization fixture", () => 
     );
     assert.equal(stanza.selectedMeter.ruleCompleteness, "provisional-rhythm");
     assert.deepEqual(stanza.selectedMeter.uncheckedRules, ["historical prāsa variants"]);
-    assert.equal(result.analysisVersion, "2.16.0");
-    assert.equal(result.catalogVersion, "5.1.0");
+    assert.equal(result.analysisVersion, "2.17.0");
+    assert.equal(result.catalogVersion, "5.2.0");
+});
+
+test("allows pādānta Laghu for Kannada Kanda lines 2 and 4 only", () => {
+    const acceptedPatterns = [
+        "GGGLLGG",
+        "GGGGLGLGGLLL",
+        "GGGLLGG",
+        "GGGGLGLGGGL"
+    ];
+    const accepted = Chandas.analyzeComposition(
+        acceptedPatterns.map(textForPattern).join("\n"),
+        combinedCatalog,
+        "structural:kanda-kannada"
+    ).stanzas[0];
+
+    assert.equal(accepted.violationCount, 0);
+    assert.equal(accepted.missingCount, 0);
+    assert.deepEqual(accepted.padas.map((pada) =>
+        pada.syllables.at(-1).metricalAdjustment || ""), [
+        "", "padanta-lengthening", "", "padanta-lengthening"
+    ]);
+    assert.deepEqual(accepted.padas.map((pada) =>
+        pada.syllables.at(-1).effectiveClassification || ""), [
+        "", "G", "", "G"
+    ]);
+
+    const rejectedPatterns = [
+        "GGGLLGL",
+        "GGGGLGLGGGG",
+        "GGGLLGL",
+        "GGGGLGLGGGG"
+    ];
+    const rejected = Chandas.analyzeComposition(
+        rejectedPatterns.map(textForPattern).join("\n"),
+        combinedCatalog,
+        "structural:kanda-kannada"
+    ).stanzas[0];
+
+    assert.equal(rejected.missingCount, 2);
+    assert.ok(rejected.padas.every((pada) =>
+        !pada.syllables.at(-1).metricalAdjustment));
 });
 
 test("loads and validates the Pañcamātrā Chaupadi Kagga form", () => {
@@ -1340,7 +1381,7 @@ test("marks a written mātrā beyond the Kagga-form fourth-line cadence", () => 
     assert.equal(text.slice(violations[0].start, violations[0].end), "ಕ");
 });
 
-test("loads and validates all six quantitative Ṣaṭpadi forms as six-line verses", () => {
+test("loads and validates all seven quantitative Ṣaṭpadi forms as six-line verses", () => {
     const meters = Chandas.normalizeCatalog(combinedCatalog);
     const quantitativeIds = new Set([
         "structural:shara-shatpadi",
@@ -1348,7 +1389,8 @@ test("loads and validates all six quantitative Ṣaṭpadi forms as six-line ver
         "structural:bhoga-shatpadi",
         "structural:bhamini-shatpadi",
         "structural:parivardhini-shatpadi",
-        "structural:vardhaka-shatpadi"
+        "structural:vardhaka-shatpadi",
+        "structural:uddanda-shatpadi"
     ]);
     const shatpadis = meters.filter((meter) => quantitativeIds.has(meter.id));
     const patternForCapacity = {
@@ -1364,7 +1406,8 @@ test("loads and validates all six quantitative Ṣaṭpadi forms as six-line ver
         "bhoga ṣaṭpadi",
         "bhāminī ṣaṭpadi",
         "parivardhinī ṣaṭpadi",
-        "vārdhaka ṣaṭpadi"
+        "vārdhaka ṣaṭpadi",
+        "uddaṇḍa ṣaṭpadi"
     ]);
     for (const meter of shatpadis) {
         assert.equal(meter.linePolicy.count, 6, meter.name);
@@ -1388,6 +1431,59 @@ test("loads and validates all six quantitative Ṣaṭpadi forms as six-line ver
                 groups.reduce((sum, value) => sum + value, 0)),
             meter.name
         );
+    }
+});
+
+test("allows pādānta Laghu as Guru only on lines 3 and 6 of quantitative Ṣaṭpadi", () => {
+    const ids = [
+        "structural:shara-shatpadi",
+        "structural:kusuma-shatpadi",
+        "structural:bhoga-shatpadi",
+        "structural:bhamini-shatpadi",
+        "structural:parivardhini-shatpadi",
+        "structural:vardhaka-shatpadi",
+        "structural:uddanda-shatpadi"
+    ];
+    const fullGroup = { 2: "G", 3: "GL", 4: "GG", 5: "GGL" };
+    const oneShortEndingLaghu = { 2: "L", 3: "LL", 4: "GL", 5: "GLL" };
+
+    for (const id of ids) {
+        const meter = structuralCatalog.meters.find((entry) => entry.id === id);
+        const patternForLine = (groups, shortenFinal) => groups
+            .map((capacity, index) => shortenFinal && index === groups.length - 1
+                ? oneShortEndingLaghu[capacity]
+                : fullGroup[capacity])
+            .join("");
+        const acceptedText = meter.padaGroups.map((groups, index) =>
+            textForPattern(patternForLine(groups, index === 2 || index === 5)))
+            .join("\n");
+        const accepted = Chandas.analyzeComposition(
+            acceptedText,
+            combinedCatalog,
+            id
+        ).stanzas[0];
+
+        assert.equal(accepted.violationCount, 0, meter.name);
+        assert.equal(accepted.missingCount, 0, meter.name);
+        assert.deepEqual(accepted.padas.map((pada) =>
+            pada.syllables.at(-1).metricalAdjustment || ""), [
+            "", "", "padanta-lengthening", "", "", "padanta-lengthening"
+        ], meter.name);
+
+        const rejectedText = meter.padaGroups.map((groups, index) =>
+            textForPattern(patternForLine(
+                groups,
+                index === 0 || index === 1 || index === 3 || index === 4
+            ))).join("\n");
+        const rejected = Chandas.analyzeComposition(
+            rejectedText,
+            combinedCatalog,
+            id
+        ).stanzas[0];
+
+        assert.equal(rejected.missingCount, 4, meter.name);
+        assert.ok(rejected.padas.every((pada) =>
+            !pada.syllables.at(-1).metricalAdjustment), meter.name);
     }
 });
 
@@ -1523,6 +1619,28 @@ test("validates canonical aṃśa frames, a literal cadence, and Piriyakkara alt
     ).stanzas[0];
     assert.equal(stanza.violationCount, 0);
     assert.equal(stanza.missingCount, 0);
+});
+
+test("accepts a final Laghu for Madanavatī's literal Guru cadence", () => {
+    const line = textForPattern(`${"GGG".repeat(5)}L`);
+    const stanza = Chandas.analyzeComposition(
+        Array.from({ length: 4 }, () => line).join("\n"),
+        combinedCatalog,
+        "structural:madanavati-nagavarma"
+    ).stanzas[0];
+
+    assert.equal(stanza.violationCount, 0);
+    assert.equal(stanza.missingCount, 0);
+    assert.deepEqual(stanza.padas.map((pada) =>
+        pada.syllables.at(-1).metricalAdjustment), [
+        "padanta-lengthening",
+        "padanta-lengthening",
+        "padanta-lengthening",
+        "padanta-lengthening"
+    ]);
+    assert.ok(stanza.padas.every((pada) =>
+        pada.syllables.at(-1).classification === "L" &&
+        pada.syllables.at(-1).effectiveClassification === "G"));
 });
 
 test("distinguishes the selected historical aṃśa signatures", () => {

@@ -51,6 +51,13 @@ Gaṇas are numbered globally from 1 through 16 across the four lines.
 6. The second akṣara's terminal consonant and the first syllable's Guru/Laghu
    weight must recur across the four lines.
 
+At the ends of lines 2 and 4, a written Laghu may occupy that required final
+Guru position through pādānta lengthening. Thus a written final group `LLL`
+is evaluated effectively as `LLG`, and `GL` as `GG`. The analyzer retains and
+displays the last syllable as intrinsically Laghu while recording its effective
+metrical value as Guru. This allowance does not apply to lines 1 or 3, or to
+an internal gaṇa position.
+
 ## Source reconciliation
 
 The Chanda Nikasha formal example specifies two half-stanza lines:

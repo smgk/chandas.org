@@ -11,8 +11,10 @@
 
 A stanza has six logical lines. Lines 1, 2, 4, and 5 share the short frame;
 lines 3 and 6 contain one-and-a-half times as many full gaṇas followed by a
-two-mātrā cadence. A final Laghu resolution may fill that cadence as described
-by the traditional rule. A gaṇa beginning `LG` is rejected. The terminal
+two-mātrā cadence. In every quantitative form listed below, a final written
+Laghu on lines 3 and 6 may count as the terminal Guru. The allowance does not
+apply to lines 1, 2, 4, or 5. A resolved `LL` cadence remains valid where the
+two-mātrā group permits it. A gaṇa beginning `LG` is rejected. The terminal
 consonant of the second akṣara and the preceding first syllable's Guru/Laghu
 weight are checked across all six lines.
 
@@ -34,7 +36,8 @@ VV / VV / VVR / VV / VV / VVR
 ```
 
 The evaluator therefore supplies the same recital-karṣaṇa guidance used by
-other classical aṃśa meters.
+other classical aṃśa meters. It does not borrow the quantitative Ṣaṭpadi
+pādānta exception merely because both families contain six lines.
 
 ## Still provisional
 

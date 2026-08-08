@@ -48,6 +48,23 @@ test("defines the traditional Telugu Sūrya and Indra gaṇa sets", () => {
     );
 });
 
+test("applies fixed-vṛtta pādānta lengthening in Telugu script", () => {
+    const stanza = Chandas.analyzeComposition(
+        "క\nక\nక\nక",
+        { metres: [["telugu-script-vrtta", "G"]] },
+        "telugu-script-vrtta"
+    ).stanzas[0];
+
+    assert.equal(stanza.violationCount, 0);
+    assert.equal(stanza.missingCount, 0);
+    assert.ok(stanza.padas.every((pada) => {
+        const final = pada.syllables.at(-1);
+        return final.classification === "L" &&
+            final.effectiveClassification === "G" &&
+            final.metricalAdjustment === "padanta-lengthening";
+    }));
+});
+
 test("loads every planned Telugu deśi family as script-scoped catalog entries", () => {
     const meters = Chandas.normalizeCatalog(catalog);
     const ids = new Set(meters.map((meter) => meter.id));
@@ -140,6 +157,21 @@ test("validates Telugu Kandamu without borrowing the Kannada catalog entry", () 
     assert.equal(stanza.violationCount, 0);
     assert.equal(stanza.missingCount, 0);
     assert.equal(stanza.selectedMeter.name, "kandamu (Telugu)");
+
+    const terminalLaghus = [
+        ["GG", "GG", "GG"],
+        ["GG", "GG", "LGL", "GG", "GL"],
+        ["GG", "GG", "GG"],
+        ["GG", "GG", "LGL", "GG", "GL"]
+    ];
+    const rejected = selectedAnalysis(
+        terminalLaghus.map((line) =>
+            teluguForPattern(line.join(""))).join("\n"),
+        "structural:kandamu-telugu"
+    );
+    assert.equal(rejected.missingCount, 2);
+    assert.ok(rejected.padas.every((pada) =>
+        !pada.syllables.at(-1).metricalAdjustment));
 });
 
 test("validates Dvipada and distinguishes prāsa-free Mañjarī Dvipada", () => {

@@ -1402,13 +1402,17 @@
         return syllable.classification === GURU ? 2 : 1;
     }
 
-    function applyMatraPadantaLengthening(pada, meter, padaIndex, running, target,
-        shouldMark) {
-        const configuredPadas = Array.isArray(meter.padantaLengtheningPadas)
+    function allowsPadantaLengthening(meter, padaIndex) {
+        const configuredPadas = Array.isArray(meter && meter.padantaLengtheningPadas)
             ? meter.padantaLengtheningPadas
             : [];
+        return configuredPadas.includes(padaIndex + 1);
+    }
+
+    function applyMatraPadantaLengthening(pada, meter, padaIndex, running, target,
+        shouldMark) {
         const finalSyllable = pada.syllables[pada.syllables.length - 1];
-        const allowed = configuredPadas.includes(padaIndex + 1) &&
+        const allowed = allowsPadantaLengthening(meter, padaIndex) &&
             running === target - 1 &&
             finalSyllable &&
             finalSyllable.classification === LAGHU;
@@ -1420,9 +1424,11 @@
         return allowed;
     }
 
-    function collectMatraGroups(pada, capacities, globalOffset, useAdjustments) {
+    function collectMatraGroups(pada, capacities, globalOffset,
+        padantaLengthening) {
         const groups = [];
         let syllableIndex = 0;
+        const finalSyllable = pada.syllables[pada.syllables.length - 1];
 
         for (let localIndex = 0; localIndex < capacities.length; localIndex += 1) {
             const capacity = capacities[localIndex];
@@ -1432,12 +1438,20 @@
             while (syllableIndex < pada.syllables.length && matras < capacity) {
                 const syllable = pada.syllables[syllableIndex];
                 syllables.push(syllable);
-                matras += useAdjustments &&
-                    syllable.effectiveClassification === GURU
+                matras += padantaLengthening && syllable === finalSyllable
                     ? 2
                     : matraValue(syllable);
                 syllableIndex += 1;
             }
+
+            const pattern = syllables
+                .map((syllable) => syllable.classification)
+                .join("");
+            const effectivePattern = syllables
+                .map((syllable) => padantaLengthening && syllable === finalSyllable
+                    ? GURU
+                    : syllable.classification)
+                .join("");
 
             groups.push({
                 globalIndex: globalOffset + localIndex + 1,
@@ -1447,7 +1461,8 @@
                 complete: matras === capacity,
                 overrun: matras > capacity,
                 syllables,
-                pattern: syllables.map((syllable) => syllable.classification).join("")
+                pattern,
+                effectivePattern
             });
         }
 
@@ -1508,12 +1523,15 @@
             const allowedPrefixes = Array.isArray(rule.allowedPrefixes)
                 ? rule.allowedPrefixes
                 : [];
-            const violatesAllowed = allowed.length > 0 && !allowed.includes(group.pattern);
-            const violatesForbidden = forbidden.includes(group.pattern);
+            const comparisonPattern = group.effectivePattern || group.pattern;
+            const violatesAllowed = allowed.length > 0 &&
+                !allowed.includes(comparisonPattern);
+            const violatesForbidden = forbidden.includes(comparisonPattern);
             const forbiddenPrefix = forbiddenPrefixes.find((prefix) =>
-                group.pattern.startsWith(prefix));
+                comparisonPattern.startsWith(prefix));
             const violatesAllowedPrefix = allowedPrefixes.length > 0 &&
-                !allowedPrefixes.some((prefix) => group.pattern.startsWith(prefix));
+                !allowedPrefixes.some((prefix) =>
+                    comparisonPattern.startsWith(prefix));
             if (!violatesAllowed && !violatesForbidden && !forbiddenPrefix &&
                 !violatesAllowedPrefix) {
                 continue;
@@ -1526,7 +1544,7 @@
                     ? `beginning ${allowedPrefixes.join(" or ")}`
                 : forbiddenPrefix
                     ? `not beginning ${forbiddenPrefix}`
-                    : `not ${group.pattern}`;
+                    : `not ${comparisonPattern}`;
             markGroupRuleViolation(
                 group,
                 rule.violationReason,
@@ -1540,7 +1558,8 @@
                 continue;
             }
             if (Array.isArray(rule.whenPatterns) &&
-                !rule.whenPatterns.includes(group.pattern)) {
+                !rule.whenPatterns.includes(
+                    group.effectivePattern || group.pattern)) {
                 continue;
             }
 
@@ -1612,17 +1631,19 @@
 
     function amshaSlotPatternOptions(slot, meter, padaIndex, slotIndex) {
         const patternTable = structuralGanaPatterns(meter);
-        const canonical = amshaSlotClasses(slot, meter).flatMap((amshaClass) => {
+        const slotClasses = amshaSlotClasses(slot, meter);
+        const canonical = slotClasses.flatMap((amshaClass) => {
             const patterns = patternTable[amshaClass] || [amshaClass];
             return patterns.map((pattern) => ({
                 amshaClass,
                 canonicalClass: amshaClass,
                 isSubstitution: false,
+                padantaLengthening: false,
                 recitalPolicy: "standard",
                 pattern
             }));
         });
-        const substitutions = amshaSlotClasses(slot, meter).flatMap((expectedClass) =>
+        const substitutions = slotClasses.flatMap((expectedClass) =>
             amshaSubstitutionRules(
                 meter,
                 expectedClass,
@@ -1636,13 +1657,30 @@
                         amshaClass: actualClass,
                         canonicalClass: expectedClass,
                         isSubstitution: true,
+                        padantaLengthening: false,
                         recitalPolicy: String(rule.karshana || "none"),
                         realizedMatras: Number(rule.realizedMatras) || 0,
                         realization: String(rule.realization || "recital-dependent"),
                         pattern
                     }));
                 }));
-        return canonical.concat(substitutions);
+        const padaSlots = Array.isArray(meter && meter.amshaGroups)
+            ? meter.amshaGroups[padaIndex]
+            : null;
+        const terminalLaghu = allowsPadantaLengthening(meter, padaIndex) &&
+            Array.isArray(padaSlots) &&
+            slotIndex === padaSlots.length - 1 &&
+            slotClasses.includes(GURU)
+            ? [{
+                amshaClass: GURU,
+                canonicalClass: GURU,
+                isSubstitution: false,
+                padantaLengthening: true,
+                recitalPolicy: "standard",
+                pattern: LAGHU
+            }]
+            : [];
+        return canonical.concat(substitutions, terminalLaghu);
     }
 
     function amshaSlotPatterns(slot, meter, padaIndex, slotIndex) {
@@ -1768,6 +1806,7 @@
                         canonicalClass: option.canonicalClass,
                         actualClass: option.amshaClass,
                         isSubstitution: option.isSubstitution,
+                        padantaLengthening: option.padantaLengthening,
                         recitalPolicy: option.recitalPolicy,
                         realizedMatras: option.realizedMatras || 0,
                         realization: option.realization || "",
@@ -2007,6 +2046,14 @@
                     : []
             );
             for (const group of matched.groups) {
+                if (group.padantaLengthening) {
+                    const finalSyllable = group.syllables.at(-1);
+                    if (finalSyllable && shouldMark) {
+                        finalSyllable.expected = GURU;
+                        finalSyllable.effectiveClassification = GURU;
+                        finalSyllable.metricalAdjustment = "padanta-lengthening";
+                    }
+                }
                 if (group.isSubstitution) {
                     const first = group.syllables[0];
                     const last = group.syllables.at(-1);
@@ -2117,6 +2164,7 @@
                     expectedClass: group.expectedClass,
                     actualClass: group.actualClass,
                     isSubstitution: Boolean(group.isSubstitution),
+                    padantaLengthening: Boolean(group.padantaLengthening),
                     complete: group.complete !== false
                 };
             }));
@@ -2325,7 +2373,7 @@
             pada,
             groups,
             globalGroupOffset,
-            shouldMark
+            padantaLengthening
         );
         for (const group of collectedGroups) {
             ruleFailures += evaluateMatraGroupRules(
@@ -3384,7 +3432,7 @@
 
         return {
             text: originalText,
-            analysisVersion: "2.16.0",
+            analysisVersion: "2.17.0",
             catalogVersion: catalog && catalog.structuralCatalogVersion
                 ? String(catalog.structuralCatalogVersion)
                 : "",

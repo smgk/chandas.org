@@ -45,6 +45,15 @@ test("normalizes Unicode poems without losing newlines or Strong blank slots", (
     assert.equal(defaultTitle(value.text), "ಕಾವ್ಯ");
 });
 
+test("preserves Telugu as a saved interface language", () => {
+    const teluguPoem = poem({ language: "te", text: "తెలుగు పద్యం" });
+    const restored = parseBackup(JSON.stringify(makeBackup([teluguPoem])));
+
+    assert.equal(teluguPoem.language, "te");
+    assert.equal(restored[0].language, "te");
+    assert.equal(poem({ language: "unsupported" }).language, "en");
+});
+
 test("exports and parses a portable versioned backup", () => {
     const backup = makeBackup([poem()]);
     assert.equal(backup.format, BACKUP_FORMAT);

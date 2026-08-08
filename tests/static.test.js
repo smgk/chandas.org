@@ -34,6 +34,30 @@ test("the web shell has no external runtime asset dependencies", () => {
     assert.match(html, /app\.js/);
 });
 
+test("Telugu localization covers every interface message", () => {
+    const app = read("app.js");
+    const html = read("index.html");
+    const startMarker = "const messages = ";
+    const endMarker = ";\n\n    const elements";
+    const start = app.indexOf(startMarker) + startMarker.length;
+    const end = app.indexOf(endMarker, start);
+    const messages = Function(`return (${app.slice(start, end)})`)();
+    const englishKeys = Object.keys(messages.en).sort();
+
+    assert.ok(englishKeys.length > 150);
+    assert.deepEqual(Object.keys(messages.kn).sort(), englishKeys);
+    assert.deepEqual(Object.keys(messages.te).sort(), englishKeys);
+    for (const key of englishKeys) {
+        const variables = (value) =>
+            Array.from(String(value).matchAll(/\{([^}]+)\}/g), (match) => match[1])
+                .sort();
+        assert.deepEqual(variables(messages.te[key]), variables(messages.en[key]), key);
+    }
+    assert.match(html, /<option value="te">తెలుగు<\/option>/);
+    assert.match(app, /state\.language = browserLanguage/);
+    assert.match(read("poem_store.js"), /\["en", "kn", "te"\]/);
+});
+
 test("meter suggestions stay compact and explain evidence rather than absence", () => {
     const styles = read("styles.css");
     const app = read("app.js");

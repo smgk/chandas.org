@@ -89,7 +89,7 @@ metrical verse.
 - Anonymous on-device draft recovery without login.
 - Copy and operating-system-supported sharing, including paths to X/Twitter and
   Facebook when those destinations are available.
-- Kannada and English interface languages.
+- Telugu, Kannada, and English interface languages.
 - Responsive, accessible UI with on-device analysis.
 - Full offline operation of the installed Android application for the core
   composition workflow.
@@ -890,7 +890,7 @@ analysis result.
    distinguishable without color alone.
 6. The editor MUST support zoom and dynamic text sizing without losing
    highlights or controls.
-7. The interface MUST support Kannada and English initially; Sanskrit terms
+7. The interface MUST support Telugu, Kannada, and English; Sanskrit terms
    SHOULD be displayed accurately. Localization architecture MUST allow more
    interface languages later.
 8. Motion MUST be subtle and respect the user's reduced-motion preference.
@@ -1211,7 +1211,7 @@ The MVP is acceptable when:
    not on language identification.
 3. `meter_analysis.js` is the analysis baseline.
 4. `mishra.json` provides the initial meter list and patterns.
-5. Kannada and English are the initial interface languages.
+5. Telugu, Kannada, and English are the supported interface languages.
 6. Meter selection and validation operate independently per stanza.
 7. Sharing defaults to the original composition only; meter information and a
    `chandas.org` link are optional additions.

@@ -28,7 +28,7 @@ runs locally; composing does not require an account, server, or cloud database.
 - Saves poems privately in browser storage and supports readable text export,
   full backup, restore, copy, sharing, and analysis links.
 - Works as an installable PWA and keeps the core workflow available offline.
-- Provides Kannada and English interface languages.
+- Provides Telugu, Kannada, and English interface languages.
 
 Some native Kannada structural rules remain explicitly provisional pending
 expert review. The interface and documentation distinguish provisional

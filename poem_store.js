@@ -88,7 +88,9 @@
                 "auto", "weights", "amsha", "matra-35", "matra-53", "off"
             ].includes(value.scansionMode) ? value.scansionMode : "auto",
             detectShithilaDvitva: value.detectShithilaDvitva === true,
-            language: value.language === "kn" ? "kn" : "en",
+            language: ["en", "kn", "te"].includes(value.language)
+                ? value.language
+                : "en",
             selectionStart,
             selectionEnd,
             createdAt,

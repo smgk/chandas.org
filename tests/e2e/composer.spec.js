@@ -18,7 +18,7 @@ test.beforeEach(async ({ page }) => {
     page.on("pageerror", (error) => errors.push(error.message));
     await page.goto("/");
     await expect(page.locator("#composition")).toBeVisible();
-    await expect(page.locator("#draft-state")).toContainText(/device|ಸಾಧನ/);
+    await expect(page.locator("#draft-state")).toContainText(/device|ಸಾಧನ|పరికరం/);
     page.__runtimeErrors = errors;
 });
 
@@ -1302,6 +1302,41 @@ test("switches to the Kannada interface", async ({ page }) => {
     await expect(page.locator(".intro .eyebrow")).toHaveText("ಛಂದದ ಪದ್ಯದ ಸಂಗಾತಿ");
     await expect(page.locator(".header-link")).toHaveText("ಕಲಿಯಿರಿ");
     await expect(page.locator("html")).toHaveAttribute("lang", "kn");
+});
+
+test("switches to the complete Telugu interface", async ({ page }) => {
+    await page.locator("#language").selectOption("te");
+
+    await expect(page.locator("#page-title"))
+        .toHaveText("ఛందస్ — పద్యంగా చెప్పండి");
+    await expect(page.locator(".intro .eyebrow"))
+        .toHaveText("ఛందోపద్య రచనా సహచరి");
+    await expect(page.locator(".header-link")).toHaveText("నేర్చుకోండి");
+    await expect(page.locator("#composition"))
+        .toHaveAttribute("placeholder", "ಕನ್ನಡ, తెలుగు లేదా देवनागरीలో రాయండి…");
+    await expect(page.locator("html")).toHaveAttribute("lang", "te");
+    await expect(page).toHaveTitle("ఛందస్ — పద్యంగా చెప్పండి");
+
+    await page.locator("#saved-poems").click();
+    await expect(page.locator("#saved-poems-title"))
+        .toHaveText("భద్రపరిచిన పద్యాలు");
+    await expect(page.locator("#backup-download")).toHaveText("పూర్తి బ్యాకప్");
+    const dimensions = await page.evaluate(() => ({
+        scrollWidth: document.documentElement.scrollWidth,
+        clientWidth: document.documentElement.clientWidth
+    }));
+    expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth + 1);
+});
+
+test.describe("Telugu browser locale", () => {
+    test.use({ locale: "te-IN" });
+
+    test("chooses Telugu automatically on a fresh visit", async ({ page }) => {
+        await expect(page.locator("#language")).toHaveValue("te");
+        await expect(page.locator("html")).toHaveAttribute("lang", "te");
+        await expect(page.locator("#page-title"))
+            .toHaveText("ఛందస్ — పద్యంగా చెప్పండి");
+    });
 });
 
 test("share options are explicit and default to composition only", async ({ page }) => {

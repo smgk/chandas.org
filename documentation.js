@@ -203,7 +203,8 @@
         return {
             "group-totals": "Mātrā-group totals",
             "provisional-rhythm": "Provisional rhythmic rules",
-            "pathyā": "Pathyā rules"
+            "pathyā": "Pathyā rules",
+            "classical-pathyā-vipulā": "Classical pathyā and vipulā rules"
         }[value] || String(value || "Catalog rules");
     }
 
@@ -282,15 +283,38 @@
             }
         } else {
             const lines = meter.padas.map((pada, index) => {
-                const cadence = pada.cadence
+                const hasRealizations = Array.isArray(pada.realizations) &&
+                    pada.realizations.length;
+                const cadence = !hasRealizations && pada.cadence
                     ? `; positions ${pada.cadence.start}–` +
                         `${pada.cadence.start + pada.cadence.pattern.length - 1} = ` +
                         `${pada.cadence.pattern}`
                     : "";
-                const forbidden = (pada.forbidden || []).map((rule) =>
+                const forbidden = (hasRealizations ? [] : pada.forbidden || []).map((rule) =>
                     `; positions ${rule.start}–${rule.start + rule.patterns[0].length - 1} ` +
                     `cannot be ${rule.patterns.join(" or ")}`).join("");
-                return `Pāda ${index + 1}: ${pada.syllables} syllables${cadence}${forbidden}`;
+                const realizations = (pada.realizations || []).map((realization) => {
+                    const sequences = [
+                        ...(realization.required || []),
+                        ...(realization.cadence ? [realization.cadence] : [])
+                    ].map((sequence) =>
+                        `positions ${sequence.start}–` +
+                        `${sequence.start + sequence.pattern.length - 1} = ` +
+                        sequence.pattern);
+                    const boundaries = (realization.boundariesAfter || []).map((position) =>
+                        `caesura after ${position}`);
+                    const exclusions = (realization.forbidden || []).map((rule) =>
+                        `positions ${rule.start}–` +
+                        `${rule.start + rule.patterns[0].length - 1} not ` +
+                        rule.patterns.join(" or "));
+                    return `${realization.name}: ` +
+                        [...sequences, ...exclusions, ...boundaries].join(", ");
+                });
+                const alternatives = realizations.length
+                    ? `; accepted forms: ${realizations.join("; ")}`
+                    : "";
+                return `Pāda ${index + 1}: ${pada.syllables} syllables` +
+                    `${cadence}${forbidden}${alternatives}`;
             });
             addDefinition(document, definitions, "Line-by-line", lines.join(" · "));
         }

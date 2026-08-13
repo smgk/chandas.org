@@ -23,7 +23,8 @@ runs locally; composing does not require an account, server, or cloud database.
 - Supports independent meter selection and validation for each stanza.
 - Shows source-local Guru/Laghu, prāsa, karṣaṇa, and violation markings.
 - Provides four-pāda and compact two-line handling for fixed vṛttas, plus
-  conservative `8 + 8 / 8 + 8` Anuṣṭubh detection.
+  pathyā and classical na/bha/ma/ra-vipulā Anuṣṭubh detection in both four-
+  pāda and conservative `8 + 8 / 8 + 8` layouts.
 - Offers non-destructive Ghost guides and fixed-vṛtta Strong templates.
 - Saves poems privately in browser storage and supports readable text export,
   full backup, restore, copy, sharing, and analysis links.

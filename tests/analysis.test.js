@@ -43,6 +43,15 @@ function compactTextForPattern(pattern) {
     return Array.from(pattern, (weight) => weight === "G" ? "ಕಾ" : "ಕ").join("");
 }
 
+function compactTextWithBoundary(pattern, afterSyllable) {
+    const syllables = Array.from(
+        pattern,
+        (weight) => weight === "G" ? "ಕಾ" : "ಕ"
+    );
+    return syllables.slice(0, afterSyllable).join("") + " " +
+        syllables.slice(afterSyllable).join("");
+}
+
 test("loads every meter and alternate pattern from mishra.json", () => {
     const meters = Chandas.normalizeCatalog(catalog);
     assert.equal(meters.length, catalog.metres.length);
@@ -926,8 +935,9 @@ test("loads the versioned structural catalog without changing mishra entries", (
             structuralCatalog.fixedMeters.length +
             structuralCatalog.meters.length
     );
-    assert.equal(anushtubh.name, "anuṣṭubh (pathyā)");
+    assert.equal(anushtubh.name, "anuṣṭubh (śloka)");
     assert.ok(anushtubh.aliases.includes("anushtup"));
+    assert.ok(anushtubh.aliases.includes("na-vipulā"));
     assert.equal(anushtubh.kind, "syllable-structural");
     assert.deepEqual(anushtubh.compactPadaLayout, {
         sourceUnitCount: 2,
@@ -969,7 +979,7 @@ test("detects and validates pathyā Anuṣṭubh across four pādas", () => {
     const stanza = result.stanzas[0];
 
     assert.equal(stanza.padas.length, 4);
-    assert.equal(stanza.selectedMeter.name, "anuṣṭubh (pathyā)");
+    assert.equal(stanza.selectedMeter.name, "anuṣṭubh (śloka)");
     assert.equal(stanza.violationCount, 0);
     assert.equal(stanza.missingCount, 0);
     assert.equal(
@@ -982,6 +992,78 @@ test("detects and validates pathyā Anuṣṭubh across four pādas", () => {
             candidate.id === "structural:anushtubh-pathya").compactPadaLayout,
         undefined
     );
+});
+
+test("accepts each standard classical Anuṣṭubh vipulā in odd pādas", () => {
+    const cases = [
+        { id: "na-vipula", pattern: "LGLGLLLG" },
+        { id: "bha-vipula", pattern: "LGLGGLLG" },
+        { id: "ma-vipula", pattern: "LGLGGGGG", boundaryAfter: 5 },
+        { id: "ra-vipula", pattern: "LGLGGLGG", boundaryAfter: 4 }
+    ];
+    const even = textForPattern("GLGGLGLG");
+
+    for (const vipula of cases) {
+        const odd = vipula.boundaryAfter
+            ? compactTextWithBoundary(vipula.pattern, vipula.boundaryAfter)
+            : textForPattern(vipula.pattern);
+        const text = [odd, even, odd, even].join("\n");
+        const stanza = Chandas.analyzeComposition(
+            text,
+            combinedCatalog,
+            "structural:anushtubh-pathya"
+        ).stanzas[0];
+        const candidate = stanza.candidates.find((item) =>
+            item.id === "structural:anushtubh-pathya");
+
+        assert.equal(stanza.violationCount, 0, vipula.id);
+        assert.equal(stanza.missingCount, 0, vipula.id);
+        assert.equal(candidate.status, "exact", vipula.id);
+        assert.deepEqual(
+            candidate.realizations.map((item) => item.id),
+            [vipula.id, "canonical", vipula.id, "canonical"]
+        );
+    }
+});
+
+test("requires visible caesura for ma- and ra-vipulā", () => {
+    const even = compactTextForPattern("GLGGLGLG");
+
+    for (const pattern of ["LGLGGGGG", "LGLGGLGG"]) {
+        const odd = compactTextForPattern(pattern);
+        const text = [odd, even, odd, even].join("\n");
+        const stanza = Chandas.analyzeComposition(
+            text,
+            combinedCatalog,
+            "structural:anushtubh-pathya"
+        ).stanzas[0];
+
+        assert.equal(stanza.missingCount, 0);
+        assert.equal(stanza.violationCount, 2);
+        assert.deepEqual(
+            stanza.lines.flatMap((line) => line.syllables)
+                .filter((syllable) => syllable.violation)
+                .map((syllable) => syllable.violationReason),
+            ["required-caesura", "required-caesura"]
+        );
+    }
+});
+
+test("does not weaken Anuṣṭubh into any sequence of eight syllables", () => {
+    const text = [
+        "LLLLGGGG",
+        "GLGGLGLG",
+        "LLLLGGGG",
+        "GLGGLGLG"
+    ].map(textForPattern).join("\n");
+    const stanza = Chandas.analyzeComposition(
+        text,
+        combinedCatalog,
+        "structural:anushtubh-pathya"
+    ).stanzas[0];
+
+    assert.ok(stanza.violationCount > 0);
+    assert.equal(stanza.missingCount, 0);
 });
 
 test("keeps two separately authored beginner pādas on the canonical path", () => {
@@ -1182,7 +1264,7 @@ test("keeps an incomplete structural meter compatible without red violations", (
 
     assert.equal(stanza.violationCount, 0);
     assert.ok(stanza.missingCount > 0);
-    assert.equal(result.analysisVersion, "2.17.0");
+    assert.equal(result.analysisVersion, "2.18.0");
     assert.equal(result.catalogVersion, structuralCatalog.catalogVersion);
 });
 
@@ -1277,8 +1359,8 @@ test("recognizes the provisional Kannada Kanda characterization fixture", () => 
     );
     assert.equal(stanza.selectedMeter.ruleCompleteness, "provisional-rhythm");
     assert.deepEqual(stanza.selectedMeter.uncheckedRules, ["historical prāsa variants"]);
-    assert.equal(result.analysisVersion, "2.17.0");
-    assert.equal(result.catalogVersion, "5.2.0");
+    assert.equal(result.analysisVersion, "2.18.0");
+    assert.equal(result.catalogVersion, "5.3.0");
 });
 
 test("allows pādānta Laghu for Kannada Kanda lines 2 and 4 only", () => {

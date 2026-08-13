@@ -2760,11 +2760,97 @@
         return projected;
     }
 
+    function evaluateSyllableRealization(pada, realization, shouldMark) {
+        let failures = 0;
+        let compared = 0;
+        const required = [
+            ...(realization.required || []),
+            ...(realization.cadence ? [realization.cadence] : [])
+        ];
+
+        for (const sequence of required) {
+            const sequenceStart = sequence.start - 1;
+            for (let offset = 0; offset < sequence.pattern.length; offset += 1) {
+                const syllable = pada.syllables[sequenceStart + offset];
+                if (!syllable) {
+                    continue;
+                }
+                compared += 1;
+                const expected = sequence.pattern[offset];
+                if (syllable.classification !== expected) {
+                    failures += 1;
+                    setViolation(syllable, "weight-mismatch", expected, shouldMark);
+                }
+            }
+        }
+
+        for (const forbidden of realization.forbidden || []) {
+            const sequenceStart = forbidden.start - 1;
+            const sequenceLength = forbidden.patterns[0].length;
+            const sequenceEnd = sequenceStart + sequenceLength;
+            if (pada.syllables.length < sequenceEnd) {
+                continue;
+            }
+            compared += sequenceLength;
+            const actual = pada.syllables.slice(sequenceStart, sequenceEnd)
+                .map((syllable) => syllable.classification).join("");
+            if (forbidden.patterns.includes(actual)) {
+                failures += 1;
+                pada.syllables.slice(sequenceStart, sequenceEnd).forEach((syllable) =>
+                    setViolation(
+                        syllable,
+                        "forbidden-sequence",
+                        `not ${actual}`,
+                        shouldMark
+                    ));
+            }
+        }
+
+        for (const boundaryIndex of realization.boundariesAfter || []) {
+            const before = pada.syllables[boundaryIndex - 1];
+            const after = pada.syllables[boundaryIndex];
+            if (!before || !after) {
+                continue;
+            }
+            compared += 1;
+            const gap = pada.text.slice(
+                before.end - pada.start,
+                after.start - pada.start
+            );
+            if (gap && METRIC_BOUNDARY_RE.test(gap)) {
+                continue;
+            }
+            failures += 1;
+            setViolation(
+                after,
+                "required-caesura",
+                `boundary after syllable ${boundaryIndex}`,
+                shouldMark
+            );
+        }
+
+        return { failures, compared };
+    }
+
+    function chooseSyllableRealization(pada, rule) {
+        const realizations = Array.isArray(rule.realizations) &&
+            rule.realizations.length ? rule.realizations : [rule];
+        return realizations.map((realization, index) => ({
+            realization,
+            index,
+            ...evaluateSyllableRealization(pada, realization, false)
+        })).sort((left, right) =>
+            left.failures - right.failures ||
+            right.compared - left.compared ||
+            left.index - right.index)[0];
+    }
+
     function evaluateSyllableStructuralMeter(padas, meter, shouldMark) {
         let ruleFailures = 0;
         let missingCount = 0;
         const expectedPadas = meter.padas || [];
         const completePadas = [];
+        const realizations = [];
 
         for (let padaIndex = 0; padaIndex < Math.max(padas.length, expectedPadas.length);
             padaIndex += 1) {
@@ -2794,37 +2880,17 @@
                 missingCount += rule.syllables - pada.syllables.length;
             }
 
-            if (rule.cadence) {
-                const cadenceStart = rule.cadence.start - 1;
-                for (let offset = 0; offset < rule.cadence.pattern.length; offset += 1) {
-                    const syllable = pada.syllables[cadenceStart + offset];
-                    const expected = rule.cadence.pattern[offset];
-                    if (syllable && syllable.classification !== expected) {
-                        ruleFailures += 1;
-                        setViolation(syllable, "weight-mismatch", expected, shouldMark);
-                    }
-                }
-            }
-
-            for (const forbidden of rule.forbidden || []) {
-                const sequenceStart = forbidden.start - 1;
-                const sequenceEnd = sequenceStart + forbidden.patterns[0].length;
-                if (pada.syllables.length < sequenceEnd) {
-                    continue;
-                }
-                const actual = pada.syllables.slice(sequenceStart, sequenceEnd)
-                    .map((syllable) => syllable.classification).join("");
-                if (forbidden.patterns.includes(actual)) {
-                    ruleFailures += 1;
-                    pada.syllables.slice(sequenceStart, sequenceEnd).forEach((syllable) =>
-                        setViolation(
-                            syllable,
-                            "forbidden-sequence",
-                            `not ${actual}`,
-                            shouldMark
-                        ));
-                }
-            }
+            const selected = chooseSyllableRealization(pada, rule);
+            const realizationResult = evaluateSyllableRealization(
+                pada,
+                selected.realization,
+                shouldMark
+            );
+            ruleFailures += realizationResult.failures;
+            realizations[padaIndex] = {
+                id: selected.realization.id || "canonical",
+                name: selected.realization.name || "canonical"
+            };
         }
 
         const prasa = evaluateLineRelations(
@@ -2843,6 +2909,7 @@
         );
         setStructuralProgress(result, completePadas, expectedPadas.length, padas.length);
         result.prasa = prasa;
+        result.realizations = realizations;
         return result;
     }
 
@@ -3432,7 +3499,7 @@
 
         return {
             text: originalText,
-            analysisVersion: "2.17.0",
+            analysisVersion: "2.18.0",
             catalogVersion: catalog && catalog.structuralCatalogVersion
                 ? String(catalog.structuralCatalogVersion)
                 : "",

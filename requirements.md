@@ -268,7 +268,7 @@ recommended, and optional behavior.
     one ambiguous authored line, an exact longer pāda MUST outrank a shorter
     pattern that requires an inferred repetition. Consistent later pādas or
     explicit boundaries MAY promote the repeated interpretation.
-14. Pathyā Anuṣṭubh MUST continue to accept four authored eight-syllable
+14. Anuṣṭubh MUST continue to accept four authored eight-syllable
     pādas without inference. It MUST also accept two complete sixteen-syllable
     half-verses by projecting each one as `8 + 8` for its odd/even rules while
     preserving the authored text and line breaks. Automatic detection MUST use
@@ -277,6 +277,12 @@ recommended, and optional behavior.
     Selected-meter validation MAY guide an incomplete second half-verse and
     MUST attach cadence or extra-syllable errors to their original source
     ranges. The four-pāda template remains canonical in both layouts.
+    Odd pādas MUST independently accept pathyā and the standard classical
+    na-, bha-, ma-, and ra-vipulā realizations. Ma- and ra-vipulā MUST require
+    their cataloged caesura at a visible whitespace or punctuation boundary;
+    the engine MUST NOT guess invisible compound-member boundaries. Even-pāda
+    cadence and forbidden-position rules remain unchanged. Rare or disputed
+    early variants MUST remain unsupported until separately reviewed.
 15. Live ranking MUST distinguish a complete-verse match, an exact completed
     pāda or structural unit, a clean fixed-pattern prefix, an unfinished
     structural possibility, and an observed mismatch. Merely remaining
@@ -704,12 +710,13 @@ analysis result.
 2. Each structural entry MUST have a stable identifier, display name, common
    search aliases, meter kind, human-readable signature, machine-readable
    pāda rules, rule-completeness label, and source reference.
-3. The initial structural release MUST include pathyā Anuṣṭubh as four
+3. The structural catalog MUST include Anuṣṭubh as four
    eight-syllable pādas with its odd/even cadence and forbidden-position rules.
    It MUST recognize both four one-pāda lines and the common two-half-verse
    `8 + 8 / 8 + 8` layout through the isolated compact projection in FR-4.
-   Vipulā variations are explicitly deferred until an expert-reviewed rule set
-   and corpus are available.
+   Catalog 5.3 adds pathyā plus the four standard classical odd-pāda vipulās
+   (na, bha, ma, and ra) as explicit, independently scored realizations. The
+   stable legacy meter ID MUST remain unchanged for saved-state compatibility.
 4. The initial mātrā release MUST include the core Āryā-family patterns:
    Āryā, Gīti, Upagīti, Udgīti, Āryāgīti, Sugīti, Anugīti, and Vallarī.
 5. Initial Āryā-family validation checks the published mātrā-group totals.
@@ -1052,11 +1059,13 @@ The MVP is acceptable when:
   two-two-pāda-line layouts, alternate-pāda signatures, inferred-boundary
   ranking against an exact longer pāda, and source-local error accounting for
   insertions, substitutions, and omissions.
-- Include pathyā Anuṣṭubh fixtures using one-pāda-per-line and compact `8 + 8`
+- Include Anuṣṭubh fixtures using one-pāda-per-line and compact `8 + 8`
   half-verses separated by newlines or danda. Cover complete automatic
   detection, selected-meter partial guidance, ambiguous single half-verses,
   wrong cadence, forbidden positions, missing pādas, and source-local extra
-  syllables.
+  syllables. Add positive fixtures for pathyā and every accepted vipulā,
+  required-caesura failures for ma- and ra-vipulā, and a negative eight-
+  syllable sequence proving that the alternatives do not weaken the meter.
 - Include each Āryā-family mātrā signature, exact group boundaries, a Guru that
   crosses a four-mātrā boundary, incomplete pādas, and extra mātrās.
 - Use `mishra.json` as the initial meter inventory and create coverage proving
@@ -1235,8 +1244,8 @@ The MVP is acceptable when:
 10. An installable web application with an Android container is the first
     delivery approach to prototype; a native Android UI remains the fallback.
 11. Structural meters are maintained in a separate versioned catalog;
-    pathyā Anuṣṭubh and the initial Āryā-family group-total rules are the first
-    supported set.
+    classical pathyā/vipulā Anuṣṭubh and the initial Āryā-family group-total
+    rules are supported there.
 12. The first template release uses a non-destructive ghost guide. A later
     release offers both ghost and strong templates, with the strong template
     supporting arbitrary out-of-order position filling.
@@ -1264,8 +1273,8 @@ The MVP is acceptable when:
    and Android redistribution. Every listed meter remains part of the initial
    catalog.
 5. Choose the minimum Android version and supported browser window.
-6. Obtain expert approval for the pathyā Anuṣṭubh corpus and determine which
-   vipulā variations the next catalog version will accept.
+6. Obtain expert corpus approval for the implemented classical Anuṣṭubh
+   realizations and separately review any proposed rare or early vipulās.
 7. Obtain expert approval for the Kannada Kanda rule packet, prāsa
    equivalence classes, and golden corpus before promoting it from
    provisional.

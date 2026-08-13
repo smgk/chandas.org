@@ -2,7 +2,7 @@
 
 **Status:** Active post-MVP plan
 
-**Updated:** 2026-08-06
+**Updated:** 2026-08-13
 
 **Baseline:** `mvp-baseline`
 
@@ -23,8 +23,8 @@ post-MVP track**, not a distant “more meters someday” item.
 ## What works today
 
 - Fixed Guru/Laghu vṛttas from `mishra.json`.
-- Pathyā Anuṣṭubh in both four one-pāda lines and conservative two-line
-  `8 + 8 / 8 + 8` form, without vipulā variants.
+- Classical pathyā and na/bha/ma/ra-vipulā Anuṣṭubh in both four one-pāda
+  lines and conservative two-line `8 + 8 / 8 + 8` form.
 - Initial Āryā-family detection using published mātrā-group totals.
 - First-class provisional Kannada Kanda validation, kept separate from
   Āryāgīti.
@@ -298,9 +298,13 @@ week per meter-family presentation
 
 ### M7 — Complete existing structural families
 
+**Status:** Anuṣṭubh pathyā/vipulā slice complete; Āryā-family completion next
+
 **Estimate:** 2–4 weeks plus review
 
-- Add accepted Anuṣṭubh vipulā variants.
+- [x] Add the standard classical na-, bha-, ma-, and ra-vipulā variants while
+  preserving pathyā, compact layouts, source-local errors, and conservative
+  treatment of caesura and rare variants.
 - Add full internal gaṇa restrictions and reviewed regional variants for the
   Āryā family.
 - Revisit compatibility scoring between Sanskrit/Prakrit-derived forms and
@@ -426,5 +430,6 @@ authored-text-only copy/share. Web and bundled Android assets carry the same
 offline editor.
 
 Next, complete the scholarly review gates for native Kannada families before
-enabling their family-specific Strong layouts. M7's Anuṣṭubh vipulā and
-Āryā-family rule completion can proceed while those reviews are underway.
+enabling their family-specific Strong layouts. M7's Anuṣṭubh vipulā slice is
+complete; full Āryā-family gaṇa restrictions and reviewed variants are the
+next independent catalog task while those reviews are underway.

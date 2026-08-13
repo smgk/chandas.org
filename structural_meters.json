@@ -1,5 +1,5 @@
 {
-  "catalogVersion": "5.2.0",
+  "catalogVersion": "5.3.0",
   "copyright": "Copyright © 2025–2026 Ganesh Krishna Shankarathota",
   "license": "GPL-3.0-only",
   "description": "Structural, mātrā, Kannada aṃśa, and Telugu deśi-gaṇa meter rules that cannot be represented as one fixed Guru/Laghu string.",
@@ -47,15 +47,15 @@
   "meters": [
     {
       "id": "structural:anushtubh-pathya",
-      "name": "anuṣṭubh (pathyā)",
-      "aliases": ["anuṣṭubh", "anushtubh", "anushtup", "anustubh", "anustup", "śloka", "shloka"],
+      "name": "anuṣṭubh (śloka)",
+      "aliases": ["anuṣṭubh", "anushtubh", "anushtup", "anustubh", "anustup", "śloka", "shloka", "pathyā", "pathya", "vipulā", "vipula", "na-vipulā", "bha-vipulā", "ma-vipulā", "ra-vipulā"],
       "kind": "syllable-structural",
       "signatureLines": [
         "4 pādas × 8 syllables",
-        "odd pādas: positions 5–7 = LGG",
+        "odd pādas: pathyā or na/bha/ma/ra-vipulā",
         "even pādas: positions 5–7 = LGL"
       ],
-      "ruleCompleteness": "pathyā",
+      "ruleCompleteness": "classical-pathyā-vipulā",
       "compactPadaLayout": {
         "sourceUnitCount": 2,
         "padasPerSourceUnit": 2,
@@ -66,7 +66,39 @@
         {
           "syllables": 8,
           "cadence": { "start": 5, "pattern": "LGG" },
-          "forbidden": [{ "start": 2, "patterns": ["LLL", "LLG"] }]
+          "forbidden": [{ "start": 2, "patterns": ["LLL", "LLG"] }],
+          "realizations": [
+            {
+              "id": "pathya",
+              "name": "pathyā",
+              "cadence": { "start": 5, "pattern": "LGG" },
+              "forbidden": [{ "start": 2, "patterns": ["LLL", "LLG"] }]
+            },
+            {
+              "id": "na-vipula",
+              "name": "na-vipulā",
+              "required": [{ "start": 4, "pattern": "GLLL" }],
+              "forbidden": [{ "start": 2, "patterns": ["LLL", "LLG"] }]
+            },
+            {
+              "id": "bha-vipula",
+              "name": "bha-vipulā",
+              "required": [{ "start": 2, "pattern": "GLGGLL" }]
+            },
+            {
+              "id": "ma-vipula",
+              "name": "ma-vipulā",
+              "required": [{ "start": 2, "pattern": "GLGGGG" }],
+              "boundariesAfter": [5]
+            },
+            {
+              "id": "ra-vipula",
+              "name": "ra-vipulā",
+              "required": [{ "start": 4, "pattern": "GGLG" }],
+              "forbidden": [{ "start": 2, "patterns": ["LLL", "LLG"] }],
+              "boundariesAfter": [4]
+            }
+          ]
         },
         {
           "syllables": 8,
@@ -76,7 +108,39 @@
         {
           "syllables": 8,
           "cadence": { "start": 5, "pattern": "LGG" },
-          "forbidden": [{ "start": 2, "patterns": ["LLL", "LLG"] }]
+          "forbidden": [{ "start": 2, "patterns": ["LLL", "LLG"] }],
+          "realizations": [
+            {
+              "id": "pathya",
+              "name": "pathyā",
+              "cadence": { "start": 5, "pattern": "LGG" },
+              "forbidden": [{ "start": 2, "patterns": ["LLL", "LLG"] }]
+            },
+            {
+              "id": "na-vipula",
+              "name": "na-vipulā",
+              "required": [{ "start": 4, "pattern": "GLLL" }],
+              "forbidden": [{ "start": 2, "patterns": ["LLL", "LLG"] }]
+            },
+            {
+              "id": "bha-vipula",
+              "name": "bha-vipulā",
+              "required": [{ "start": 2, "pattern": "GLGGLL" }]
+            },
+            {
+              "id": "ma-vipula",
+              "name": "ma-vipulā",
+              "required": [{ "start": 2, "pattern": "GLGGGG" }],
+              "boundariesAfter": [5]
+            },
+            {
+              "id": "ra-vipula",
+              "name": "ra-vipulā",
+              "required": [{ "start": 4, "pattern": "GGLG" }],
+              "forbidden": [{ "start": 2, "patterns": ["LLL", "LLG"] }],
+              "boundariesAfter": [4]
+            }
+          ]
         },
         {
           "syllables": 8,
@@ -84,7 +148,7 @@
           "forbidden": [{ "start": 2, "patterns": ["LLL", "LLG", "GLG"] }]
         }
       ],
-      "notes": "This rule set recognizes pathyā Anuṣṭubh in four one-pāda lines or two complete 8+8 half-verse units. Vipulā variations are not yet accepted.",
+      "notes": "This rule set recognizes pathyā and the four standard classical odd-pāda vipulās (na, bha, ma, and ra) in four one-pāda lines or two complete 8+8 half-verse units. Ma- and ra-vipulā require a visible caesura; rare or disputed early variants are not accepted.",
       "source": {
         "title": "A Study on the Sanskrit Meter: Anuṣṭubh",
         "url": "https://www.kci.go.kr/kciportal/ci/sereArticleSearch/ciSereArtiView.kci?sereArticleSearchBean.artiId=ART001963953"

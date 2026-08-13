@@ -658,7 +658,7 @@ test("finds Anuṣṭubh as anushtup and shows structural and mātrā references
     await page.locator("#meter-search").fill("anushtup");
 
     await expect(page.locator("#meter-select option")).toHaveText([
-        "anuṣṭubh (pathyā)"
+        "anuṣṭubh (śloka)"
     ]);
     await page.locator("#meter-select").selectOption("structural:anushtubh-pathya");
 
@@ -667,7 +667,7 @@ test("finds Anuṣṭubh as anushtup and shows structural and mātrā references
     await expect(page.locator("#active-matras"))
         .toHaveText("Mātrās by pāda: 14 | 13 | 14 | 13");
     await expect(page.locator("#validation-summary"))
-        .toHaveText("This stanza follows anuṣṭubh (pathyā).");
+        .toHaveText("This stanza follows anuṣṭubh (śloka).");
 
     const compactPathya = [
         "ಕಾ ಕ ಕಾ ಕಾ ಕ ಕಾ ಕಾ ಕಾ ಕಾ ಕ ಕಾ ಕಾ ಕ ಕಾ ಕ ಕಾ",
@@ -675,13 +675,13 @@ test("finds Anuṣṭubh as anushtup and shows structural and mātrā references
     ].join("\n");
     await page.locator("#composition").fill(compactPathya);
     const compactCandidate = page.locator("#candidate-list .candidate")
-        .filter({ hasText: "anuṣṭubh (pathyā)" });
+        .filter({ hasText: "anuṣṭubh (śloka)" });
     await expect(compactCandidate).toHaveAttribute("data-match-level", "exact-verse");
     await expect(compactCandidate.locator(".candidate-status")).toHaveText("Selected");
     await expect(compactCandidate.locator(".candidate-detail"))
         .toContainText("4/4 units");
     await expect(page.locator("#validation-summary"))
-        .toHaveText("This stanza follows anuṣṭubh (pathyā).");
+        .toHaveText("This stanza follows anuṣṭubh (śloka).");
     await page.locator("#show-template").check();
     await expect(page.locator("#whole-verse-template .whole-template-line"))
         .toHaveCount(4);
@@ -1536,7 +1536,7 @@ test("opens documentation and searches the complete prosody catalog", async ({ p
 
     await page.locator("#meter-catalog-search").fill("anushtup");
     await expect(page.locator(".meter-catalog-item")).toHaveCount(1);
-    await expect(page.locator(".meter-catalog-name")).toHaveText("anuṣṭubh (pathyā)");
+    await expect(page.locator(".meter-catalog-name")).toHaveText("anuṣṭubh (śloka)");
     await page.locator(".meter-catalog-item summary").click();
     await expect(page.locator(".meter-definitions")).toContainText("Pāda 4: 8 syllables");
 

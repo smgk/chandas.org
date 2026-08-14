@@ -18,7 +18,8 @@ test.beforeEach(async ({ page }) => {
     page.on("pageerror", (error) => errors.push(error.message));
     await page.goto("/");
     await expect(page.locator("#composition")).toBeVisible();
-    await expect(page.locator("#draft-state")).toContainText(/device|ಸಾಧನ|పరికరం/);
+    await expect(page.locator("#draft-state"))
+        .toContainText(/device|ಸಾಧನ|పరికరం|ઉપકરણ/);
     page.__runtimeErrors = errors;
 });
 
@@ -59,6 +60,26 @@ test("shows Telugu-native Guru and Laghu template symbols", async ({ page }) => 
     await page.locator("#meter-select").selectOption("structural:anushtubh-pathya");
     await expect(page.locator("#highlight-layer .ghost-template"))
         .toContainText("గా");
+});
+
+test("shows Gujarati-native analysis and template symbols", async ({ page }) => {
+    await page.locator("#composition").fill("ક કા કં");
+    await expect(page.locator("#active-pattern")).toHaveText("LGG");
+    await page.locator("#composition").fill("ક");
+
+    await page.locator("#meter-picker summary").click();
+    await page.locator("#meter-search").fill("madhu");
+    await page.locator("#meter-select").selectOption("madhu");
+    await page.locator("#show-template").check();
+
+    await expect(page.locator("#highlight-layer .ghost-template")).toHaveText("લ");
+    await expect(page.locator("#whole-verse-template .whole-template-line-guide"))
+        .toHaveText(["લ લ", "લ લ", "લ લ", "લ લ"]);
+
+    await page.locator("#meter-search").fill("anushtup");
+    await page.locator("#meter-select").selectOption("structural:anushtubh-pathya");
+    await expect(page.locator("#highlight-layer .ghost-template"))
+        .toContainText("ગા");
 });
 
 test("allows choosing a meter before the first syllable is typed", async ({ page }) => {
@@ -1313,7 +1334,7 @@ test("switches to the complete Telugu interface", async ({ page }) => {
         .toHaveText("ఛందోపద్య రచనా సహచరి");
     await expect(page.locator(".header-link")).toHaveText("నేర్చుకోండి");
     await expect(page.locator("#composition"))
-        .toHaveAttribute("placeholder", "ಕನ್ನಡ, తెలుగు లేదా देवनागरीలో రాయండి…");
+        .toHaveAttribute("placeholder", "ಕನ್ನಡ, తెలుగు, ગુજરાતી లేదా देवनागरीలో రాయండి…");
     await expect(page.locator("html")).toHaveAttribute("lang", "te");
     await expect(page).toHaveTitle("ఛందస్ — పద్యంగా చెప్పండి");
 
@@ -1321,6 +1342,31 @@ test("switches to the complete Telugu interface", async ({ page }) => {
     await expect(page.locator("#saved-poems-title"))
         .toHaveText("భద్రపరిచిన పద్యాలు");
     await expect(page.locator("#backup-download")).toHaveText("పూర్తి బ్యాకప్");
+    const dimensions = await page.evaluate(() => ({
+        scrollWidth: document.documentElement.scrollWidth,
+        clientWidth: document.documentElement.clientWidth
+    }));
+    expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth + 1);
+});
+
+test("switches to the complete Gujarati interface", async ({ page }) => {
+    await page.locator("#language").selectOption("gu");
+
+    await expect(page.locator("#page-title")).toHaveText("છંદસ — પદ્યમાં કહો");
+    await expect(page.locator(".intro .eyebrow"))
+        .toHaveText("છંદોબદ્ધ પદ્યનો સાથી");
+    await expect(page.locator(".header-link")).toHaveText("શીખો");
+    await expect(page.locator("#composition"))
+        .toHaveAttribute(
+            "placeholder",
+            "ಕನ್ನಡ, తెలుగు, ગુજરાતી અથવા देवनागरीમાં લખો…"
+        );
+    await expect(page.locator("html")).toHaveAttribute("lang", "gu");
+    await expect(page).toHaveTitle("છંદસ — પદ્યમાં કહો");
+
+    await page.locator("#saved-poems").click();
+    await expect(page.locator("#saved-poems-title")).toHaveText("સાચવેલાં પદ્યો");
+    await expect(page.locator("#backup-download")).toHaveText("સંપૂર્ણ બૅકઅપ");
     const dimensions = await page.evaluate(() => ({
         scrollWidth: document.documentElement.scrollWidth,
         clientWidth: document.documentElement.clientWidth
@@ -1336,6 +1382,17 @@ test.describe("Telugu browser locale", () => {
         await expect(page.locator("html")).toHaveAttribute("lang", "te");
         await expect(page.locator("#page-title"))
             .toHaveText("ఛందస్ — పద్యంగా చెప్పండి");
+    });
+});
+
+test.describe("Gujarati browser locale", () => {
+    test.use({ locale: "gu-IN" });
+
+    test("chooses Gujarati automatically on a fresh visit", async ({ page }) => {
+        await expect(page.locator("#language")).toHaveValue("gu");
+        await expect(page.locator("html")).toHaveAttribute("lang", "gu");
+        await expect(page.locator("#page-title"))
+            .toHaveText("છંદસ — પદ્યમાં કહો");
     });
 });
 

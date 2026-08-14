@@ -66,6 +66,38 @@
             heavyMarks: new Set([0x0902, 0x0903]),
             ignoredMarks: new Set([0x0901, 0x093c, 0x0951, 0x0952, 0x0953, 0x0954])
         },
+        gujarati: {
+            label: "Gujarati",
+            block: [0x0a80, 0x0aff],
+            consonant: [0x0a95, 0x0ab9],
+            // ZHA is an additional consonant outside Gujarati's principal
+            // consonant range. It is used for Avestan transliteration.
+            additionalConsonants: new Set([0x0af9]),
+            independentShort: new Set([
+                0x0a85, 0x0a87, 0x0a89, 0x0a8b,
+                0x0a8c, 0x0a8d, 0x0a91
+            ]),
+            independentLong: new Set([
+                0x0a86, 0x0a88, 0x0a8a, 0x0a8f,
+                0x0a90, 0x0a93, 0x0a94, 0x0ae0, 0x0ae1
+            ]),
+            dependentShort: new Set([
+                0x0abf, 0x0ac1, 0x0ac3, 0x0ac5,
+                0x0ac9, 0x0ae2
+            ]),
+            dependentLong: new Set([
+                0x0abe, 0x0ac0, 0x0ac2, 0x0ac4, 0x0ac7,
+                0x0ac8, 0x0acb, 0x0acc, 0x0ae3
+            ]),
+            virama: 0x0acd,
+            heavyMarks: new Set([0x0a82, 0x0a83]),
+            ignoredMarks: new Set([0x0a81, 0x0abc]),
+            ignoredCharacters: new Set([
+                0x0abd,
+                0x0ae6, 0x0ae7, 0x0ae8, 0x0ae9, 0x0aea,
+                0x0aeb, 0x0aec, 0x0aed, 0x0aee, 0x0aef
+            ])
+        },
         kannada: {
             label: "Kannada",
             block: [0x0c80, 0x0cff],
@@ -3499,7 +3531,7 @@
 
         return {
             text: originalText,
-            analysisVersion: "2.18.0",
+            analysisVersion: "2.19.0",
             catalogVersion: catalog && catalog.structuralCatalogVersion
                 ? String(catalog.structuralCatalogVersion)
                 : "",

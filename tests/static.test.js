@@ -34,7 +34,7 @@ test("the web shell has no external runtime asset dependencies", () => {
     assert.match(html, /app\.js/);
 });
 
-test("Telugu localization covers every interface message", () => {
+test("Kannada, Telugu, and Gujarati localization cover every interface message", () => {
     const app = read("app.js");
     const html = read("index.html");
     const startMarker = "const messages = ";
@@ -47,15 +47,23 @@ test("Telugu localization covers every interface message", () => {
     assert.ok(englishKeys.length > 150);
     assert.deepEqual(Object.keys(messages.kn).sort(), englishKeys);
     assert.deepEqual(Object.keys(messages.te).sort(), englishKeys);
-    for (const key of englishKeys) {
-        const variables = (value) =>
-            Array.from(String(value).matchAll(/\{([^}]+)\}/g), (match) => match[1])
-                .sort();
-        assert.deepEqual(variables(messages.te[key]), variables(messages.en[key]), key);
+    assert.deepEqual(Object.keys(messages.gu).sort(), englishKeys);
+    for (const language of ["kn", "te", "gu"]) {
+        for (const key of englishKeys) {
+            const variables = (value) =>
+                Array.from(String(value).matchAll(/\{([^}]+)\}/g), (match) => match[1])
+                    .sort();
+            assert.deepEqual(
+                variables(messages[language][key]),
+                variables(messages.en[key]),
+                `${language}.${key}`
+            );
+        }
     }
     assert.match(html, /<option value="te">తెలుగు<\/option>/);
+    assert.match(html, /<option value="gu">ગુજરાતી<\/option>/);
     assert.match(app, /state\.language = browserLanguage/);
-    assert.match(read("poem_store.js"), /\["en", "kn", "te"\]/);
+    assert.match(read("poem_store.js"), /\["en", "kn", "te", "gu"\]/);
 });
 
 test("meter suggestions stay compact and explain evidence rather than absence", () => {

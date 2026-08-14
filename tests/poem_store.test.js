@@ -54,6 +54,14 @@ test("preserves Telugu as a saved interface language", () => {
     assert.equal(poem({ language: "unsupported" }).language, "en");
 });
 
+test("preserves Gujarati as a saved interface language", () => {
+    const gujaratiPoem = poem({ language: "gu", text: "ગુજરાતી પદ્ય" });
+    const restored = parseBackup(JSON.stringify(makeBackup([gujaratiPoem])));
+
+    assert.equal(gujaratiPoem.language, "gu");
+    assert.equal(restored[0].language, "gu");
+});
+
 test("exports and parses a portable versioned backup", () => {
     const backup = makeBackup([poem()]);
     assert.equal(backup.format, BACKUP_FORMAT);

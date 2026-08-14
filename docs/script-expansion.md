@@ -1,10 +1,10 @@
 # Indic Script Expansion Research
 
-**Status:** Active roadmap note; Telugu adapter implemented
-**Updated:** 2026-08-06
+**Status:** Active roadmap note; Telugu and Gujarati adapters implemented
+**Updated:** 2026-08-13
 
 This note records the initial assessment of which Indic scripts can reuse the
-current Guru/Laghu engine. Telugu is now a supported first-class adapter; the
+current Guru/Laghu engine. Telugu and Gujarati are now supported first-class adapters; the
 remaining entries are research, not a claim that their scripts or native
 prosody traditions are already supported.
 
@@ -35,7 +35,7 @@ code points.
 | Order | Script | Fit with current engine | Important exception |
 | --- | --- | --- | --- |
 | 1 | Telugu | Excellent | Historic consonants and alternate vowel encodings |
-| 2 | Gujarati | Very good | Orthographic quantity must not imply complete native-language prosody |
+| 2 | Gujarati | Implemented | Orthographic quantity does not imply complete native-language prosody |
 | 3 | Odia | Very good | Additional letters and AU-length representation |
 | 4 | Bengali/Assamese | Good | Khanda-ta is an atomically encoded dead consonant |
 | 5 | Tamil | Good for basic quantity | Native meters require an eḻuttu/asai/cīr layer; Sanskrit transcription has reduced consonant distinctions |
@@ -57,10 +57,24 @@ marks, canonical and alternate vowel representations, atomic nakaara pollu,
 native Ghost-template symbols, analytics identifiers, and shaping-safe source
 ranges. Android and Safari rendering remain part of release verification.
 
-### Gujarati and Odia
+### Gujarati
 
-Both follow the ordinary virāma/conjunct model closely enough for small,
-isolated adapters. Each needs reviewed vowel-quantity tables, consonants outside
+**Implemented in version 1.28.0.** Gujarati has an isolated, offline adapter
+for native script detection, short and long independent vowels and vowel
+signs, virāma conjuncts, anusvāra, visarga, candrabindu, avagraha, Gujarati
+digits, and additional consonant `ૹ`. It also has native Laghu/Guru template
+symbols, aggregate script analytics, saved-language persistence, automatic
+`gu-IN` interface selection, and a complete Gujarati UI translation.
+
+The adapter supports Gujarati-script Sanskrit and other orthographically
+quantitative verse against the existing script-independent meter catalog.
+Gujarati-specific meters are deliberately deferred to their own sourced rule
+packet and corpus milestone.
+
+### Odia
+
+Odia follows the ordinary virāma/conjunct model closely enough for a small,
+isolated adapter. It needs reviewed vowel-quantity tables, consonants outside
 the principal range, normalization fixtures, punctuation tests, and native
 guide symbols.
 
@@ -156,11 +170,12 @@ assumption that one virāma is both vowel killer and conjunct operator.
 1. [x] Generalize script detection while proving that Kannada and Devanagari
    results do not change.
 2. [x] Add Telugu with paired Telugu/Devanagari characterization tests.
-3. Add Gujarati and Odia.
-4. Add atomic dead-consonant support, then Bengali/Assamese.
-5. Choose Tamil or Sinhala next based on user demand and available reviewers.
-6. Add Malayalam only after chillu and half-u review.
-7. Treat Gurmukhi, Grantha, and Tulu-Tigalari as specialized later passes.
+3. [x] Add Gujarati script analysis and Gujarati interface localization.
+4. Add Odia.
+5. Add atomic dead-consonant support, then Bengali/Assamese.
+6. Choose Tamil or Sinhala next based on user demand and available reviewers.
+7. Add Malayalam only after chillu and half-u review.
+8. Treat Gurmukhi, Grantha, and Tulu-Tigalari as specialized later passes.
 
 ## Primary technical references
 
@@ -170,5 +185,6 @@ assumption that one virāma is both vowel killer and conjunct operator.
 - [Unicode FAQ: Indic Scripts and Languages](https://www.unicode.org/faq/indic.html)
 - [Unicode Character Database property specification](https://www.unicode.org/reports/tr44/)
 - [Telugu Unicode code chart](https://www.unicode.org/charts/PDF/U0C00.pdf)
+- [Gujarati Unicode code chart](https://www.unicode.org/charts/PDF/U0A80.pdf)
 - [Grantha Unicode code chart](https://www.unicode.org/charts/PDF/U11300.pdf)
 - [Tulu-Tigalari Unicode code chart](https://www.unicode.org/charts/PDF/U11380.pdf)

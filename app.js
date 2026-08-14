@@ -54,7 +54,7 @@
             updating: "Updating…",
             eyebrow: "A live prosody companion",
             title: "Chandas - say it in-verse",
-            intro: "Type Kannada, Telugu, or Devanagari verse. Guru and Laghu appear in place, and the closest meters stay quietly within reach.",
+            intro: "Type Kannada, Telugu, Gujarati, or Devanagari verse. Guru and Laghu appear in place, and the closest meters stay quietly within reach.",
             composition: "Composition",
             savedLocally: "Saved privately on this device",
             saving: "Saving on this device…",
@@ -63,7 +63,7 @@
             copied: "Composition copied",
             copyFailed: "Copy was unavailable",
             share: "Share",
-            placeholder: "Type in ಕನ್ನಡ, తెలుగు, or देवनागरी…",
+            placeholder: "Type in ಕನ್ನಡ, తెలుగు, ગુજરાતી, or देवनागरी…",
             laghu: "Laghu",
             guru: "Guru",
             violation: "Violation",
@@ -215,7 +215,7 @@
             updating: "ನವೀಕರಿಸಲಾಗುತ್ತಿದೆ…",
             eyebrow: "ಛಂದದ ಪದ್ಯದ ಸಂಗಾತಿ",
             title: "ಛಂದಸ್ - ಪದ್ಯದಲ್ಲಿ ಹೇಳಿ",
-            intro: "ಕನ್ನಡ, ತೆಲುಗು ಅಥವಾ ದೇವನಾಗರಿ ಪದ್ಯವನ್ನು ಬರೆಯಿರಿ. ಗುರು–ಲಘು ಅದೇ ಪಠ್ಯದಲ್ಲಿ ಕಾಣುತ್ತದೆ; ಸಮೀಪದ ಛಂದಸ್ಸುಗಳು ಪಕ್ಕದಲ್ಲಿರುತ್ತವೆ.",
+            intro: "ಕನ್ನಡ, ತೆಲುಗು, ಗುಜರಾತಿ ಅಥವಾ ದೇವನಾಗರಿ ಪದ್ಯವನ್ನು ಬರೆಯಿರಿ. ಗುರು–ಲಘು ಅದೇ ಪಠ್ಯದಲ್ಲಿ ಕಾಣುತ್ತದೆ; ಸಮೀಪದ ಛಂದಸ್ಸುಗಳು ಪಕ್ಕದಲ್ಲಿರುತ್ತವೆ.",
             composition: "ರಚನೆ",
             savedLocally: "ಈ ಸಾಧನದಲ್ಲಿ ಖಾಸಗಿಯಾಗಿ ಉಳಿಸಲಾಗಿದೆ",
             saving: "ಈ ಸಾಧನದಲ್ಲಿ ಉಳಿಸಲಾಗುತ್ತಿದೆ…",
@@ -224,7 +224,7 @@
             copied: "ರಚನೆಯನ್ನು ನಕಲಿಸಲಾಗಿದೆ",
             copyFailed: "ನಕಲಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ",
             share: "ಹಂಚಿಕೊಳ್ಳಿ",
-            placeholder: "ಕನ್ನಡ, తెలుగు ಅಥವಾ देवनागरीಯಲ್ಲಿ ಬರೆಯಿರಿ…",
+            placeholder: "ಕನ್ನಡ, తెలుగు, ગુજરાતી ಅಥವಾ देवनागरीಯಲ್ಲಿ ಬರೆಯಿರಿ…",
             laghu: "ಲಘು",
             guru: "ಗುರು",
             violation: "ದೋಷ",
@@ -376,7 +376,7 @@
             updating: "నవీకరిస్తోంది…",
             eyebrow: "ఛందోపద్య రచనా సహచరి",
             title: "ఛందస్ — పద్యంగా చెప్పండి",
-            intro: "కన్నడ, తెలుగు లేదా దేవనాగరి పద్యాన్ని రాయండి. గురు–లఘువులు అదే పాఠ్యంలో కనిపిస్తాయి; సమీప ఛందస్సులు పక్కనే అందుబాటులో ఉంటాయి.",
+            intro: "కన్నడ, తెలుగు, గుజరాతీ లేదా దేవనాగరి పద్యాన్ని రాయండి. గురు–లఘువులు అదే పాఠ్యంలో కనిపిస్తాయి; సమీప ఛందస్సులు పక్కనే అందుబాటులో ఉంటాయి.",
             composition: "రచన",
             savedLocally: "ఈ పరికరంలో గోప్యంగా భద్రపరచబడింది",
             saving: "ఈ పరికరంలో భద్రపరుస్తోంది…",
@@ -385,7 +385,7 @@
             copied: "రచన నకలు చేయబడింది",
             copyFailed: "నకలు చేయడం సాధ్యం కాలేదు",
             share: "పంచుకోండి",
-            placeholder: "ಕನ್ನಡ, తెలుగు లేదా देवनागरीలో రాయండి…",
+            placeholder: "ಕನ್ನಡ, తెలుగు, ગુજરાતી లేదా देवनागरीలో రాయండి…",
             laghu: "లఘు",
             guru: "గురు",
             violation: "లోపం",
@@ -494,6 +494,167 @@
             automaticPrasaMismatches: "కన్నడ లిపి స్వయంచాలక పరీక్ష: {type} {count} చోట్ల భిన్నంగా ఉంది.",
             prasaWeightMismatches: "మొదటి అక్షర గురు–లఘు {count} చోట్ల భిన్నంగా ఉంది.",
             adiPrasaFound: "{key}పై ఆదిప్రాస కనిపించింది."
+        },
+        gu: {
+            skip: "રચના પર જાઓ",
+            brandTagline: "પદ્યમાં કહો",
+            learn: "શીખો",
+            savedPoems: "સાચવેલાં પદ્યો",
+            onThisDevice: "આ ઉપકરણમાં",
+            savedPoemsNote: "તમે નિકાસ કે વહેંચણી ન કરો ત્યાં સુધી આ પદ્યો આ ઉપકરણમાંથી બહાર જતા નથી. બ્રાઉઝર અથવા ઍપનો ડેટા સાફ કરતાં પહેલાં બૅકઅપ રાખો.",
+            searchSavedPoems: "સાચવેલાં પદ્યો શોધો",
+            saveBackup: "બધાં પદ્યો .txtમાં સાચવો",
+            downloadBackup: "સંપૂર્ણ બૅકઅપ",
+            importBackup: "સંપૂર્ણ બૅકઅપ પુનઃસ્થાપિત કરો",
+            exportHelp: "વાંચવા અને નકલ કરવા માટે લખાણની નિકાસ વાપરો. તમારું સંપૂર્ણ છંદસ કાર્યસ્થળ પુનઃસ્થાપિત કરવા સંપૂર્ણ બૅકઅપ વાપરો.",
+            noSavedPoems: "હજુ કોઈ પદ્ય સાચવ્યું નથી. તમારી આગામી પંક્તિ એ સુધારી દેશે.",
+            savedPoemCount: "સાચવેલાં પદ્યો: {count}",
+            openPoem: "ખોલો",
+            renamePoem: "નામ બદલો",
+            duplicatePoem: "પ્રતિ બનાવો",
+            deletePoem: "કાઢી નાખો",
+            saveName: "નામ સાચવો",
+            cancel: "રદ કરો",
+            activePoem: "વર્તમાન",
+            untitledPoem: "નામ વિનાનું પદ્ય",
+            poemCopySuffix: "પ્રતિ",
+            deletePoemConfirm: "આ સાચવેલું પદ્ય આ ઉપકરણમાંથી કાઢી નાખવું છે?",
+            backupDownloaded: "સંપૂર્ણ બૅકઅપ ડાઉનલોડ થયું",
+            backupShared: "સંપૂર્ણ બૅકઅપની વહેંચણી ખૂલી",
+            poemsDownloaded: "વાંચી શકાય તેવાં પદ્યો ડાઉનલોડ થયાં",
+            poemsShared: "પદ્યોની વહેંચણી ખૂલી",
+            poemsFileTitle: "છંદસ પદ્યો",
+            exportedAtLabel: "નિકાસનો સમય",
+            lastEditedLabel: "છેલ્લો ફેરફાર",
+            metersLabel: "પસંદ કરેલા છંદ",
+            noSelectedMeters: "કોઈ નહીં",
+            backupImported: "{added} આયાત થયાં; {conflicts} વિરોધી પ્રતિ રાખી; {skipped} નકલ છોડી.",
+            backupInvalid: "આ માન્ય છંદસ બૅકઅપ ફાઇલ નથી.",
+            localStorageUnavailable: "સાચવેલાં પદ્યો ઉપલબ્ધ નથી, પણ વર્તમાન મુસદ્દો આ ઉપકરણમાં ફરી મળશે.",
+            language: "ઇન્ટરફેસની ભાષા",
+            newDraft: "નવું",
+            updateAvailable: "અપડેટ ઉપલબ્ધ",
+            updating: "અપડેટ થઈ રહ્યું છે…",
+            eyebrow: "છંદોબદ્ધ પદ્યનો સાથી",
+            title: "છંદસ — પદ્યમાં કહો",
+            intro: "કન્નડ, તેલુગુ, ગુજરાતી અથવા દેવનાગરી પદ્ય લખો. ગુરુ–લઘુ એ જ લખાણમાં દેખાશે અને સૌથી નજીકના છંદ સહેલાઈથી મળશે.",
+            composition: "રચના",
+            savedLocally: "આ ઉપકરણમાં ખાનગી રીતે સાચવ્યું",
+            saving: "આ ઉપકરણમાં સાચવી રહ્યું છે…",
+            restored: "સ્થાનિક મુસદ્દો પુનઃસ્થાપિત થયો",
+            copy: "નકલ કરો",
+            copied: "રચનાની નકલ થઈ",
+            copyFailed: "નકલ થઈ શકી નહીં",
+            share: "વહેંચો",
+            placeholder: "ಕನ್ನಡ, తెలుగు, ગુજરાતી અથવા देवनागरीમાં લખો…",
+            laghu: "લઘુ",
+            guru: "ગુરુ",
+            violation: "ભૂલ",
+            prasaMatchLegend: "પ્રાસ મળ્યો",
+            prasaMismatchLegend: "પ્રાસ મળ્યો નહીં",
+            openingWeightLegend: "પ્રથમ અક્ષરના ગુરુ–લઘુમાં ભેદ",
+            syllableShort: "અ",
+            matraShort: "મા",
+            cursorMetrics: "અક્ષર {syllable} · માત્રા {matras}",
+            cursorMetricsLabel: "પંક્તિની શરૂઆતથી કર્સર સુધીની ગણતરી",
+            stanzaHelp: "પદ્યખંડો વચ્ચે એક ખાલી પંક્તિ છોડો.",
+            activeStanza: "વર્તમાન પદ્યખંડ",
+            stanza: "પદ્યખંડ {number} / {total}",
+            analysisEmpty: "છંદનાં સૂચનો અહીં દેખાશે.",
+            chooseMeterFirst: "છંદ પસંદ કરો અથવા લખવાનું શરૂ કરો",
+            pattern: "વર્તમાન રચના",
+            matras: "પાદ પ્રમાણે માત્રા",
+            scansion: "છંદોવિન્યાસ",
+            scansionAuto: "આપમેળે",
+            scansionWeights: "ગુરુ–લઘુ",
+            scansionAmsha: "ગણ સમૂહ · V/B/R/S/I",
+            scansionMatra35: "માત્રાગતિ · 3+5",
+            scansionMatra53: "માત્રાગતિ · 5+3",
+            scansionOff: "બંધ",
+            detectShithilaDvitva: "શિથિલ દ્વિત્વ શોધો",
+            shithilaApplied: "{count} શિથિલ-દ્વિત્વ પ્રયોગને *થી ચિહ્નિત કર્યો.",
+            realizedAmsha: "પ્રયુક્ત ગણ: {scan}",
+            recitalSubstitutions: "પ્રયુક્ત અંશગણ વિન્યાસમાં પાઠ આધારિત {count} તપાસેલા વૈકલ્પિક ગણ દેખાડ્યા છે.",
+            selectedMeterReference: "પસંદ કરેલો છંદ",
+            closestMeters: "નજીકના છંદ",
+            suggestionNote: "તમે લખો તેમ સૂચનો બદલાય છે.",
+            chooseAnother: "કોઈપણ છંદ પસંદ કરો",
+            findMeter: "છંદ શોધો",
+            searchMeters: "છંદ શોધો…",
+            clearSelection: "પસંદ કરેલો છંદ દૂર કરો",
+            showTemplate: "ઢાંચો બતાવો",
+            templateMode: "ઢાંચાની રીત",
+            ghostTemplate: "ઝાંખો",
+            strongTemplate: "દૃઢ",
+            guidedComposition: "માર્ગદર્શિત રચના",
+            strongTemplateHelp: "કોઈપણ સ્થાન ભરો. ખાલી સ્થાનો ખાલી જ રહે છે અને ક્યારેય નકલ થતાં નથી.",
+            strongTemplateAvailable: "દૃઢ ઢાંચો નિશ્ચિત વૃત્તો માટે ઉપલબ્ધ છે.",
+            strongTemplateUnavailable: "આ છંદ-પરિવારના નિયમોની સમીક્ષા પછી દૃઢ ઢાંચો મળશે.",
+            strongLine: "પંક્તિ {number}",
+            strongSlot: "પંક્તિ {line}, સ્થાન {position}: અપેક્ષિત {weight}",
+            strongOpen: "{missing} સ્થાનો ખાલી છે.",
+            strongValid: "ભરેલાં બધાં સ્થાનો {meter}ને અનુસરે છે; {missing} સ્થાનો ખાલી છે.",
+            strongIssues: "ભરેલાં {violations} સ્થાનો તપાસવા જરૂરી છે; {missing} સ્થાનો ખાલી છે.",
+            expectedLaghu: "લઘુ",
+            expectedGuru: "ગુરુ",
+            meterTemplate: "{meter}નો ઢાંચો",
+            templateLine: "પંક્તિ {number}",
+            repeatableLine: "દરેક પંક્તિ",
+            exact: "ચોક્કસ",
+            exactPada: "ચોક્કસ પાદ",
+            exactUnit: "એકમ મળ્યો",
+            strongPrefix: "મજબૂત શરૂઆત",
+            earlyPossibility: "પ્રારંભિક શક્યતા",
+            commonMeter: "પ્રચલિત",
+            syllableProgress: "{observed}/{expected} અક્ષરો",
+            padaProgress: "{completed}/{expected} પાદ",
+            unitProgress: "{completed}/{expected} એકમ",
+            compatible: "શક્ય",
+            approximate: "સૌથી નજીક",
+            selected: "પસંદ કરેલું",
+            noMeterSelected: "આ પદ્યખંડ તપાસવા છંદ પસંદ કરો.",
+            meterReady: "{meter} તૈયાર છે. પંક્તિ સૂઝે ત્યારે લખવાનું શરૂ કરો.",
+            validMeter: "આ પદ્યખંડ {meter}ને અનુસરે છે.",
+            sungExtensionsValid: "{meter} {count} ગેય દીર્ઘતા સાથે મળે છે; તેને ಽથી ચિહ્નિત કરી છે.",
+            karshanaValid: "{meter} મળે છે; {count} પાઠ-દીર્ઘતા ಽથી ચિહ્નિત છે.",
+            karshanaAmbiguousValid: "{meter} મળે છે; {count} નિશ્ચિત પાઠ-દીર્ઘતા ಽથી ચિહ્નિત છે. {ambiguous} પંક્તિમાં વૈકલ્પિક ગણવિભાગ છે.",
+            detectedKarshana: "{meter} મળ્યો; {count} પાઠ-દીર્ઘતા ಽથી ચિહ્નિત છે. ચકાસવા માટે છંદ પસંદ કરો.",
+            detectedKarshanaAmbiguous: "{meter} મળ્યો; {count} નિશ્ચિત પાઠ-દીર્ઘતા ಽથી ચિહ્નિત છે. {ambiguous} પંક્તિમાં વૈકલ્પિક ગણવિભાગ છે; ચકાસવા માટે છંદ પસંદ કરો.",
+            validationIssues: "{meter} માટે {violations} ભેદ અને {missing} ખૂટતા અક્ષરો.",
+            incompleteMeter: "{meter} હજુ શક્ય છે; {missing} છંદ-એકમ બાકી છે.",
+            supportedRulesValid: "આ પદ્યખંડ {meter}ના સમર્થિત નિયમોને અનુસરે છે.",
+            uncheckedRulesValid: "આ પદ્યખંડ {meter}ની નોંધેલી લયને અનુસરે છે; {rules} હજી તપાસ્યો નથી.",
+            uncheckedRulesValidPlural: "આ પદ્યખંડ {meter}ની નોંધેલી લયને અનુસરે છે; {rules} હજી તપાસ્યા નથી.",
+            privateTitle: "તમારું પદ્ય તમારી પાસે જ રહે છે.",
+            privateText: "Android ઑફલાઇન હોય ત્યારે પણ વિશ્લેષણ અને મુસદ્દાની પુનઃપ્રાપ્તિ આ ઉપકરણમાં જ થાય છે.",
+            shareComposition: "રચના વહેંચો",
+            includeMeter: "પસંદ કરેલા છંદનાં નામ ઉમેરો",
+            includeLink: "chandas.orgની લિંક ઉમેરો",
+            deviceShare: "ઉપકરણથી વહેંચો",
+            copyText: "લખાણની નકલ કરો",
+            copyAnalysisLink: "વિશ્લેષણ લિંકની નકલ કરો",
+            analysisLinkCopied: "વિશ્લેષણ લિંકની નકલ થઈ",
+            shared: "વહેંચણી ખૂલી",
+            facebookCopied: "લખાણની નકલ થઈ; તેને Facebook પોસ્ટમાં ચોંટાડો.",
+            shareUnavailable: "વહેંચણી ઉપલબ્ધ નથી; તેના બદલે લખાણની નકલ થઈ.",
+            clearConfirm: "આ સ્થાનિક મુસદ્દો સાફ કરીને નવી રચના શરૂ કરવી છે?",
+            catalogError: "છંદસૂચિ લોડ થઈ શકી નહીં.",
+            noResults: "મેળ ખાતો કોઈ છંદ નથી",
+            previousStanza: "પાછલો પદ્યખંડ",
+            nextStanza: "આગલો પદ્યખંડ",
+            urlImported: "લિંકમાંથી પદ્ય ઉમેરાયું",
+            urlMeterMissing: "આ લિંકમાં આપેલો છંદ મળ્યો નહીં.",
+            urlStrongFallback: "આ છંદ માટે હાલમાં માત્ર ઝાંખું માર્ગદર્શન ઉપલબ્ધ છે.",
+            prasaHeading: "પ્રાસ",
+            "dvitiyakshara-prasa": "દ્વિતીયાક્ષર-પ્રાસ",
+            "antya-prasa": "અંત્ય-પ્રાસ",
+            "adi-prasa": "આદિ-પ્રાસ",
+            prasaMatches: "{type} {key} પર મળે છે.",
+            prasaMismatches: "{type}: {count} ભેદ.",
+            automaticPrasaMatches: "કન્નડ લિપિની આપમેળે તપાસમાં {type} {key} પર મળે છે.",
+            automaticPrasaMismatches: "કન્નડ લિપિની આપમેળે તપાસમાં {type}: {count} ભેદ.",
+            prasaWeightMismatches: "પ્રથમ અક્ષરનું ગુરુ–લઘુ વજન {count} જગ્યાએ જુદું છે.",
+            adiPrasaFound: "{key} પર આદિ-પ્રાસ મળ્યો."
         }
     };
 
@@ -1107,9 +1268,19 @@
         if (script === "telugu") {
             return { L: "ల", G: "గా", variable: "○" };
         }
-        return state.language === "kn"
-            ? { L: "ಲ", G: "ಗಾ", variable: "○" }
-            : { L: "L", G: "G", variable: "○" };
+        if (script === "gujarati") {
+            return { L: "લ", G: "ગા", variable: "○" };
+        }
+        if (state.language === "kn") {
+            return { L: "ಲ", G: "ಗಾ", variable: "○" };
+        }
+        if (state.language === "te") {
+            return { L: "ల", G: "గా", variable: "○" };
+        }
+        if (state.language === "gu") {
+            return { L: "લ", G: "ગા", variable: "○" };
+        }
+        return { L: "L", G: "G", variable: "○" };
     }
 
     function formatWeightGuide(pattern, script, consumed) {
@@ -1128,6 +1299,18 @@
         }
         if (script === "telugu") {
             return { B: "బ్ర", V: "వి", R: "రు", I: "ఇం", S: "సూ" };
+        }
+        if (script === "gujarati") {
+            return { B: "બ્ર", V: "વિ", R: "રુ", I: "ઇં", S: "સૂ" };
+        }
+        if (state.language === "kn") {
+            return { B: "ಬ್ರ", V: "ವಿ", R: "ರು", I: "ಇಂ", S: "ಸೂ" };
+        }
+        if (state.language === "te") {
+            return { B: "బ్ర", V: "వి", R: "రు", I: "ఇం", S: "సూ" };
+        }
+        if (state.language === "gu") {
+            return { B: "બ્ર", V: "વિ", R: "રુ", I: "ઇં", S: "સૂ" };
         }
         return { B: "B", V: "V", R: "R", I: "I", S: "S" };
     }

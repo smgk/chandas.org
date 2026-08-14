@@ -316,6 +316,11 @@ week per meter-family presentation
   [Indic Script Expansion Research](docs/script-expansion.md).
 - [x] Add native, offline Telugu script detection, segmentation, Guru/Laghu
   analysis, templates, analytics classification, and source-safe highlighting.
+- [x] Add native, offline Gujarati script detection, segmentation, Guru/Laghu
+  analysis, templates, analytics classification, source-safe highlighting,
+  saved-language persistence, and complete Gujarati interface localization.
+- [ ] Add Gujarati-specific meters through separately sourced rule packets and
+  a reviewed positive/negative corpus; do not infer them from writing script.
 - [x] Add the isolated Telugu Sūrya/Indra-gaṇa engine and the first deśi
   catalog: Āṭaveladi, Tēṭagīti, Telugu Kandamu, Dvipada, Mañjarī Dvipada,
   Sīsamu with ettugīti layouts, Mutyāla Sarālu, Taruvoja, Madhyākkara, and

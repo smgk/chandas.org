@@ -127,6 +127,18 @@ test("mixed writing emits individual presence and mixed events without text", ()
     });
 });
 
+test("Gujarati writing emits only its aggregate script event", () => {
+    const fake = environment();
+    const analytics = createAnalytics(fake.root);
+
+    analytics.trackCompositionScripts(analysisFor(
+        "gujarati", "gujarati", "gujarati"
+    ));
+    fake.runTimers();
+
+    assert.deepEqual(requestPaths(fake.requests), ["writing-script-gujarati"]);
+});
+
 test("Telugu writing emits its stable script event", () => {
     const fake = environment();
     const analytics = createAnalytics(fake.root);

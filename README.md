@@ -6,7 +6,7 @@ SPDX-License-Identifier: GPL-3.0-only
 # Chandas — say it in-verse
 
 [Chandas.org](https://chandas.org) is an offline-first, pre-beta composition
-companion for Indic prosody. Type or paste Kannada, Telugu, or Devanagari verse
+companion for Indic prosody. Type or paste Kannada, Telugu, Gujarati, or Devanagari verse
 and it marks syllables as Laghu or Guru, suggests likely meters, and highlights
 departures from a selected meter directly on the text.
 
@@ -15,7 +15,7 @@ runs locally; composing does not require an account, server, or cloud database.
 
 ## What it does
 
-- Analyzes Kannada, Telugu, and Devanagari Unicode while the user types.
+- Analyzes Kannada, Telugu, Gujarati, and Devanagari Unicode while the user types.
 - Preserves the original text, punctuation, line breaks, caret, and Indic IME
   behavior.
 - Suggests and ranks fixed vṛttas, syllable-structural meters, mātrā meters,
@@ -29,7 +29,7 @@ runs locally; composing does not require an account, server, or cloud database.
 - Saves poems privately in browser storage and supports readable text export,
   full backup, restore, copy, sharing, and analysis links.
 - Works as an installable PWA and keeps the core workflow available offline.
-- Provides Telugu, Kannada, and English interface languages.
+- Provides Gujarati, Telugu, Kannada, and English interface languages.
 
 Some native Kannada structural rules remain explicitly provisional pending
 expert review. The interface and documentation distinguish provisional

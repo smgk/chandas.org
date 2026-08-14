@@ -27,8 +27,8 @@ but visually unobtrusive.
 - **Guru (G):** A heavy syllable.
 - **Chandas/meter:** A metrical pattern or rule set against which a verse is
   compared.
-- **Script and language:** Kannada, Telugu, and Devanagari are scripts;
-  Sanskrit, Kannada, and Telugu are languages. Guru/Laghu classification is
+- **Script and language:** Kannada, Telugu, Gujarati, and Devanagari are scripts;
+  Sanskrit, Kannada, Telugu, and Gujarati are languages. Guru/Laghu classification is
   based on syllable length,
   not the language of the composition. The engine therefore detects the script
   needed for Unicode parsing but MUST NOT choose metrical rules based on a
@@ -46,6 +46,9 @@ but visually unobtrusive.
 
 - Telugu-script text, including Sanskrit compositions, is supported natively
   in the post-MVP script-expansion release without transliteration.
+- Gujarati-script text, including Sanskrit compositions, is supported natively
+  without transliteration. This release does not imply support for
+  Gujarati-specific meters; those require their own catalog and reviewed corpus.
 - Additional Indic Unicode scripts, added through script-specific
   segmentation/rule modules without changing the editor experience.
 - Mixed-script analysis where a single composition contains more than one
@@ -80,7 +83,7 @@ metrical verse.
 
 - Web application at `https://chandas.org`.
 - Android application using the same analysis rules and core user experience.
-- Unicode-safe Kannada and Devanagari input.
+- Unicode-safe Kannada, Telugu, Gujarati, and Devanagari input.
 - Live akshara segmentation and Guru/Laghu classification.
 - Inline Guru/Laghu presentation.
 - Ranked meter suggestions in a non-obtrusive dropdown.
@@ -89,7 +92,7 @@ metrical verse.
 - Anonymous on-device draft recovery without login.
 - Copy and operating-system-supported sharing, including paths to X/Twitter and
   Facebook when those destinations are available.
-- Telugu, Kannada, and English interface languages.
+- Gujarati, Telugu, Kannada, and English interface languages.
 - Responsive, accessible UI with on-device analysis.
 - Full offline operation of the installed Android application for the core
   composition workflow.
@@ -120,13 +123,13 @@ recommended, and optional behavior.
 4. Pasting, deleting, undoing, redoing, and selecting text MUST continue to
    behave as users expect from a native text editor.
 5. The website MUST be usable on current desktop and mobile browsers. The
-   Android editor MUST work with commonly used Kannada, Telugu, and Devanagari
+   Android editor MUST work with commonly used Kannada, Telugu, Gujarati, and Devanagari
    keyboards.
 6. The editor MUST perform analysis locally so typing does not depend on a
    network round trip.
 7. The default composition font SHOULD favor fitting a useful poetic line
    without wrapping while remaining at least 16 CSS pixels on mobile and fully
-   legible for Kannada, Telugu, and Devanagari combining marks.
+   legible for Kannada, Telugu, Gujarati, and Devanagari combining marks.
 8. The website MUST accept a URL-encoded verse as the raw query string in the
    form `chandas.org?<verse>`.
 9. The website MUST also accept `verse` (with `text` as an alias), `meter`, and
@@ -164,7 +167,7 @@ recommended, and optional behavior.
 3. Canonically equivalent Unicode input MUST produce equivalent results. Input
    MAY be normalized internally, but the exact user-entered text MUST remain
    unchanged in the editor and when copied.
-4. The engine MUST identify Kannada, Telugu, and Devanagari for each analyzed
+4. The engine MUST identify Kannada, Telugu, Gujarati, and Devanagari for each analyzed
    line and apply the
    appropriate rules.
 5. The engine MUST classify each analyzable akshara as Guru or Laghu and retain
@@ -183,7 +186,9 @@ recommended, and optional behavior.
 9. Empty and partially typed lines MUST NOT be reported as meter violations.
 10. Script-specific vowel quantity MUST be explicit. In particular,
     Devanagari independent `ए` and `ओ` and Kannada independent `ಏ` and `ಓ`
-    MUST be Guru; Kannada independent `ಎ` and `ಒ` remain Laghu. Independent
+    MUST be Guru; Gujarati independent `એ` and `ઓ` MUST also be Guru, while
+    Gujarati candra `ઍ` and `ઑ` are treated as short for the quantitative
+    adapter. Kannada independent `ಎ` and `ಒ` remain Laghu. Independent
     vowels and their corresponding dependent signs MUST receive consistent
     quantities.
 
@@ -207,7 +212,7 @@ recommended, and optional behavior.
    the beginning of the caret's logical line to the caret. The count MUST reset
    after every explicit line break. Moving the caret without editing MUST
    update these counts.
-8. Inline styling MUST NOT divide a Kannada, Telugu, or Devanagari conjunct shaping
+8. Inline styling MUST NOT divide a Kannada, Telugu, Gujarati, or Devanagari conjunct shaping
    cluster. When a metrical syllable boundary falls inside a visible conjunct,
    the analysis offsets MUST remain unchanged while the display boundary is
    moved to a shaping-safe position. An explicit ZWNJ MUST continue to prevent
@@ -555,7 +560,7 @@ recommended, and optional behavior.
    literal placeholder characters in the authored composition.
 4. A filled position MUST retain its association with the intended metrical
    slot when other positions are filled, cleared, or edited.
-5. Strong template mode MUST support Kannada, Telugu, and Devanagari IMEs, Unicode
+5. Strong template mode MUST support Kannada, Telugu, Gujarati, and Devanagari IMEs, Unicode
    aksharas, punctuation, whitespace, paste, selection, undo/redo, and
    accessible keyboard and touch navigation.
 6. Anonymous recovery and future synchronized drafts MUST preserve the
@@ -576,7 +581,7 @@ recommended, and optional behavior.
     families MUST remain unavailable until that family has a reviewed rule
     model and golden corpus.
 11. Strong-mode boxes MUST use shaping-safe visual syllable boundaries in
-    Kannada, Telugu, and Devanagari. A conjunct onset MUST remain intact in the following
+    Kannada, Telugu, Gujarati, and Devanagari. A conjunct onset MUST remain intact in the following
     box (`ಪಾ · ರ್ಥಾ`, `पा · र्था`) even when prosodic syllabification assigns
     its closing consonant to the preceding syllable.
 12. Guru/Laghu validation MUST still operate across adjacent occupied Strong
@@ -610,7 +615,7 @@ recommended, and optional behavior.
 ## 6. Analysis Engine Requirements
 
 The existing `meter_analysis.js` implementation is the baseline for
-Kannada/Devanagari script detection, akshara segmentation, and Guru/Laghu
+Kannada, Telugu, Gujarati, and Devanagari script detection, akshara segmentation, and Guru/Laghu
 classification. Before it is refactored or integrated into new delivery
 layers, its current intended behavior MUST be recorded in characterization
 tests. The baseline does not waive the Unicode safety, correctness,
@@ -654,6 +659,14 @@ analysis result.
    Brahma/Viṣṇu/Rudra aṃśa-gaṇas. It MUST accept Sūrya `GL` or `LLL` and the
    six cataloged Indra realizations `LLLL`, `LLLG`, `LLGL`, `GLL`, `GLG`, and
    `GGL` without reducing every seat to a single mātrā total.
+2b. The Gujarati adapter MUST support the U+0A80–U+0AFF repertoire needed for
+   standard Gujarati and Gujarati-script Sanskrit: explicit short and long
+   independent vowels and dependent vowel signs, virāma conjuncts, anusvāra,
+   visarga, candrabindu, avagraha, and additional consonant `ૹ`, while
+   preserving original source ranges. Gujarati digits and shared danda marks
+   MUST remain metrically transparent. The adapter and Gujarati localization
+   MUST work offline. Gujarati-specific meter rules MUST remain a separate
+   catalog milestone rather than being inferred from Gujarati script.
 3. `mishra.json` MUST be treated as the source list for the initial meter
    catalog. The runtime representation MAY be transformed during the build,
    provided tests prove that every source entry and pattern is retained.
@@ -912,7 +925,7 @@ analysis result.
    distinguishable without color alone.
 6. The editor MUST support zoom and dynamic text sizing without losing
    highlights or controls.
-7. The interface MUST support Telugu, Kannada, and English; Sanskrit terms
+7. The interface MUST support Gujarati, Telugu, Kannada, and English; Sanskrit terms
    SHOULD be displayed accurately. Localization architecture MUST allow more
    interface languages later.
 8. Motion MUST be subtle and respect the user's reduced-motion preference.
@@ -951,8 +964,8 @@ analysis result.
   features MUST be disclosed and protected in transit.
 - Telemetry MUST avoid composition text and other sensitive content by default.
 - Production website analytics MAY record aggregate page visits and coarse
-  writing-script presence (`kannada`, `telugu`, `devanagari`, `mixed`, and later stable
-  script identifiers). They MUST NOT send composition text, shared-analysis
+  writing-script presence (`kannada`, `telugu`, `gujarati`, `devanagari`,
+  `mixed`, and later stable script identifiers). They MUST NOT send composition text, shared-analysis
   query parameters, meter choices, draft identifiers, counts, caret state, or
   other authored-content metadata. The analytics request MUST suppress its
   referrer and MUST use only the query-free page pathname.
@@ -1041,12 +1054,12 @@ The MVP is acceptable when:
 
 - Build a version-controlled, license-compatible corpus covering prose,
   complete verses, partial verses, and intentionally incorrect verses.
-- Include Kannada, Telugu, and Devanagari examples for short/long vowels, independent
+- Include Kannada, Telugu, Gujarati, and Devanagari examples for short/long vowels, independent
   and dependent vowels, conjuncts, virāma/halant, anusvāra, visarga, avagraha,
   Vedic or extended marks if supported, punctuation, danda/double danda,
   whitespace, zero-width characters, and canonically equivalent Unicode.
 - Include cross-boundary fixtures where whitespace, commas, danda marks, and
-  other punctuation precede a conjunct in Kannada, Telugu, and Devanagari.
+  other punctuation precede a conjunct in Kannada, Telugu, Gujarati, and Devanagari.
 - Include search fixtures proving that scholarly names remain displayed with
   diacritics while unaccented and common Roman spellings find them.
 - Include every supported meter, exact matches, near matches, ties, allowed
@@ -1070,7 +1083,7 @@ The MVP is acceptable when:
   crosses a four-mātrā boundary, incomplete pādas, and extra mātrās.
 - Use `mishra.json` as the initial meter inventory and create coverage proving
   that every entry and every alternate pattern can be loaded and matched.
-- Derive characterization fixtures from the intended Kannada/Devanagari
+- Derive characterization fixtures from the intended Kannada/Telugu/Gujarati/Devanagari
   segmentation and Guru/Laghu behavior in `meter_analysis.js` before changing
   that code. Review any intentional behavior change rather than silently
   updating expected output.
@@ -1095,7 +1108,7 @@ The MVP is acceptable when:
   results across web and Android.
 - **Component tests:** Editor/highlight alignment, meter dropdown behavior,
   line-end syllable/mātrā counters, caret-position counting, stanza boundary
-  handling, shaping-safe Kannada, Telugu, and Devanagari conjunct highlighting,
+  handling, shaping-safe Kannada, Telugu, Gujarati, and Devanagari conjunct highlighting,
   preservation of explicit ZWNJ breaks, per-stanza selected-meter persistence,
   the always-available clear action, anonymous local draft recovery/clearing,
   ghost-template toggling and alignment, proof that ghost symbols never enter
@@ -1113,8 +1126,8 @@ The MVP is acceptable when:
   that copy and sharing contain only authored text while retaining meaningful
   blank rows. Repeat the suite for each
   structural, mātrā, or aṃśa presentation before enabling that family.
-- **URL-import tests:** Cover raw and named query forms, Kannada, Telugu, and
-  Devanagari line breaks, appending to recovered drafts, multiple imported
+- **URL-import tests:** Cover raw and named query forms, Kannada, Telugu,
+  Gujarati, and Devanagari line breaks, appending to recovered drafts, multiple imported
   stanzas, catalog IDs and common Roman meter names, Ghost/Strong choices,
   out-of-order Strong slot restoration, malformed optional slot state,
   leading-line samasyā-pūraṇa frames, unsupported-Strong fallback, query
@@ -1130,11 +1143,11 @@ The MVP is acceptable when:
 
 ### 10.3 Manual and release testing
 
-- Test physical Android keyboards/IMEs for Kannada, Telugu, and Devanagari, because
+- Test physical Android keyboards/IMEs for Kannada, Telugu, Gujarati, and Devanagari, because
   synthetic browser events do not fully reproduce composition behavior.
 - Test current supported browsers and a representative set of phone sizes,
   orientations, fonts, zoom levels, and low/offline network states. Include
-  Kannada, Telugu, and Devanagari conjuncts whose metrical boundary falls between a
+  Kannada, Telugu, Gujarati, and Devanagari conjuncts whose metrical boundary falls between a
   virāma and consonant on physical macOS Safari and iPhone Safari.
 - On a physical Android device, install the release candidate, enable airplane
   mode, restart the app, and complete the full edit/analyze/select/validate/copy
@@ -1230,12 +1243,12 @@ The MVP is acceptable when:
 
 ### Confirmed
 
-1. Sanskrit written in both Kannada and Devanagari scripts is in MVP.
+1. Sanskrit written in Kannada, Telugu, Gujarati, and Devanagari scripts is supported.
 2. Guru/Laghu analysis depends on syllable length and supported-script parsing,
    not on language identification.
 3. `meter_analysis.js` is the analysis baseline.
 4. `mishra.json` provides the initial meter list and patterns.
-5. Telugu, Kannada, and English are the supported interface languages.
+5. Gujarati, Telugu, Kannada, and English are the supported interface languages.
 6. Meter selection and validation operate independently per stanza.
 7. Sharing defaults to the original composition only; meter information and a
    `chandas.org` link are optional additions.

@@ -1,8 +1,8 @@
 {
   "name": "chandas-org",
-  "version": "1.27.0",
+  "version": "1.28.0",
   "private": true,
-  "description": "Offline-first Kannada, Telugu, and Devanagari meter composer",
+  "description": "Offline-first Kannada, Telugu, Gujarati, and Devanagari meter composer",
   "author": "Ganesh Krishna Shankarathota",
   "license": "GPL-3.0-only",
   "scripts": {

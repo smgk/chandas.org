@@ -319,8 +319,12 @@ week per meter-family presentation
 - [x] Add native, offline Gujarati script detection, segmentation, Guru/Laghu
   analysis, templates, analytics classification, source-safe highlighting,
   saved-language persistence, and complete Gujarati interface localization.
-- [ ] Add Gujarati-specific meters through separately sourced rule packets and
-  a reviewed positive/negative corpus; do not infer them from writing script.
+- [x] Add the first separately sourced Gujarati catalog: Caupāī, Doharō,
+  Soraṭhō, Harigīt, Jhūḷaṇā, Savaiyā, Roḷā, Kaṭāv, Manhar, and Ghanākṣarī,
+  with compact layouts, whole-verse guides, and Gujarati-only automatic scope.
+- [ ] Expand the Gujarati golden corpus and model pronunciation-dependent
+  realization, Soraṭhō tuk, flowing Kaṭāv, Gulbaṅkī, and Vanavelī without
+  weakening the script-independent scanner.
 - [x] Add the isolated Telugu Sūrya/Indra-gaṇa engine and the first deśi
   catalog: Āṭaveladi, Tēṭagīti, Telugu Kandamu, Dvipada, Mañjarī Dvipada,
   Sīsamu with ettugīti layouts, Mutyāla Sarālu, Taruvoja, Madhyākkara, and

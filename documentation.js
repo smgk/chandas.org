@@ -201,8 +201,11 @@
 
     function ruleLevelLabel(value) {
         return {
+            complete: "Complete catalog rules",
             "group-totals": "Mātrā-group totals",
             "provisional-rhythm": "Provisional rhythmic rules",
+            "gujarati-tala-totals": "Gujarati mātrā and tāla totals",
+            "gujarati-akshara-count": "Gujarati akṣara-count rules",
             "pathyā": "Pathyā rules",
             "classical-pathyā-vipulā": "Classical pathyā and vipulā rules"
         }[value] || String(value || "Catalog rules");
@@ -246,6 +249,16 @@
                     `${patterns} = ${groups.reduce((sum, value) => sum + value, 0)} mātrās`;
             });
             addDefinition(document, definitions, "Line-by-line", lines.join(" · "));
+            if (meter.compactMatraLayout) {
+                addDefinition(
+                    document,
+                    definitions,
+                    "Accepted typing layout",
+                    `${meter.padaGroups.length} separate caraṇa lines or ` +
+                        `${meter.compactMatraLayout.sourceUnitCount} lines with ` +
+                        `${meter.compactMatraLayout.padasPerSourceUnit} caraṇas each`
+                );
+            }
         } else if (meter.kind === "amsha" || meter.kind === "telugu-gana") {
             const formatGroups = (groups) => groups.map((slot) =>
                 (Array.isArray(slot) ? slot.join("/") : slot)).join(" · ");
@@ -344,6 +357,14 @@
                 definitions,
                 `Lines ${(rule.padas || []).join(", ")}`,
                 `place yati after gaṇa ${rule.afterGroup}`
+            );
+        });
+        (meter.padaEndRules || []).forEach((rule) => {
+            addDefinition(
+                document,
+                definitions,
+                `Lines ${(rule.padas || []).join(", ")} ending`,
+                `must end ${rule.allowedPatterns.join(" or ")}`
             );
         });
         (meter.yatiRelations || []).forEach((rule) => {

@@ -1,11 +1,26 @@
 {
-  "corpusVersion": "1.3.0",
+  "corpusVersion": "1.4.0",
   "description": "Curated, offline examples for regression tests and the Learn field guide. Classical works are public domain; linked Wikisource transcriptions retain their source attribution.",
   "defaults": {
     "verificationStatus": "source-verified",
     "childSafety": "reviewed-safe"
   },
   "examples": [
+    {
+      "id": "gu-chaupai-stars",
+      "meterId": "structural:chaupai-gujarati",
+      "title": "Stars above, flowers below",
+      "author": "Traditional teaching example",
+      "script": "gujarati",
+      "language": "Gujarati",
+      "text": "આકાશે તારાની ભાત\nધરતી હૈયે ફૂલબિછાત\nસર્જી, તો કાં સર્જી તાત!\nમાનવના મનમાં મધરાત!",
+      "source": {
+        "title": "Gujarati grammar: Chaupai",
+        "url": "https://gu.wikisource.org/wiki/વ્યાકરણ/છંદ/ચોપાઈ"
+      },
+      "rights": "Traditional teaching verse; Wikisource transcription attribution retained",
+      "expected": {"status": "exact", "violations": 0, "matras": [15, 15, 15, 15]}
+    },
     {
       "id": "te-vemana-good-company",
       "meterId": "structural:ataveladi-telugu",

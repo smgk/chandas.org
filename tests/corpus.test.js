@@ -83,12 +83,12 @@ test("the authenticated example catalog never uses generated filler", () => {
 test("the Archive audit accounts for every supported catalog entry", () => {
     const audit = ArchiveAudit.loadAudit();
 
-    assert.equal(audit.catalogEntries, 1408);
-    assert.equal(audit.uniqueMeterIds, 1399);
+    assert.equal(audit.catalogEntries, 1419);
+    assert.equal(audit.uniqueMeterIds, 1410);
     assert.equal(audit.duplicateCatalogEntries, 9);
-    assert.equal(audit.verifiedExampleMeters, 50);
+    assert.equal(audit.verifiedExampleMeters, 51);
     assert.equal(audit.sourcePendingExampleMeters, 0);
-    assert.equal(audit.researchPendingMeters, 1349);
+    assert.equal(audit.researchPendingMeters, 1359);
     assert.equal(audit.recordedArchiveOcrLeadMeters, 121);
     assert.equal(audit.ledger.length, audit.catalogEntries);
     assert.ok(audit.ledger.every((entry) => [

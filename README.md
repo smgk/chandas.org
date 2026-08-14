@@ -19,7 +19,8 @@ runs locally; composing does not require an account, server, or cloud database.
 - Preserves the original text, punctuation, line breaks, caret, and Indic IME
   behavior.
 - Suggests and ranks fixed vṛttas, syllable-structural meters, mātrā meters,
-  aṃśa meters, and Telugu deśi-gaṇa meters.
+  aṃśa meters, Telugu deśi-gaṇa meters, and a sourced Gujarati traditional
+  catalog with Gujarati-only automatic suggestion scope.
 - Supports independent meter selection and validation for each stanza.
 - Shows source-local Guru/Laghu, prāsa, karṣaṇa, and violation markings.
 - Provides four-pāda and compact two-line handling for fixed vṛttas, plus

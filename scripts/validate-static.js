@@ -24,6 +24,7 @@ const required = [
     "examples/field_guide_corpus.json",
     "examples/apte_sanskrit_examples.json",
     "docs/research/archive-meter-audit.md",
+    "docs/rules/gujarati-meters.md",
     "manifest.webmanifest",
     "service-worker.js",
     "icon.svg",
@@ -214,6 +215,36 @@ for (const meter of structuralCatalog.meters) {
     }
 
     const capacities = meter.padaGroups.flat();
+    if (meter.compactMatraLayout !== undefined) {
+        const layout = meter.compactMatraLayout;
+        if (!layout || meter.linePolicy.type !== "fixed" ||
+            !Number.isInteger(layout.sourceUnitCount) ||
+            layout.sourceUnitCount < 1 ||
+            !Number.isInteger(layout.padasPerSourceUnit) ||
+            layout.padasPerSourceUnit < 2 ||
+            layout.sourceUnitCount * layout.padasPerSourceUnit !==
+                meter.padaGroups.length) {
+            throw new Error(`${meter.id} has an invalid compact mātrā layout`);
+        }
+    }
+    for (const rule of meter.padaEndRules || []) {
+        if (!Array.isArray(rule.padas) || !rule.padas.length ||
+            rule.padas.some((pada) => !Number.isInteger(pada) ||
+                pada < 1 || pada > meter.padaGroups.length) ||
+            !Array.isArray(rule.allowedPatterns) || !rule.allowedPatterns.length ||
+            rule.allowedPatterns.some((pattern) => !/^[GL]+$/.test(pattern))) {
+            throw new Error(`${meter.id} has an invalid pāda-ending rule`);
+        }
+    }
+    for (const rule of meter.lineBoundaryRules || []) {
+        if (!Array.isArray(rule.padas) || !rule.padas.length ||
+            !Number.isInteger(rule.afterGroup) || rule.afterGroup < 1 ||
+            rule.padas.some((pada) => !Number.isInteger(pada) ||
+                pada < 1 || pada > meter.padaGroups.length ||
+                rule.afterGroup >= meter.padaGroups[pada - 1].length)) {
+            throw new Error(`${meter.id} has an invalid mātrā line-boundary rule`);
+        }
+    }
     if (meter.sungLaghuExtension !== undefined) {
         const policy = meter.sungLaghuExtension;
         if (!policy || !Number.isInteger(policy.maxMatras) ||

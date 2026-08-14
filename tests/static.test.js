@@ -159,6 +159,7 @@ test("service worker pre-caches every core web asset", () => {
         "examples/field_guide_corpus.json",
         "examples/apte_sanskrit_examples.json",
         "docs/research/archive-meter-audit.md",
+        "docs/rules/gujarati-meters.md",
         "manifest.webmanifest",
         "icon.svg",
         "documentation.html",
@@ -365,7 +366,7 @@ test("the Anuṣṭubh rule packet exposes the accepted classical vipulās", () 
         meter.id === "structural:anushtubh-pathya");
     const oddRealizations = anushtubh.padas[0].realizations;
 
-    assert.equal(catalog.catalogVersion, "5.3.0");
+    assert.equal(catalog.catalogVersion, "5.4.0");
     assert.equal(anushtubh.name, "anuṣṭubh (śloka)");
     assert.deepEqual(oddRealizations.map((item) => item.id), [
         "pathya",
@@ -403,7 +404,7 @@ test("the provisional Kanda rule packet and attribution are retained", () => {
     const kanda = catalog.meters.find((meter) =>
         meter.id === "structural:kanda-kannada");
 
-    assert.equal(catalog.catalogVersion, "5.3.0");
+    assert.equal(catalog.catalogVersion, "5.4.0");
     assert.equal(kanda.ruleCompleteness, "provisional-rhythm");
     assert.deepEqual(kanda.uncheckedRules, ["historical prāsa variants"]);
     assert.deepEqual(kanda.padantaLengtheningPadas, [2, 4]);
@@ -418,7 +419,7 @@ test("the provisional Kagga-form Chaupadi packet and references are retained", (
     const chaupadi = catalog.meters.find((meter) =>
         meter.id === "structural:panchamatra-chaupadi-kagga");
 
-    assert.equal(catalog.catalogVersion, "5.3.0");
+    assert.equal(catalog.catalogVersion, "5.4.0");
     assert.equal(chaupadi.ruleCompleteness, "provisional-rhythm");
     assert.deepEqual(chaupadi.padaGroups, [
         [5, 5, 5, 5],
@@ -462,7 +463,7 @@ test("the Ṣaṭpadi and aṃśa milestones retain their catalogs and rule pack
         meter.id.endsWith("-shatpadi"));
     const amsha = catalog.meters.filter((meter) => meter.kind === "amsha");
 
-    assert.equal(catalog.catalogVersion, "5.3.0");
+    assert.equal(catalog.catalogVersion, "5.4.0");
     assert.equal(shatpadis.length, 8);
     assert.equal(amsha.length, 15);
     shatpadis.forEach((meter) => {

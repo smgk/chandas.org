@@ -1264,7 +1264,7 @@ test("keeps an incomplete structural meter compatible without red violations", (
 
     assert.equal(stanza.violationCount, 0);
     assert.ok(stanza.missingCount > 0);
-    assert.equal(result.analysisVersion, "2.19.0");
+    assert.equal(result.analysisVersion, "2.20.0");
     assert.equal(result.catalogVersion, structuralCatalog.catalogVersion);
 });
 
@@ -1359,8 +1359,8 @@ test("recognizes the provisional Kannada Kanda characterization fixture", () => 
     );
     assert.equal(stanza.selectedMeter.ruleCompleteness, "provisional-rhythm");
     assert.deepEqual(stanza.selectedMeter.uncheckedRules, ["historical prāsa variants"]);
-    assert.equal(result.analysisVersion, "2.19.0");
-    assert.equal(result.catalogVersion, "5.3.0");
+    assert.equal(result.analysisVersion, "2.20.0");
+    assert.equal(result.catalogVersion, "5.4.0");
 });
 
 test("allows pādānta Laghu for Kannada Kanda lines 2 and 4 only", () => {

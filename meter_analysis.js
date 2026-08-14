@@ -1456,6 +1456,53 @@
         return allowed;
     }
 
+    function evaluateMatraPadaEnding(pada, meter, padaIndex, complete, shouldMark,
+        padantaLengthening) {
+        if (!complete || !pada || !pada.syllables.length) {
+            return 0;
+        }
+        const rule = (meter.padaEndRules || []).find((candidate) =>
+            !Array.isArray(candidate.padas) ||
+            candidate.padas.includes(padaIndex + 1));
+        const allowed = rule && Array.isArray(rule.allowedPatterns)
+            ? rule.allowedPatterns
+            : [];
+        if (!allowed.length) {
+            return 0;
+        }
+        const maximumLength = Math.max(...allowed.map((pattern) => pattern.length));
+        const endingSyllables = pada.syllables.slice(-maximumLength);
+        const actual = endingSyllables.map((syllable) =>
+            padantaLengthening && syllable === pada.syllables.at(-1)
+                ? GURU
+                : syllable.classification).join("");
+        const matched = allowed.some((pattern) => actual.endsWith(pattern));
+        if (matched) {
+            return 0;
+        }
+        const expected = allowed.join(" or ");
+        const expectedPattern = allowed[0];
+        const compared = pada.syllables.slice(-expectedPattern.length);
+        compared.forEach((syllable, index) => {
+            const expectedWeight = expectedPattern[index] || "";
+            if (shouldMark && expectedWeight) {
+                syllable.expected = expectedWeight;
+            }
+            const effective = padantaLengthening && syllable === pada.syllables.at(-1)
+                ? GURU
+                : syllable.classification;
+            if (effective !== expectedWeight) {
+                setViolation(
+                    syllable,
+                    rule.violationReason || "invalid-pada-ending",
+                    expected,
+                    shouldMark
+                );
+            }
+        });
+        return 1;
+    }
+
     function collectMatraGroups(pada, capacities, globalOffset,
         padantaLengthening) {
         const groups = [];
@@ -2342,6 +2389,14 @@
                     shouldMark
                 );
             }
+            ruleFailures += evaluateMatraPadaEnding(
+                pada,
+                meter,
+                padaIndex,
+                true,
+                shouldMark,
+                false
+            );
             return {
                 groups,
                 matchedGroups: sungMatch.groups,
@@ -2416,6 +2471,14 @@
                 shouldMark
             );
         }
+        ruleFailures += evaluateMatraPadaEnding(
+            pada,
+            meter,
+            padaIndex,
+            running === target,
+            shouldMark,
+            padantaLengthening
+        );
 
         return {
             groups,
@@ -2788,6 +2851,102 @@
                     sourcePadaIndex: sourcePada.index
                 });
             }
+        }
+        return projected;
+    }
+
+    function compactMatraPadaProjection(padas, meter, mode) {
+        const layout = meter && meter.compactMatraLayout;
+        if (!layout || mode === "none" || !padas.length) {
+            return null;
+        }
+        const sourceUnitCount = Number(layout.sourceUnitCount) || 0;
+        const padasPerSourceUnit = Number(layout.padasPerSourceUnit) || 0;
+        const expectedGroups = Array.isArray(meter.padaGroups)
+            ? meter.padaGroups
+            : [];
+        if (sourceUnitCount < 1 || padasPerSourceUnit < 2 ||
+            padas.length > sourceUnitCount ||
+            expectedGroups.length !== sourceUnitCount * padasPerSourceUnit) {
+            return null;
+        }
+
+        const projected = [];
+        for (let sourceIndex = 0; sourceIndex < padas.length; sourceIndex += 1) {
+            const sourcePada = padas[sourceIndex];
+            const groupsForSource = expectedGroups.slice(
+                sourceIndex * padasPerSourceUnit,
+                (sourceIndex + 1) * padasPerSourceUnit
+            );
+            const targets = groupsForSource.map((groups) =>
+                groups.reduce((sum, value) => sum + value, 0));
+            const sourcePadaOffset = sourceIndex * padasPerSourceUnit;
+
+            function splitPart(partIndex, syllableStart) {
+                if (partIndex === targets.length) {
+                    return syllableStart === sourcePada.syllables.length ? [] : null;
+                }
+                const target = targets[partIndex];
+                const padaIndex = sourcePadaOffset + partIndex;
+                const rawTargets = [target];
+                if (allowsPadantaLengthening(meter, padaIndex)) {
+                    rawTargets.push(target - 1);
+                }
+                for (const rawTarget of rawTargets) {
+                    let matras = 0;
+                    let syllableEnd = syllableStart;
+                    while (syllableEnd < sourcePada.syllables.length &&
+                        matras < rawTarget) {
+                        matras += matraValue(sourcePada.syllables[syllableEnd]);
+                        syllableEnd += 1;
+                    }
+                    const finalSyllable = sourcePada.syllables[syllableEnd - 1];
+                    const usesLengthening = rawTarget === target - 1;
+                    if (matras !== rawTarget || (usesLengthening &&
+                        (!finalSyllable ||
+                            finalSyllable.classification !== LAGHU))) {
+                        continue;
+                    }
+                    const remaining = splitPart(partIndex + 1, syllableEnd);
+                    if (remaining) {
+                        return [{
+                            syllableStart,
+                            syllableEnd,
+                            matras
+                        }, ...remaining];
+                    }
+                }
+                return null;
+            }
+
+            const split = splitPart(0, 0);
+            if (!split) {
+                return null;
+            }
+            split.forEach((part, partIndex) => {
+                const syllables = sourcePada.syllables.slice(
+                    part.syllableStart,
+                    part.syllableEnd
+                );
+                const start = syllables[0].start;
+                const end = syllables.at(-1).end;
+                projected.push({
+                    ...sourcePada,
+                    index: projected.length,
+                    start,
+                    end,
+                    text: sourcePada.sourceLineText.slice(
+                        start - sourcePada.sourceLineStart,
+                        end - sourcePada.sourceLineStart
+                    ),
+                    syllables,
+                    pattern: syllables.map((syllable) =>
+                        syllable.classification).join(""),
+                    matras: part.matras,
+                    inferredPadaBoundary: partIndex > 0,
+                    sourcePadaIndex: sourcePada.index
+                });
+            });
         }
         return projected;
     }
@@ -3171,7 +3330,26 @@
             result.ganaLayoutName = selected.layout.name;
             return result;
         }
-        return evaluateMatraMeter(metricUnits, meter, shouldMark);
+        const compactMode = options && options.compactMode
+            ? options.compactMode
+            : "none";
+        const compactPadas = compactMatraPadaProjection(
+            metricUnits,
+            meter,
+            compactMode
+        );
+        const result = evaluateMatraMeter(
+            compactPadas || metricUnits,
+            meter,
+            shouldMark
+        );
+        if (compactPadas) {
+            result.compactMatraLayout = true;
+            result.authoredUnitCount = metricUnits.length;
+            result.inferredPadaBoundaryCount = compactPadas.filter((pada) =>
+                pada.inferredPadaBoundary).length;
+        }
+        return result;
     }
 
     function meterSupportsPadas(meter, padas) {
@@ -3531,7 +3709,7 @@
 
         return {
             text: originalText,
-            analysisVersion: "2.19.0",
+            analysisVersion: "2.20.0",
             catalogVersion: catalog && catalog.structuralCatalogVersion
                 ? String(catalog.structuralCatalogVersion)
                 : "",

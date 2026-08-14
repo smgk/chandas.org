@@ -47,8 +47,8 @@ but visually unobtrusive.
 - Telugu-script text, including Sanskrit compositions, is supported natively
   in the post-MVP script-expansion release without transliteration.
 - Gujarati-script text, including Sanskrit compositions, is supported natively
-  without transliteration. This release does not imply support for
-  Gujarati-specific meters; those require their own catalog and reviewed corpus.
+  without transliteration. Gujarati-specific meters are stored as separately
+  sourced, Gujarati-scoped catalog entries rather than inferred from script.
 - Additional Indic Unicode scripts, added through script-specific
   segmentation/rule modules without changing the editor experience.
 - Mixed-script analysis where a single composition contains more than one
@@ -665,8 +665,20 @@ analysis result.
    visarga, candrabindu, avagraha, and additional consonant `ૹ`, while
    preserving original source ranges. Gujarati digits and shared danda marks
    MUST remain metrically transparent. The adapter and Gujarati localization
-   MUST work offline. Gujarati-specific meter rules MUST remain a separate
-   catalog milestone rather than being inferred from Gujarati script.
+   MUST work offline. Gujarati-specific meter rules MUST remain separate from
+   script parsing rather than being inferred from Gujarati text alone.
+2c. The Gujarati traditional-meter catalog MUST initially include Caupāī,
+   Doharō, Soraṭhō, Harigīt, Jhūḷaṇā, 31- and 32-mātrā Savaiyā variants,
+   Roḷā, Kaṭāv, Manhar, and Ghanākṣarī. Every entry MUST carry Gujarati and
+   plain-Roman search aliases, source notes, a rule-completeness label, and a
+   `gujarati` script scope for automatic suggestions. Caupāī, Doharō,
+   Soraṭhō, and Roḷā MUST accept both separate-caraṇa input and their customary
+   compact two-line layout where applicable. Script scope MUST NOT alter
+   explicit manual meter selection.
+2d. Gujarati mātrā templates MUST show the complete verse and its mātrā-group
+   guide. Rules that depend on pronunciation, recitational extension, rhyme,
+   or flowing typography MUST remain visibly provisional until a reviewed
+   positive/negative corpus is available.
 3. `mishra.json` MUST be treated as the source list for the initial meter
    catalog. The runtime representation MAY be transformed during the build,
    provided tests prove that every source entry and pattern is retained.
@@ -912,6 +924,10 @@ analysis result.
 47. The repository MUST bundle an offline, versioned field-guide corpus with
     source and rights metadata. Every bundled poem MUST be analyzed in CI
     against its stored meter, zero-violation expectation, and line totals.
+48. Gujarati-meter tests MUST include a sourced Caupāī and compact Doharō,
+    positive and negative structural fixtures, source-range checks, and an
+    explicit regression proving that Gujarati-scoped meters never enter
+    automatic Kannada or Devanagari candidate lists.
 
 ## 7. User Experience and Accessibility
 

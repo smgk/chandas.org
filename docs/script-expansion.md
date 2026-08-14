@@ -59,7 +59,8 @@ ranges. Android and Safari rendering remain part of release verification.
 
 ### Gujarati
 
-**Implemented in version 1.28.0.** Gujarati has an isolated, offline adapter
+**Script adapter implemented in version 1.28.0; initial native-meter catalog
+implemented in version 1.29.0.** Gujarati has an isolated, offline adapter
 for native script detection, short and long independent vowels and vowel
 signs, virāma conjuncts, anusvāra, visarga, candrabindu, avagraha, Gujarati
 digits, and additional consonant `ૹ`. It also has native Laghu/Guru template
@@ -67,9 +68,11 @@ symbols, aggregate script analytics, saved-language persistence, automatic
 `gu-IN` interface selection, and a complete Gujarati UI translation.
 
 The adapter supports Gujarati-script Sanskrit and other orthographically
-quantitative verse against the existing script-independent meter catalog.
-Gujarati-specific meters are deliberately deferred to their own sourced rule
-packet and corpus milestone.
+quantitative verse against the existing script-independent meter catalog. A
+separate Gujarati-scoped packet now adds Caupāī, Doharō, Soraṭhō, Harigīt,
+Jhūḷaṇā, Savaiyā, Roḷā, Kaṭāv, Manhar, and Ghanākṣarī. It does not modify the
+shared Kannada/Devanagari scanner. Pronunciation-dependent realizations,
+flowing Kaṭāv, Gulbaṅkī, and Vanavelī remain explicit later work.
 
 ### Odia
 
@@ -171,11 +174,12 @@ assumption that one virāma is both vowel killer and conjunct operator.
    results do not change.
 2. [x] Add Telugu with paired Telugu/Devanagari characterization tests.
 3. [x] Add Gujarati script analysis and Gujarati interface localization.
-4. Add Odia.
-5. Add atomic dead-consonant support, then Bengali/Assamese.
-6. Choose Tamil or Sinhala next based on user demand and available reviewers.
-7. Add Malayalam only after chillu and half-u review.
-8. Treat Gurmukhi, Grantha, and Tulu-Tigalari as specialized later passes.
+4. [x] Add the first separately sourced Gujarati traditional-meter packet.
+5. Add Odia.
+6. Add atomic dead-consonant support, then Bengali/Assamese.
+7. Choose Tamil or Sinhala next based on user demand and available reviewers.
+8. Add Malayalam only after chillu and half-u review.
+9. Treat Gurmukhi, Grantha, and Tulu-Tigalari as specialized later passes.
 
 ## Primary technical references
 

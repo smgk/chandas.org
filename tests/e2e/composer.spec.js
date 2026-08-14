@@ -82,6 +82,40 @@ test("shows Gujarati-native analysis and template symbols", async ({ page }) => 
         .toContainText("ગા");
 });
 
+test("selects Gujarati meters by Roman name and shows a whole-verse guide", async ({
+    page
+}) => {
+    await page.locator("#composition").fill(
+        "આકાશે તારાની ભાત\n" +
+        "ધરતી હૈયે ફૂલબિછાત\n" +
+        "સર્જી, તો કાં સર્જી તાત!\n" +
+        "માનવના મનમાં મધરાત!"
+    );
+
+    const chaupaiCandidate = page.locator(
+        '.candidate[data-meter-id="structural:chaupai-gujarati"]'
+    );
+    await expect(chaupaiCandidate).toBeVisible();
+    await expect(chaupaiCandidate.locator(".candidate-status"))
+        .toHaveText("Exact");
+
+    await page.locator("#meter-picker summary").click();
+    await page.locator("#meter-search").fill("chaupai");
+    await expect(page.locator("#meter-select option")).toHaveText([
+        "caupāī (Gujarati)"
+    ]);
+    await page.locator("#meter-select")
+        .selectOption("structural:chaupai-gujarati");
+    await page.locator("#show-template").check();
+
+    await expect(page.locator("#whole-verse-template .whole-template-heading"))
+        .toHaveText("caupāī (Gujarati) template");
+    await expect(page.locator("#whole-verse-template .whole-template-line"))
+        .toHaveCount(4);
+    await expect(page.locator("#whole-verse-template .whole-template-line-guide"))
+        .toHaveText(Array(4).fill("M 15 · 4|4|4|3"));
+});
+
 test("allows choosing a meter before the first syllable is typed", async ({ page }) => {
     await expect(page.locator("#analysis-content")).toBeVisible();
     await expect(page.locator("#meter-picker")).toBeVisible();
@@ -1582,13 +1616,13 @@ test("opens documentation and searches the complete prosody catalog", async ({ p
     await expect(page.locator("h1")).toContainText("How to use Chandas");
     await expect(page.locator("main")).toContainText("tea break");
     await expect(page.locator("#meter-catalog-status"))
-        .toHaveText("1,408 of 1,408 supported meters shown.");
+        .toHaveText("1,419 of 1,419 supported meters shown.");
     await expect(page.locator("#meter-catalog-example-count"))
-        .toHaveText("50 meters currently have authenticated, child-safe examples.");
+        .toHaveText("51 meters currently have authenticated, child-safe examples.");
 
     await page.locator("#meter-catalog-examples").selectOption("verified");
     await expect(page.locator("#meter-catalog-status"))
-        .toHaveText("50 of 1,408 supported meters shown.");
+        .toHaveText("51 of 1,419 supported meters shown.");
     await page.locator("#meter-catalog-examples").selectOption("all");
 
     await page.locator("#meter-catalog-search").fill("anushtup");
@@ -1623,6 +1657,13 @@ test("opens documentation and searches the complete prosody catalog", async ({ p
     await expect(ataveladi.locator(".meter-definitions"))
         .toContainText("S = Sūrya (GL or LLL)");
     await expect(ataveladi.locator(".meter-example")).toContainText("Vemana");
+
+    await page.locator("#meter-catalog-search").fill("chaupai");
+    const gujaratiChaupai = page.locator(".meter-catalog-item");
+    await expect(gujaratiChaupai).toHaveCount(1);
+    await gujaratiChaupai.locator("summary").click();
+    await expect(gujaratiChaupai.locator(".meter-example-text"))
+        .toContainText("આકાશે તારાની ભાત");
 
     await page.locator("#meter-catalog-search").fill("indravajra");
     const indravajra = page.locator(".meter-catalog-item");

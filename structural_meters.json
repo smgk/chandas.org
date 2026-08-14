@@ -1,5 +1,5 @@
 {
-  "catalogVersion": "5.3.0",
+  "catalogVersion": "5.4.0",
   "copyright": "Copyright © 2025–2026 Ganesh Krishna Shankarathota",
   "license": "GPL-3.0-only",
   "description": "Structural, mātrā, Kannada aṃśa, and Telugu deśi-gaṇa meter rules that cannot be represented as one fixed Guru/Laghu string.",
@@ -33,7 +33,18 @@
     "structural:kandamu-telugu": "common",
     "structural:dvipada-telugu": "common",
     "structural:sisa-telugu": "common",
-    "structural:mutyala-saralu": "common"
+    "structural:mutyala-saralu": "common",
+    "structural:chaupai-gujarati": "common",
+    "structural:doharo-gujarati": "common",
+    "structural:soratho-gujarati": "common",
+    "structural:harigit-gujarati": "common",
+    "structural:jhulana-gujarati": "common",
+    "structural:savaiya-ekatrisa-gujarati": "common",
+    "structural:savaiya-batrisa-gujarati": "established",
+    "structural:rola-gujarati": "established",
+    "structural:katav-gujarati": "established",
+    "structural:manhar-gujarati": "common",
+    "structural:ghanakshari-gujarati": "established"
   },
   "fixedMeters": [
     ["campakamāle (Kannada)", "LLLLGLGLLLGLLGLLGLGLG"],
@@ -153,6 +164,166 @@
         "title": "A Study on the Sanskrit Meter: Anuṣṭubh",
         "url": "https://www.kci.go.kr/kciportal/ci/sereArticleSearch/ciSereArtiView.kci?sereArticleSearchBean.artiId=ART001963953"
       }
+    },
+    {
+      "id": "structural:chaupai-gujarati",
+      "name": "caupāī (Gujarati)",
+      "aliases": ["chaupai", "chopai", "chopāī", "caupai", "gujarati chaupai", "ચોપાઈ", "ચોપાઇ"],
+      "kind": "matra",
+      "scripts": ["gujarati"],
+      "signatureLines": ["4 caraṇas × 15 mātrās", "groups: 4+4+4+3; each caraṇa ends GL"],
+      "ruleCompleteness": "complete",
+      "sourceRef": "gujaratiMeterSource",
+      "linePolicy": {"type": "fixed", "count": 4},
+      "compactMatraLayout": {"sourceUnitCount": 2, "padasPerSourceUnit": 2},
+      "padaGroups": [[4, 4, 4, 3], [4, 4, 4, 3], [4, 4, 4, 3], [4, 4, 4, 3]],
+      "padaEndRules": [{"padas": [1, 2, 3, 4], "allowedPatterns": ["GL"], "violationReason": "required-gujarati-chaupai-ending"}],
+      "notes": "Accepts four separate caraṇa lines or two complete 15+15 lines. Punctuation remains metrically transparent."
+    },
+    {
+      "id": "structural:doharo-gujarati",
+      "name": "doharō (Gujarati)",
+      "aliases": ["doharo", "dohra", "doha", "gujarati doha", "દોહરો", "દોહરા"],
+      "kind": "matra",
+      "scripts": ["gujarati"],
+      "signatureLines": ["13+11 / 13+11 mātrās", "tāla begins at mātrās 1, 5, and 9"],
+      "ruleCompleteness": "complete",
+      "sourceRef": "gujaratiMeterSource",
+      "linePolicy": {"type": "fixed", "count": 4},
+      "compactMatraLayout": {"sourceUnitCount": 2, "padasPerSourceUnit": 2},
+      "padaGroups": [[13], [11], [13], [11]],
+      "padantaLengtheningPadas": [2, 4],
+      "uncheckedRules": ["regional rhyme practice"],
+      "notes": "Recognizes either four caraṇa lines or the customary two-line 13+11 layout. Final-Laghu lengthening is confined to the 11-mātrā caraṇas."
+    },
+    {
+      "id": "structural:soratho-gujarati",
+      "name": "soraṭhō (Gujarati)",
+      "aliases": ["soratho", "soratha", "sorathā", "gujarati soratha", "સોરઠો", "સોરઠા"],
+      "kind": "matra",
+      "scripts": ["gujarati"],
+      "signatureLines": ["11+13 / 11+13 mātrās", "caraṇas 1 and 3 traditionally rhyme"],
+      "ruleCompleteness": "gujarati-tala-totals",
+      "sourceRef": "gujaratiMeterSource",
+      "linePolicy": {"type": "fixed", "count": 4},
+      "compactMatraLayout": {"sourceUnitCount": 2, "padasPerSourceUnit": 2},
+      "padaGroups": [[11], [13], [11], [13]],
+      "uncheckedRules": ["tuk rhyme on caraṇas 1 and 3"],
+      "notes": "The mātrā order reverses doharō. The catalog currently scores the quantitative frame; its traditional 1/3 tuk relation remains advisory until the Gujarati rhyme corpus is reviewed."
+    },
+    {
+      "id": "structural:harigit-gujarati",
+      "name": "harigīt (Gujarati)",
+      "aliases": ["harigit", "harigeet", "hari git", "hari geet", "હરિગીત", "હરીગીત"],
+      "kind": "matra",
+      "scripts": ["gujarati"],
+      "signatureLines": ["4 lines × 28 mātrās", "final syllable Guru; tāla at 3, 6, 10, 13, 17, 20, 24, 28"],
+      "ruleCompleteness": "gujarati-tala-totals",
+      "sourceRef": "gujaratiMeterSource",
+      "linePolicy": {"type": "fixed", "count": 4},
+      "padaGroups": [[28], [28], [28], [28]],
+      "padaEndRules": [{"padas": [1, 2, 3, 4], "allowedPatterns": ["G"], "violationReason": "required-final-guru"}],
+      "notes": "Tāla positions are displayed as a learning aid but are not treated as syllable boundaries, because a Guru may span a beat."
+    },
+    {
+      "id": "structural:jhulana-gujarati",
+      "name": "jhūḷaṇā (Gujarati)",
+      "aliases": ["jhulana", "jhulna", "zhulana", "zulana", "jhoolna", "ઝૂલણા", "ઝુલણા"],
+      "kind": "matra",
+      "scripts": ["gujarati"],
+      "signatureLines": ["4 lines × 37 mātrās", "seven 5-mātrā swings + final Guru"],
+      "ruleCompleteness": "gujarati-tala-totals",
+      "sourceRef": "gujaratiMeterSource",
+      "linePolicy": {"type": "fixed", "count": 4},
+      "padaGroups": [[5, 5, 5, 5, 5, 5, 5, 2], [5, 5, 5, 5, 5, 5, 5, 2], [5, 5, 5, 5, 5, 5, 5, 2], [5, 5, 5, 5, 5, 5, 5, 2]],
+      "padaEndRules": [{"padas": [1, 2, 3, 4], "allowedPatterns": ["G"], "violationReason": "required-final-guru"}],
+      "notes": "The seven pañcakal units produce the characteristic swing; the final two mātrās are one Guru."
+    },
+    {
+      "id": "structural:savaiya-ekatrisa-gujarati",
+      "name": "savaiyā—ekatrīsā (Gujarati)",
+      "aliases": ["savaiya", "sawaiya", "ekatrisa", "ekatrīsā", "31 savaiya", "સવૈયા", "એકત્રીસા"],
+      "kind": "matra",
+      "scripts": ["gujarati"],
+      "signatureLines": ["4 lines × 31 mātrās", "yati after 16 mātrās; ending GL"],
+      "ruleCompleteness": "complete",
+      "sourceRef": "gujaratiMeterSource",
+      "linePolicy": {"type": "fixed", "count": 4},
+      "padaGroups": [[4, 4, 4, 4, 4, 4, 4, 3], [4, 4, 4, 4, 4, 4, 4, 3], [4, 4, 4, 4, 4, 4, 4, 3], [4, 4, 4, 4, 4, 4, 4, 3]],
+      "padaEndRules": [{"padas": [1, 2, 3, 4], "allowedPatterns": ["GL"], "violationReason": "required-savaiya-ending"}],
+      "notes": "The 31-mātrā Gujarati savaiyā is kept separate from Hindi varṇa-savaiyā and from the 32-mātrā batrīsā form."
+    },
+    {
+      "id": "structural:savaiya-batrisa-gujarati",
+      "name": "savaiyā—batrīsā (Gujarati)",
+      "aliases": ["batrisa savaiya", "batrīsā savaiyā", "32 savaiya", "બત્રીસા સવૈયા", "બત્રીસા"],
+      "kind": "matra",
+      "scripts": ["gujarati"],
+      "signatureLines": ["4 lines × 32 mātrās", "eight 4-mātrā units; ending GG"],
+      "ruleCompleteness": "provisional-rhythm",
+      "sourceRef": "gujaratiMeterSource",
+      "linePolicy": {"type": "fixed", "count": 4},
+      "padaGroups": [[4, 4, 4, 4, 4, 4, 4, 4], [4, 4, 4, 4, 4, 4, 4, 4], [4, 4, 4, 4, 4, 4, 4, 4], [4, 4, 4, 4, 4, 4, 4, 4]],
+      "padaEndRules": [{"padas": [1, 2, 3, 4], "allowedPatterns": ["GG"], "violationReason": "required-savaiya-ending"}],
+      "uncheckedRules": ["less common 32-mātrā terminal variants"],
+      "notes": "Separated from ekatrīsā so that a 32-mātrā line is not accepted by silently weakening the 31-mātrā ending."
+    },
+    {
+      "id": "structural:rola-gujarati",
+      "name": "roḷā (Gujarati)",
+      "aliases": ["rola", "rola vrtta", "rolavrtta", "roḷāvṛtta", "રોળા", "રોળાવૃત્ત"],
+      "kind": "matra",
+      "scripts": ["gujarati"],
+      "signatureLines": ["11+13 / 11+13 mātrās", "caraṇas 2 and 4 end Guru"],
+      "ruleCompleteness": "complete",
+      "sourceRef": "gujaratiMeterSource",
+      "linePolicy": {"type": "fixed", "count": 4},
+      "compactMatraLayout": {"sourceUnitCount": 2, "padasPerSourceUnit": 2},
+      "padaGroups": [[11], [13], [11], [13]],
+      "padaEndRules": [{"padas": [2, 4], "allowedPatterns": ["G"], "violationReason": "required-final-guru"}],
+      "notes": "Accepts four caraṇa lines or the customary two-line 11+13 layout. It stays distinct from soraṭhō because roḷā requires a Guru ending on caraṇas 2 and 4."
+    },
+    {
+      "id": "structural:katav-gujarati",
+      "name": "kaṭāv (Gujarati)",
+      "aliases": ["katav", "kataav", "kaṭāva", "કટાવ"],
+      "kind": "matra",
+      "scripts": ["gujarati"],
+      "signatureLines": ["repeatable 16-mātrā caraṇas", "groups: 4+4+4+4; stanza length is open"],
+      "ruleCompleteness": "gujarati-tala-totals",
+      "sourceRef": "gujaratiMeterSource",
+      "linePolicy": {"type": "repeating", "unit": "line", "min": 1, "previewCount": 2},
+      "padaGroups": [[4, 4, 4, 4]],
+      "uncheckedRules": ["flowing layouts that break a 16-mātrā caraṇa across typography"],
+      "notes": "Each authored line is currently treated as one 16-mātrā caraṇa. Fully flowing kaṭāv needs a future meter-aware stream editor."
+    },
+    {
+      "id": "structural:manhar-gujarati",
+      "name": "manhar / kavitt (Gujarati)",
+      "aliases": ["manhar", "kavitt", "kavit", "kavita", "મનહર", "કવિત"],
+      "kind": "syllable-structural",
+      "scripts": ["gujarati"],
+      "signatureLines": ["4 lines × 31 akṣaras", "rhythmic divisions: 8+8+8+7"],
+      "ruleCompleteness": "gujarati-akshara-count",
+      "sourceRef": "gujaratiMeterSource",
+      "linePolicy": {"type": "fixed", "count": 4},
+      "padas": [{"syllables": 31}, {"syllables": 31}, {"syllables": 31}, {"syllables": 31}],
+      "uncheckedRules": ["relaxed yati positions", "four-line rhyme"],
+      "notes": "Counts the established 31-akṣara frame without imposing a Guru/Laghu sequence. The 8-akṣara divisions remain visible in the signature but are not red-error boundaries because Gujarati authorities describe them as relaxable."
+    },
+    {
+      "id": "structural:ghanakshari-gujarati",
+      "name": "ghanākṣarī (Gujarati)",
+      "aliases": ["ghanakshari", "ghanakshari", "ghanakṣarī", "ઘનાક્ષરી"],
+      "kind": "syllable-structural",
+      "scripts": ["gujarati"],
+      "signatureLines": ["4 lines × 32 akṣaras", "rhythmic divisions: 8+8+8+8"],
+      "ruleCompleteness": "gujarati-akshara-count",
+      "sourceRef": "gujaratiMeterSource",
+      "linePolicy": {"type": "fixed", "count": 4},
+      "padas": [{"syllables": 32}, {"syllables": 32}, {"syllables": 32}, {"syllables": 32}],
+      "uncheckedRules": ["relaxed yati positions", "traditional rhyme variants"],
+      "notes": "The 32-akṣara counterpart of manhar. It is kept as a count meter rather than pretending that every syllable has a fixed weight."
     },
     {
       "id": "structural:arya",
@@ -1714,6 +1885,28 @@
       }
     ],
     "notes": "The catalog records Brown's canonical line architectures and explicitly labels historically variable layout and yati practice."
+  },
+  "gujaratiMeterSource": {
+    "title": "Gujarati traditional-meter rule packet",
+    "references": [
+      {
+        "title": "Gujarati Piṅgaḷ, Dalpatram, 1909 edition",
+        "url": "https://rekhtagujarati.org/ebooks/detail/gujarati-pingal-ebooks"
+      },
+      {
+        "title": "Bṛhat Piṅgaḷ overview, R. V. Pathak",
+        "url": "https://gujaratisahityaparishad.com/prakashan/sarjako/savishesh/Savishesh-Ra-Vi-Pathak.html"
+      },
+      {
+        "title": "Gujarati metre curriculum, Sardar Patel University",
+        "url": "https://www.spuvvn.edu/orbit-cdn/uploads//Syllabi_data/ba/sixth_semester_2023_24/BA_Gujarati_Sem6-HistoryofModernGujaratiLiterature.pdf"
+      },
+      {
+        "title": "Gujarati grammar metre examples, Wikisource",
+        "url": "https://gu.wikisource.org/wiki/વ્યાકરણ/છંદ"
+      }
+    ],
+    "notes": "The executable rules and source disagreements are documented in docs/rules/gujarati-meters.md. Garbī, garbā, pada, bhajan, and prabhātiyā remain literary or musical forms rather than single signatures. Gulbaṅkī and vanavelī await a meter-aware flowing-text model."
   },
   "matraSource": {
     "title": "DHARMA Prosodic Patterns",

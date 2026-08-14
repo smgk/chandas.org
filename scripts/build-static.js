@@ -25,6 +25,7 @@ const assets = [
     "examples/field_guide_corpus.json",
     "examples/apte_sanskrit_examples.json",
     "docs/research/archive-meter-audit.md",
+    "docs/rules/gujarati-meters.md",
     "manifest.webmanifest",
     "service-worker.js",
     "icon.svg",

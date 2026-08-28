@@ -308,6 +308,44 @@ textarea:focus-visible {
     font-size: 0.78rem;
 }
 
+.input-scheme-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-top: 0.9rem;
+    padding: 0.45rem 0.62rem;
+    border: 1px solid color-mix(in srgb, var(--line) 78%, transparent);
+    border-radius: 0.72rem;
+    color: var(--muted);
+    background: rgba(255, 253, 248, 0.58);
+    font-size: 0.72rem;
+}
+
+.input-scheme-control {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 0.45rem;
+    color: var(--ink);
+    font-weight: 700;
+}
+
+.input-scheme-control select {
+    min-height: 2rem;
+    max-width: 13rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 0.3rem 1.8rem 0.3rem 0.62rem;
+    color: var(--ink);
+    background-color: #fffdf8;
+}
+
+#transliteration-help {
+    line-height: 1.35;
+    text-align: right;
+}
+
 .icon-button,
 .primary-button,
 .destination-button {
@@ -336,7 +374,7 @@ textarea:focus-visible {
     position: relative;
     height: clamp(22rem, 50vh, 38rem);
     min-height: 22rem;
-    margin-top: 1.25rem;
+    margin-top: 0.65rem;
     overflow: hidden;
     border: 1px solid var(--line);
     border-radius: 0.9rem;
@@ -1916,6 +1954,15 @@ textarea:focus-visible {
 
     .composer-heading {
         align-items: center;
+    }
+
+    .input-scheme-bar {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    #transliteration-help {
+        text-align: left;
     }
 
     .composer-actions .icon-button span:last-child,

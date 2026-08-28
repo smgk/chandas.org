@@ -88,6 +88,8 @@
                 "auto", "weights", "amsha", "matra-35", "matra-53", "off"
             ].includes(value.scansionMode) ? value.scansionMode : "auto",
             detectShithilaDvitva: value.detectShithilaDvitva === true,
+            inputScheme: ["native", "iast", "iso15919", "itrans", "hk"]
+                .includes(value.inputScheme) ? value.inputScheme : "native",
             language: ["en", "kn", "te", "gu"].includes(value.language)
                 ? value.language
                 : "en",

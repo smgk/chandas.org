@@ -151,6 +151,16 @@ test("Telugu writing emits its stable script event", () => {
     assert.deepEqual(requestPaths(fake.requests), ["writing-script-telugu"]);
 });
 
+test("Roman transliteration emits only an aggregate script event", () => {
+    const fake = environment();
+    const analytics = createAnalytics(fake.root);
+
+    analytics.trackCompositionScripts(analysisFor("roman", "roman", "roman"));
+    fake.runTimers();
+
+    assert.deepEqual(requestPaths(fake.requests), ["writing-script-roman"]);
+});
+
 test("analytics stays disabled outside the production website", () => {
     const fake = environment("smgk.github.io");
     const analytics = createAnalytics(fake.root);

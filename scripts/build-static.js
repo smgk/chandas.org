@@ -14,6 +14,7 @@ const assets = [
     "index.html",
     "styles.css",
     "app.js",
+    "roman_transliteration.js",
     "analytics.js",
     "poem_store.js",
     "meter_analysis.js",

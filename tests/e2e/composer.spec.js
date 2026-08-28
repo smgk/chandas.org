@@ -45,6 +45,53 @@ test("analyzes Kannada, Telugu, and Devanagari stanzas inline", async ({ page })
     await expect(page.locator("#active-pattern")).toHaveText("LGG");
 });
 
+test("analyzes Roman schemes while highlighting the authored letter groups", async ({
+    page,
+    context,
+    browser
+}) => {
+    await page.locator("#input-scheme").selectOption("iast");
+    await page.locator("#composition").fill("ka kā kaṃ");
+
+    await expect(page.locator("#active-pattern")).toHaveText("LGG");
+    await expect(page.locator("#highlight-layer .laghu")).toHaveText(["ka"]);
+    await expect(page.locator("#highlight-layer .guru")).toHaveText(["kā", "kaṃ"]);
+    await expect(page.locator("#detect-shithila-dvitva")).toBeHidden();
+
+    await page.locator("#composition").fill("ka ka\nka ka\nka ka\nka ka");
+    await page.locator("#meter-picker summary").click();
+    await page.locator("#meter-search").fill("madhu");
+    await page.locator("#meter-select").selectOption("madhu");
+    await page.locator("#show-template").check();
+    await expect(page.locator("#template-mode-strong")).toBeDisabled();
+    await expect(page.locator("#whole-verse-template .whole-template-line-guide"))
+        .toHaveText(Array(4).fill("L L"));
+
+    await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+    await page.locator("#share").click();
+    await page.locator("#copy-analysis-url").click();
+    const copied = await page.evaluate(() => navigator.clipboard.readText());
+    const copiedUrl = new URL(copied);
+    expect(copiedUrl.searchParams.get("scheme")).toBe("iast");
+    expect(copiedUrl.searchParams.get("verse"))
+        .toBe("ka ka\nka ka\nka ka\nka ka");
+
+    const linkedContext = await browser.newContext();
+    const linkedPage = await linkedContext.newPage();
+    const localUrl = new URL("/", page.url());
+    localUrl.search = copiedUrl.search;
+    await linkedPage.goto(localUrl.toString());
+    await expect(linkedPage.locator("#composition"))
+        .toHaveValue("ka ka\nka ka\nka ka\nka ka");
+    await expect(linkedPage.locator("#input-scheme")).toHaveValue("iast");
+
+    await linkedPage.reload();
+    await expect(linkedPage.locator("#input-scheme")).toHaveValue("iast");
+    await expect(linkedPage.locator("#active-pattern"))
+        .toHaveText("LL / LL / LL / LL");
+    await linkedContext.close();
+});
+
 test("shows Telugu-native Guru and Laghu template symbols", async ({ page }) => {
     await page.locator("#composition").fill("క");
     await page.locator("#meter-picker summary").click();
@@ -1495,7 +1542,7 @@ test("copies and round-trips a per-stanza analysis link", async ({ page, browser
     const copied = new URL(await page.evaluate(() => navigator.clipboard.readText()));
 
     expect(copied.origin).toBe("https://chandas.org");
-    expect(copied.searchParams.get("v")).toBe("3");
+    expect(copied.searchParams.get("v")).toBe("4");
     expect(copied.searchParams.get("verse")).toBe(composition);
     expect(copied.searchParams.get("meter1")).toBe("madhu");
     expect(copied.searchParams.get("template1")).toBe("ghost");

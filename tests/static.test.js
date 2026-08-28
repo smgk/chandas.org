@@ -25,6 +25,7 @@ test("the web shell has no external runtime asset dependencies", () => {
 
     assert.deepEqual(externalAssets, []);
     assert.match(html, /manifest\.webmanifest/);
+    assert.match(html, /roman_transliteration\.js/);
     assert.match(html, /meter_analysis\.js/);
     assert.match(html, /scansion\.js/);
     assert.match(html, /shithila_dvitva\.js/);
@@ -32,6 +33,12 @@ test("the web shell has no external runtime asset dependencies", () => {
     assert.match(html, /poem_store\.js/);
     assert.match(html, /analytics\.js/);
     assert.match(html, /app\.js/);
+});
+
+test("the Android wrapper bundles the Roman and shared scansion adapters", () => {
+    const gradle = read("android/app/build.gradle");
+    assert.match(gradle, /include "roman_transliteration\.js"/);
+    assert.match(gradle, /include "scansion\.js"/);
 });
 
 test("Kannada, Telugu, and Gujarati localization cover every interface message", () => {
@@ -101,6 +108,7 @@ test("original source declares Ganesh Krishna Shankarathota under GPLv3 only", (
         "Copyright © 2025–2026 Ganesh Krishna Shankarathota";
     const sourceFiles = [
         "app.js",
+        "roman_transliteration.js",
         "analytics.js",
         "meter_analysis.js",
         "scansion.js",
@@ -149,6 +157,7 @@ test("service worker pre-caches every core web asset", () => {
         "index.html",
         "styles.css",
         "app.js",
+        "roman_transliteration.js",
         "analytics.js",
         "meter_analysis.js",
         "scansion.js",

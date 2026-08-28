@@ -1,0 +1,42 @@
+{
+  "oracle": "Aksharamukha public REST API",
+  "oracleUrl": "https://www.aksharamukha.com/web-api",
+  "verifiedAt": "2026-08-28",
+  "target": "Devanagari",
+  "inventoryExpected": {
+    "iast": "अ आ इ ई उ ऊ ऋ ॠ ऌ ॡ ए ऐ ओ औ\nक ख ग घ ङ च छ ज झ ञ ट ठ ड ढ ण त थ द ध न प फ ब भ म य र ल व श ष स ह\nअं अः कृष्णः",
+    "iso15919": "अ आ इ ई उ ऊ ऋ ॠ ऌ ॡ ऎ ए ऐ ऒ ओ औ\nक ख ग घ ङ च छ ज झ ञ ट ठ ड ढ ण त थ द ध न प फ ब भ म य र ल व श ष स ह\nअं अः कृष्णः",
+    "itrans": "अ आ इ ई उ ऊ ऋ ॠ ऌ ॡ ए ऐ ओ औ\nक ख ग घ ङ च छ ज झ ञ ट ठ ड ढ ण त थ द ध न प फ ब भ म य र ल व श ष स ह\nअं अः कृष्णः",
+    "hk": "अ आ इ ई उ ऊ ऋ ॠ ऌ ॡ ए ऐ ओ औ\nक ख ग घ ङ च छ ज झ ञ ट ठ ड ढ ण त थ द ध न प फ ब भ म य र ल व श ष स ह\nअं अः कृष्णः"
+  },
+  "cases": [
+    {
+      "scheme": "iast",
+      "aksharamukhaSource": "IAST",
+      "input": "pārthāya pratibodhitāṃ bhagavatā nārāyaṇena svayam\nvande gurūṇāṃ caraṇāravinde",
+      "inventoryInput": "a ā i ī u ū ṛ ṝ ḷ ḹ e ai o au\nka kha ga gha ṅa ca cha ja jha ña ṭa ṭha ḍa ḍha ṇa ta tha da dha na pa pha ba bha ma ya ra la va śa ṣa sa ha\naṃ aḥ kṛṣṇaḥ",
+      "expected": "पार्थाय प्रतिबोधितां भगवता नारायणेन स्वयम्\nवन्दे गुरूणां चरणारविन्दे"
+    },
+    {
+      "scheme": "iso15919",
+      "aksharamukhaSource": "ISO",
+      "input": "pārthāya pratibōdhitāṁ bhagavatā nārāyaṇēna svayam\nvandē gurūṇāṁ caraṇāravindē",
+      "inventoryInput": "a ā i ī u ū r̥ r̥̄ l̥ l̥̄ e ē ai o ō au\nka kha ga gha ṅa ca cha ja jha ña ṭa ṭha ḍa ḍha ṇa ta tha da dha na pa pha ba bha ma ya ra la va śa ṣa sa ha\naṁ aḥ kr̥ṣṇaḥ",
+      "expected": "पार्थाय प्रतिबोधितां भगवता नारायणेन स्वयम्\nवन्दे गुरूणां चरणारविन्दे"
+    },
+    {
+      "scheme": "itrans",
+      "aksharamukhaSource": "Itrans",
+      "input": "pArthAya pratibodhitAM bhagavatA nArAyaNena svayam\nvande gurUNAM charaNAravinde",
+      "inventoryInput": "a A i I u U R^i R^I L^i L^I e ai o au\nka kha ga gha ~Na cha Cha ja jha ~na Ta Tha Da Dha Na ta tha da dha na pa pha ba bha ma ya ra la va sha Sha sa ha\naM aH kR^iShNaH",
+      "expected": "पार्थाय प्रतिबोधितां भगवता नारायणेन स्वयम्\nवन्दे गुरूणां चरणारविन्दे"
+    },
+    {
+      "scheme": "hk",
+      "aksharamukhaSource": "HK",
+      "input": "pArthAya pratibodhitAM bhagavatA nArAyaNena svayam\nvande gurUNAM caraNAravinde",
+      "inventoryInput": "a A i I u U R RR lR lRR e ai o au\nka kha ga gha Ga ca cha ja jha Ja Ta Tha Da Dha Na ta tha da dha na pa pha ba bha ma ya ra la va za Sa sa ha\naM aH kRSNaH",
+      "expected": "पार्थाय प्रतिबोधितां भगवता नारायणेन स्वयम्\nवन्दे गुरूणां चरणारविन्दे"
+    }
+  ]
+}

@@ -8,12 +8,13 @@ SPDX-License-Identifier: GPL-3.0-only
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="theme-color" content="#f4efe5">
-    <meta name="description" content="Compose Kannada, Telugu, Gujarati, and Devanagari verse with live Guru/Laghu and chandas guidance.">
+    <meta name="description" content="Compose Indic-script or Roman-transliterated verse with live Guru/Laghu and chandas guidance.">
     <meta name="color-scheme" content="light">
     <title>Chandas - say it in-verse</title>
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="icon" href="icon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="styles.css">
+    <script src="roman_transliteration.js" defer></script>
     <script src="meter_analysis.js" defer></script>
     <script src="scansion.js" defer></script>
     <script src="shithila_dvitva.js" defer></script>
@@ -64,7 +65,7 @@ SPDX-License-Identifier: GPL-3.0-only
             <p class="eyebrow" data-i18n="eyebrow">A live prosody companion</p>
             <h1 id="page-title" class="sr-only" data-i18n="title">Chandas - say it in-verse</h1>
             <p data-i18n="intro">
-                Type Kannada, Telugu, Gujarati, or Devanagari verse. Guru and Laghu appear in place,
+                Type Indic-script or Roman-transliterated verse. Guru and Laghu appear in place,
                 and the closest meters stay quietly within reach.
             </p>
         </section>
@@ -92,6 +93,22 @@ SPDX-License-Identifier: GPL-3.0-only
                             <span data-i18n="share">Share</span>
                         </button>
                     </div>
+                </div>
+
+                <div class="input-scheme-bar">
+                    <label class="input-scheme-control" for="input-scheme">
+                        <span data-i18n="inputScheme">Input</span>
+                        <select id="input-scheme" aria-describedby="transliteration-help">
+                            <option value="native" data-i18n="schemeNative">Indic scripts · automatic</option>
+                            <option value="iast">IAST</option>
+                            <option value="iso15919">ISO 15919</option>
+                            <option value="itrans">ITRANS</option>
+                            <option value="hk">Harvard-Kyoto</option>
+                        </select>
+                    </label>
+                    <small id="transliteration-help" data-i18n="nativeInputHelp">
+                        Kannada, Telugu, Gujarati, or Devanagari is detected automatically.
+                    </small>
                 </div>
 
                 <div class="editor-shell" id="editor-shell">

@@ -2,7 +2,7 @@
 
 **Status:** Draft for stakeholder review
 
-**Last updated:** 2026-08-06
+**Last updated:** 2026-08-28
 
 **Products:** `chandas.org` website and Android application
 
@@ -54,8 +54,9 @@ but visually unobtrusive.
 - Mixed-script analysis where a single composition contains more than one
   supported script.
 
-Transliteration from Latin text is not part of the initial release unless
-separately approved.
+Roman transliteration input is a separately versioned post-MVP adapter. It is
+not part of the initial-release baseline and MUST NOT change native-script
+analysis behavior.
 
 ## 3. Users and Primary Journey
 
@@ -105,7 +106,8 @@ metrical verse.
 - A strong template mode for structured, arbitrary-position composition while
   retaining the ghost template as an alternative.
 - More Indic scripts and meter traditions.
-- Optional transliteration.
+- Additional transliteration schemes and automatic scheme assistance beyond
+  the explicit IAST, ISO 15919, ITRANS, and Harvard-Kyoto selector.
 
 ## 5. Functional Requirements
 
@@ -679,6 +681,22 @@ analysis result.
    guide. Rules that depend on pronunciation, recitational extension, rhyme,
    or flowing typography MUST remain visibly provisional until a reviewed
    positive/negative corpus is available.
+2e. The first Roman-input adapter MUST support explicitly selected IAST,
+   ISO 15919, ITRANS, and Harvard-Kyoto. It MUST run offline, preserve the
+   authored Roman text exactly, produce a private Devanagari analysis shadow,
+   and project every syllable, violation, count, and scansion boundary back to
+   stable ranges in the Roman source. IAST and ISO 15919 MUST remain distinct,
+   including ISO short `e/o` and long `ē/ō`. Native-script input MUST bypass
+   this adapter without behavioral changes.
+2f. Roman input MUST retain its selected scheme in local drafts, saved poems,
+   full backups, and versioned analysis URLs. Unknown Roman spans MUST remain
+   visible and be reported as uncertain rather than silently discarded.
+   Composition text MUST NOT be sent to a transliteration service. Offline
+   tests MAY use externally verified oracle fixtures, but production MUST NOT
+   depend on that service.
+2g. Ghost templates MUST work for Roman input using `L/G` guide symbols.
+   Strong templates MAY be unavailable for the first Roman release, provided
+   the UI states this clearly and falls back without losing authored text.
 3. `mishra.json` MUST be treated as the source list for the initial meter
    catalog. The runtime representation MAY be transformed during the build,
    provided tests prove that every source entry and pattern is retained.

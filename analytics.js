@@ -28,7 +28,8 @@
             "kannada",
             "devanagari",
             "telugu",
-            "gujarati"
+            "gujarati",
+            "roman"
         ]);
         const minimumSyllables = settings.minimumSyllables || 3;
         const scriptDelayMs = settings.scriptDelayMs === undefined

@@ -340,9 +340,12 @@ week per meter-family presentation
 - Select synonym data whose license permits bundled web and Android use.
 - Prefer an offline-first index; label meaning, register, grammatical
   differences, and metrical fit.
+- [x] Add an isolated offline Roman adapter for IAST, ISO 15919, ITRANS, and
+  Harvard-Kyoto with Aksharamukha-verified fixtures, source-safe highlighting,
+  saved state, and analysis-link round trips.
 - Add remaining script modules one at a time with normalization and
   golden-corpus tests.
-- Treat transliteration as a separate, optional layer, never as a replacement
+- [x] Treat transliteration as a separate, optional layer, never as a replacement
   for preserving the original text.
 
 ### M9 — Privacy-preserving short analysis links

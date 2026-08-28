@@ -175,11 +175,15 @@ assumption that one virāma is both vowel killer and conjunct operator.
 2. [x] Add Telugu with paired Telugu/Devanagari characterization tests.
 3. [x] Add Gujarati script analysis and Gujarati interface localization.
 4. [x] Add the first separately sourced Gujarati traditional-meter packet.
-5. Add Odia.
-6. Add atomic dead-consonant support, then Bengali/Assamese.
-7. Choose Tamil or Sinhala next based on user demand and available reviewers.
-8. Add Malayalam only after chillu and half-u review.
-9. Treat Gurmukhi, Grantha, and Tulu-Tigalari as specialized later passes.
+5. [x] Add an offline Roman adapter for IAST, ISO 15919, ITRANS, and
+   Harvard-Kyoto. Analysis uses an internal Devanagari shadow while authored
+   text and highlight ranges remain Roman. Aksharamukha is a differential test
+   oracle only; it is not a runtime dependency.
+6. Add Odia.
+7. Add atomic dead-consonant support, then Bengali/Assamese.
+8. Choose Tamil or Sinhala next based on user demand and available reviewers.
+9. Add Malayalam only after chillu and half-u review.
+10. Treat Gurmukhi, Grantha, and Tulu-Tigalari as specialized later passes.
 
 ## Primary technical references
 

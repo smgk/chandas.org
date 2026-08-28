@@ -49,12 +49,18 @@
             backupInvalid: "That file is not a valid Chandas backup.",
             localStorageUnavailable: "Saved Poems is unavailable, but the current draft will still recover locally.",
             language: "Interface language",
+            inputScheme: "Input",
+            schemeNative: "Indic scripts · automatic",
+            nativeInputHelp: "Kannada, Telugu, Gujarati, or Devanagari is detected automatically.",
+            romanInputHelp: "Roman text is analyzed through an offline Devanagari shadow; your spelling stays untouched.",
+            romanPlaceholder: "Type Roman transliteration here…",
+            romanStrongUnavailable: "Strong templates are not yet available for Roman input; ghost guidance remains available.",
             newDraft: "New",
             updateAvailable: "Update available",
             updating: "Updating…",
             eyebrow: "A live prosody companion",
             title: "Chandas - say it in-verse",
-            intro: "Type Kannada, Telugu, Gujarati, or Devanagari verse. Guru and Laghu appear in place, and the closest meters stay quietly within reach.",
+            intro: "Type Indic-script or Roman-transliterated verse. Guru and Laghu appear in place, and the closest meters stay quietly within reach.",
             composition: "Composition",
             savedLocally: "Saved privately on this device",
             saving: "Saving on this device…",
@@ -210,12 +216,18 @@
             backupInvalid: "ಇದು ಸರಿಯಾದ ಛಂದಸ್ ಬ್ಯಾಕಪ್ ಅಲ್ಲ.",
             localStorageUnavailable: "ಉಳಿಸಿದ ಪದ್ಯಗಳ ಪಟ್ಟಿ ಲಭ್ಯವಿಲ್ಲ; ಪ್ರಸ್ತುತ ಕರಡು ಸ್ಥಳೀಯವಾಗಿ ಮರುಪಡೆಯುತ್ತದೆ.",
             language: "ತೆರೆಯ ಭಾಷೆ",
+            inputScheme: "ಬರಹದ ಲಿಪಿ",
+            schemeNative: "ಭಾರತೀಯ ಲಿಪಿಗಳು · ಸ್ವಯಂ",
+            nativeInputHelp: "ಕನ್ನಡ, ತೆಲುಗು, ಗುಜರಾತಿ ಅಥವಾ ದೇವನಾಗರಿಯನ್ನು ಸ್ವಯಂ ಗುರುತಿಸುತ್ತದೆ.",
+            romanInputHelp: "ರೋಮನ್ ಪಠ್ಯವನ್ನು ಆಫ್‌ಲೈನ್ ದೇವನಾಗರಿ ಪ್ರತಿಯ ಮೂಲಕ ವಿಶ್ಲೇಷಿಸುತ್ತದೆ; ನಿಮ್ಮ ಬರಹ ಬದಲಾಗುವುದಿಲ್ಲ.",
+            romanPlaceholder: "ರೋಮನ್ ಲಿಪ್ಯಂತರದಲ್ಲಿ ಇಲ್ಲಿ ಬರೆಯಿರಿ…",
+            romanStrongUnavailable: "ರೋಮನ್ ಬರಹಕ್ಕೆ ಬಲವಾದ ಟೆಂಪ್ಲೇಟ್ ಇನ್ನೂ ಲಭ್ಯವಿಲ್ಲ; ಮಸುಕಾದ ಮಾರ್ಗದರ್ಶನ ಲಭ್ಯವಿದೆ.",
             newDraft: "ಹೊಸದು",
             updateAvailable: "ನವೀಕರಣ ಲಭ್ಯ",
             updating: "ನವೀಕರಿಸಲಾಗುತ್ತಿದೆ…",
             eyebrow: "ಛಂದದ ಪದ್ಯದ ಸಂಗಾತಿ",
             title: "ಛಂದಸ್ - ಪದ್ಯದಲ್ಲಿ ಹೇಳಿ",
-            intro: "ಕನ್ನಡ, ತೆಲುಗು, ಗುಜರಾತಿ ಅಥವಾ ದೇವನಾಗರಿ ಪದ್ಯವನ್ನು ಬರೆಯಿರಿ. ಗುರು–ಲಘು ಅದೇ ಪಠ್ಯದಲ್ಲಿ ಕಾಣುತ್ತದೆ; ಸಮೀಪದ ಛಂದಸ್ಸುಗಳು ಪಕ್ಕದಲ್ಲಿರುತ್ತವೆ.",
+            intro: "ಭಾರತೀಯ ಲಿಪಿಯಲ್ಲಿ ಅಥವಾ ರೋಮನ್ ಲಿಪ್ಯಂತರದಲ್ಲಿ ಪದ್ಯವನ್ನು ಬರೆಯಿರಿ. ಗುರು–ಲಘು ಅದೇ ಪಠ್ಯದಲ್ಲಿ ಕಾಣುತ್ತದೆ; ಸಮೀಪದ ಛಂದಸ್ಸುಗಳು ಪಕ್ಕದಲ್ಲಿರುತ್ತವೆ.",
             composition: "ರಚನೆ",
             savedLocally: "ಈ ಸಾಧನದಲ್ಲಿ ಖಾಸಗಿಯಾಗಿ ಉಳಿಸಲಾಗಿದೆ",
             saving: "ಈ ಸಾಧನದಲ್ಲಿ ಉಳಿಸಲಾಗುತ್ತಿದೆ…",
@@ -371,12 +383,18 @@
             backupInvalid: "ఈ దస్త్రం సరైన ఛందస్ బ్యాకప్ కాదు.",
             localStorageUnavailable: "భద్రపరిచిన పద్యాలు అందుబాటులో లేవు; ప్రస్తుత ముసాయిదా మాత్రం స్థానికంగా తిరిగి లభిస్తుంది.",
             language: "తెర భాష",
+            inputScheme: "ఇన్‌పుట్",
+            schemeNative: "భారతీయ లిపులు · స్వయంచాలకం",
+            nativeInputHelp: "కన్నడ, తెలుగు, గుజరాతీ లేదా దేవనాగరి స్వయంచాలకంగా గుర్తించబడుతుంది.",
+            romanInputHelp: "రోమన్ పాఠ్యం ఆఫ్‌లైన్ దేవనాగరి ప్రతిరూపం ద్వారా విశ్లేషించబడుతుంది; మీ వ్రాత మారదు.",
+            romanPlaceholder: "రోమన్ లిప్యంతరీకరణలో ఇక్కడ వ్రాయండి…",
+            romanStrongUnavailable: "రోమన్ ఇన్‌పుట్‌కు స్ట్రాంగ్ టెంప్లేట్ ఇంకా లేదు; ఘోస్ట్ మార్గదర్శనం అందుబాటులో ఉంది.",
             newDraft: "కొత్తది",
             updateAvailable: "నవీకరణ అందుబాటులో ఉంది",
             updating: "నవీకరిస్తోంది…",
             eyebrow: "ఛందోపద్య రచనా సహచరి",
             title: "ఛందస్ — పద్యంగా చెప్పండి",
-            intro: "కన్నడ, తెలుగు, గుజరాతీ లేదా దేవనాగరి పద్యాన్ని రాయండి. గురు–లఘువులు అదే పాఠ్యంలో కనిపిస్తాయి; సమీప ఛందస్సులు పక్కనే అందుబాటులో ఉంటాయి.",
+            intro: "భారతీయ లిపిలో లేదా రోమన్ లిప్యంతరీకరణలో పద్యాన్ని రాయండి. గురు–లఘువులు అదే పాఠ్యంలో కనిపిస్తాయి; సమీప ఛందస్సులు పక్కనే అందుబాటులో ఉంటాయి.",
             composition: "రచన",
             savedLocally: "ఈ పరికరంలో గోప్యంగా భద్రపరచబడింది",
             saving: "ఈ పరికరంలో భద్రపరుస్తోంది…",
@@ -532,12 +550,18 @@
             backupInvalid: "આ માન્ય છંદસ બૅકઅપ ફાઇલ નથી.",
             localStorageUnavailable: "સાચવેલાં પદ્યો ઉપલબ્ધ નથી, પણ વર્તમાન મુસદ્દો આ ઉપકરણમાં ફરી મળશે.",
             language: "ઇન્ટરફેસની ભાષા",
+            inputScheme: "ઇનપુટ",
+            schemeNative: "ભારતીય લિપિઓ · આપમેળે",
+            nativeInputHelp: "કન્નડ, તેલુગુ, ગુજરાતી અથવા દેવનાગરી આપમેળે ઓળખાય છે.",
+            romanInputHelp: "રોમન લખાણનું ઓફલાઇન દેવનાગરી પ્રતિરૂપ દ્વારા વિશ્લેષણ થાય છે; તમારું લખાણ બદલાતું નથી.",
+            romanPlaceholder: "રોમન લિપ્યંતરણમાં અહીં લખો…",
+            romanStrongUnavailable: "રોમન ઇનપુટ માટે મજબૂત ટેમ્પલેટ હજી ઉપલબ્ધ નથી; ઝાંખું માર્ગદર્શન ઉપલબ્ધ છે.",
             newDraft: "નવું",
             updateAvailable: "અપડેટ ઉપલબ્ધ",
             updating: "અપડેટ થઈ રહ્યું છે…",
             eyebrow: "છંદોબદ્ધ પદ્યનો સાથી",
             title: "છંદસ — પદ્યમાં કહો",
-            intro: "કન્નડ, તેલુગુ, ગુજરાતી અથવા દેવનાગરી પદ્ય લખો. ગુરુ–લઘુ એ જ લખાણમાં દેખાશે અને સૌથી નજીકના છંદ સહેલાઈથી મળશે.",
+            intro: "ભારતીય લિપિમાં અથવા રોમન લિપ્યંતરણમાં પદ્ય લખો. ગુરુ–લઘુ એ જ લખાણમાં દેખાશે અને સૌથી નજીકના છંદ સહેલાઈથી મળશે.",
             composition: "રચના",
             savedLocally: "આ ઉપકરણમાં ખાનગી રીતે સાચવ્યું",
             saving: "આ ઉપકરણમાં સાચવી રહ્યું છે…",
@@ -670,6 +694,7 @@
         strongDrafts: {},
         scansionMode: "auto",
         detectShithilaDvitva: false,
+        inputScheme: "native",
         strongHistory: {},
         strongFuture: {},
         activeStanzaIndex: 0,
@@ -699,6 +724,7 @@
     function cacheElements() {
         [
             "composition", "highlight-layer", "editor-shell", "draft-state", "cursor-metrics",
+            "input-scheme", "transliteration-help",
             "language", "new-draft", "saved-poems", "app-update", "copy", "share", "analysis-title",
             "previous-stanza", "next-stanza", "empty-analysis", "analysis-content",
             "pattern-block", "active-pattern", "active-matras",
@@ -731,18 +757,40 @@
         return value;
     }
 
+    function updateInputSchemeUi() {
+        const roman = state.inputScheme !== "native";
+        if (elements["input-scheme"]) {
+            elements["input-scheme"].value = state.inputScheme;
+        }
+        if (elements["transliteration-help"]) {
+            elements["transliteration-help"].textContent = t(
+                roman ? "romanInputHelp" : "nativeInputHelp"
+            );
+        }
+        if (elements.composition) {
+            elements.composition.placeholder = roman
+                ? t("romanPlaceholder")
+                : t("placeholder");
+        }
+        if (elements["detect-shithila-dvitva"]) {
+            elements["detect-shithila-dvitva"].disabled = roman;
+            elements["detect-shithila-dvitva"].closest("label")
+                .toggleAttribute("hidden", roman);
+        }
+    }
+
     function updateLanguage() {
         document.documentElement.lang = state.language;
         document.title = t("title");
         elements.language.value = state.language;
         elements.language.setAttribute("aria-label", t("language"));
-
         document.querySelectorAll("[data-i18n]").forEach((node) => {
             node.textContent = t(node.dataset.i18n);
         });
         document.querySelectorAll("[data-i18n-placeholder]").forEach((node) => {
             node.placeholder = t(node.dataset.i18nPlaceholder);
         });
+        updateInputSchemeUi();
 
         elements["previous-stanza"].setAttribute("aria-label", t("previousStanza"));
         elements["next-stanza"].setAttribute("aria-label", t("nextStanza"));
@@ -901,8 +949,14 @@
                 params.has("scan") ? params.get("scan") : params.get("scansion")
             )
             : null;
+        const hasInputScheme = params.has("scheme") || params.has("input");
+        const inputScheme = hasInputScheme
+            ? ChandasRoman.normalizeScheme(
+                params.has("scheme") ? params.get("scheme") : params.get("input")
+            )
+            : null;
         const consumed = verse !== null || meter !== null || hasTemplate ||
-            hasShithilaOption || hasScansionMode ||
+            hasShithilaOption || hasScansionMode || hasInputScheme ||
             Object.keys(stanzaOptions).length > 0;
         return consumed
             ? {
@@ -911,7 +965,8 @@
                 guideMode,
                 stanzaOptions,
                 detectShithilaDvitva,
-                scansionMode
+                scansionMode,
+                inputScheme
             }
             : null;
     }
@@ -982,6 +1037,11 @@
         let insertionStart = null;
         const incoming = normalizeImportedVerse(payload.verse);
         let importMessage = incoming ? t("urlImported") : "";
+        if (payload.inputScheme &&
+            (payload.inputScheme !== "native" || !authoredCompositionText())) {
+            state.inputScheme = payload.inputScheme;
+            updateInputSchemeUi();
+        }
         if (incoming) {
             const appended = appendAsPadya(authoredCompositionText(), incoming);
             insertionStart = appended.insertionStart;
@@ -1139,6 +1199,7 @@
 
     function supportsStrongTemplate(meter) {
         return Boolean(
+            state.inputScheme === "native" &&
             meter &&
             meter.kind === "fixed" &&
             meter.linePolicy &&
@@ -1259,6 +1320,9 @@
     }
 
     function weightSymbols(script) {
+        if (script === "roman") {
+            return { L: "L", G: "G", variable: "○" };
+        }
         if (script === "kannada") {
             return { L: "ಲ", G: "ಗಾ", variable: "○" };
         }
@@ -2145,14 +2209,21 @@
         const parsedStanzas = Chandas.parseStanzas(text);
         reconcileSelections(oldStanzas, parsedStanzas, elements.composition.selectionStart);
 
-        state.analysis = state.detectShithilaDvitva
+        const conversion = ChandasRoman.transliterate(text, state.inputScheme);
+        const rawAnalysis = state.detectShithilaDvitva &&
+            state.inputScheme === "native"
             ? ChandasShithilaDvitva.analyzeComposition(
-                text,
+                conversion.analysisText,
                 state.catalog,
                 state.selections,
                 { detect: true }
             )
-            : Chandas.analyzeComposition(text, state.catalog, state.selections);
+            : Chandas.analyzeComposition(
+                conversion.analysisText,
+                state.catalog,
+                state.selections
+            );
+        state.analysis = ChandasRoman.projectAnalysis(rawAnalysis, conversion);
         state.activeStanzaIndex = stanzaAtOffset(
             state.analysis.stanzas,
             elements.composition.selectionStart
@@ -2388,7 +2459,9 @@
         elements["strong-template-availability"].textContent =
             supportsStrongTemplate(selectedMeter)
                 ? t("strongTemplateAvailable")
-                : t("strongTemplateUnavailable");
+                : state.inputScheme !== "native"
+                    ? t("romanStrongUnavailable")
+                    : t("strongTemplateUnavailable");
         if (stanza.selectedMeter) {
             elements["selected-meter-name"].textContent = stanza.selectedMeter.name;
             elements["selected-meter-signature"].replaceChildren(
@@ -2622,7 +2695,7 @@
 
     function currentDraftSnapshot() {
         return {
-            version: 5,
+            version: 6,
             poemId: state.activePoemId,
             text: elements.composition.value,
             selections: state.selections,
@@ -2631,6 +2704,7 @@
             strongDrafts: state.strongDrafts,
             scansionMode: state.scansionMode,
             detectShithilaDvitva: state.detectShithilaDvitva,
+            inputScheme: state.inputScheme,
             language: state.language,
             selectionStart: elements.composition.selectionStart,
             selectionEnd: elements.composition.selectionEnd,
@@ -2643,7 +2717,8 @@
             Object.keys(draft.templates).length ||
             Object.keys(draft.strongDrafts).length ||
             draft.scansionMode !== "auto" ||
-            draft.detectShithilaDvitva);
+            draft.detectShithilaDvitva ||
+            draft.inputScheme !== "native");
     }
 
     function saveDraft() {
@@ -2697,7 +2772,7 @@
                 return null;
             }
             const draft = JSON.parse(raw);
-            if (!draft || ![1, 2, 3, 4, 5].includes(draft.version) ||
+            if (!draft || ![1, 2, 3, 4, 5, 6].includes(draft.version) ||
                 typeof draft.text !== "string") {
                 return null;
             }
@@ -2724,6 +2799,7 @@
             : {};
         state.scansionMode = ChandasScansion.normalizeMode(poem.scansionMode);
         state.detectShithilaDvitva = poem.detectShithilaDvitva === true;
+        state.inputScheme = ChandasRoman.normalizeScheme(poem.inputScheme);
         state.strongHistory = {};
         state.strongFuture = {};
         state.analysis = null;
@@ -2809,11 +2885,13 @@
         state.strongDrafts = {};
         state.scansionMode = "auto";
         state.detectShithilaDvitva = false;
+        state.inputScheme = "native";
         state.strongHistory = {};
         state.strongFuture = {};
         state.analysis = null;
         state.activeStanzaIndex = 0;
         renderPlainOverlay();
+        updateInputSchemeUi();
         renderCursorMetrics();
         renderAnalysisPanel();
         saveDraft();
@@ -2833,8 +2911,11 @@
             return savedPoemAnalysisUrl(state.sharingPoem);
         }
         const url = new URL("https://chandas.org/");
-        url.searchParams.set("v", "3");
+        url.searchParams.set("v", "4");
         url.searchParams.set("verse", authoredCompositionText());
+        if (state.inputScheme !== "native") {
+            url.searchParams.set("scheme", state.inputScheme);
+        }
         if (state.detectShithilaDvitva) {
             url.searchParams.set("sd", "1");
         }
@@ -2872,8 +2953,12 @@
 
     function savedPoemAnalysisUrl(poem) {
         const url = new URL("https://chandas.org/");
-        url.searchParams.set("v", "3");
+        url.searchParams.set("v", "4");
         url.searchParams.set("verse", poem.text);
+        const inputScheme = ChandasRoman.normalizeScheme(poem.inputScheme);
+        if (inputScheme !== "native") {
+            url.searchParams.set("scheme", inputScheme);
+        }
         if (poem.detectShithilaDvitva === true) {
             url.searchParams.set("sd", "1");
         }
@@ -3653,6 +3738,25 @@
             localStorage.setItem(LANGUAGE_KEY, state.language);
             updateLanguage();
             scheduleSave();
+        });
+
+        elements["input-scheme"].addEventListener("change", () => {
+            const nextScheme = ChandasRoman.normalizeScheme(
+                elements["input-scheme"].value
+            );
+            if (nextScheme === state.inputScheme) {
+                return;
+            }
+            if (templateMode(state.activeStanzaIndex) === "strong") {
+                const meterId = state.selections[state.activeStanzaIndex];
+                if (meterId) {
+                    commitStrongDraftToComposition(state.activeStanzaIndex, meterId);
+                }
+                setTemplateMode(state.activeStanzaIndex, "ghost");
+            }
+            state.inputScheme = nextScheme;
+            updateInputSchemeUi();
+            runAnalysis();
         });
 
         elements["new-draft"].addEventListener("click", clearDraft);

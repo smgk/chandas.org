@@ -16,6 +16,9 @@ runs locally; composing does not require an account, server, or cloud database.
 ## What it does
 
 - Analyzes Kannada, Telugu, Gujarati, and Devanagari Unicode while the user types.
+- Accepts explicitly selected IAST, ISO 15919, ITRANS, and Harvard-Kyoto input;
+  an offline Devanagari shadow drives analysis while markings stay on the
+  untouched Roman text.
 - Preserves the original text, punctuation, line breaks, caret, and Indic IME
   behavior.
 - Suggests and ranks fixed vṛttas, syllable-structural meters, mātrā meters,
@@ -124,6 +127,7 @@ Android application is built and released separately.
 | Path | Purpose |
 | --- | --- |
 | `meter_analysis.js` | Unicode syllable analysis, meter scoring, validation, and prāsa |
+| `roman_transliteration.js` | Offline Roman-scheme parsing, Devanagari shadow generation, and source-range projection |
 | `mishra.json` | Attributed baseline fixed-vṛtta catalog |
 | `structural_meters.json` | Versioned structural, mātrā, aṃśa, and sourced fixed-meter extensions |
 | `examples/field_guide_corpus.json` | Sourced Kannada, Telugu, and Devanagari examples used by tests and Learn |

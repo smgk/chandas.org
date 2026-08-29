@@ -47,6 +47,7 @@
             noSelectedMeters: "None",
             backupImported: "Imported {added}; kept {conflicts} conflict copy/copies; skipped {skipped} duplicate(s).",
             backupInvalid: "That file is not a valid Chandas backup.",
+            customFormsImported: " {count} custom form(s) restored.",
             localStorageUnavailable: "Saved Poems is unavailable, but the current draft will still recover locally.",
             language: "Interface language",
             inputScheme: "Input",
@@ -65,6 +66,44 @@
             compositionConverted: "Composition converted to {target}.",
             conversionCopied: "Conversion copied",
             undo: "Undo",
+            learnPattern: "Learn this pattern",
+            customForm: "Custom form",
+            learnThisPattern: "Learn this pattern",
+            learnPatternIntro: "Chandas finds recurring evidence; you decide which observations become rules.",
+            patternName: "Pattern name",
+            patternNamePlaceholder: "My cadence",
+            strictness: "Strictness",
+            exactMould: "Exact mould",
+            exactMouldHelp: "Keep every observed Guru–Laghu pattern.",
+            balancedForm: "Balanced form",
+            balancedFormHelp: "Keep stable counts, cadence, and recurring weights.",
+            looseCadence: "Loose cadence",
+            looseCadenceHelp: "Allow small count variations and retain only strong anchors.",
+            includeAsRules: "Include as rules",
+            lineCadence: "Stable line endings",
+            inferredYati: "Inferred pause positions",
+            inferredEndRhyme: "Inferred end rhyme",
+            inferredSecondRhyme: "Inferred second-letter prāsa",
+            inferredRefrain: "Repeated refrain",
+            customFormCaution: "Saved privately as your form—not presented as a traditional meter.",
+            saveAndUsePattern: "Save and use pattern",
+            yourPatterns: "Your patterns",
+            noCustomForms: "No custom forms saved yet.",
+            customEvidence: "{samples} matching stanza(s) · {lines} lines per stanza · {confidence}% stable evidence",
+            customIgnoredStanzas: " {count} differently shaped stanza(s) were not used.",
+            customLineEvidence: "{syllables} syllables · {matras} mātrās{cadence}{groups}{yati}",
+            cadenceEvidence: " · ending {pattern}",
+            groupEvidence: " · possible {groups}",
+            yatiEvidence: " · pause after syllable {position}",
+            rhymeSchemeLabel: "{label} · {scheme}",
+            customPatternSaved: "Saved and selected {name}.",
+            customPatternDeleted: "Custom form deleted.",
+            customPatternDeleteConfirm: "Delete this custom form from this device?",
+            usePattern: "Use",
+            deletePattern: "Delete",
+            customFormCard: "{mode} · {lines} lines · {samples} example(s)",
+            noPoemToLearn: "Write at least one complete line before learning a pattern.",
+            patternNameRequired: "Give this pattern a name.",
             nativeInputHelp: "Kannada, Telugu, Gujarati, or Devanagari is detected automatically.",
             romanInputHelp: "Roman text is analyzed through an offline Devanagari shadow; your spelling stays untouched.",
             romanPlaceholder: "Type Roman transliteration here…",
@@ -228,6 +267,7 @@
             noSelectedMeters: "ಯಾವುದೂ ಇಲ್ಲ",
             backupImported: "{added} ಆಮದು; {conflicts} ಭಿನ್ನ ಪ್ರತಿಗಳು ಉಳಿದವು; {skipped} ನಕಲುಗಳನ್ನು ಬಿಟ್ಟಿದೆ.",
             backupInvalid: "ಇದು ಸರಿಯಾದ ಛಂದಸ್ ಬ್ಯಾಕಪ್ ಅಲ್ಲ.",
+            customFormsImported: " {count} ಸ್ವಂತ ಲಯ(ಗಳನ್ನು) ಮರುಸ್ಥಾಪಿಸಲಾಗಿದೆ.",
             localStorageUnavailable: "ಉಳಿಸಿದ ಪದ್ಯಗಳ ಪಟ್ಟಿ ಲಭ್ಯವಿಲ್ಲ; ಪ್ರಸ್ತುತ ಕರಡು ಸ್ಥಳೀಯವಾಗಿ ಮರುಪಡೆಯುತ್ತದೆ.",
             language: "ತೆರೆಯ ಭಾಷೆ",
             inputScheme: "ಬರಹದ ಲಿಪಿ",
@@ -246,6 +286,44 @@
             compositionConverted: "ಪದ್ಯವನ್ನು {target}ಗೆ ಬದಲಿಸಲಾಗಿದೆ.",
             conversionCopied: "ಬದಲಾದ ಬರಹ ನಕಲಾಗಿದೆ",
             undo: "ಹಿಂದಕ್ಕೆ",
+            learnPattern: "ಈ ಲಯವನ್ನು ಕಲಿಸಿ",
+            customForm: "ನನ್ನ ಛಂದೋರೂಪ",
+            learnThisPattern: "ಈ ಲಯವನ್ನು ಕಲಿಸಿ",
+            learnPatternIntro: "ಛಂದಸ್ ಮರುಕಳಿಸುವ ಲಕ್ಷಣಗಳನ್ನು ಕಂಡುಕೊಳ್ಳುತ್ತದೆ; ಅವುಗಳಲ್ಲಿ ಯಾವುದು ನಿಯಮವಾಗಬೇಕೆಂದು ನೀವು ತೀರ್ಮಾನಿಸಿ.",
+            patternName: "ಲಯದ ಹೆಸರು",
+            patternNamePlaceholder: "ನನ್ನ ಲಯ",
+            strictness: "ಕಟ್ಟುನಿಟ್ಟು",
+            exactMould: "ನಿಖರ ಅಚ್ಚು",
+            exactMouldHelp: "ಕಂಡ ಎಲ್ಲ ಗುರು–ಲಘು ಮಾದರಿಗಳನ್ನು ಉಳಿಸಿ.",
+            balancedForm: "ಸಮತೋಲಿತ ರೂಪ",
+            balancedFormHelp: "ಸ್ಥಿರ ಎಣಿಕೆ, ಅಂತ್ಯದ ನಡೆ ಮತ್ತು ಮರುಕಳಿಸುವ ತೂಕ ಉಳಿಸಿ.",
+            looseCadence: "ಸಡಿಲ ಲಯ",
+            looseCadenceHelp: "ಸಣ್ಣ ಎಣಿಕೆ ವ್ಯತ್ಯಾಸಗಳಿಗೆ ಅವಕಾಶ ನೀಡಿ, ಬಲವಾದ ಆಧಾರ ಮಾತ್ರ ಉಳಿಸಿ.",
+            includeAsRules: "ನಿಯಮಗಳಾಗಿ ಸೇರಿಸಿ",
+            lineCadence: "ಸ್ಥಿರ ಸಾಲು ಅಂತ್ಯಗಳು",
+            inferredYati: "ಊಹಿಸಿದ ವಿರಾಮ ಸ್ಥಾನಗಳು",
+            inferredEndRhyme: "ಊಹಿಸಿದ ಅಂತ್ಯಪ್ರಾಸ",
+            inferredSecondRhyme: "ಊಹಿಸಿದ ದ್ವಿತೀಯಾಕ್ಷರ ಪ್ರಾಸ",
+            inferredRefrain: "ಮರುಕಳಿಸುವ ಪಲ್ಲವಿ",
+            customFormCaution: "ಇದು ನಿಮ್ಮ ಖಾಸಗಿ ರೂಪವಾಗಿ ಉಳಿಯುತ್ತದೆ—ಪಾರಂಪರಿಕ ಛಂದಸ್ಸೆಂದು ತೋರಿಸುವುದಿಲ್ಲ.",
+            saveAndUsePattern: "ಉಳಿಸಿ ಮತ್ತು ಬಳಸಿ",
+            yourPatterns: "ನಿಮ್ಮ ಲಯಗಳು",
+            noCustomForms: "ಇನ್ನೂ ಯಾವುದೇ ಸ್ವಂತ ಲಯ ಉಳಿಸಿಲ್ಲ.",
+            customEvidence: "{samples} ಹೊಂದುವ ಪದ್ಯಖಂಡ(ಗಳು) · ಪ್ರತಿ ಪದ್ಯಖಂಡಕ್ಕೆ {lines} ಸಾಲು · {confidence}% ಸ್ಥಿರ ಲಕ್ಷಣ",
+            customIgnoredStanzas: " ಬೇರೆ ಆಕಾರದ {count} ಪದ್ಯಖಂಡ(ಗಳನ್ನು) ಬಳಸಲಿಲ್ಲ.",
+            customLineEvidence: "{syllables} ಅಕ್ಷರ · {matras} ಮಾತ್ರೆ{cadence}{groups}{yati}",
+            cadenceEvidence: " · ಅಂತ್ಯ {pattern}",
+            groupEvidence: " · ಸಾಧ್ಯ {groups}",
+            yatiEvidence: " · {position}ನೇ ಅಕ್ಷರದ ನಂತರ ವಿರಾಮ",
+            rhymeSchemeLabel: "{label} · {scheme}",
+            customPatternSaved: "{name} ಉಳಿಸಿ ಆಯ್ಕೆ ಮಾಡಲಾಗಿದೆ.",
+            customPatternDeleted: "ಸ್ವಂತ ಲಯ ಅಳಿಸಲಾಗಿದೆ.",
+            customPatternDeleteConfirm: "ಈ ಸ್ವಂತ ಲಯವನ್ನು ಸಾಧನದಿಂದ ಅಳಿಸಬೇಕೇ?",
+            usePattern: "ಬಳಸಿ",
+            deletePattern: "ಅಳಿಸಿ",
+            customFormCard: "{mode} · {lines} ಸಾಲು · {samples} ಉದಾಹರಣೆ",
+            noPoemToLearn: "ಲಯ ಕಲಿಸುವ ಮೊದಲು ಕನಿಷ್ಠ ಒಂದು ಪೂರ್ಣ ಸಾಲು ಬರೆಯಿರಿ.",
+            patternNameRequired: "ಈ ಲಯಕ್ಕೆ ಹೆಸರಿಡಿ.",
             nativeInputHelp: "ಕನ್ನಡ, ತೆಲುಗು, ಗುಜರಾತಿ ಅಥವಾ ದೇವನಾಗರಿಯನ್ನು ಸ್ವಯಂ ಗುರುತಿಸುತ್ತದೆ.",
             romanInputHelp: "ರೋಮನ್ ಪಠ್ಯವನ್ನು ಆಫ್‌ಲೈನ್ ದೇವನಾಗರಿ ಪ್ರತಿಯ ಮೂಲಕ ವಿಶ್ಲೇಷಿಸುತ್ತದೆ; ನಿಮ್ಮ ಬರಹ ಬದಲಾಗುವುದಿಲ್ಲ.",
             romanPlaceholder: "ರೋಮನ್ ಲಿಪ್ಯಂತರದಲ್ಲಿ ಇಲ್ಲಿ ಬರೆಯಿರಿ…",
@@ -409,6 +487,7 @@
             noSelectedMeters: "ఏవీ లేవు",
             backupImported: "{added} దిగుమతి అయ్యాయి; {conflicts} భిన్న ప్రతులు ఉంచబడ్డాయి; {skipped} నకళ్లు దాటవేయబడ్డాయి.",
             backupInvalid: "ఈ దస్త్రం సరైన ఛందస్ బ్యాకప్ కాదు.",
+            customFormsImported: " {count} వ్యక్తిగత లయ(లు) పునరుద్ధరించబడ్డాయి.",
             localStorageUnavailable: "భద్రపరిచిన పద్యాలు అందుబాటులో లేవు; ప్రస్తుత ముసాయిదా మాత్రం స్థానికంగా తిరిగి లభిస్తుంది.",
             language: "తెర భాష",
             inputScheme: "ఇన్‌పుట్",
@@ -427,6 +506,44 @@
             compositionConverted: "రచన {target}కు మార్చబడింది.",
             conversionCopied: "మార్పు కాపీ అయింది",
             undo: "వెనక్కి",
+            learnPattern: "ఈ లయను నేర్పండి",
+            customForm: "నా ఛందోరూపం",
+            learnThisPattern: "ఈ లయను నేర్పండి",
+            learnPatternIntro: "ఛందస్ పునరావృత లక్షణాలను కనుగొంటుంది; వాటిలో ఏవి నియమాలో మీరు నిర్ణయించండి.",
+            patternName: "లయ పేరు",
+            patternNamePlaceholder: "నా లయ",
+            strictness: "కట్టుదిట్టత",
+            exactMould: "ఖచ్చితమైన మూస",
+            exactMouldHelp: "గమనించిన ప్రతి గురు–లఘు నమూనాను ఉంచండి.",
+            balancedForm: "సమతుల రూపం",
+            balancedFormHelp: "స్థిర లెక్కలు, చివరి నడక, పునరావృత బరువులను ఉంచండి.",
+            looseCadence: "సడలిన లయ",
+            looseCadenceHelp: "చిన్న లెక్క భేదాలను అనుమతించి బలమైన ఆధారాలనే ఉంచండి.",
+            includeAsRules: "నియమాలుగా చేర్చండి",
+            lineCadence: "స్థిర పంక్తి ముగింపులు",
+            inferredYati: "ఊహించిన విరామ స్థానాలు",
+            inferredEndRhyme: "ఊహించిన అంత్యప్రాస",
+            inferredSecondRhyme: "ఊహించిన రెండవ అక్షర ప్రాస",
+            inferredRefrain: "పునరావృత పల్లవి",
+            customFormCaution: "ఇది మీ వ్యక్తిగత రూపంగా నిల్వ అవుతుంది—సాంప్రదాయ ఛందస్సుగా చూపబడదు.",
+            saveAndUsePattern: "భద్రపరచి ఉపయోగించండి",
+            yourPatterns: "మీ లయలు",
+            noCustomForms: "ఇంకా వ్యక్తిగత లయలు లేవు.",
+            customEvidence: "{samples} సరిపోలిన పద్యభాగం(లు) · ఒక్కో భాగంలో {lines} పంక్తులు · {confidence}% స్థిర ఆధారం",
+            customIgnoredStanzas: " వేరే ఆకారంలోని {count} భాగం(లు) ఉపయోగించలేదు.",
+            customLineEvidence: "{syllables} అక్షరాలు · {matras} మాత్రలు{cadence}{groups}{yati}",
+            cadenceEvidence: " · ముగింపు {pattern}",
+            groupEvidence: " · సాధ్యమైనది {groups}",
+            yatiEvidence: " · {position}వ అక్షరం తర్వాత విరామం",
+            rhymeSchemeLabel: "{label} · {scheme}",
+            customPatternSaved: "{name} భద్రపరచి ఎంచుకోబడింది.",
+            customPatternDeleted: "వ్యక్తిగత లయ తొలగించబడింది.",
+            customPatternDeleteConfirm: "ఈ వ్యక్తిగత లయను పరికరం నుంచి తొలగించాలా?",
+            usePattern: "ఉపయోగించు",
+            deletePattern: "తొలగించు",
+            customFormCard: "{mode} · {lines} పంక్తులు · {samples} ఉదాహరణలు",
+            noPoemToLearn: "లయ నేర్పే ముందు కనీసం ఒక పూర్తి పంక్తి వ్రాయండి.",
+            patternNameRequired: "ఈ లయకు పేరు ఇవ్వండి.",
             nativeInputHelp: "కన్నడ, తెలుగు, గుజరాతీ లేదా దేవనాగరి స్వయంచాలకంగా గుర్తించబడుతుంది.",
             romanInputHelp: "రోమన్ పాఠ్యం ఆఫ్‌లైన్ దేవనాగరి ప్రతిరూపం ద్వారా విశ్లేషించబడుతుంది; మీ వ్రాత మారదు.",
             romanPlaceholder: "రోమన్ లిప్యంతరీకరణలో ఇక్కడ వ్రాయండి…",
@@ -590,6 +707,7 @@
             noSelectedMeters: "કોઈ નહીં",
             backupImported: "{added} આયાત થયાં; {conflicts} વિરોધી પ્રતિ રાખી; {skipped} નકલ છોડી.",
             backupInvalid: "આ માન્ય છંદસ બૅકઅપ ફાઇલ નથી.",
+            customFormsImported: " {count} વ્યક્તિગત લય પુનઃસ્થાપિત થઈ.",
             localStorageUnavailable: "સાચવેલાં પદ્યો ઉપલબ્ધ નથી, પણ વર્તમાન મુસદ્દો આ ઉપકરણમાં ફરી મળશે.",
             language: "ઇન્ટરફેસની ભાષા",
             inputScheme: "ઇનપુટ",
@@ -608,6 +726,44 @@
             compositionConverted: "રચના {target}માં ફેરવાઈ.",
             conversionCopied: "ફેરવેલું લખાણ નકલ થયું",
             undo: "પાછું ફેરવો",
+            learnPattern: "આ લય શીખવો",
+            customForm: "મારું છંદરૂપ",
+            learnThisPattern: "આ લય શીખવો",
+            learnPatternIntro: "છંદસ પુનરાવર્તિત લક્ષણો શોધે છે; તેમાંથી કયાં નિયમ બનશે તે તમે નક્કી કરો.",
+            patternName: "લયનું નામ",
+            patternNamePlaceholder: "મારી લય",
+            strictness: "કડકાઈ",
+            exactMould: "ચોક્કસ બીબું",
+            exactMouldHelp: "જોવાયેલી દરેક ગુરુ–લઘુ રચના રાખો.",
+            balancedForm: "સંતુલિત રૂપ",
+            balancedFormHelp: "સ્થિર ગણતરી, અંતિમ ચાલ અને પુનરાવર્તિત વજન રાખો.",
+            looseCadence: "ઢીલી લય",
+            looseCadenceHelp: "નાના ગણતરીભેદ સ્વીકારી માત્ર મજબૂત આધાર રાખો.",
+            includeAsRules: "નિયમ તરીકે ઉમેરો",
+            lineCadence: "સ્થિર પંક્તિ અંત",
+            inferredYati: "અનુમાનિત વિરામ સ્થાન",
+            inferredEndRhyme: "અનુમાનિત અંત્યપ્રાસ",
+            inferredSecondRhyme: "અનુમાનિત દ્વિતીયાક્ષર પ્રાસ",
+            inferredRefrain: "પુનરાવર્તિત ધ્રુવપંક્તિ",
+            customFormCaution: "આ તમારા ખાનગી રૂપ તરીકે સચવાશે—પરંપરાગત છંદ તરીકે રજૂ નહીં થાય.",
+            saveAndUsePattern: "સાચવો અને વાપરો",
+            yourPatterns: "તમારી લયો",
+            noCustomForms: "હજુ કોઈ વ્યક્તિગત લય સાચવેલી નથી.",
+            customEvidence: "{samples} મળતા પદ્યખંડ · દરેકમાં {lines} પંક્તિ · {confidence}% સ્થિર પુરાવો",
+            customIgnoredStanzas: " જુદા આકારના {count} પદ્યખંડ વપરાયા નથી.",
+            customLineEvidence: "{syllables} અક્ષર · {matras} માત્રા{cadence}{groups}{yati}",
+            cadenceEvidence: " · અંત {pattern}",
+            groupEvidence: " · શક્ય {groups}",
+            yatiEvidence: " · {position}મા અક્ષર પછી વિરામ",
+            rhymeSchemeLabel: "{label} · {scheme}",
+            customPatternSaved: "{name} સાચવીને પસંદ કરાયું.",
+            customPatternDeleted: "વ્યક્તિગત લય કાઢી નાખી.",
+            customPatternDeleteConfirm: "આ વ્યક્તિગત લય ઉપકરણમાંથી કાઢી નાખવી છે?",
+            usePattern: "વાપરો",
+            deletePattern: "કાઢો",
+            customFormCard: "{mode} · {lines} પંક્તિ · {samples} ઉદાહરણ",
+            noPoemToLearn: "લય શીખવતાં પહેલાં ઓછામાં ઓછી એક પૂર્ણ પંક્તિ લખો.",
+            patternNameRequired: "આ લયને નામ આપો.",
             nativeInputHelp: "કન્નડ, તેલુગુ, ગુજરાતી અથવા દેવનાગરી આપમેળે ઓળખાય છે.",
             romanInputHelp: "રોમન લખાણનું ઓફલાઇન દેવનાગરી પ્રતિરૂપ દ્વારા વિશ્લેષણ થાય છે; તમારું લખાણ બદલાતું નથી.",
             romanPlaceholder: "રોમન લિપ્યંતરણમાં અહીં લખો…",
@@ -741,6 +897,7 @@
     const elements = {};
     const state = {
         catalog: null,
+        baseCatalog: null,
         meters: [],
         filteredMeters: [],
         analysis: null,
@@ -776,7 +933,9 @@
         savedPoems: [],
         sharingPoem: null,
         pendingConversion: null,
-        conversionUndo: null
+        conversionUndo: null,
+        customForms: [],
+        pendingCustomInference: null
     };
 
     function cacheElements() {
@@ -803,7 +962,15 @@
             "backup-share", "backup-download", "backup-import", "backup-file",
             "conversion-dialog", "conversion-title", "conversion-summary",
             "conversion-warning", "conversion-preview", "close-conversion",
-            "cancel-conversion", "copy-conversion", "apply-conversion"
+            "cancel-conversion", "copy-conversion", "apply-conversion",
+            "learn-pattern", "learn-pattern-dialog", "close-learn-pattern",
+            "learn-pattern-review", "learn-pattern-evidence", "learn-pattern-lines",
+            "custom-form-name", "custom-enforce-cadence", "custom-yati-row",
+            "custom-enforce-yati", "custom-antya-row", "custom-enforce-antya",
+            "custom-antya-label", "custom-dvitiyakshara-row",
+            "custom-enforce-dvitiyakshara", "custom-dvitiyakshara-label",
+            "custom-refrain-row", "custom-enforce-refrain", "save-custom-form",
+            "custom-form-list", "custom-form-empty"
         ].forEach((id) => {
             elements[id] = document.getElementById(id);
         });
@@ -1450,6 +1617,36 @@
     }
 
     function structuralPadaGuide(meter, padaIndex, pada, script, wholeLine) {
+        if (meter.kind === "custom") {
+            const rule = meter.customRules && meter.customRules[padaIndex];
+            if (!rule) {
+                return "";
+            }
+            const count = rule.syllables.preferred;
+            const guide = Array(count).fill("○");
+            if (rule.allowedPatterns && rule.allowedPatterns.length === 1 &&
+                rule.allowedPatterns[0].length === count) {
+                Array.from(rule.allowedPatterns[0]).forEach((weight, index) => {
+                    guide[index] = weight;
+                });
+            }
+            (rule.weightConstraints || []).forEach((constraint) => {
+                if (constraint.position <= guide.length) {
+                    guide[constraint.position - 1] = constraint.weight;
+                }
+            });
+            if (rule.cadence && rule.cadence.length <= guide.length) {
+                const start = guide.length - rule.cadence.length;
+                Array.from(rule.cadence).forEach((weight, offset) => {
+                    guide[start + offset] = weight;
+                });
+            }
+            return formatWeightGuide(
+                guide.join(""),
+                script,
+                wholeLine || !pada ? 0 : pada.syllables.length
+            );
+        }
         if (meter.kind === "matra") {
             const repeating = meter.linePolicy &&
                 ["repeating", "variable"].includes(meter.linePolicy.type);
@@ -2699,10 +2896,18 @@
             state.analysis.stanzas[state.activeStanzaIndex];
         const selectedId = activeStanza ? activeStanza.selectedMeterId : "";
 
-        state.filteredMeters = state.meters.filter((meter) =>
+        const matchingMeters = state.meters.filter((meter) =>
             !queryKeys.length ||
             queryKeys.some((key) => meter.searchText.includes(key))
-        ).slice(0, 250);
+        );
+        state.filteredMeters = matchingMeters.slice(0, 250);
+        const selectedMeter = selectedId
+            ? matchingMeters.find((meter) => meter.id === selectedId)
+            : null;
+        if (selectedMeter && !state.filteredMeters.some((meter) =>
+            meter.id === selectedId)) {
+            state.filteredMeters.push(selectedMeter);
+        }
 
         const fragment = document.createDocumentFragment();
         if (!state.filteredMeters.length) {
@@ -3294,6 +3499,244 @@
         });
     }
 
+    function customModeLabel(mode) {
+        return t({
+            exact: "exactMould",
+            balanced: "balancedForm",
+            loose: "looseCadence"
+        }[mode] || "balancedForm");
+    }
+
+    function rangeLabel(range) {
+        return range.min === range.max
+            ? String(range.min)
+            : `${range.min}–${range.max}`;
+    }
+
+    function renderCustomInference(inference) {
+        const confidence = Math.round((inference.confidence || 0) * 100);
+        elements["learn-pattern-evidence"].textContent =
+            t("customEvidence", {
+                samples: inference.sampleCount,
+                lines: inference.lineCount,
+                confidence
+            }) + (inference.ignoredStanzaCount
+                ? t("customIgnoredStanzas", { count: inference.ignoredStanzaCount })
+                : "");
+        elements["learn-pattern-lines"].replaceChildren(
+            ...inference.roles.map((role) => {
+                const row = document.createElement("div");
+                row.className = "learn-pattern-line";
+                const number = document.createElement("strong");
+                number.textContent = String(role.line);
+                const evidence = document.createElement("span");
+                const cadence = role.cadence.length >= 2
+                    ? t("cadenceEvidence", { pattern: role.cadence })
+                    : "";
+                const groups = role.groupAlternatives[0]
+                    ? t("groupEvidence", {
+                        groups: role.groupAlternatives[0].join("+")
+                    })
+                    : "";
+                const yati = role.yati
+                    ? t("yatiEvidence", { position: role.yati.afterSyllable })
+                    : "";
+                evidence.textContent = t("customLineEvidence", {
+                    syllables: rangeLabel(role.syllables),
+                    matras: rangeLabel(role.matras),
+                    cadence,
+                    groups,
+                    yati
+                });
+                row.append(number, evidence);
+                return row;
+            })
+        );
+
+        const antya = inference.rhyme.antya;
+        elements["custom-antya-row"].hidden = !antya;
+        elements["custom-enforce-antya"].checked = Boolean(antya);
+        if (antya) {
+            elements["custom-antya-label"].textContent = t("rhymeSchemeLabel", {
+                label: t("inferredEndRhyme"),
+                scheme: antya.scheme
+            });
+        }
+        const dvitiyakshara = inference.rhyme.dvitiyakshara;
+        elements["custom-dvitiyakshara-row"].hidden = !dvitiyakshara;
+        elements["custom-enforce-dvitiyakshara"].checked =
+            Boolean(dvitiyakshara && !antya);
+        if (dvitiyakshara) {
+            elements["custom-dvitiyakshara-label"].textContent = t(
+                "rhymeSchemeLabel",
+                {
+                    label: t("inferredSecondRhyme"),
+                    scheme: dvitiyakshara.scheme
+                }
+            );
+        }
+        const hasYati = inference.roles.some((role) => Boolean(role.yati));
+        elements["custom-yati-row"].hidden = !hasYati;
+        elements["custom-enforce-yati"].checked = false;
+        elements["custom-refrain-row"].hidden = !inference.refrains.length;
+        elements["custom-enforce-refrain"].checked = Boolean(
+            inference.refrains.length
+        );
+        elements["custom-enforce-cadence"].checked = inference.roles.some((role) =>
+            role.cadence.length >= 2);
+    }
+
+    function defaultCustomFormName(inference) {
+        const first = inference.examples[0] || "";
+        const opening = first.split("\n").map((line) => line.trim()).find(Boolean) || "";
+        const short = opening.length > 32 ? `${opening.slice(0, 29)}…` : opening;
+        return short ? `${short} · ${t("customForm")}` : t("patternNamePlaceholder");
+    }
+
+    function renderCustomFormLibrary() {
+        elements["custom-form-list"].replaceChildren();
+        elements["custom-form-empty"].hidden = state.customForms.length > 0;
+        for (const form of state.customForms) {
+            const card = document.createElement("article");
+            card.className = "custom-form-card";
+            const identity = document.createElement("div");
+            const name = document.createElement("strong");
+            name.textContent = form.name;
+            const details = document.createElement("small");
+            details.textContent = t("customFormCard", {
+                mode: customModeLabel(form.mode),
+                lines: form.lineCount,
+                samples: form.evidence.sampleCount || 0
+            });
+            identity.append(name, details);
+            const actions = document.createElement("div");
+            actions.className = "custom-form-card-actions";
+            const use = document.createElement("button");
+            use.type = "button";
+            use.textContent = t("usePattern");
+            use.addEventListener("click", () => {
+                selectMeter(form.id);
+                elements["learn-pattern-dialog"].close();
+            });
+            const remove = document.createElement("button");
+            remove.type = "button";
+            remove.className = "delete";
+            remove.textContent = t("deletePattern");
+            remove.addEventListener("click", async () => {
+                if (!window.confirm(t("customPatternDeleteConfirm"))) {
+                    return;
+                }
+                state.customForms = state.customForms.filter((item) =>
+                    item.id !== form.id);
+                Object.keys(state.selections).forEach((key) => {
+                    if (state.selections[key] === form.id) {
+                        delete state.selections[key];
+                        delete state.templates[key];
+                        delete state.templateModes[key];
+                    }
+                });
+                await saveCustomForms();
+                rebuildMeterCatalog();
+                renderCustomFormLibrary();
+                runAnalysis();
+                showToast(t("customPatternDeleted"));
+            });
+            actions.append(use, remove);
+            card.append(identity, actions);
+            elements["custom-form-list"].append(card);
+        }
+    }
+
+    function closeLearnPatternDialog() {
+        state.pendingCustomInference = null;
+        const dialog = elements["learn-pattern-dialog"];
+        if (dialog.open) {
+            dialog.close();
+        }
+    }
+
+    function openLearnPatternDialog() {
+        renderCustomFormLibrary();
+        const stanza = state.analysis &&
+            state.analysis.stanzas[state.activeStanzaIndex];
+        if (!stanza || !stanza.lines.some((line) => line.syllables.length)) {
+            elements["learn-pattern-review"].hidden = true;
+            showToast(t("noPoemToLearn"));
+            elements["learn-pattern-dialog"].showModal();
+            return;
+        }
+        try {
+            const inference = ChandasCustomMeter.infer(state.analysis, {
+                activeStanzaIndex: state.activeStanzaIndex,
+                sourceScheme: state.inputScheme,
+                romanApi: ChandasRoman
+            });
+            state.pendingCustomInference = inference;
+            renderCustomInference(inference);
+            elements["custom-form-name"].value = defaultCustomFormName(inference);
+            const balanced = document.querySelector(
+                'input[name="custom-form-mode"][value="balanced"]'
+            );
+            balanced.checked = true;
+            elements["learn-pattern-review"].hidden = false;
+            elements["learn-pattern-dialog"].showModal();
+            requestAnimationFrame(() => elements["custom-form-name"].select());
+        } catch (error) {
+            elements["learn-pattern-review"].hidden = true;
+            showToast(t("noPoemToLearn"));
+            elements["learn-pattern-dialog"].showModal();
+        }
+    }
+
+    async function saveCustomForms() {
+        try {
+            localStorage.setItem(
+                ChandasCustomMeter.LOCAL_STORAGE_KEY,
+                JSON.stringify(state.customForms)
+            );
+        } catch (error) {
+            // IndexedDB below remains the primary durable store when available.
+        }
+        if (state.repository) {
+            await state.repository.setMeta(
+                ChandasCustomMeter.STORAGE_META_KEY,
+                state.customForms
+            );
+        }
+    }
+
+    async function savePendingCustomForm() {
+        const inference = state.pendingCustomInference;
+        const name = elements["custom-form-name"].value.trim();
+        if (!inference || !name) {
+            showToast(t("patternNameRequired"));
+            elements["custom-form-name"].focus();
+            return;
+        }
+        const mode = document.querySelector(
+            'input[name="custom-form-mode"]:checked'
+        ).value;
+        const form = ChandasCustomMeter.buildForm(inference, {
+            name,
+            mode,
+            enforceCadence: elements["custom-enforce-cadence"].checked,
+            enforceYati: elements["custom-enforce-yati"].checked,
+            enforceAntya: elements["custom-enforce-antya"].checked,
+            enforceDvitiyakshara:
+                elements["custom-enforce-dvitiyakshara"].checked,
+            enforceRefrain: elements["custom-enforce-refrain"].checked
+        });
+        state.customForms = ChandasCustomMeter.normalizeForms([
+            ...state.customForms,
+            form
+        ]);
+        await saveCustomForms();
+        rebuildMeterCatalog();
+        selectMeter(form.id);
+        closeLearnPatternDialog();
+        showToast(t("customPatternSaved", { name: form.name }));
+    }
+
     function closeShareDialog() {
         const dialog = elements["share-dialog"];
         if (dialog && dialog.open) {
@@ -3501,7 +3944,10 @@
     }
 
     function backupFile(poems) {
-        const json = JSON.stringify(ChandasPoemStore.makeBackup(poems), null, 2);
+        const json = JSON.stringify(ChandasPoemStore.makeBackup(
+            poems,
+            state.customForms
+        ), null, 2);
         const date = new Date().toISOString().slice(0, 10);
         return new File([json], `chandas-backup-${date}.json`, {
             type: "application/json"
@@ -3603,9 +4049,24 @@
             return;
         }
         try {
-            const result = await state.repository.import(await file.text());
+            const text = await file.text();
+            const workspace = ChandasPoemStore.parseWorkspaceBackup(text);
+            const result = await state.repository.import(text);
+            const mergedForms = ChandasCustomMeter.mergeForms(
+                state.customForms,
+                workspace.customForms
+            );
+            state.customForms = mergedForms.forms;
+            await saveCustomForms();
+            rebuildMeterCatalog();
+            runAnalysis();
             await refreshSavedPoems();
-            showToast(t("backupImported", result));
+            showToast(t("backupImported", result) +
+                (mergedForms.added || mergedForms.conflicts
+                    ? t("customFormsImported", {
+                        count: mergedForms.added + mergedForms.conflicts
+                    })
+                    : ""));
         } catch (error) {
             console.warn("Backup import rejected", error);
             showToast(t("backupInvalid"));
@@ -3650,6 +4111,18 @@
         if (event.clientX < bounds.left || event.clientX > bounds.right ||
             event.clientY < bounds.top || event.clientY > bounds.bottom) {
             closeConversionDialog();
+        }
+    }
+
+    function dismissLearnPatternFromBackdrop(event) {
+        const dialog = elements["learn-pattern-dialog"];
+        if (event.target !== dialog) {
+            return;
+        }
+        const bounds = dialog.getBoundingClientRect();
+        if (event.clientX < bounds.left || event.clientX > bounds.right ||
+            event.clientY < bounds.top || event.clientY > bounds.bottom) {
+            closeLearnPatternDialog();
         }
     }
 
@@ -3750,6 +4223,48 @@
         }
     }
 
+    function rebuildMeterCatalog() {
+        if (!state.baseCatalog) {
+            return;
+        }
+        state.catalog = {
+            ...state.baseCatalog,
+            structuralMeters: [
+                ...(state.baseCatalog.structuralMeters || []),
+                ...state.customForms.map((form) =>
+                    ChandasCustomMeter.toCatalogMeter(form))
+            ]
+        };
+        state.meters = Chandas.normalizeCatalog(state.catalog)
+            .map((meter) => ({
+                ...meter,
+                searchText: meterSearchKeys(
+                    [meter.name, ...(meter.aliases || [])].join(" ")
+                ).join(" ")
+            }))
+            .sort((left, right) => left.name.localeCompare(right.name));
+        filterMeterOptions(elements["meter-search"].value || "");
+    }
+
+    async function loadCustomForms() {
+        let stored;
+        if (state.repository) {
+            stored = await state.repository.getMeta(
+                ChandasCustomMeter.STORAGE_META_KEY
+            );
+        }
+        if (!stored) {
+            try {
+                stored = JSON.parse(
+                    localStorage.getItem(ChandasCustomMeter.LOCAL_STORAGE_KEY) || "[]"
+                );
+            } catch (error) {
+                stored = [];
+            }
+        }
+        state.customForms = ChandasCustomMeter.normalizeForms(stored);
+    }
+
     async function loadCatalog() {
         const [fixedResponse, structuralResponse] = await Promise.all([
             fetch("mishra.json", { cache: "force-cache" }),
@@ -3762,7 +4277,7 @@
         }
         const fixedCatalog = await fixedResponse.json();
         const structuralCatalog = await structuralResponse.json();
-        state.catalog = {
+        state.baseCatalog = {
             ...fixedCatalog,
             metres: [
                 ...(fixedCatalog.metres || []),
@@ -3772,15 +4287,7 @@
             meterProminence: structuralCatalog.meterProminence || {},
             structuralCatalogVersion: structuralCatalog.catalogVersion
         };
-        state.meters = Chandas.normalizeCatalog(state.catalog)
-            .map((meter) => ({
-                ...meter,
-                searchText: meterSearchKeys(
-                    [meter.name, ...(meter.aliases || [])].join(" ")
-                ).join(" ")
-            }))
-            .sort((left, right) => left.name.localeCompare(right.name));
-        filterMeterOptions("");
+        rebuildMeterCatalog();
     }
 
     function strongInputPosition(input) {
@@ -4000,6 +4507,28 @@
             "click",
             applyPendingConversion
         );
+        elements["learn-pattern"].addEventListener("click", openLearnPatternDialog);
+        elements["close-learn-pattern"].addEventListener(
+            "click",
+            closeLearnPatternDialog
+        );
+        elements["learn-pattern-dialog"].addEventListener(
+            "click",
+            dismissLearnPatternFromBackdrop
+        );
+        elements["learn-pattern-dialog"].addEventListener("close", () => {
+            state.pendingCustomInference = null;
+        });
+        elements["save-custom-form"].addEventListener(
+            "click",
+            savePendingCustomForm
+        );
+        elements["custom-form-name"].addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                savePendingCustomForm();
+            }
+        });
 
         elements["new-draft"].addEventListener("click", clearDraft);
         elements["saved-poems"].addEventListener("click", showSavedPoems);
@@ -4227,6 +4756,7 @@
         renderPlainOverlay();
 
         try {
+            await loadCustomForms();
             await loadCatalog();
             runAnalysis();
         } catch (error) {

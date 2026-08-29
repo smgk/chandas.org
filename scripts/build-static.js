@@ -21,6 +21,7 @@ const assets = [
     "scansion.js",
     "shithila_dvitva.js",
     "strong_template.js",
+    "custom_meter.js",
     "mishra.json",
     "structural_meters.json",
     "examples/field_guide_corpus.json",

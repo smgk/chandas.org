@@ -709,6 +709,30 @@ analysis result.
    explain that it removes distinctions required for meter analysis and MUST
    NOT replace an analyzed buffer until a reversible, explicitly uncertain
    input model exists.
+2j. The writing slate MUST offer a compact **Learn this pattern** action for
+   deriving a private, named custom form from the current composition. The
+   first release is a written-text model, not a claim that the composition is
+   a traditional meter or that it captures performed melody. It MUST infer and
+   show the evidence before saving: stanza/line shape, per-line syllable and
+   mātrā ranges, observed Guru/Laghu patterns, stable cadence, possible mātrā
+   grouping, plausible yati, second-letter and line-end rhyme schemes, repeated
+   refrains, sample count, and confidence. Stanzas with the active stanza's
+   line count provide the evidence; different-shaped stanzas MUST be reported
+   as ignored rather than silently mixed into one form.
+2k. The user MUST name the custom form and choose an Exact, Balanced, or Loose
+   profile. Rhythm, yati, rhyme, and refrain constraints MUST remain separately
+   reviewable switches. Exact preserves observed complete line patterns;
+   Balanced preserves stable positions and observed ranges; Loose widens the
+   observed syllable and mātrā ranges without changing classical catalog rules.
+   A saved custom form MUST be selectable, rankable, and validated by the same
+   stanza-local workflow as a catalog meter while remaining visibly labeled
+   user-defined.
+2l. Custom forms and their source evidence MUST remain on the device, be
+   included in Full backup/restore, and never be sent in analytics. Imported
+   records MUST be bounded, validated, and isolated from the built-in meter
+   catalog. A future performance-aware extension MAY add tapping or recitation
+   timing, but it MUST preserve the written-text profile and require explicit
+   user confirmation before changing any rule.
 3. `mishra.json` MUST be treated as the source list for the initial meter
    catalog. The runtime representation MAY be transformed during the build,
    provided tests prove that every source entry and pattern is retained.
@@ -1093,6 +1117,10 @@ The MVP is acceptable when:
 16. A samasyā-pūraṇa link containing only a later pāda retains its leading
     blank lines through URL copy/import and Ghost/Strong switching. Its Strong
     slot matrix retains all earlier blank rows and cells.
+17. A user can review, name, save, select, validate, reload, back up, restore,
+    and delete a custom form without changing any built-in meter. An Exact
+    custom form marks a changed Guru/Laghu position, and malformed imported
+    custom records cannot crash analysis or escape their documented limits.
 
 ## 10. Test Strategy
 
@@ -1161,6 +1189,11 @@ The MVP is acceptable when:
   source text, copy, share fallback, URL-import parsing and one-shot appending,
   URL meter/template choices, and synonym-dropdown placeholder behavior where
   present.
+- **Custom-form tests:** Infer multiple same-shaped stanza samples, report
+  ignored shapes, verify exact/balanced/loose rules, optional cadence/yati/rhyme
+  and refrain enforcement, stanza-local source ranges, catalog ranking,
+  persistence, backup merging, malformed-record rejection, deletion, and
+  unchanged results for every built-in-meter regression fixture.
 - **End-to-end tests:** Type with simulated IME events; paste; undo/redo; select
   different meters in multiple stanzas; split and merge stanzas; repair a
   violation; enable and disable a ghost template without changing the poem;
@@ -1218,6 +1251,9 @@ The MVP is acceptable when:
 - The Android artifact MUST bundle all core application, analysis, localization,
   and meter-catalog assets needed for full offline operation. It MUST NOT rely
   on a first-run network fetch to enable the core workflow.
+- Custom-form inference, storage, selection, and validation MUST ship as static
+  application code and local data only. Deployment MUST NOT introduce an API,
+  hosted poem database, model download, or other paid service.
 - The container prototype MUST verify IME behavior, inline highlighting,
   offline operation, local recovery, sharing, accessibility, lifecycle
   restoration, and Play policy compliance.

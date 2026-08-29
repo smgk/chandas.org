@@ -135,6 +135,59 @@ test("keeps lossy colloquial Roman as a copy-only preview", async ({ page }) => 
     await expect(page.locator("#input-scheme")).toHaveValue("native");
 });
 
+test("learns, saves, validates, restores, and deletes a private custom form", async ({
+    page
+}) => {
+    const source = "ಕ ಕಾ\nಗ ಗಾ\n\nಚ ಚಾ\nಜ ಜಾ";
+    await page.locator("#composition").fill(source);
+    await page.locator("#learn-pattern").click();
+    await expect(page.locator("#learn-pattern-dialog")).toBeVisible();
+    await expect(page.locator("#learn-pattern-evidence"))
+        .toContainText("2 matching stanza");
+    await expect(page.locator(".learn-pattern-line")).toHaveCount(2);
+    await expect(page.locator(".learn-pattern-line").first())
+        .toContainText("2 syllables · 3 mātrās");
+    await page.locator("#custom-form-name").fill("My dancing cadence");
+    await page.locator("#save-custom-form").click();
+
+    await expect(page.locator("#learn-pattern-dialog")).toBeHidden();
+    await expect(page.locator("#selected-meter-name"))
+        .toHaveText("My dancing cadence");
+    await expect(page.locator("#validation-summary"))
+        .toContainText("My dancing cadence");
+    const customId = await page.locator("#meter-select").inputValue();
+    expect(customId).toMatch(/^custom:/);
+
+    await page.waitForTimeout(400);
+    await page.reload();
+    await expect(page.locator("#composition")).toHaveValue(source);
+    await expect(page.locator("#selected-meter-name"))
+        .toHaveText("My dancing cadence");
+    await expect(page.locator("#meter-select")).toHaveValue(customId);
+
+    await page.locator("#learn-pattern").click();
+    await expect(page.locator(".custom-form-card")).toHaveCount(1);
+    await expect(page.locator(".custom-form-card"))
+        .toContainText("My dancing cadence");
+    page.once("dialog", (dialog) => dialog.accept());
+    await page.locator(".custom-form-card .delete").click();
+    await expect(page.locator("#custom-form-empty")).toBeVisible();
+    await expect(page.locator("#selected-meter-reference")).toBeHidden();
+});
+
+test("marks departures from an exact learned Guru-Laghu mould", async ({ page }) => {
+    await page.locator("#composition").fill("ಕ ಕಾ\nಗ ಗಾ");
+    await page.locator("#learn-pattern").click();
+    await page.locator("#custom-form-name").fill("Exact two-line mould");
+    await page.locator('input[name="custom-form-mode"][value="exact"]').check();
+    await page.locator("#save-custom-form").click();
+    await expect(page.locator("#learn-pattern-dialog")).toBeHidden();
+    await page.locator("#composition").fill("ಕ ಕ\nಗ ಗಾ");
+    await expect(page.locator("#active-pattern")).toHaveText("LL / LG");
+    await expect(page.locator("#validation-summary")).toContainText("mismatched");
+    await expect(page.locator("#highlight-layer .violation")).toHaveCount(1);
+});
+
 test("shows Telugu-native Guru and Laghu template symbols", async ({ page }) => {
     await page.locator("#composition").fill("క");
     await page.locator("#meter-picker summary").click();

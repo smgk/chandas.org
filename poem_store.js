@@ -21,6 +21,7 @@
     const BACKUP_VERSION = 1;
     const MAX_BACKUP_BYTES = 10 * 1024 * 1024;
     const MAX_POEMS = 5000;
+    const MAX_CUSTOM_FORMS = 100;
 
     function clone(value) {
         return JSON.parse(JSON.stringify(value));
@@ -117,16 +118,17 @@
         return JSON.stringify(copy);
     }
 
-    function makeBackup(poems) {
+    function makeBackup(poems, customForms) {
         return {
             format: BACKUP_FORMAT,
             version: BACKUP_VERSION,
             exportedAt: new Date().toISOString(),
-            poems: poems.map((poem) => normalizePoem(poem))
+            poems: poems.map((poem) => normalizePoem(poem)),
+            customForms: Array.isArray(customForms) ? clone(customForms) : []
         };
     }
 
-    function parseBackup(input) {
+    function parseBackupEnvelope(input) {
         const text = typeof input === "string" ? input : JSON.stringify(input);
         if (text.length > MAX_BACKUP_BYTES) {
             throw new Error("Backup file is too large");
@@ -144,8 +146,13 @@
         if (data.poems.length > MAX_POEMS) {
             throw new Error("Backup contains too many poems");
         }
+        if (data.customForms !== undefined &&
+            (!Array.isArray(data.customForms) ||
+                data.customForms.length > MAX_CUSTOM_FORMS)) {
+            throw new Error("Backup contains invalid custom forms");
+        }
         const seen = new Set();
-        return data.poems.map((poem) => {
+        const poems = data.poems.map((poem) => {
             if (!poem || typeof poem !== "object" || Array.isArray(poem) ||
                 typeof poem.id !== "string" || !poem.id ||
                 typeof poem.text !== "string") {
@@ -158,6 +165,18 @@
             seen.add(normalized.id);
             return normalized;
         });
+        return {
+            poems,
+            customForms: clone(data.customForms || [])
+        };
+    }
+
+    function parseBackup(input) {
+        return parseBackupEnvelope(input).poems;
+    }
+
+    function parseWorkspaceBackup(input) {
+        return parseBackupEnvelope(input);
     }
 
     function mergePoems(existingPoems, importedPoems, idFactory) {
@@ -310,12 +329,14 @@
         BACKUP_FORMAT,
         BACKUP_VERSION,
         MAX_BACKUP_BYTES,
+        MAX_CUSTOM_FORMS,
         PoemRepository,
         createId,
         defaultTitle,
         makeBackup,
         mergePoems,
         normalizePoem,
-        parseBackup
+        parseBackup,
+        parseWorkspaceBackup
     };
 }));

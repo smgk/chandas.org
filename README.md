@@ -34,6 +34,9 @@ runs locally; composing does not require an account, server, or cloud database.
   pathyā and classical na/bha/ma/ra-vipulā Anuṣṭubh detection in both four-
   pāda and conservative `8 + 8 / 8 + 8` layouts.
 - Offers non-destructive Ghost guides and fixed-vṛtta Strong templates.
+- Learns a private named custom form from the composition's recurring written
+  shape, cadence, optional yati, rhyme, and refrain, with Exact, Balanced, and
+  Loose validation profiles.
 - Saves poems privately in browser storage and supports readable text export,
   full backup, restore, copy, sharing, and analysis links.
 - Works as an installable PWA and keeps the core workflow available offline.
@@ -132,6 +135,7 @@ Android application is built and released separately.
 | --- | --- |
 | `meter_analysis.js` | Unicode syllable analysis, meter scoring, validation, and prāsa |
 | `roman_transliteration.js` | Offline Roman parsing, native/Roman buffer conversion, Devanagari shadows, and source-range projection |
+| `custom_meter.js` | Reviewable custom-form inference, validation schema, local persistence normalization, and catalog projection |
 | `mishra.json` | Attributed baseline fixed-vṛtta catalog |
 | `structural_meters.json` | Versioned structural, mātrā, aṃśa, and sourced fixed-meter extensions |
 | `examples/field_guide_corpus.json` | Sourced Kannada, Telugu, and Devanagari examples used by tests and Learn |

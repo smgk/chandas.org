@@ -831,7 +831,8 @@
             .filter((entry) => entry && entry.id && entry.name &&
                 (entry.kind === "matra" || entry.kind === "amsha" ||
                     entry.kind === "telugu-gana" ||
-                    entry.kind === "syllable-structural"))
+                    entry.kind === "syllable-structural" ||
+                    entry.kind === "custom"))
             .map((entry, index) => ({
                 ...entry,
                 id: String(entry.id),
@@ -2512,6 +2513,17 @@
             relation.type === "antya-prasa"
             ? "antya"
             : "dvitiyakshara";
+        if (Array.isArray(relation.lineGroups) && relation.lineGroups.length) {
+            return {
+                type,
+                groups: relation.lineGroups.map((lineGroup) =>
+                    lineGroup.map((lineNumber) => {
+                        const index = Number(lineNumber) - 1;
+                        const pada = padas[index];
+                        return pada ? prasaOccurrence(pada, type) : null;
+                    }).filter(Boolean)).filter((group) => group.length)
+            };
+        }
         const pairwise = relation.type === "pairwise-antya-prasa" ||
             relation.type === "pairwise-dvitiyakshara-prasa";
         const pairSize = pairwise
@@ -3104,6 +3116,163 @@
         return result;
     }
 
+    function closestCustomPattern(actual, patterns) {
+        return (patterns || []).map((pattern, index) => ({
+            pattern: sanitizePattern(pattern),
+            index,
+            distance: sanitizedEditDistance(actual, pattern)
+        })).sort((left, right) =>
+            left.distance - right.distance || left.index - right.index)[0] || null;
+    }
+
+    function normalizedRefrainText(value) {
+        return String(value || "").trim().replace(/\s+/g, " ");
+    }
+
+    function evaluateCustomMeter(padas, meter, shouldMark) {
+        const rules = meter.customRules || [];
+        let ruleFailures = 0;
+        let missingCount = 0;
+        const completePadas = [];
+
+        for (let index = 0; index < Math.max(padas.length, rules.length); index += 1) {
+            const pada = padas[index];
+            const rule = rules[index];
+            if (!rule) {
+                if (pada) {
+                    ruleFailures += Math.max(1, pada.syllables.length);
+                    pada.syllables.forEach((syllable) =>
+                        setViolation(syllable, "extra-pada", "", shouldMark));
+                }
+                continue;
+            }
+            const syllableRange = rule.syllables || { min: 1, max: Infinity };
+            const matraRange = rule.matras || { min: 1, max: Infinity };
+            if (!pada) {
+                missingCount += Math.max(1, syllableRange.min || 1);
+                completePadas[index] = false;
+                continue;
+            }
+
+            const syllableCount = pada.syllables.length;
+            const matras = pada.matras;
+            const syllableShortfall = Math.max(0, syllableRange.min - syllableCount);
+            const matraShortfall = Math.max(0, matraRange.min - matras);
+            missingCount += Math.max(syllableShortfall, matraShortfall);
+            completePadas[index] = syllableShortfall === 0 && matraShortfall === 0;
+
+            if (syllableCount > syllableRange.max) {
+                const extras = pada.syllables.slice(syllableRange.max);
+                ruleFailures += extras.length;
+                extras.forEach((syllable) =>
+                    setViolation(syllable, "extra-syllable", "", shouldMark));
+            }
+            if (matras > matraRange.max) {
+                ruleFailures += matras - matraRange.max;
+                const last = pada.syllables.at(-1);
+                setViolation(
+                    last,
+                    "extra-matra",
+                    `${matraRange.max} mātrās`,
+                    shouldMark
+                );
+            }
+
+            const actual = pada.pattern;
+            const closest = closestCustomPattern(actual, rule.allowedPatterns);
+            if (closest && closest.pattern !== actual) {
+                const limit = Math.min(actual.length, closest.pattern.length);
+                for (let position = 0; position < limit; position += 1) {
+                    if (actual[position] !== closest.pattern[position]) {
+                        ruleFailures += 1;
+                        setViolation(
+                            pada.syllables[position],
+                            "weight-mismatch",
+                            closest.pattern[position],
+                            shouldMark
+                        );
+                    }
+                }
+            }
+
+            for (const constraint of rule.weightConstraints || []) {
+                const syllable = pada.syllables[constraint.position - 1];
+                if (syllable && syllable.classification !== constraint.weight) {
+                    ruleFailures += 1;
+                    setViolation(
+                        syllable,
+                        "weight-mismatch",
+                        constraint.weight,
+                        shouldMark
+                    );
+                }
+            }
+
+            if (rule.cadence && actual.length >= rule.cadence.length) {
+                const start = actual.length - rule.cadence.length;
+                Array.from(rule.cadence).forEach((weight, offset) => {
+                    const syllable = pada.syllables[start + offset];
+                    if (syllable && syllable.classification !== weight) {
+                        ruleFailures += 1;
+                        setViolation(syllable, "weight-mismatch", weight, shouldMark);
+                    }
+                });
+            }
+
+            if (rule.yatiAfter) {
+                const before = pada.syllables[rule.yatiAfter - 1];
+                const after = pada.syllables[rule.yatiAfter];
+                if (before && after) {
+                    const gap = pada.text.slice(
+                        before.end - pada.start,
+                        after.start - pada.start
+                    );
+                    if (!gap || !METRIC_BOUNDARY_RE.test(gap)) {
+                        ruleFailures += 1;
+                        setViolation(
+                            after,
+                            "required-caesura",
+                            `boundary after syllable ${rule.yatiAfter}`,
+                            shouldMark
+                        );
+                    }
+                }
+            }
+        }
+
+        for (const refrain of meter.refrains || []) {
+            const pada = padas[Number(refrain.line) - 1];
+            if (pada && normalizedRefrainText(pada.text) !==
+                normalizedRefrainText(refrain.text)) {
+                ruleFailures += 1;
+                setViolation(
+                    pada.syllables[0],
+                    "refrain-mismatch",
+                    refrain.text,
+                    shouldMark
+                );
+            }
+        }
+
+        const prasa = evaluateLineRelations(
+            padas,
+            meter,
+            shouldMark,
+            { completePadas }
+        );
+        ruleFailures += prasa.failures;
+        const result = structuralScore(
+            padas,
+            rules.length,
+            ruleFailures,
+            missingCount,
+            rules.reduce((sum, rule) => sum + (rule.syllables.preferred || 0), 0)
+        );
+        setStructuralProgress(result, completePadas, rules.length, padas.length);
+        result.prasa = prasa;
+        return result;
+    }
+
     function evaluateMatraMeter(padas, meter, shouldMark) {
         let ruleFailures = 0;
         let missingCount = 0;
@@ -3285,6 +3454,9 @@
             }
             return result;
         }
+        if (meter.kind === "custom") {
+            return evaluateCustomMeter(metricUnits, meter, shouldMark);
+        }
         if (meter.kind === "amsha") {
             return evaluateAmshaMeter(metricUnits, meter, shouldMark);
         }
@@ -3406,6 +3578,7 @@
                     }[matchLevel],
                     constraintRank: {
                         "syllable-structural": 1,
+                        custom: 1,
                         matra: 2,
                         amsha: 3,
                         "telugu-gana": 3
@@ -3709,7 +3882,7 @@
 
         return {
             text: originalText,
-            analysisVersion: "2.20.0",
+            analysisVersion: "2.21.0",
             catalogVersion: catalog && catalog.structuralCatalogVersion
                 ? String(catalog.structuralCatalogVersion)
                 : "",

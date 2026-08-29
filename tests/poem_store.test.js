@@ -13,7 +13,8 @@ const {
     makeBackup,
     mergePoems,
     normalizePoem,
-    parseBackup
+    parseBackup,
+    parseWorkspaceBackup
 } = require("../poem_store.js");
 
 function poem(overrides) {
@@ -63,7 +64,12 @@ test("preserves Gujarati as a saved interface language", () => {
 });
 
 test("exports and parses a portable versioned backup", () => {
-    const backup = makeBackup([poem()]);
+    const customForms = [{
+        id: "custom:test",
+        name: "My cadence",
+        rules: [{ syllables: { min: 2, max: 2 } }]
+    }];
+    const backup = makeBackup([poem()], customForms);
     assert.equal(backup.format, BACKUP_FORMAT);
     assert.equal(backup.version, 1);
     const restored = parseBackup(JSON.stringify(backup));
@@ -72,6 +78,8 @@ test("exports and parses a portable versioned backup", () => {
     assert.deepEqual(restored[0].selections, { 0: "madhu" });
     assert.equal(restored[0].detectShithilaDvitva, true);
     assert.equal(restored[0].scansionMode, "amsha");
+    const workspace = parseWorkspaceBackup(JSON.stringify(backup));
+    assert.deepEqual(workspace.customForms, customForms);
 });
 
 test("rejects foreign, malformed, and duplicate-id backups", () => {

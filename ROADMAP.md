@@ -2,7 +2,7 @@
 
 **Status:** Active post-MVP plan
 
-**Updated:** 2026-08-13
+**Updated:** 2026-08-28
 
 **Baseline:** `mvp-baseline`
 
@@ -51,6 +51,9 @@ post-MVP track**, not a distant “more meters someday” item.
   two-pāda half-verse lines, with bounded inference and source-local errors.
 - One-shot URL verse import with exact line-break preservation,
   recovered-draft appending, and optional per-stanza meter/template selection.
+- Private custom forms learned from a composition's written line shape,
+  syllable/mātrā ranges, Guru/Laghu cadence, optional yati, rhyme, and refrain;
+  Exact, Balanced, and Loose profiles stay on-device and travel in full backup.
 
 The UI must not label a result “exact Kanda,” “exact Ragale,” or “exact
 Ṣaṭpadi” until the relevant internal gaṇa, line-structure, and exception rules
@@ -350,6 +353,11 @@ week per meter-family presentation
   golden-corpus tests.
 - [x] Treat transliteration as a separate, optional layer, never as a replacement
   for preserving the original text.
+- [x] Add review-before-save custom-form learning from written compositions,
+  with bounded local persistence and no changes to the classical catalogs.
+- [ ] Extend custom forms with an optional performance layer for tapped or
+  recited timing, stress/accent, pauses, and recurring musical phrases. Keep it
+  separate from the reproducible written-text model.
 
 ### M9 — Privacy-preserving short analysis links
 

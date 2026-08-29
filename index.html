@@ -20,6 +20,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <script src="shithila_dvitva.js" defer></script>
     <script src="strong_template.js" defer></script>
     <script src="poem_store.js" defer></script>
+    <script src="custom_meter.js" defer></script>
     <script src="analytics.js" defer></script>
     <script src="app.js" defer></script>
 </head>
@@ -257,6 +258,10 @@ SPDX-License-Identifier: GPL-3.0-only
                             <span class="mini-label" data-i18n="closestMeters">Closest meters</span>
                             <p id="suggestion-note" data-i18n="suggestionNote">Suggestions adjust while you type.</p>
                         </div>
+                        <button id="learn-pattern" class="quiet-button learn-pattern-button"
+                            type="button" data-i18n="learnPattern">
+                            Learn this pattern
+                        </button>
                     </div>
                     <div id="candidate-list" class="candidate-list"></div>
 
@@ -379,6 +384,86 @@ SPDX-License-Identifier: GPL-3.0-only
             <button id="copy-conversion" type="button" class="destination-button" data-i18n="copyConversion">Copy conversion</button>
             <button id="apply-conversion" type="button" class="primary-button" data-i18n="replaceComposition">Replace composition</button>
         </div>
+    </dialog>
+
+    <dialog id="learn-pattern-dialog" class="learn-pattern-dialog" aria-labelledby="learn-pattern-title">
+        <div class="dialog-heading">
+            <div>
+                <p class="eyebrow" data-i18n="customForm">Custom form</p>
+                <h2 id="learn-pattern-title" data-i18n="learnThisPattern">Learn this pattern</h2>
+            </div>
+            <button id="close-learn-pattern" class="close-button" type="button" aria-label="Close">×</button>
+        </div>
+        <p class="learn-pattern-intro" data-i18n="learnPatternIntro">
+            Chandas finds recurring evidence; you decide which observations become rules.
+        </p>
+        <div id="learn-pattern-review" hidden>
+            <p id="learn-pattern-evidence" class="learn-pattern-evidence"></p>
+            <div id="learn-pattern-lines" class="learn-pattern-lines"></div>
+
+            <label class="learn-pattern-name" for="custom-form-name">
+                <span data-i18n="patternName">Pattern name</span>
+                <input id="custom-form-name" type="text" maxlength="120"
+                    autocomplete="off" data-i18n-placeholder="patternNamePlaceholder"
+                    placeholder="My cadence">
+            </label>
+
+            <fieldset class="learn-pattern-modes">
+                <legend data-i18n="strictness">Strictness</legend>
+                <label>
+                    <input type="radio" name="custom-form-mode" value="exact">
+                    <span><strong data-i18n="exactMould">Exact mould</strong>
+                        <small data-i18n="exactMouldHelp">Keep every observed Guru–Laghu pattern.</small></span>
+                </label>
+                <label>
+                    <input type="radio" name="custom-form-mode" value="balanced" checked>
+                    <span><strong data-i18n="balancedForm">Balanced form</strong>
+                        <small data-i18n="balancedFormHelp">Keep stable counts, cadence, and recurring weights.</small></span>
+                </label>
+                <label>
+                    <input type="radio" name="custom-form-mode" value="loose">
+                    <span><strong data-i18n="looseCadence">Loose cadence</strong>
+                        <small data-i18n="looseCadenceHelp">Allow small count variations and retain only strong anchors.</small></span>
+                </label>
+            </fieldset>
+
+            <fieldset class="learn-pattern-constraints">
+                <legend data-i18n="includeAsRules">Include as rules</legend>
+                <label id="custom-cadence-row">
+                    <input id="custom-enforce-cadence" type="checkbox" checked>
+                    <span data-i18n="lineCadence">Stable line endings</span>
+                </label>
+                <label id="custom-yati-row" hidden>
+                    <input id="custom-enforce-yati" type="checkbox">
+                    <span data-i18n="inferredYati">Inferred pause positions</span>
+                </label>
+                <label id="custom-antya-row" hidden>
+                    <input id="custom-enforce-antya" type="checkbox" checked>
+                    <span id="custom-antya-label" data-i18n="inferredEndRhyme">Inferred end rhyme</span>
+                </label>
+                <label id="custom-dvitiyakshara-row" hidden>
+                    <input id="custom-enforce-dvitiyakshara" type="checkbox">
+                    <span id="custom-dvitiyakshara-label" data-i18n="inferredSecondRhyme">Inferred second-letter prāsa</span>
+                </label>
+                <label id="custom-refrain-row" hidden>
+                    <input id="custom-enforce-refrain" type="checkbox" checked>
+                    <span data-i18n="inferredRefrain">Repeated refrain</span>
+                </label>
+            </fieldset>
+            <p class="learn-pattern-note" data-i18n="customFormCaution">
+                Saved privately as your form—not presented as a traditional meter.
+            </p>
+            <div class="learn-pattern-actions">
+                <button id="save-custom-form" class="primary-button" type="button"
+                    data-i18n="saveAndUsePattern">Save and use pattern</button>
+            </div>
+        </div>
+
+        <section class="custom-form-library" aria-labelledby="custom-form-library-title">
+            <h3 id="custom-form-library-title" data-i18n="yourPatterns">Your patterns</h3>
+            <div id="custom-form-list"></div>
+            <p id="custom-form-empty" data-i18n="noCustomForms">No custom forms saved yet.</p>
+        </section>
     </dialog>
 
     <div id="toast" class="toast" role="status" aria-live="polite"></div>

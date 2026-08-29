@@ -297,6 +297,14 @@ textarea:focus-visible {
     gap: 1rem;
 }
 
+.learn-pattern-button {
+    flex: 0 0 auto;
+    align-self: center;
+    min-height: 2rem;
+    padding: 0.35rem 0.65rem;
+    font-size: 0.76rem;
+}
+
 .section-label {
     display: block;
     margin-top: 0.3rem;
@@ -1672,7 +1680,8 @@ textarea:focus-visible {
 
 .share-dialog,
 .saved-poems-dialog,
-.conversion-dialog {
+.conversion-dialog,
+.learn-pattern-dialog {
     width: min(440px, calc(100% - 2rem));
     border: 1px solid var(--line);
     border-radius: 1rem;
@@ -1684,14 +1693,16 @@ textarea:focus-visible {
 
 .share-dialog::backdrop,
 .saved-poems-dialog::backdrop,
-.conversion-dialog::backdrop {
+.conversion-dialog::backdrop,
+.learn-pattern-dialog::backdrop {
     background: rgba(36, 29, 22, 0.48);
     backdrop-filter: blur(3px);
 }
 
 .share-dialog h2,
 .saved-poems-dialog h2,
-.conversion-dialog h2 {
+.conversion-dialog h2,
+.learn-pattern-dialog h2 {
     margin: 0.25rem 0 1rem;
     font-family: Georgia, "Times New Roman", serif;
     font-weight: 500;
@@ -1910,6 +1921,180 @@ textarea:focus-visible {
     margin-top: 0.9rem;
 }
 
+.learn-pattern-dialog {
+    width: min(720px, calc(100% - 2rem));
+    max-height: calc(100dvh - 2rem);
+    overflow: auto;
+}
+
+.learn-pattern-intro,
+.learn-pattern-note,
+.learn-pattern-evidence {
+    color: var(--muted);
+    font-size: 0.84rem;
+    line-height: 1.5;
+}
+
+.learn-pattern-evidence {
+    margin: 0 0 0.75rem;
+    font-weight: 700;
+}
+
+.learn-pattern-lines {
+    display: grid;
+    gap: 0.38rem;
+    margin-bottom: 1rem;
+}
+
+.learn-pattern-line {
+    display: grid;
+    grid-template-columns: 2rem minmax(0, 1fr);
+    gap: 0.5rem;
+    align-items: baseline;
+    padding: 0.48rem 0.6rem;
+    border-radius: 0.55rem;
+    background: var(--paper-deep);
+    font-size: 0.8rem;
+}
+
+.learn-pattern-line strong {
+    color: var(--saffron-deep);
+}
+
+.learn-pattern-line span {
+    overflow-wrap: anywhere;
+}
+
+.learn-pattern-name {
+    display: grid;
+    gap: 0.35rem;
+    margin: 0.8rem 0;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.learn-pattern-name input {
+    min-height: 2.55rem;
+    border: 1px solid var(--line);
+    border-radius: 0.6rem;
+    padding: 0.58rem 0.7rem;
+    color: var(--ink);
+    background: #fffdf8;
+    font: inherit;
+}
+
+.learn-pattern-modes,
+.learn-pattern-constraints {
+    display: grid;
+    gap: 0.5rem;
+    margin: 0.9rem 0;
+    border: 1px solid var(--line);
+    border-radius: 0.72rem;
+    padding: 0.75rem;
+}
+
+.learn-pattern-modes legend,
+.learn-pattern-constraints legend {
+    padding: 0 0.25rem;
+    font-size: 0.76rem;
+    font-weight: 800;
+}
+
+.learn-pattern-modes label,
+.learn-pattern-constraints label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.55rem;
+    font-size: 0.82rem;
+}
+
+.learn-pattern-modes input,
+.learn-pattern-constraints input {
+    flex: 0 0 auto;
+    margin-top: 0.18rem;
+    accent-color: var(--saffron);
+}
+
+.learn-pattern-modes span {
+    display: grid;
+    gap: 0.12rem;
+}
+
+.learn-pattern-modes small {
+    color: var(--muted);
+    line-height: 1.35;
+}
+
+.learn-pattern-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.custom-form-library {
+    margin-top: 1.2rem;
+    border-top: 1px solid var(--line);
+    padding-top: 1rem;
+}
+
+.custom-form-library h3 {
+    margin: 0 0 0.65rem;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1rem;
+}
+
+#custom-form-list {
+    display: grid;
+    gap: 0.5rem;
+}
+
+.custom-form-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.55rem;
+    align-items: center;
+    padding: 0.65rem;
+    border: 1px solid var(--line);
+    border-radius: 0.65rem;
+    background: #fffdf8;
+}
+
+.custom-form-card strong,
+.custom-form-card small {
+    display: block;
+}
+
+.custom-form-card small {
+    margin-top: 0.15rem;
+    color: var(--muted);
+    font-size: 0.72rem;
+}
+
+.custom-form-card-actions {
+    display: flex;
+    gap: 0.35rem;
+}
+
+.custom-form-card-actions button {
+    min-height: 2rem;
+    border: 1px solid var(--line);
+    border-radius: 0.5rem;
+    padding: 0.35rem 0.55rem;
+    color: var(--ink);
+    background: var(--paper-deep);
+    font: inherit;
+    font-size: 0.74rem;
+}
+
+.custom-form-card-actions .delete {
+    color: var(--error);
+}
+
+#custom-form-empty {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.8rem;
+}
+
 .toast {
     position: fixed;
     z-index: 200;
@@ -2104,6 +2289,20 @@ textarea:focus-visible {
         width: calc(100% - 1rem);
         max-height: calc(100dvh - 1rem);
         padding: 0.9rem;
+    }
+
+    .learn-pattern-dialog {
+        width: calc(100% - 1rem);
+        max-height: calc(100dvh - 1rem);
+        padding: 0.9rem;
+    }
+
+    .custom-form-card {
+        grid-template-columns: 1fr;
+    }
+
+    .custom-form-card-actions {
+        justify-content: flex-end;
     }
 
     .saved-poems-toolbar {

@@ -65,6 +65,7 @@ tasks.register("syncWebAssets", Copy) {
     include "scansion.js"
     include "shithila_dvitva.js"
     include "strong_template.js"
+    include "custom_meter.js"
     include "mishra.json"
     include "structural_meters.json"
     include "manifest.webmanifest"

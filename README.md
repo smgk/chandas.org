@@ -19,6 +19,10 @@ runs locally; composing does not require an account, server, or cloud database.
 - Accepts explicitly selected IAST, ISO 15919, ITRANS, and Harvard-Kyoto input;
   an offline Devanagari shadow drives analysis while markings stay on the
   untouched Roman text.
+- Converts the entire editing buffer among Kannada, Devanagari, Telugu,
+  Gujarati, IAST, ISO 15919, ITRANS, and Harvard-Kyoto after an on-device
+  preview, with one-step undo. Colloquial Roman is available as a clearly
+  lossy copy-only preview.
 - Preserves the original text, punctuation, line breaks, caret, and Indic IME
   behavior.
 - Suggests and ranks fixed vṛttas, syllable-structural meters, mātrā meters,
@@ -127,7 +131,7 @@ Android application is built and released separately.
 | Path | Purpose |
 | --- | --- |
 | `meter_analysis.js` | Unicode syllable analysis, meter scoring, validation, and prāsa |
-| `roman_transliteration.js` | Offline Roman-scheme parsing, Devanagari shadow generation, and source-range projection |
+| `roman_transliteration.js` | Offline Roman parsing, native/Roman buffer conversion, Devanagari shadows, and source-range projection |
 | `mishra.json` | Attributed baseline fixed-vṛtta catalog |
 | `structural_meters.json` | Versioned structural, mātrā, aṃśa, and sourced fixed-meter extensions |
 | `examples/field_guide_corpus.json` | Sourced Kannada, Telugu, and Devanagari examples used by tests and Learn |

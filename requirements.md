@@ -697,6 +697,18 @@ analysis result.
 2g. Ghost templates MUST work for Roman input using `L/G` guide symbols.
    Strong templates MAY be unavailable for the first Roman release, provided
    the UI states this clearly and falls back without losing authored text.
+2h. The Input control MUST also expose a compact whole-composition conversion
+   action for Kannada, Devanagari, Telugu, Gujarati, IAST, ISO 15919, ITRANS,
+   and Harvard-Kyoto. Conversion MUST be local and previewed before replacing
+   the authored buffer; stanza breaks, punctuation, selected meters, template
+   choices, and a one-step recovery point MUST survive the operation. A Strong
+   template MUST first be serialized without losing filled or blank positions
+   and then return to Ghost guidance because its source positions are no longer
+   valid. Unsupported characters MUST remain visible with a warning.
+2i. Roman Colloquial MAY be offered as a lossy copy-only preview. The UI MUST
+   explain that it removes distinctions required for meter analysis and MUST
+   NOT replace an analyzed buffer until a reversible, explicitly uncertain
+   input model exists.
 3. `mishra.json` MUST be treated as the source list for the initial meter
    catalog. The runtime representation MAY be transformed during the build,
    provided tests prove that every source entry and pattern is retained.

@@ -15,7 +15,7 @@
 }(typeof window !== "undefined" ? window : globalThis, function createRomanApi() {
     "use strict";
 
-    const VERSION = "1.0.0";
+    const VERSION = "1.1.0";
     const VIRAMA = "्";
 
     const VOWELS = {
@@ -172,6 +172,74 @@
         hk: { id: "hk", label: "Harvard-Kyoto", tokens: HK }
     });
 
+    const TARGETS = Object.freeze({
+        kannada: { id: "kannada", label: "ಕನ್ನಡ", kind: "native" },
+        devanagari: { id: "devanagari", label: "देवनागरी", kind: "native" },
+        telugu: { id: "telugu", label: "తెలుగు", kind: "native" },
+        gujarati: { id: "gujarati", label: "ગુજરાતી", kind: "native" },
+        iast: { id: "iast", label: "IAST", kind: "roman" },
+        iso15919: { id: "iso15919", label: "ISO 15919", kind: "roman" },
+        itrans: { id: "itrans", label: "ITRANS", kind: "roman" },
+        hk: { id: "hk", label: "Harvard-Kyoto", kind: "roman" },
+        colloquial: {
+            id: "colloquial",
+            label: "Roman (colloquial)",
+            kind: "roman",
+            lossy: true
+        }
+    });
+
+    const SCRIPT_OFFSETS = Object.freeze({
+        devanagari: 0,
+        gujarati: 0x180,
+        telugu: 0x300,
+        kannada: 0x380
+    });
+    const DEVANAGARI_MAPPABLE = /[\u0900-\u0914\u0915-\u0939\u093c-\u094d\u0962-\u0963\u0966-\u096f]/u;
+    const SCRIPT_RANGES = Object.freeze({
+        devanagari: [0x0900, 0x097f],
+        gujarati: [0x0a80, 0x0aff],
+        telugu: [0x0c00, 0x0c7f],
+        kannada: [0x0c80, 0x0cff]
+    });
+    const SPECIAL_TO_DEVANAGARI = Object.freeze({
+        "ೞ": "ऴ",
+        "ౘ": "च", "ౙ": "ज", "ౚ": "च", "ౝ": "न"
+    });
+    const SPECIAL_FROM_DEVANAGARI = Object.freeze({
+        kannada: { "ऴ": "ೞ" },
+        telugu: { "ऴ": "ఴ" },
+        gujarati: {},
+        devanagari: {}
+    });
+
+    const ROMAN_TABLES = Object.freeze({
+        iast: {
+            vowels: ["a", "ā", "i", "ī", "u", "ū", "ṛ", "ṝ", "ḷ", "ḹ", "ĕ", "e", "ai", "ŏ", "o", "au"],
+            consonants: ["k", "kh", "g", "gh", "ṅ", "c", "ch", "j", "jh", "ñ", "ṭ", "ṭh", "ḍ", "ḍh", "ṇ", "t", "th", "d", "dh", "n", "p", "ph", "b", "bh", "m", "y", "r", "l", "v", "ś", "ṣ", "s", "h", "ḷ", "ḻ", "ṟ"],
+            marks: { "ँ": "m̐", "ं": "ṃ", "ः": "ḥ", "ऽ": "’" }
+        },
+        iso15919: {
+            vowels: ["a", "ā", "i", "ī", "u", "ū", "r̥", "r̥̄", "l̥", "l̥̄", "e", "ē", "ai", "o", "ō", "au"],
+            consonants: ["k", "kh", "g", "gh", "ṅ", "c", "ch", "j", "jh", "ñ", "ṭ", "ṭh", "ḍ", "ḍh", "ṇ", "t", "th", "d", "dh", "n", "p", "ph", "b", "bh", "m", "y", "r", "l", "v", "ś", "ṣ", "s", "h", "ḷ", "ḻ", "ṟ"],
+            marks: { "ँ": "m̐", "ं": "ṁ", "ः": "ḥ", "ऽ": "’" }
+        },
+        itrans: {
+            vowels: ["a", "A", "i", "I", "u", "U", "R^i", "R^I", "L^i", "L^I", "e", "e", "ai", "o", "o", "au"],
+            consonants: ["k", "kh", "g", "gh", "~N", "ch", "Ch", "j", "jh", "~n", "T", "Th", "D", "Dh", "N", "t", "th", "d", "dh", "n", "p", "ph", "b", "bh", "m", "y", "r", "l", "v", "sh", "Sh", "s", "h", "L", "L", "r"],
+            marks: { "ँ": ".n", "ं": "M", "ः": "H", "ऽ": ".a" }
+        },
+        hk: {
+            vowels: ["a", "A", "i", "I", "u", "U", "R", "RR", "lR", "lRR", "e", "e", "ai", "o", "o", "au"],
+            consonants: ["k", "kh", "g", "gh", "G", "c", "ch", "j", "jh", "J", "T", "Th", "D", "Dh", "N", "t", "th", "d", "dh", "n", "p", "ph", "b", "bh", "m", "y", "r", "l", "v", "z", "S", "s", "h", "l", "l", "r"],
+            marks: { "ँ": "M", "ं": "M", "ः": "H", "ऽ": "'" }
+        }
+    });
+
+    const DEVANAGARI_VOWELS = ["अ", "आ", "इ", "ई", "उ", "ऊ", "ऋ", "ॠ", "ऌ", "ॡ", "ऎ", "ए", "ऐ", "ऒ", "ओ", "औ"];
+    const DEVANAGARI_SIGNS = ["", "ा", "ि", "ी", "ु", "ू", "ृ", "ॄ", "ॢ", "ॣ", "ॆ", "े", "ै", "ॊ", "ो", "ौ"];
+    const DEVANAGARI_CONSONANTS = ["क", "ख", "ग", "घ", "ङ", "च", "छ", "ज", "झ", "ञ", "ट", "ठ", "ड", "ढ", "ण", "त", "थ", "द", "ध", "न", "प", "फ", "ब", "भ", "म", "य", "र", "ल", "व", "श", "ष", "स", "ह", "ळ", "ऴ", "ऱ"];
+
     function normalizeScheme(value) {
         const normalized = String(value || "native").trim().toLocaleLowerCase()
             .replace(/[ _-]/g, "");
@@ -181,6 +249,21 @@
             itrans: "itrans", harvardkyoto: "hk", hk: "hk"
         };
         return aliases[normalized] || "native";
+    }
+
+    function normalizeTarget(value) {
+        const normalized = String(value || "devanagari").trim().toLocaleLowerCase()
+            .replace(/[ _-]/g, "");
+        const aliases = {
+            kannada: "kannada", kn: "kannada",
+            devanagari: "devanagari", deva: "devanagari",
+            telugu: "telugu", te: "telugu",
+            gujarati: "gujarati", gu: "gujarati",
+            iast: "iast", iso: "iso15919", iso15919: "iso15919",
+            itrans: "itrans", harvardkyoto: "hk", hk: "hk",
+            colloquial: "colloquial", romancolloquial: "colloquial"
+        };
+        return aliases[normalized] || "devanagari";
     }
 
     function normalizedSource(text, caseInsensitive) {
@@ -430,11 +513,183 @@
         return result;
     }
 
+    function scriptForCharacter(character) {
+        const codePoint = character.codePointAt(0);
+        return Object.keys(SCRIPT_RANGES).find((script) => {
+            const [start, end] = SCRIPT_RANGES[script];
+            return codePoint >= start && codePoint <= end;
+        }) || null;
+    }
+
+    function normalizeNativeText(sourceValue) {
+        const sourceText = String(sourceValue || "").replace(/\r\n?/g, "\n");
+        const warnings = [];
+        let text = "";
+        for (const character of sourceText) {
+            const special = SPECIAL_TO_DEVANAGARI[character];
+            if (special) {
+                text += special;
+                continue;
+            }
+            const script = scriptForCharacter(character);
+            if (!script || script === "devanagari") {
+                text += character;
+                continue;
+            }
+            const devanagari = String.fromCodePoint(
+                character.codePointAt(0) - SCRIPT_OFFSETS[script]
+            );
+            if (DEVANAGARI_MAPPABLE.test(devanagari)) {
+                text += devanagari;
+                continue;
+            }
+            text += character;
+            if (/\p{Letter}|\p{Mark}/u.test(character)) {
+                warnings.push({
+                    text: character,
+                    reason: "unsupported-native-character",
+                    script
+                });
+            }
+        }
+        return { text, warnings };
+    }
+
+    function devanagariToNative(sourceValue, target) {
+        const warnings = [];
+        let text = "";
+        for (const character of String(sourceValue || "")) {
+            const special = SPECIAL_FROM_DEVANAGARI[target][character];
+            if (special) {
+                text += special;
+                continue;
+            }
+            if (target === "devanagari" || !DEVANAGARI_MAPPABLE.test(character)) {
+                text += character;
+                if (target !== "devanagari" &&
+                    /\p{Script=Devanagari}/u.test(character) &&
+                    /\p{Letter}|\p{Mark}/u.test(character)) {
+                    warnings.push({
+                        text: character,
+                        reason: "unsupported-target-character",
+                        target
+                    });
+                }
+                continue;
+            }
+            text += String.fromCodePoint(
+                character.codePointAt(0) + SCRIPT_OFFSETS[target]
+            );
+        }
+        return { text, warnings };
+    }
+
+    function romanizeDevanagari(sourceValue, scheme) {
+        const table = ROMAN_TABLES[scheme];
+        const text = Array.from(String(sourceValue || ""));
+        const vowelIndex = new Map(DEVANAGARI_VOWELS.map((item, index) =>
+            [item, index]));
+        const signIndex = new Map(DEVANAGARI_SIGNS.slice(1).map((item, index) =>
+            [item, index + 1]));
+        const consonantIndex = new Map(DEVANAGARI_CONSONANTS.map((item, index) =>
+            [item, index]));
+        const warnings = [];
+        let output = "";
+
+        for (let index = 0; index < text.length; index += 1) {
+            const character = text[index];
+            if (vowelIndex.has(character)) {
+                output += table.vowels[vowelIndex.get(character)];
+                continue;
+            }
+            if (consonantIndex.has(character)) {
+                output += table.consonants[consonantIndex.get(character)];
+                const next = text[index + 1];
+                if (next === VIRAMA) {
+                    index += 1;
+                } else if (signIndex.has(next)) {
+                    output += table.vowels[signIndex.get(next)];
+                    index += 1;
+                } else {
+                    output += table.vowels[0];
+                }
+                continue;
+            }
+            if (table.marks[character]) {
+                output += table.marks[character];
+                continue;
+            }
+            if (character >= "०" && character <= "९") {
+                output += String(character.codePointAt(0) - "०".codePointAt(0));
+                continue;
+            }
+            output += character;
+            if (/\p{Script=Devanagari}/u.test(character) &&
+                /\p{Letter}|\p{Mark}/u.test(character)) {
+                warnings.push({
+                    text: character,
+                    reason: "unsupported-romanization-character",
+                    target: scheme
+                });
+            }
+        }
+        return { text: output.normalize("NFC"), warnings };
+    }
+
+    function colloquialize(sourceValue) {
+        return String(sourceValue || "")
+            .normalize("NFC")
+            .replace(/ā/g, "a").replace(/ī/g, "i").replace(/ū/g, "u")
+            .replace(/[ṛṝ]/g, "ri").replace(/[ḷḹ]/g, "li")
+            .replace(/ṅ/g, "ng").replace(/ñ/g, "ny")
+            .replace(/[ṭ]/g, "t").replace(/[ḍ]/g, "d").replace(/ṇ/g, "n")
+            .replace(/[śṣ]/g, "sh").replace(/[ṃṁ]/g, "m")
+            .replace(/ḥ/g, "h").replace(/[ḻ]/g, "l").replace(/ṟ/g, "r")
+            .replace(/m̐/g, "m").replace(/[’']/g, "'")
+            .toLocaleLowerCase();
+    }
+
+    function convert(sourceValue, sourceSchemeValue, targetValue) {
+        const sourceText = String(sourceValue || "").replace(/\r\n?/g, "\n");
+        const sourceScheme = normalizeScheme(sourceSchemeValue);
+        const target = normalizeTarget(targetValue);
+        const firstPass = sourceScheme === "native"
+            ? { analysisText: sourceText, warnings: [] }
+            : transliterate(sourceText, sourceScheme);
+        const normalized = normalizeNativeText(firstPass.analysisText);
+        let converted;
+        if (TARGETS[target].kind === "native") {
+            converted = devanagariToNative(normalized.text, target);
+        } else {
+            const exactScheme = target === "colloquial" ? "iast" : target;
+            converted = romanizeDevanagari(normalized.text, exactScheme);
+            if (target === "colloquial") {
+                converted.text = colloquialize(converted.text);
+            }
+        }
+        return {
+            version: VERSION,
+            sourceScheme,
+            target,
+            sourceText,
+            text: converted.text,
+            lossy: Boolean(TARGETS[target].lossy),
+            warnings: [
+                ...(firstPass.warnings || []),
+                ...normalized.warnings,
+                ...converted.warnings
+            ]
+        };
+    }
+
     return {
         VERSION,
         SCHEMES,
+        TARGETS,
         normalizeScheme,
+        normalizeTarget,
         transliterate,
+        convert,
         mapRange,
         projectAnalysis
     };

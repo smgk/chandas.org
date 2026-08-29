@@ -343,6 +343,9 @@ week per meter-family presentation
 - [x] Add an isolated offline Roman adapter for IAST, ISO 15919, ITRANS, and
   Harvard-Kyoto with Aksharamukha-verified fixtures, source-safe highlighting,
   saved state, and analysis-link round trips.
+- [x] Add previewed, offline whole-buffer conversion among the four native
+  scripts and four exact Roman schemes, with meter/template preservation and
+  one-step undo. Keep lossy colloquial Roman copy-only.
 - Add remaining script modules one at a time with normalization and
   golden-corpus tests.
 - [x] Treat transliteration as a separate, optional layer, never as a replacement

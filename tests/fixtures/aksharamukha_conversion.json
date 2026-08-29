@@ -1,0 +1,18 @@
+{
+  "verifiedAt": "2026-08-28",
+  "source": "https://www.aksharamukha.com/",
+  "notes": "Expected Roman outputs were checked against Aksharamukha. Native-script outputs use the same Brahmic phoneme sequence.",
+  "sourceScheme": "iast",
+  "input": "kṛṣṇaḥ pārthāya",
+  "targets": {
+    "devanagari": "कृष्णः पार्थाय",
+    "kannada": "ಕೃಷ್ಣಃ ಪಾರ್ಥಾಯ",
+    "telugu": "కృష్ణః పార్థాయ",
+    "gujarati": "કૃષ્ણઃ પાર્થાય",
+    "iast": "kṛṣṇaḥ pārthāya",
+    "iso15919": "kr̥ṣṇaḥ pārthāya",
+    "itrans": "kR^iShNaH pArthAya",
+    "hk": "kRSNaH pArthAya",
+    "colloquial": "krishnah parthaya"
+  }
+}

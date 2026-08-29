@@ -92,6 +92,49 @@ test("analyzes Roman schemes while highlighting the authored letter groups", asy
     await linkedContext.close();
 });
 
+test("previews and applies whole-composition conversion without losing meter state", async ({
+    page
+}) => {
+    await page.locator("#input-scheme").selectOption("iast");
+    await page.locator("#composition").fill("ka kā\nka kā\nka kā\nka kā");
+    await page.locator("#meter-picker summary").click();
+    await page.locator("#meter-search").fill("madhu");
+    await page.locator("#meter-select").selectOption("madhu");
+    await expect(page.locator("#meter-select")).toHaveValue("madhu");
+
+    await page.locator("#input-scheme").selectOption("convert:kannada");
+    await expect(page.locator("#conversion-dialog")).toBeVisible();
+    await expect(page.locator("#conversion-summary")).toContainText("IAST");
+    await expect(page.locator("#conversion-preview"))
+        .toHaveValue("ಕ ಕಾ\nಕ ಕಾ\nಕ ಕಾ\nಕ ಕಾ");
+    await page.locator("#apply-conversion").click();
+
+    await expect(page.locator("#conversion-dialog")).toBeHidden();
+    await expect(page.locator("#composition"))
+        .toHaveValue("ಕ ಕಾ\nಕ ಕಾ\nಕ ಕಾ\nಕ ಕಾ");
+    await expect(page.locator("#input-scheme")).toHaveValue("native");
+    await expect(page.locator("#meter-select")).toHaveValue("madhu");
+    await expect(page.locator("#active-pattern")).toHaveText("LG / LG / LG / LG");
+
+    await page.locator("#toast button").click();
+    await expect(page.locator("#composition"))
+        .toHaveValue("ka kā\nka kā\nka kā\nka kā");
+    await expect(page.locator("#input-scheme")).toHaveValue("iast");
+    await expect(page.locator("#meter-select")).toHaveValue("madhu");
+});
+
+test("keeps lossy colloquial Roman as a copy-only preview", async ({ page }) => {
+    await page.locator("#composition").fill("कृष्णः पार्थाय");
+    await page.locator("#input-scheme").selectOption("convert:colloquial");
+    await expect(page.locator("#conversion-preview"))
+        .toHaveValue("krishnah parthaya");
+    await expect(page.locator("#conversion-warning")).toBeVisible();
+    await expect(page.locator("#apply-conversion")).toBeDisabled();
+    await page.locator("#cancel-conversion").click();
+    await expect(page.locator("#composition")).toHaveValue("कृष्णः पार्थाय");
+    await expect(page.locator("#input-scheme")).toHaveValue("native");
+});
+
 test("shows Telugu-native Guru and Laghu template symbols", async ({ page }) => {
     await page.locator("#composition").fill("క");
     await page.locator("#meter-picker summary").click();

@@ -16,6 +16,10 @@ const fixture = JSON.parse(fs.readFileSync(path.join(
     __dirname,
     "fixtures/aksharamukha_roman_devanagari.json"
 ), "utf8"));
+const conversionFixture = JSON.parse(fs.readFileSync(path.join(
+    __dirname,
+    "fixtures/aksharamukha_conversion.json"
+), "utf8"));
 
 test("matches Aksharamukha-verified verse for all four Roman schemes", () => {
     for (const item of fixture.cases) {
@@ -97,4 +101,49 @@ test("native mode is an exact no-op", () => {
     assert.equal(conversion.analysisText, source);
     const analysis = { text: source, stanzas: [] };
     assert.equal(Roman.projectAnalysis(analysis, conversion), analysis);
+});
+
+test("converts one phoneme stream to every Aksharamukha-verified target", () => {
+    for (const [target, expected] of Object.entries(conversionFixture.targets)) {
+        const result = Roman.convert(
+            conversionFixture.input,
+            conversionFixture.sourceScheme,
+            target
+        );
+        assert.equal(result.text, expected, target);
+        assert.equal(result.lossy, target === "colloquial", target);
+        assert.deepEqual(result.warnings, [], target);
+    }
+});
+
+test("converts all four native scripts to the same IAST text", () => {
+    for (const target of ["devanagari", "kannada", "telugu", "gujarati"]) {
+        const native = conversionFixture.targets[target];
+        assert.equal(
+            Roman.convert(native, "native", "iast").text,
+            conversionFixture.targets.iast,
+            target
+        );
+    }
+});
+
+test("exact Roman targets round-trip through the analysis shadow", () => {
+    const expected = conversionFixture.targets.devanagari;
+    for (const scheme of ["iast", "iso15919", "itrans", "hk"]) {
+        const roman = Roman.convert(expected, "native", scheme).text;
+        assert.equal(Roman.transliterate(roman, scheme).analysisText, expected, scheme);
+    }
+});
+
+test("conversion preserves verse layout, punctuation, and numerals", () => {
+    const source = "ಕೃಷ್ಣಃ, ಪಾರ್ಥಾಯ।\n\nಸ್ವಯಮ್ ೧೨";
+    const converted = Roman.convert(source, "native", "devanagari");
+    assert.equal(converted.text, "कृष्णः, पार्थाय।\n\nस्वयम् १२");
+    assert.deepEqual(converted.warnings, []);
+});
+
+test("unsupported native letters stay visible and produce a warning", () => {
+    const result = Roman.convert("ૹ", "native", "devanagari");
+    assert.equal(result.text, "ૹ");
+    assert.equal(result.warnings[0].reason, "unsupported-native-character");
 });

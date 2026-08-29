@@ -51,6 +51,20 @@
             language: "Interface language",
             inputScheme: "Input",
             schemeNative: "Indic scripts · automatic",
+            interpretAs: "Interpret current text as",
+            convertTo: "Convert entire composition to",
+            romanColloquial: "Roman · colloquial preview",
+            convertComposition: "Convert composition",
+            reviewConversion: "Review conversion",
+            conversionPreview: "Preview",
+            conversionSummary: "{source} → {target}",
+            conversionWarning: "{count} character(s) could not be converted exactly and will stay unchanged.",
+            colloquialWarning: "Colloquial Roman drops vowel length and other distinctions needed for meter analysis. You can copy this preview, but it cannot safely replace the analyzed composition.",
+            copyConversion: "Copy conversion",
+            replaceComposition: "Replace composition",
+            compositionConverted: "Composition converted to {target}.",
+            conversionCopied: "Conversion copied",
+            undo: "Undo",
             nativeInputHelp: "Kannada, Telugu, Gujarati, or Devanagari is detected automatically.",
             romanInputHelp: "Roman text is analyzed through an offline Devanagari shadow; your spelling stays untouched.",
             romanPlaceholder: "Type Roman transliteration here…",
@@ -218,6 +232,20 @@
             language: "ತೆರೆಯ ಭಾಷೆ",
             inputScheme: "ಬರಹದ ಲಿಪಿ",
             schemeNative: "ಭಾರತೀಯ ಲಿಪಿಗಳು · ಸ್ವಯಂ",
+            interpretAs: "ಈ ಬರಹವನ್ನು ಹೀಗೆ ಓದಿ",
+            convertTo: "ಇಡೀ ಪದ್ಯವನ್ನು ಇದಕ್ಕೆ ಬದಲಿಸಿ",
+            romanColloquial: "ರೋಮನ್ · ಆಡುಮಾತಿನ ಮುನ್ನೋಟ",
+            convertComposition: "ಪದ್ಯದ ಲಿಪಿ ಬದಲಿಸಿ",
+            reviewConversion: "ಬದಲಾವಣೆಯನ್ನು ಪರಿಶೀಲಿಸಿ",
+            conversionPreview: "ಮುನ್ನೋಟ",
+            conversionSummary: "{source} → {target}",
+            conversionWarning: "{count} ಅಕ್ಷರ(ಗಳು) ನಿಖರವಾಗಿ ಬದಲಾಗಲಿಲ್ಲ; ಅವು ಹಾಗೆಯೇ ಉಳಿಯುತ್ತವೆ.",
+            colloquialWarning: "ಆಡುಮಾತಿನ ರೋಮನ್ ಬರಹದಲ್ಲಿ ಛಂದಸ್ಸಿಗೆ ಬೇಕಾದ ಸ್ವರದ ಉದ್ದ ಮತ್ತಿತರ ವ್ಯತ್ಯಾಸಗಳು ಕಳೆದುಹೋಗುತ್ತವೆ. ಈ ಮುನ್ನೋಟವನ್ನು ನಕಲಿಸಬಹುದು; ವಿಶ್ಲೇಷಿತ ಪದ್ಯವನ್ನು ಇದರಿಂದ ಬದಲಿಸಲಾಗುವುದಿಲ್ಲ.",
+            copyConversion: "ಬದಲಾದ ಬರಹ ನಕಲಿಸಿ",
+            replaceComposition: "ಪದ್ಯವನ್ನು ಬದಲಿಸಿ",
+            compositionConverted: "ಪದ್ಯವನ್ನು {target}ಗೆ ಬದಲಿಸಲಾಗಿದೆ.",
+            conversionCopied: "ಬದಲಾದ ಬರಹ ನಕಲಾಗಿದೆ",
+            undo: "ಹಿಂದಕ್ಕೆ",
             nativeInputHelp: "ಕನ್ನಡ, ತೆಲುಗು, ಗುಜರಾತಿ ಅಥವಾ ದೇವನಾಗರಿಯನ್ನು ಸ್ವಯಂ ಗುರುತಿಸುತ್ತದೆ.",
             romanInputHelp: "ರೋಮನ್ ಪಠ್ಯವನ್ನು ಆಫ್‌ಲೈನ್ ದೇವನಾಗರಿ ಪ್ರತಿಯ ಮೂಲಕ ವಿಶ್ಲೇಷಿಸುತ್ತದೆ; ನಿಮ್ಮ ಬರಹ ಬದಲಾಗುವುದಿಲ್ಲ.",
             romanPlaceholder: "ರೋಮನ್ ಲಿಪ್ಯಂತರದಲ್ಲಿ ಇಲ್ಲಿ ಬರೆಯಿರಿ…",
@@ -385,6 +413,20 @@
             language: "తెర భాష",
             inputScheme: "ఇన్‌పుట్",
             schemeNative: "భారతీయ లిపులు · స్వయంచాలకం",
+            interpretAs: "ప్రస్తుత పాఠ్యాన్ని ఇలా చదవండి",
+            convertTo: "మొత్తం రచనను దీనికి మార్చండి",
+            romanColloquial: "రోమన్ · వాడుక భాష ముందుచూపు",
+            convertComposition: "రచనను మార్చండి",
+            reviewConversion: "మార్పును పరిశీలించండి",
+            conversionPreview: "ముందుచూపు",
+            conversionSummary: "{source} → {target}",
+            conversionWarning: "{count} అక్షరం(లు) సరిగ్గా మారలేదు; అవి మారకుండా ఉంటాయి.",
+            colloquialWarning: "వాడుక రోమన్‌లో ఛందస్సుకు అవసరమైన అచ్చు నిడివి వంటి భేదాలు పోతాయి. ఈ ముందుచూపును కాపీ చేయవచ్చు; విశ్లేషిస్తున్న రచనను దీనితో మార్చలేరు.",
+            copyConversion: "మార్పును కాపీ చేయండి",
+            replaceComposition: "రచనను మార్చండి",
+            compositionConverted: "రచన {target}కు మార్చబడింది.",
+            conversionCopied: "మార్పు కాపీ అయింది",
+            undo: "వెనక్కి",
             nativeInputHelp: "కన్నడ, తెలుగు, గుజరాతీ లేదా దేవనాగరి స్వయంచాలకంగా గుర్తించబడుతుంది.",
             romanInputHelp: "రోమన్ పాఠ్యం ఆఫ్‌లైన్ దేవనాగరి ప్రతిరూపం ద్వారా విశ్లేషించబడుతుంది; మీ వ్రాత మారదు.",
             romanPlaceholder: "రోమన్ లిప్యంతరీకరణలో ఇక్కడ వ్రాయండి…",
@@ -552,6 +594,20 @@
             language: "ઇન્ટરફેસની ભાષા",
             inputScheme: "ઇનપુટ",
             schemeNative: "ભારતીય લિપિઓ · આપમેળે",
+            interpretAs: "હાલનું લખાણ આ રીતે વાંચો",
+            convertTo: "આખી રચનાને આમાં ફેરવો",
+            romanColloquial: "રોમન · બોલચાલનું પૂર્વદર્શન",
+            convertComposition: "રચના ફેરવો",
+            reviewConversion: "ફેરફાર તપાસો",
+            conversionPreview: "પૂર્વદર્શન",
+            conversionSummary: "{source} → {target}",
+            conversionWarning: "{count} અક્ષર(ો) ચોક્કસ રીતે ફેરવી શકાયા નથી અને જેમ છે તેમ રહેશે.",
+            colloquialWarning: "બોલચાલના રોમનમાં છંદ માટે જરૂરી સ્વરની લંબાઈ જેવા ભેદો ખોવાય છે. આ પૂર્વદર્શન નકલ કરી શકાય છે, પણ વિશ્લેષિત રચનાને તેનાથી બદલી શકાતી નથી.",
+            copyConversion: "ફેરવેલું લખાણ નકલ કરો",
+            replaceComposition: "રચના બદલો",
+            compositionConverted: "રચના {target}માં ફેરવાઈ.",
+            conversionCopied: "ફેરવેલું લખાણ નકલ થયું",
+            undo: "પાછું ફેરવો",
             nativeInputHelp: "કન્નડ, તેલુગુ, ગુજરાતી અથવા દેવનાગરી આપમેળે ઓળખાય છે.",
             romanInputHelp: "રોમન લખાણનું ઓફલાઇન દેવનાગરી પ્રતિરૂપ દ્વારા વિશ્લેષણ થાય છે; તમારું લખાણ બદલાતું નથી.",
             romanPlaceholder: "રોમન લિપ્યંતરણમાં અહીં લખો…",
@@ -718,7 +774,9 @@
         activePoemPersisted: false,
         saveChain: Promise.resolve(),
         savedPoems: [],
-        sharingPoem: null
+        sharingPoem: null,
+        pendingConversion: null,
+        conversionUndo: null
     };
 
     function cacheElements() {
@@ -742,7 +800,10 @@
             "facebook-share", "dialog-copy", "copy-analysis-url", "toast",
             "saved-poems-dialog", "close-saved-poems", "saved-poems-search",
             "saved-poems-count", "saved-poems-list", "saved-poems-empty",
-            "backup-share", "backup-download", "backup-import", "backup-file"
+            "backup-share", "backup-download", "backup-import", "backup-file",
+            "conversion-dialog", "conversion-title", "conversion-summary",
+            "conversion-warning", "conversion-preview", "close-conversion",
+            "cancel-conversion", "copy-conversion", "apply-conversion"
         ].forEach((id) => {
             elements[id] = document.getElementById(id);
         });
@@ -789,6 +850,9 @@
         });
         document.querySelectorAll("[data-i18n-placeholder]").forEach((node) => {
             node.placeholder = t(node.dataset.i18nPlaceholder);
+        });
+        document.querySelectorAll("[data-i18n-label]").forEach((node) => {
+            node.label = t(node.dataset.i18nLabel);
         });
         updateInputSchemeUi();
 
@@ -3082,13 +3146,152 @@
         window.open(url, "_blank", "noopener,noreferrer");
     }
 
-    function showToast(message) {
+    function showToast(message, action) {
         window.clearTimeout(state.toastTimer);
-        elements.toast.textContent = message;
+        elements.toast.replaceChildren();
+        const label = document.createElement("span");
+        label.textContent = message;
+        elements.toast.append(label);
+        elements.toast.classList.toggle("has-action", Boolean(action));
+        if (action) {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.textContent = action.label;
+            button.addEventListener("click", () => {
+                action.run();
+                elements.toast.classList.remove("show", "has-action");
+            }, { once: true });
+            elements.toast.append(button);
+        }
         elements.toast.classList.add("show");
         state.toastTimer = window.setTimeout(() => {
-            elements.toast.classList.remove("show");
-        }, 2600);
+            elements.toast.classList.remove("show", "has-action");
+        }, action ? 6200 : 2600);
+    }
+
+    function closeConversionDialog() {
+        const dialog = elements["conversion-dialog"];
+        if (dialog && dialog.open) {
+            dialog.close();
+        }
+        state.pendingConversion = null;
+        updateInputSchemeUi();
+    }
+
+    function conversionLabel(id, source) {
+        const definition = source
+            ? ChandasRoman.SCHEMES[id]
+            : ChandasRoman.TARGETS[id];
+        return definition ? definition.label : id;
+    }
+
+    function openConversionDialog(targetValue) {
+        if (state.composing) {
+            updateInputSchemeUi();
+            return;
+        }
+        const target = ChandasRoman.normalizeTarget(targetValue);
+        const sourceText = authoredCompositionText();
+        const conversion = ChandasRoman.convert(
+            sourceText,
+            state.inputScheme,
+            target
+        );
+        state.pendingConversion = conversion;
+        elements["conversion-summary"].textContent = t("conversionSummary", {
+            source: conversionLabel(state.inputScheme, true),
+            target: conversionLabel(target, false)
+        });
+        elements["conversion-preview"].value = conversion.text;
+        const warning = elements["conversion-warning"];
+        const warningMessage = conversion.lossy
+            ? t("colloquialWarning")
+            : conversion.warnings.length
+                ? t("conversionWarning", { count: conversion.warnings.length })
+                : "";
+        warning.textContent = warningMessage;
+        warning.hidden = !warningMessage;
+        elements["apply-conversion"].disabled = conversion.lossy;
+        updateInputSchemeUi();
+        elements["conversion-dialog"].showModal();
+    }
+
+    function conversionSnapshot() {
+        return JSON.parse(JSON.stringify({
+            text: elements.composition.value,
+            selections: state.selections,
+            templates: state.templates,
+            templateModes: state.templateModes,
+            strongDrafts: state.strongDrafts,
+            inputScheme: state.inputScheme,
+            selectionStart: elements.composition.selectionStart,
+            selectionEnd: elements.composition.selectionEnd
+        }));
+    }
+
+    function restoreConvertedComposition() {
+        const snapshot = state.conversionUndo;
+        if (!snapshot) {
+            return;
+        }
+        elements.composition.value = snapshot.text;
+        state.selections = snapshot.selections;
+        state.templates = snapshot.templates;
+        state.templateModes = snapshot.templateModes;
+        state.strongDrafts = snapshot.strongDrafts;
+        state.strongHistory = {};
+        state.strongFuture = {};
+        state.inputScheme = snapshot.inputScheme;
+        state.conversionUndo = null;
+        updateInputSchemeUi();
+        elements.composition.setSelectionRange(
+            snapshot.selectionStart,
+            snapshot.selectionEnd
+        );
+        runAnalysis();
+    }
+
+    function applyPendingConversion() {
+        const conversion = state.pendingConversion;
+        if (!conversion || conversion.lossy) {
+            return;
+        }
+        const sourceText = conversion.sourceText;
+        const selectionStart = elements.composition.selectionStart;
+        const selectionEnd = elements.composition.selectionEnd;
+        state.conversionUndo = conversionSnapshot();
+        const convertedStart = ChandasRoman.convert(
+            sourceText.slice(0, selectionStart),
+            state.inputScheme,
+            conversion.target
+        ).text.length;
+        const convertedEnd = ChandasRoman.convert(
+            sourceText.slice(0, selectionEnd),
+            state.inputScheme,
+            conversion.target
+        ).text.length;
+
+        elements.composition.value = conversion.text;
+        Object.keys(state.templateModes).forEach((key) => {
+            if (state.templateModes[key] === "strong") {
+                state.templateModes[key] = "ghost";
+            }
+        });
+        state.strongDrafts = {};
+        state.strongHistory = {};
+        state.strongFuture = {};
+        state.inputScheme = ChandasRoman.TARGETS[conversion.target].kind === "native"
+            ? "native"
+            : conversion.target;
+        const targetLabel = conversionLabel(conversion.target, false);
+        closeConversionDialog();
+        updateInputSchemeUi();
+        elements.composition.setSelectionRange(convertedStart, convertedEnd);
+        runAnalysis();
+        showToast(t("compositionConverted", { target: targetLabel }), {
+            label: t("undo"),
+            run: restoreConvertedComposition
+        });
     }
 
     function closeShareDialog() {
@@ -3438,6 +3641,18 @@
         }
     }
 
+    function dismissConversionFromBackdrop(event) {
+        const dialog = elements["conversion-dialog"];
+        if (event.target !== dialog) {
+            return;
+        }
+        const bounds = dialog.getBoundingClientRect();
+        if (event.clientX < bounds.left || event.clientX > bounds.right ||
+            event.clientY < bounds.top || event.clientY > bounds.bottom) {
+            closeConversionDialog();
+        }
+    }
+
     function exposeAppUpdate(worker) {
         if (!worker || !elements["app-update"] || state.updateRequested) {
             return;
@@ -3741,8 +3956,13 @@
         });
 
         elements["input-scheme"].addEventListener("change", () => {
+            const selectedValue = elements["input-scheme"].value;
+            if (selectedValue.startsWith("convert:")) {
+                openConversionDialog(selectedValue.slice("convert:".length));
+                return;
+            }
             const nextScheme = ChandasRoman.normalizeScheme(
-                elements["input-scheme"].value
+                selectedValue
             );
             if (nextScheme === state.inputScheme) {
                 return;
@@ -3758,6 +3978,28 @@
             updateInputSchemeUi();
             runAnalysis();
         });
+
+        elements["close-conversion"].addEventListener("click", closeConversionDialog);
+        elements["cancel-conversion"].addEventListener("click", closeConversionDialog);
+        elements["conversion-dialog"].addEventListener(
+            "click",
+            dismissConversionFromBackdrop
+        );
+        elements["conversion-dialog"].addEventListener("close", () => {
+            state.pendingConversion = null;
+            updateInputSchemeUi();
+        });
+        elements["copy-conversion"].addEventListener("click", () => {
+            const conversion = state.pendingConversion;
+            if (!conversion) {
+                return;
+            }
+            copyText(conversion.text, "conversionCopied");
+        });
+        elements["apply-conversion"].addEventListener(
+            "click",
+            applyPendingConversion
+        );
 
         elements["new-draft"].addEventListener("click", clearDraft);
         elements["saved-poems"].addEventListener("click", showSavedPoems);

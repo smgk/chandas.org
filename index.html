@@ -99,11 +99,24 @@ SPDX-License-Identifier: GPL-3.0-only
                     <label class="input-scheme-control" for="input-scheme">
                         <span data-i18n="inputScheme">Input</span>
                         <select id="input-scheme" aria-describedby="transliteration-help">
-                            <option value="native" data-i18n="schemeNative">Indic scripts · automatic</option>
-                            <option value="iast">IAST</option>
-                            <option value="iso15919">ISO 15919</option>
-                            <option value="itrans">ITRANS</option>
-                            <option value="hk">Harvard-Kyoto</option>
+                            <optgroup label="Interpret current text as" data-i18n-label="interpretAs">
+                                <option value="native" data-i18n="schemeNative">Indic scripts · automatic</option>
+                                <option value="iast">IAST</option>
+                                <option value="iso15919">ISO 15919</option>
+                                <option value="itrans">ITRANS</option>
+                                <option value="hk">Harvard-Kyoto</option>
+                            </optgroup>
+                            <optgroup label="Convert entire composition to" data-i18n-label="convertTo">
+                                <option value="convert:kannada">ಕನ್ನಡ</option>
+                                <option value="convert:devanagari">देवनागरी</option>
+                                <option value="convert:telugu">తెలుగు</option>
+                                <option value="convert:gujarati">ગુજરાતી</option>
+                                <option value="convert:iast">IAST</option>
+                                <option value="convert:iso15919">ISO 15919</option>
+                                <option value="convert:itrans">ITRANS</option>
+                                <option value="convert:hk">Harvard-Kyoto</option>
+                                <option value="convert:colloquial" data-i18n="romanColloquial">Roman · colloquial preview</option>
+                            </optgroup>
                         </select>
                     </label>
                     <small id="transliteration-help" data-i18n="nativeInputHelp">
@@ -345,6 +358,27 @@ SPDX-License-Identifier: GPL-3.0-only
         <p id="saved-poems-empty" class="saved-poems-empty" data-i18n="noSavedPoems">
             No saved poems yet. Your next line will fix that.
         </p>
+    </dialog>
+
+    <dialog id="conversion-dialog" class="conversion-dialog" aria-labelledby="conversion-title">
+        <div class="dialog-heading">
+            <div>
+                <p class="eyebrow" data-i18n="convertComposition">Convert composition</p>
+                <h2 id="conversion-title" data-i18n="reviewConversion">Review conversion</h2>
+            </div>
+            <button id="close-conversion" class="close-button" type="button" aria-label="Close">×</button>
+        </div>
+        <p id="conversion-summary" class="conversion-summary"></p>
+        <p id="conversion-warning" class="conversion-warning" role="alert" hidden></p>
+        <label class="conversion-preview-label" for="conversion-preview" data-i18n="conversionPreview">
+            Preview
+        </label>
+        <textarea id="conversion-preview" class="conversion-preview" rows="9" readonly></textarea>
+        <div class="conversion-actions">
+            <button id="cancel-conversion" type="button" class="quiet-button" data-i18n="cancel">Cancel</button>
+            <button id="copy-conversion" type="button" class="destination-button" data-i18n="copyConversion">Copy conversion</button>
+            <button id="apply-conversion" type="button" class="primary-button" data-i18n="replaceComposition">Replace composition</button>
+        </div>
     </dialog>
 
     <div id="toast" class="toast" role="status" aria-live="polite"></div>

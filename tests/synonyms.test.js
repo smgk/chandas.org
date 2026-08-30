@@ -53,7 +53,7 @@ test("indexes separate licensed databases without merging their senses", () => {
     assert.equal(Synonyms.lookup(index, ["आकाश"])[0].source.id, "amara");
 });
 
-test("Alar builder groups only explicit shared sense ids", () => {
+test("Alar builder preserves explicit ids and adds inferred English meanings", () => {
     const source = [
         "- id: 1",
         "  entry: ಬಾನು",
@@ -75,10 +75,40 @@ test("Alar builder groups only explicit shared sense ids", () => {
         "    type: noun"
     ].join("\n");
     const built = Builder.buildAlarDatabase(source);
-    assert.equal(built.concepts.length, 1);
+    const explicit = built.concepts.find((concept) => !concept.relation);
+    const inferred = built.concepts.find((concept) =>
+        concept.relation === "english-meaning");
     assert.deepEqual(
-        built.concepts[0].words.map((word) => word[0]).sort(),
+        explicit.words.map((word) => word[0]).sort(),
         ["ಆಕಾಶ", "ಬಾನು"].sort()
+    );
+    assert.deepEqual(
+        inferred.words.map((word) => word[0]).sort(),
+        ["ಆಕಾಶ", "ಬಾನು", "ಗಗನ"].sort()
+    );
+});
+
+test("Alar English meanings connect independently described tree words", () => {
+    const entries = [
+        [1, "ಮರ", 101, "a woody plant with a trunk; a tree."],
+        [2, "ತರು", 102, "a perennial plant with branches; a tree."],
+        [3, "ವೃಕ್ಷ", 103, "a tree (in gen.)."]
+    ];
+    const source = entries.flatMap(([record, word, definition, gloss]) => [
+        `- id: ${record}`,
+        `  entry: ${word}`,
+        "  defs:",
+        `  - id: ${definition}`,
+        `    entry: ${gloss}`,
+        "    type: noun"
+    ]).join("\n");
+    const built = Builder.buildAlarDatabase(source);
+    const tree = built.concepts.find((concept) =>
+        concept.label === "tree" && concept.relation === "english-meaning");
+    assert.ok(tree);
+    assert.deepEqual(
+        tree.words.map((word) => word[0]).sort(),
+        ["ಮರ", "ತರು", "ವೃಕ್ಷ"].sort()
     );
 });
 
@@ -106,8 +136,16 @@ test("production synonym data is compact, attributed, and non-empty", () => {
     assert.equal(documents[0].license, "ODbL-1.0");
     assert.equal(documents[1].license, "CC-BY-SA-4.0");
     assert.ok(documents[0].counts.concepts > 5000);
+    assert.ok(documents[0].counts.inferredConcepts > 10_000);
     assert.ok(documents[1].counts.concepts > 4000);
     assert.ok(documents.every((document) => document.source.revision));
     assert.ok(files.every((file) =>
-        fs.statSync(path.join(root, file)).size < 1_500_000));
+        fs.statSync(path.join(root, file)).size < 4_000_000));
+    const maraMeanings = documents[0].concepts
+        .filter((concept) => concept.words.some((word) => word[0] === "ಮರ"))
+        .map((concept) => concept.label);
+    assert.ok(maraMeanings.includes("tree"));
+    assert.ok(maraMeanings.includes("wood"));
+    assert.ok(!maraMeanings.includes("aerial root"));
+    assert.ok(!maraMeanings.includes("white dammar"));
 });

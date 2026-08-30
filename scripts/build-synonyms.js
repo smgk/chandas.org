@@ -86,6 +86,80 @@ function acceptableKannadaLemma(value) {
         /^[\p{Script=Kannada}\p{Mark}\u200C\u200D]+$/u.test(lemma);
 }
 
+const GENERIC_SEMANTIC_KEYS = new Set([
+    "act", "action", "animal", "being", "form", "kind", "man",
+    "material", "name", "object", "one", "part", "person", "piece",
+    "place", "plant", "quality", "state", "substance", "term", "thing",
+    "type", "way", "woman", "word"
+]);
+
+function cleanSemanticAlarKey(value, pos) {
+    let phrase = String(value || "")
+        .normalize("NFC")
+        .toLocaleLowerCase("en")
+        .replace(/\([^)]*\)/gu, " ")
+        .replace(/^\s*(?:fig\.|lit\.)\s*/u, "")
+        .replace(/\s+/gu, " ")
+        .trim();
+    phrase = phrase.split(/,\s*(?=(?:that|which|who|whose|having|with|without|made|used|found|grown|consisting|containing|characteri[sz]ed)\b)/u)[0];
+    phrase = phrase
+        .replace(/[.]+$/gu, "")
+        .replace(/^(?:a|an|the)\s+/u, "")
+        .replace(/\s+(?:in general|in gen\.?)$/u, "")
+        .replace(/\s+/gu, " ")
+        .trim();
+    if (!phrase || phrase.length < 3 || phrase.length > 64 ||
+        !/^[a-z][a-z -]*$/u.test(phrase) ||
+        phrase.split(/\s+/u).length > 7 ||
+        GENERIC_SEMANTIC_KEYS.has(phrase) ||
+        /\b(?:and\/or|etc|especially|usually|figuratively|metaphorically)\b/u
+            .test(phrase) ||
+        /^(?:another|any|kind|name|one|part|piece|same|state|type) of\b/u
+            .test(phrase) ||
+        /^(?:being|having|something|someone|that|thing|used|which|who)\b/u
+            .test(phrase) ||
+        /^(?:to be|to become|to cause|to come|to do|to get|to give|to go|to have|to make|to take)(?:\s|$)/u
+            .test(phrase)) {
+        return "";
+    }
+    if (pos === "verb" && !phrase.startsWith("to ")) {
+        return "";
+    }
+    if (pos !== "verb" && phrase.startsWith("to ")) {
+        return "";
+    }
+    return phrase;
+}
+
+function semanticAlarKeys(value, pos) {
+    if (/[\u0C80-\u0CFF]/u.test(String(value || ""))) {
+        return [];
+    }
+    const keys = new Set();
+    const clauses = String(value || "").split(";");
+    for (const clauseValue of clauses) {
+        const candidates = [clauseValue];
+        const emphasis = clauseValue.match(
+            /\b(?:esp(?:ecially)?\.?|particularly)\s+(?:a|an|the)?\s*(.+)$/iu
+        );
+        if (emphasis) {
+            candidates.push(emphasis[1]);
+        }
+        for (const candidate of candidates) {
+            const key = cleanSemanticAlarKey(candidate, pos);
+            if (key) {
+                keys.add(key);
+            }
+        }
+    }
+    return Array.from(keys)
+        .sort((left, right) =>
+            left.split(/\s+/u).length - right.split(/\s+/u).length ||
+            left.length - right.length ||
+            left.localeCompare(right, "en"))
+        .slice(0, 1);
+}
+
 function parseAlar(source) {
     const records = [];
     let record = null;
@@ -135,6 +209,7 @@ function parseAlar(source) {
 
 function buildAlarDatabase(source) {
     const groups = new Map();
+    const semanticGroups = new Map();
     for (const record of parseAlar(source)) {
         if (!acceptableKannadaLemma(record.lemma)) {
             continue;
@@ -144,18 +219,38 @@ function buildAlarDatabase(source) {
             const pos = definition.pos || "unknown";
             if (!acceptableAlarGloss(gloss) ||
                 !["noun", "verb", "adjective", "adverb"].includes(pos)) {
-                continue;
+                if (!["noun", "verb", "adjective", "adverb"].includes(pos)) {
+                    continue;
+                }
+            } else {
+                // Alar reuses a definition id across headwords that share that
+                // dictionary sense. Treat that explicit source relationship as
+                // the strongest grouping signal.
+                const key = `${pos}\u0000${definition.id}`;
+                if (!groups.has(key)) {
+                    groups.set(key, { label: gloss, pos, words: new Map() });
+                }
+                const group = groups.get(key);
+                if (!group.words.has(record.lemma)) {
+                    group.words.set(record.lemma, [record.id, definition.id]);
+                }
             }
-            // Alar reuses a definition id across headwords that share that
-            // dictionary sense.  Treat that explicit source relationship as
-            // the grouping signal; equal prose alone is not strong enough.
-            const key = `${pos}\u0000${definition.id}`;
-            if (!groups.has(key)) {
-                groups.set(key, { label: gloss, pos, words: new Map() });
-            }
-            const group = groups.get(key);
-            if (!group.words.has(record.lemma)) {
-                group.words.set(record.lemma, [record.id, definition.id]);
+
+            for (const meaning of semanticAlarKeys(definition.gloss, pos)) {
+                const key = `${pos}\u0000${meaning}`;
+                if (!semanticGroups.has(key)) {
+                    semanticGroups.set(key, {
+                        label: meaning,
+                        pos,
+                        definitionIds: new Set(),
+                        words: new Map()
+                    });
+                }
+                const group = semanticGroups.get(key);
+                group.definitionIds.add(definition.id);
+                if (!group.words.has(record.lemma)) {
+                    group.words.set(record.lemma, [record.id, definition.id]);
+                }
             }
         }
     }
@@ -181,13 +276,73 @@ function buildAlarDatabase(source) {
             review.push({ ...compact, reason: "broad-exact-gloss" });
         }
     }
+
+    const explicitPairs = new Set();
+    for (const concept of concepts) {
+        const words = concept.words.map((word) => word[0]);
+        for (let left = 0; left < words.length; left += 1) {
+            for (let right = left + 1; right < words.length; right += 1) {
+                explicitPairs.add([words[left], words[right]].sort().join("\u0000"));
+            }
+        }
+    }
+    const inferredSignatures = new Set();
+    for (const group of semanticGroups.values()) {
+        const words = Array.from(group.words.entries())
+            .sort((left, right) => left[0].localeCompare(right[0], "kn"));
+        if (words.length < 2 || group.definitionIds.size < 2) {
+            continue;
+        }
+        const maximumWords = group.label.includes(" ") ? 20 : 40;
+        if (words.length > maximumWords) {
+            review.push({
+                id: `kn:${String(++ordinal).padStart(5, "0")}`,
+                label: group.label,
+                pos: group.pos,
+                relation: "english-meaning",
+                words: words.map(([word, provenance]) => [word, ...provenance]),
+                reason: "broad-english-meaning"
+            });
+            continue;
+        }
+        let novelPair = false;
+        for (let left = 0; left < words.length && !novelPair; left += 1) {
+            for (let right = left + 1; right < words.length; right += 1) {
+                const pair = [words[left][0], words[right][0]].sort().join("\u0000");
+                if (!explicitPairs.has(pair)) {
+                    novelPair = true;
+                    break;
+                }
+            }
+        }
+        const signature = `${group.pos}\u0000${words.map(([word]) => word).join("\u0000")}`;
+        if (!novelPair || inferredSignatures.has(signature)) {
+            continue;
+        }
+        inferredSignatures.add(signature);
+        concepts.push({
+            id: `kn:${String(++ordinal).padStart(5, "0")}`,
+            label: group.label,
+            pos: group.pos,
+            relation: "english-meaning",
+            // The transformation is deterministic from the pinned source; the
+            // compact runtime file does not repeat provenance ids for every
+            // inferred word-sense edge.
+            words: words.map(([word]) => [word])
+        });
+    }
     concepts.sort((left, right) =>
         left.label.localeCompare(right.label, "en") ||
         left.pos.localeCompare(right.pos, "en"));
     concepts.forEach((concept, index) => {
         concept.id = `kn:${String(index + 1).padStart(5, "0")}`;
     });
-    return { concepts, review };
+    return {
+        concepts,
+        review,
+        inferredConcepts: concepts.filter((concept) =>
+            concept.relation === "english-meaning").length
+    };
 }
 
 function splitAmaraSynonym(value) {
@@ -253,13 +408,19 @@ function buildAmaraDatabase(source) {
 
 function dataDocument({ language, license, licenseUrl, source, concepts }) {
     const wordCount = concepts.reduce((sum, concept) => sum + concept.words.length, 0);
+    const inferredConcepts = concepts.filter((concept) =>
+        concept.relation === "english-meaning").length;
+    const counts = { concepts: concepts.length, wordSenses: wordCount };
+    if (inferredConcepts) {
+        counts.inferredConcepts = inferredConcepts;
+    }
     return {
         schemaVersion: 1,
         language,
         license,
         licenseUrl,
         source,
-        counts: { concepts: concepts.length, wordSenses: wordCount },
+        counts,
         concepts
     };
 }
@@ -322,7 +483,7 @@ function main() {
     writeJson(args.review, {
         schemaVersion: 1,
         sourceRevision: ALAR_REVISION,
-        note: "Exact-gloss groups withheld from the product because they are too broad; review before promotion.",
+        note: "Broad explicit and English-meaning groups withheld automatically from the product.",
         groups: alar.review
     });
     console.log(JSON.stringify({
@@ -341,6 +502,7 @@ module.exports = {
     buildAlarDatabase,
     buildAmaraDatabase,
     normalizeAlarGloss,
+    semanticAlarKeys,
     parseAlar,
     parseAmara,
     slp1ToDevanagari

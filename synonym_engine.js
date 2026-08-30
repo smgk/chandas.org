@@ -101,6 +101,7 @@
                     source: reference.document.source,
                     label: reference.concept.label || "",
                     pos: reference.concept.pos || "",
+                    relation: reference.concept.relation || "",
                     category: reference.concept.category || "",
                     section: reference.concept.section || "",
                     words: reference.concept.words

@@ -2,9 +2,10 @@
 
 The two runtime files are deliberately separate datasets:
 
-- `kn-alar-v1.json` contains conservative Kannada synonym candidates derived
-  from Alar's explicitly shared definition identifiers. It does not infer a
-  relationship merely because two English definitions happen to look alike.
+- `kn-alar-v1.json` contains Kannada synonym candidates derived from Alar's
+  explicitly shared definition identifiers and deterministic English-meaning
+  anchors. Inferred groups are marked `english-meaning` so the interface can
+  distinguish them from source-explicit relationships.
 - `sa-amarakosha-v1.json` contains the direct synonym sets encoded in the
   Cologne Digital Sanskrit Lexicon edition of the *Amarakośa*.
 
@@ -30,6 +31,6 @@ node scripts/build-synonyms.js \
   --review research/synonyms/alar-review-v1.json
 ```
 
-The build is deterministic. Broad Alar groups are withheld into the readable
-review file rather than being exposed as trustworthy suggestions.
-
+The build is deterministic. It rejects generic descriptions and usage notes,
+keeps only one concise meaning anchor per definition, caps inferred group size,
+and withholds broader groups in the readable review file.

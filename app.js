@@ -145,6 +145,7 @@
             sameRhythm: "same rhythm",
             sameMatras: "same mātrās",
             baseForm: "base form; inflect as needed",
+            meaningMatched: "matched by English meaning",
             masculine: "masculine",
             feminine: "feminine",
             neuter: "neuter",
@@ -384,6 +385,7 @@
             sameRhythm: "ಅದೇ ಲಯ",
             sameMatras: "ಅದೇ ಮಾತ್ರೆಗಳು",
             baseForm: "ಮೂಲರೂಪ; ಬೇಕಾದಂತೆ ವಿಭಕ್ತಿ ಸೇರಿಸಿ",
+            meaningMatched: "ಇಂಗ್ಲಿಷ್ ಅರ್ಥದಿಂದ ಹೊಂದಿಸಲಾಗಿದೆ",
             masculine: "ಪುಲ್ಲಿಂಗ",
             feminine: "ಸ್ತ್ರೀಲಿಂಗ",
             neuter: "ನಪುಂಸಕಲಿಂಗ",
@@ -623,6 +625,7 @@
             sameRhythm: "అదే లయ",
             sameMatras: "అదే మాత్రలు",
             baseForm: "మూలరూపం; అవసరమైన విభక్తి చేర్చండి",
+            meaningMatched: "ఆంగ్ల అర్థంతో సరిపోల్చబడింది",
             masculine: "పుంలింగం",
             feminine: "స్త్రీలింగం",
             neuter: "నపుంసకలింగం",
@@ -862,6 +865,7 @@
             sameRhythm: "સમાન લય",
             sameMatras: "સમાન માત્રા",
             baseForm: "મૂળરૂપ; જરૂર મુજબ વિભક્તિ ઉમેરો",
+            meaningMatched: "અંગ્રેજી અર્થ પરથી મેળવેલ",
             masculine: "પુલ્લિંગ",
             feminine: "સ્ત્રીલિંગ",
             neuter: "નપુંસકલિંગ",
@@ -2525,6 +2529,9 @@
         if (stemmed || sense.language === "sa") {
             parts.push(t("baseForm"));
         }
+        if (sense.relation === "english-meaning") {
+            parts.push(t("meaningMatched"));
+        }
         parts.push(sense.source.id === "alar" ? "Alar" : "Amarakośa");
         return parts.join(" · ");
     }
@@ -2577,14 +2584,21 @@
             if (!index) {
                 continue;
             }
-            for (const sense of ChandasSynonyms.lookup(index, context.lookupTerms, 8)) {
+            for (const sense of ChandasSynonyms.lookup(index, context.lookupTerms, 32)) {
                 if (!seen.has(sense.id)) {
                     seen.add(sense.id);
                     senses.push(sense);
                 }
             }
         }
-        return senses;
+        const posPriority = { noun: 0, verb: 1, adjective: 2, adverb: 3 };
+        return senses.sort((left, right) =>
+            Number(left.relation === "english-meaning") -
+                Number(right.relation === "english-meaning") ||
+            (posPriority[left.pos] ?? 4) - (posPriority[right.pos] ?? 4) ||
+            right.words.length - left.words.length ||
+            left.label.localeCompare(right.label, "en")
+        ).slice(0, 8);
     }
 
     function renderSynonymResults(context, languages) {
@@ -2605,7 +2619,7 @@
                     left.rank - right.rank ||
                     left.metrics.syllables - right.metrics.syllables ||
                     left.displayWord.localeCompare(right.displayWord))
-                .slice(0, 12);
+                .slice(0, 32);
             candidates.forEach((candidate) => allWords.add(candidate.displayWord));
             if (candidates.length) {
                 renderedSenses.push({ sense, candidates });

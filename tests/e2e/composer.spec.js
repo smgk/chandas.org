@@ -160,6 +160,27 @@ test("offers metrical Amarakośa synonyms and replaces only the current word", a
     await expect(page.locator("#composition")).toHaveValue("देवः पातु");
 });
 
+test("offers meaning-matched Kannada synonyms for common words", async ({ page }) => {
+    await page.locator("#composition").fill("ಮರ");
+    await page.locator("#composition").evaluate((input) => {
+        input.focus();
+        input.setSelectionRange(input.value.length, input.value.length);
+        input.dispatchEvent(new Event("select", { bubbles: true }));
+    });
+
+    await expect(page.locator("#synonym-picker")).toBeVisible();
+    await page.locator("#synonym-picker summary").click();
+    const treeSense = page.locator(".synonym-sense")
+        .filter({ has: page.locator(".synonym-sense-heading strong", { hasText: /^tree$/ }) });
+    await expect(treeSense).toBeVisible();
+    await expect(treeSense.locator(".synonym-sense-heading"))
+        .toContainText("matched by English meaning");
+    await expect(treeSense.locator(".synonym-choice-word").filter({ hasText: /^ತರು$/ }))
+        .toBeVisible();
+    await expect(treeSense.locator(".synonym-choice-word").filter({ hasText: /^ವೃಕ್ಷ$/ }))
+        .toBeVisible();
+});
+
 test.describe("synonym source recovery", () => {
     test.use({ serviceWorkers: "block" });
 

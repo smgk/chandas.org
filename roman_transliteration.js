@@ -15,7 +15,7 @@
 }(typeof window !== "undefined" ? window : globalThis, function createRomanApi() {
     "use strict";
 
-    const VERSION = "1.1.0";
+    const VERSION = "1.1.1";
     const VIRAMA = "्";
 
     const VOWELS = {
@@ -81,8 +81,10 @@
         ["ā", vowel("aa")], ["ī", vowel("ii")], ["ū", vowel("uu")],
         ["ṝ", vowel("rr")], ["ṛ", vowel("r")],
         ["ḹ", vowel("ll")], ["ḷ", vowel("l")],
+        ["ĕ", vowel("e_short")], ["ŏ", vowel("o_short")],
         ["a", vowel("a")], ["i", vowel("i")], ["u", vowel("u")],
         ["e", vowel("e")], ["o", vowel("o")],
+        ["l̤", consonant("retro_l")],
         ...COMMON_IAST_CONSONANTS,
         ["m̐", mark("ँ")], ["ṃ", mark("ं")], ["ṁ", mark("ं")],
         ["ḥ", mark("ः")], ["'", literal("ऽ")], ["’", literal("ऽ")]
@@ -216,7 +218,7 @@
     const ROMAN_TABLES = Object.freeze({
         iast: {
             vowels: ["a", "ā", "i", "ī", "u", "ū", "ṛ", "ṝ", "ḷ", "ḹ", "ĕ", "e", "ai", "ŏ", "o", "au"],
-            consonants: ["k", "kh", "g", "gh", "ṅ", "c", "ch", "j", "jh", "ñ", "ṭ", "ṭh", "ḍ", "ḍh", "ṇ", "t", "th", "d", "dh", "n", "p", "ph", "b", "bh", "m", "y", "r", "l", "v", "ś", "ṣ", "s", "h", "ḷ", "ḻ", "ṟ"],
+            consonants: ["k", "kh", "g", "gh", "ṅ", "c", "ch", "j", "jh", "ñ", "ṭ", "ṭh", "ḍ", "ḍh", "ṇ", "t", "th", "d", "dh", "n", "p", "ph", "b", "bh", "m", "y", "r", "l", "v", "ś", "ṣ", "s", "h", "l̤", "ḻ", "ṟ"],
             marks: { "ँ": "m̐", "ं": "ṃ", "ः": "ḥ", "ऽ": "’" }
         },
         iso15919: {
@@ -374,6 +376,18 @@
             emit(token.value, span);
         }
 
+        function resolvedToken(key, index) {
+            const token = definition.tokens[key];
+            if (scheme !== "iast" || key !== "ḷ" || pendingConsonant) {
+                return token;
+            }
+            const before = normalized.text.slice(0, index);
+            const after = normalized.text.slice(index + key.length);
+            const touchesRomanWord = /[\p{Letter}\p{Mark}]$/u.test(before) ||
+                /^[\p{Letter}\p{Mark}]/u.test(after);
+            return touchesRomanWord ? consonant("retro_l") : token;
+        }
+
         for (let index = 0; index < normalized.text.length;) {
             const key = tokenKeys.find((candidate) =>
                 normalized.text.startsWith(candidate, index));
@@ -383,7 +397,7 @@
                     start: tokenSpans[0].start,
                     end: tokenSpans.at(-1).end
                 };
-                applyToken(definition.tokens[key], span);
+                applyToken(resolvedToken(key, index), span);
                 index += key.length;
                 continue;
             }

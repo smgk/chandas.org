@@ -135,6 +135,30 @@ test("keeps lossy colloquial Roman as a copy-only preview", async ({ page }) => 
     await expect(page.locator("#input-scheme")).toHaveValue("native");
 });
 
+test("round-trips a Kannada Kanda passage through reversible IAST", async ({
+    page
+}) => {
+    const source = "ಅರುಣಂಗೆ ವನಂ ಪಲ್ಲವ ಕರಂಗಳಿಂದರ್ಘ್ಯವೆತ್ತುತಿರ್ದಪನೆಂಬಂ ತಿರೆ ಪನಿವ ಪುಲ್ಲ ನೀರ್ಗ ಳ್ವೆರಸಲರುದುರುತ್ತಮಿರ್ದುವಂತಾ ಕ್ಷಣದೊಳ್";
+    await page.locator("#composition").fill(source);
+    await expect(page.locator("#active-pattern")).not.toHaveText("—");
+    const originalPattern = await page.locator("#active-pattern").textContent();
+
+    await page.locator("#input-scheme").selectOption("convert:iast");
+    await expect(page.locator("#conversion-warning")).toBeHidden();
+    await expect(page.locator("#conversion-preview")).toHaveValue(/ĕ/);
+    await expect(page.locator("#conversion-preview")).toHaveValue(/l̤/);
+    await page.locator("#apply-conversion").click();
+    await expect(page.locator("#input-scheme")).toHaveValue("iast");
+
+    await page.locator("#input-scheme").selectOption("convert:kannada");
+    await expect(page.locator("#conversion-warning")).toBeHidden();
+    await expect(page.locator("#conversion-preview")).toHaveValue(source);
+    await page.locator("#apply-conversion").click();
+
+    await expect(page.locator("#composition")).toHaveValue(source);
+    await expect(page.locator("#active-pattern")).toHaveText(originalPattern || "");
+});
+
 test("learns, saves, validates, restores, and deletes a private custom form", async ({
     page
 }) => {

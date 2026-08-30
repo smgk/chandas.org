@@ -135,6 +135,25 @@ test("exact Roman targets round-trip through the analysis shadow", () => {
     }
 });
 
+test("round-trips southern IAST vowels and Kannada retroflex laterals", () => {
+    const source = "ಅರುಣಂಗೆ ವನಂ ಪಲ್ಲವ ಕರಂಗಳಿಂದರ್ಘ್ಯವೆತ್ತುತಿರ್ದಪನೆಂಬಂ ತಿರೆ ಪನಿವ ಪುಲ್ಲ ನೀರ್ಗ ಳ್ವೆರಸಲರುದುರುತ್ತಮಿರ್ದುವಂತಾ ಕ್ಷಣದೊಳ್";
+    const roman = Roman.convert(source, "native", "iast");
+    assert.match(roman.text, /ĕ/);
+    assert.match(roman.text, /ŏ/);
+    assert.match(roman.text, /l̤/);
+    assert.doesNotMatch(roman.text, /gaḷ/);
+    assert.deepEqual(roman.warnings, []);
+
+    const restored = Roman.convert(roman.text, "iast", "kannada");
+    assert.equal(restored.text, source);
+    assert.deepEqual(restored.warnings, []);
+
+    const legacyRoman = roman.text.replaceAll("l̤", "ḷ");
+    const restoredLegacy = Roman.convert(legacyRoman, "iast", "kannada");
+    assert.equal(restoredLegacy.text, source);
+    assert.deepEqual(restoredLegacy.warnings, []);
+});
+
 test("conversion preserves verse layout, punctuation, and numerals", () => {
     const source = "ಕೃಷ್ಣಃ, ಪಾರ್ಥಾಯ।\n\nಸ್ವಯಮ್ ೧೨";
     const converted = Roman.convert(source, "native", "devanagari");

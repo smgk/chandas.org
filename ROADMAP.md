@@ -340,9 +340,14 @@ week per meter-family presentation
 - [ ] Obtain Telugu prosody review for full yati-maitri equivalence, historical
   Sīsa variants, specialist written-line conventions, and musical Ragaḍa
   licenses before promoting those rules beyond their catalog labels.
-- Select synonym data whose license permits bundled web and Android use.
-- Prefer an offline-first index; label meaning, register, grammatical
-  differences, and metrical fit.
+- [x] Add separately licensed, offline synonym indexes: conservative Alar
+  shared-sense candidates for Kannada and direct CDSL Amarakośa synsets for
+  Sanskrit, with provenance and a readable review queue.
+- [x] Add a compact caret-aware synonym picker with sense, grammatical,
+  syllable, mātrā, Guru–Laghu, and same-fit guidance; replace only the current
+  word and rerun live analysis.
+- [ ] Scholar-review the Alar candidate queue and add explicit register and
+  usage labels beyond what can be retained safely from the source corpus.
 - [x] Add an isolated offline Roman adapter for IAST, ISO 15919, ITRANS, and
   Harvard-Kyoto with Aksharamukha-verified fixtures, source-safe highlighting,
   saved state, and analysis-link round trips.

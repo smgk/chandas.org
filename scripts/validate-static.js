@@ -17,12 +17,17 @@ const required = [
     "analytics.js",
     "poem_store.js",
     "meter_analysis.js",
+    "synonym_engine.js",
     "scansion.js",
     "shithila_dvitva.js",
     "strong_template.js",
     "custom_meter.js",
     "mishra.json",
     "structural_meters.json",
+    "data/synonyms/kn-alar-v1.json",
+    "data/synonyms/sa-amarakosha-v1.json",
+    "data/synonyms/README.md",
+    "data/synonyms/DATA_LICENSES.md",
     "examples/field_guide_corpus.json",
     "examples/apte_sanskrit_examples.json",
     "docs/research/archive-meter-audit.md",
@@ -71,6 +76,39 @@ if (!structuralCatalog.catalogVersion ||
     !Array.isArray(structuralCatalog.meters) ||
     structuralCatalog.meters.length === 0) {
     throw new Error("structural_meters.json does not contain a versioned meter list");
+}
+
+const synonymDocuments = [
+    ["data/synonyms/kn-alar-v1.json", "kn", "ODbL-1.0"],
+    ["data/synonyms/sa-amarakosha-v1.json", "sa", "CC-BY-SA-4.0"]
+].map(([file, language, license]) => {
+    const document = JSON.parse(fs.readFileSync(path.join(root, file), "utf8"));
+    if (document.schemaVersion !== 1 || document.language !== language ||
+        document.license !== license || !document.licenseUrl ||
+        !document.source || !document.source.revision ||
+        !Array.isArray(document.concepts) || !document.concepts.length) {
+        throw new Error(`${file} has incomplete synonym metadata`);
+    }
+    const ids = new Set();
+    let wordSenses = 0;
+    for (const concept of document.concepts) {
+        if (!concept.id || ids.has(concept.id) || !concept.label ||
+            !Array.isArray(concept.words) || concept.words.length < 2 ||
+            concept.words.some((word) => !Array.isArray(word) || !word[0])) {
+            throw new Error(`${file} contains an invalid synonym concept`);
+        }
+        ids.add(concept.id);
+        wordSenses += concept.words.length;
+    }
+    if (!document.counts || document.counts.concepts !== ids.size ||
+        document.counts.wordSenses !== wordSenses) {
+        throw new Error(`${file} synonym counts are stale`);
+    }
+    return document;
+});
+if (synonymDocuments[0].counts.concepts < 5000 ||
+    synonymDocuments[1].counts.concepts < 4000) {
+    throw new Error("Synonym databases are unexpectedly incomplete");
 }
 const prominenceValues = new Set(["specialist", "neutral", "established", "common"]);
 if (!structuralCatalog.meterProminence ||

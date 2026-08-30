@@ -467,6 +467,19 @@ recommended, and optional behavior.
    fit differs.
 6. The source and license of synonym data MUST permit use in both the website
    and Android application.
+7. The first synonym release MUST remain entirely offline. It MUST NOT send
+   the current word, composition, or lookup history to a dictionary service.
+8. Kannada suggestions MUST be derived conservatively from Alar's explicit
+   shared sense identifiers. Exact-looking English prose alone MUST NOT create
+   a synonym relationship, and broad groups MUST remain in a review queue.
+9. Sanskrit suggestions MUST use direct Amarakośa synsets. Sanskrit candidates
+   MAY be rendered in Kannada, Telugu, Gujarati, Devanagari, or the active exact
+   Roman scheme without changing the source text until the user selects one.
+10. Suggestions SHOULD show syllable count, mātrā count, Guru–Laghu pattern,
+    and whether their rhythm or mātrā total matches the current word.
+11. Source databases with different licenses MUST remain separately
+    downloadable and attributed. Application code MUST NOT claim GPL-only
+    licensing over ODbL or CC-BY-SA lexical data.
 
 ### FR-10: Local saved work and user-owned backups
 

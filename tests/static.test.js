@@ -27,6 +27,7 @@ test("the web shell has no external runtime asset dependencies", () => {
     assert.match(html, /manifest\.webmanifest/);
     assert.match(html, /roman_transliteration\.js/);
     assert.match(html, /meter_analysis\.js/);
+    assert.match(html, /synonym_engine\.js/);
     assert.match(html, /scansion\.js/);
     assert.match(html, /shithila_dvitva\.js/);
     assert.match(html, /strong_template\.js/);
@@ -36,11 +37,13 @@ test("the web shell has no external runtime asset dependencies", () => {
     assert.match(html, /app\.js/);
 });
 
-test("the Android wrapper bundles the Roman and shared scansion adapters", () => {
+test("the Android wrapper bundles the Roman, scansion, and synonym adapters", () => {
     const gradle = read("android/app/build.gradle");
     assert.match(gradle, /include "roman_transliteration\.js"/);
     assert.match(gradle, /include "scansion\.js"/);
     assert.match(gradle, /include "custom_meter\.js"/);
+    assert.match(gradle, /include "synonym_engine\.js"/);
+    assert.match(gradle, /include "data\/synonyms\/\*\*"/);
 });
 
 test("Kannada, Telugu, and Gujarati localization cover every interface message", () => {
@@ -114,6 +117,7 @@ test("original source declares Ganesh Krishna Shankarathota under GPLv3 only", (
         "custom_meter.js",
         "analytics.js",
         "meter_analysis.js",
+        "synonym_engine.js",
         "scansion.js",
         "strong_template.js",
         "poem_store.js",
@@ -131,6 +135,7 @@ test("original source declares Ganesh Krishna Shankarathota under GPLv3 only", (
         "scripts/build-static.js",
         "scripts/static-server.js",
         "scripts/validate-static.js",
+        "scripts/build-synonyms.js",
         "android/app/src/main/java/org/chandas/app/MainActivity.java"
     ];
 
@@ -164,11 +169,15 @@ test("service worker pre-caches every core web asset", () => {
         "custom_meter.js",
         "analytics.js",
         "meter_analysis.js",
+        "synonym_engine.js",
         "scansion.js",
         "strong_template.js",
         "poem_store.js",
         "mishra.json",
         "structural_meters.json",
+        "data/synonyms/kn-alar-v1.json",
+        "data/synonyms/sa-amarakosha-v1.json",
+        "data/synonyms/DATA_LICENSES.md",
         "examples/field_guide_corpus.json",
         "examples/apte_sanskrit_examples.json",
         "docs/research/archive-meter-audit.md",
@@ -214,6 +223,8 @@ test("the composition control and live regions have accessible labels", () => {
     assert.match(html, /id="validation-summary"[^>]*aria-live="polite"/);
     assert.match(html, /id="toast"[^>]*role="status"[^>]*aria-live="polite"/);
     assert.match(html, /id="cursor-metrics"/);
+    assert.match(html, /id="synonym-picker"[^>]*hidden/);
+    assert.match(html, /id="synonym-list"/);
     assert.match(html, /id="show-template"[^>]*type="checkbox"/);
     assert.match(html, /id="detect-shithila-dvitva"[^>]*type="checkbox"/);
     assert.match(html, /id="scansion-mode"/);

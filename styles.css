@@ -910,6 +910,146 @@ textarea:focus-visible {
     font-variant-numeric: tabular-nums;
 }
 
+.synonym-picker {
+    position: relative;
+    margin-top: 0.7rem;
+    border: 1px solid color-mix(in srgb, var(--green) 24%, var(--line));
+    border-radius: 0.78rem;
+    background: color-mix(in srgb, var(--green) 3%, #fffdf8);
+}
+
+.synonym-picker > summary {
+    display: flex;
+    min-height: 2.35rem;
+    align-items: center;
+    gap: 0.48rem;
+    padding: 0.48rem 0.7rem;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 0.75rem;
+    list-style: none;
+}
+
+.synonym-picker > summary::-webkit-details-marker {
+    display: none;
+}
+
+.synonym-picker > summary::before {
+    content: "+";
+    color: var(--green);
+    font-size: 1rem;
+    line-height: 1;
+}
+
+.synonym-picker[open] > summary::before {
+    content: "−";
+}
+
+.synonym-picker > summary strong {
+    color: var(--ink);
+    font-family: var(--editor-font);
+    font-size: 0.9rem;
+}
+
+.synonym-picker > summary small {
+    margin-left: auto;
+    color: var(--muted);
+    font-size: 0.68rem;
+}
+
+.synonym-popover {
+    padding: 0.15rem 0.7rem 0.72rem;
+    border-top: 1px solid color-mix(in srgb, var(--green) 16%, var(--line));
+}
+
+.synonym-popover > p:first-child {
+    margin: 0.6rem 0;
+    color: var(--muted);
+    font-size: 0.72rem;
+}
+
+.synonym-list {
+    display: grid;
+    gap: 0.65rem;
+    max-height: 18rem;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+.synonym-sense {
+    display: grid;
+    gap: 0.34rem;
+}
+
+.synonym-sense-heading {
+    display: flex;
+    align-items: baseline;
+    gap: 0.45rem;
+    color: var(--muted);
+    font-size: 0.67rem;
+}
+
+.synonym-sense-heading strong {
+    color: var(--ink);
+    font-size: 0.73rem;
+    font-weight: 700;
+}
+
+.synonym-choices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.synonym-choice {
+    display: inline-grid;
+    grid-template-columns: auto auto;
+    align-items: baseline;
+    gap: 0.38rem;
+    min-height: 2.25rem;
+    padding: 0.38rem 0.55rem;
+    border: 1px solid var(--line);
+    border-radius: 0.62rem;
+    color: var(--ink);
+    background: #fffdf8;
+    text-align: left;
+}
+
+.synonym-choice:hover,
+.synonym-choice:focus-visible {
+    border-color: color-mix(in srgb, var(--green) 52%, var(--line));
+    background: color-mix(in srgb, var(--green) 7%, #fffdf8);
+}
+
+.synonym-choice-word {
+    font-family: var(--editor-font);
+    font-size: 0.94rem;
+    font-weight: 650;
+}
+
+.synonym-choice-fit {
+    color: var(--green);
+    font-size: 0.61rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.synonym-choice-metrics {
+    grid-column: 1 / -1;
+    color: var(--muted);
+    font-size: 0.61rem;
+}
+
+.synonym-license-note {
+    margin: 0.65rem 0 0;
+    color: var(--muted);
+    font-size: 0.62rem;
+}
+
+.synonym-license-note a {
+    margin-left: 0.3rem;
+}
+
 .analysis-card {
     min-height: 33rem;
     padding: 1.35rem;
@@ -2271,6 +2411,10 @@ textarea:focus-visible {
 
     .editor-status {
         justify-items: start;
+    }
+
+    .synonym-choice {
+        flex: 1 1 9rem;
     }
 
     .editor-help {

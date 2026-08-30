@@ -135,6 +135,31 @@ test("keeps lossy colloquial Roman as a copy-only preview", async ({ page }) => 
     await expect(page.locator("#input-scheme")).toHaveValue("native");
 });
 
+test("offers metrical Amarakośa synonyms and replaces only the current word", async ({
+    page
+}) => {
+    await page.locator("#composition").fill("देवः पातु");
+    await page.locator("#composition").evaluate((input) => {
+        input.focus();
+        input.setSelectionRange(1, 1);
+        input.dispatchEvent(new Event("select", { bubbles: true }));
+    });
+
+    await expect(page.locator("#synonym-picker")).toBeVisible();
+    await expect(page.locator("#synonym-count")).toContainText("choices");
+    await page.locator("#synonym-picker summary").click();
+    await expect(page.locator(".synonym-sense-heading").first())
+        .toContainText("Amarakośa");
+    const amar = page.locator(".synonym-choice-word")
+        .filter({ hasText: /^अमर$/ }).locator("..");
+    await expect(amar).toContainText(/syllables|mātrās/);
+    await amar.click();
+
+    await expect(page.locator("#composition")).toHaveValue("अमर पातु");
+    await page.locator("#composition").press("Control+z");
+    await expect(page.locator("#composition")).toHaveValue("देवः पातु");
+});
+
 test("round-trips a Kannada Kanda passage through reversible IAST", async ({
     page
 }) => {

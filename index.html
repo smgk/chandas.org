@@ -16,6 +16,7 @@ SPDX-License-Identifier: GPL-3.0-only
     <link rel="stylesheet" href="styles.css">
     <script src="roman_transliteration.js" defer></script>
     <script src="meter_analysis.js" defer></script>
+    <script src="synonym_engine.js" defer></script>
     <script src="scansion.js" defer></script>
     <script src="shithila_dvitva.js" defer></script>
     <script src="strong_template.js" defer></script>
@@ -180,6 +181,23 @@ SPDX-License-Identifier: GPL-3.0-only
                         </p>
                     </div>
                 </div>
+                <details id="synonym-picker" class="synonym-picker" hidden>
+                    <summary>
+                        <span data-i18n="synonyms">Synonyms</span>
+                        <strong id="synonym-word"></strong>
+                        <small id="synonym-count"></small>
+                    </summary>
+                    <div class="synonym-popover">
+                        <p data-i18n="synonymHelp">
+                            Choose the intended sense, then a word that fits the line.
+                        </p>
+                        <div id="synonym-list" class="synonym-list"></div>
+                        <p class="synonym-license-note">
+                            <span data-i18n="synonymSourceNote">Suggestions retain their source and license.</span>
+                            <a href="notices.html#synonym-data" data-i18n="dataDetails">Data details</a>
+                        </p>
+                    </div>
+                </details>
             </div>
 
             <aside class="analysis-card" aria-labelledby="analysis-title">

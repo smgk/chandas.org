@@ -147,3 +147,25 @@ verse of Kālidāsa's public-domain *Meghadūta*, checked against K. B. Pathak's
 1916 edition:
 
 <https://archive.org/details/kalidasas-meghaduta-skt-eng-kb-pathak-1916>
+
+## Offline synonym data
+
+`data/synonyms/kn-alar-v1.json` contains information from
+[V. Krishna's Alar Kannada–English dictionary](https://github.com/alar-dict/data),
+made available under the
+[Open Database License 1.0](https://opendatacommons.org/licenses/odbl/1-0/).
+The complete adapted JSON database and deterministic transformation are
+distributed with Chandas, and the adapted database remains ODbL-1.0.
+
+`data/synonyms/sa-amarakosha-v1.json` contains direct synonym sets from
+Amarasiṃha's *Nāmaliṅgānuśāsana* (*Amarakośa*) using the
+[Cologne Digital Sanskrit Lexicon edition](https://github.com/sanskrit-lexicon/AMAR),
+released under
+[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). Attribution
+is retained for Amarasiṃha, the University of Hyderabad SCL digitisation, and
+CDSL's conversion and correction contributors. The resulting Sanskrit JSON
+remains CC BY-SA 4.0.
+
+The two databases are separate data works and are not relicensed under the
+GPL license of the Chandas application. The complete data notices are in
+`data/synonyms/DATA_LICENSES.md`.

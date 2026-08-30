@@ -133,6 +133,22 @@
             matraShort: "M",
             cursorMetrics: "Syllable {syllable} · Mātrās {matras}",
             cursorMetricsLabel: "Counts from the beginning of the line to the cursor",
+            synonyms: "Synonyms",
+            synonymsFor: "Synonyms for {word}",
+            synonymCount: "{count} choices",
+            synonymHelp: "Choose the intended sense, then a word that fits the line.",
+            synonymSourceNote: "Suggestions retain their source and license.",
+            dataDetails: "Data details",
+            sameRhythm: "same rhythm",
+            sameMatras: "same mātrās",
+            baseForm: "base form; inflect as needed",
+            masculine: "masculine",
+            feminine: "feminine",
+            neuter: "neuter",
+            indeclinable: "indeclinable",
+            plural: "plural",
+            synonymMetrics: "{syllables} syllables · {matras} mātrās · {pattern}",
+            synonymReplaced: "Replaced {word}",
             stanzaHelp: "Leave a blank line between stanzas.",
             activeStanza: "Active stanza",
             stanza: "Stanza {number} of {total}",
@@ -353,6 +369,22 @@
             matraShort: "ಮಾ",
             cursorMetrics: "ಅಕ್ಷರ {syllable} · ಮಾತ್ರೆ {matras}",
             cursorMetricsLabel: "ಸಾಲಿನ ಆರಂಭದಿಂದ ಕರ್ಸರ್‌ವರೆಗಿನ ಎಣಿಕೆ",
+            synonyms: "ಪರ್ಯಾಯ ಪದಗಳು",
+            synonymsFor: "{word} ಪದಕ್ಕೆ ಪರ್ಯಾಯಗಳು",
+            synonymCount: "{count} ಆಯ್ಕೆಗಳು",
+            synonymHelp: "ಬೇಕಾದ ಅರ್ಥವನ್ನು ನೋಡಿ, ಸಾಲಿಗೆ ಒಪ್ಪುವ ಪದವನ್ನು ಆರಿಸಿ.",
+            synonymSourceNote: "ಸಲಹೆಗಳ ಮೂಲ ಮತ್ತು ಪರವಾನಗಿ ಉಳಿಯುತ್ತವೆ.",
+            dataDetails: "ದತ್ತಾಂಶ ವಿವರಗಳು",
+            sameRhythm: "ಅದೇ ಲಯ",
+            sameMatras: "ಅದೇ ಮಾತ್ರೆಗಳು",
+            baseForm: "ಮೂಲರೂಪ; ಬೇಕಾದಂತೆ ವಿಭಕ್ತಿ ಸೇರಿಸಿ",
+            masculine: "ಪುಲ್ಲಿಂಗ",
+            feminine: "ಸ್ತ್ರೀಲಿಂಗ",
+            neuter: "ನಪುಂಸಕಲಿಂಗ",
+            indeclinable: "ಅವ್ಯಯ",
+            plural: "ಬಹುವಚನ",
+            synonymMetrics: "{syllables} ಅಕ್ಷರ · {matras} ಮಾತ್ರೆ · {pattern}",
+            synonymReplaced: "{word} ಪದವನ್ನು ಹಾಕಲಾಗಿದೆ",
             stanzaHelp: "ಪದ್ಯಗಳ ನಡುವೆ ಒಂದು ಖಾಲಿ ಸಾಲು ಬಿಡಿ.",
             activeStanza: "ಪ್ರಸ್ತುತ ಪದ್ಯ",
             stanza: "ಪದ್ಯ {number} / {total}",
@@ -573,6 +605,22 @@
             matraShort: "మా",
             cursorMetrics: "అక్షరం {syllable} · మాత్రలు {matras}",
             cursorMetricsLabel: "పంక్తి మొదలు నుండి కర్సర్ వరకు లెక్క",
+            synonyms: "పర్యాయపదాలు",
+            synonymsFor: "{word}కు పర్యాయపదాలు",
+            synonymCount: "{count} ఎంపికలు",
+            synonymHelp: "ఉద్దేశించిన అర్థాన్ని చూసి, పంక్తికి సరిపోయే పదాన్ని ఎంచుకోండి.",
+            synonymSourceNote: "సూచనల మూలం, లైసెన్స్ అలాగే ఉంటాయి.",
+            dataDetails: "డేటా వివరాలు",
+            sameRhythm: "అదే లయ",
+            sameMatras: "అదే మాత్రలు",
+            baseForm: "మూలరూపం; అవసరమైన విభక్తి చేర్చండి",
+            masculine: "పుంలింగం",
+            feminine: "స్త్రీలింగం",
+            neuter: "నపుంసకలింగం",
+            indeclinable: "అవ్యయం",
+            plural: "బహువచనం",
+            synonymMetrics: "{syllables} అక్షరాలు · {matras} మాత్రలు · {pattern}",
+            synonymReplaced: "{word} చేర్చబడింది",
             stanzaHelp: "పద్యాల మధ్య ఒక ఖాళీ పంక్తిని విడిచిపెట్టండి.",
             activeStanza: "ప్రస్తుత పద్యం",
             stanza: "పద్యం {number} / {total}",
@@ -793,6 +841,22 @@
             matraShort: "મા",
             cursorMetrics: "અક્ષર {syllable} · માત્રા {matras}",
             cursorMetricsLabel: "પંક્તિની શરૂઆતથી કર્સર સુધીની ગણતરી",
+            synonyms: "સમાનાર્થી શબ્દો",
+            synonymsFor: "{word} માટે સમાનાર્થી",
+            synonymCount: "{count} વિકલ્પો",
+            synonymHelp: "ઇચ્છિત અર્થ જોઈને પંક્તિને બંધબેસતો શબ્દ પસંદ કરો.",
+            synonymSourceNote: "સૂચનોનો સ્રોત અને લાઇસન્સ જળવાય છે.",
+            dataDetails: "ડેટાની વિગતો",
+            sameRhythm: "સમાન લય",
+            sameMatras: "સમાન માત્રા",
+            baseForm: "મૂળરૂપ; જરૂર મુજબ વિભક્તિ ઉમેરો",
+            masculine: "પુલ્લિંગ",
+            feminine: "સ્ત્રીલિંગ",
+            neuter: "નપુંસકલિંગ",
+            indeclinable: "અવ્યય",
+            plural: "બહુવચન",
+            synonymMetrics: "{syllables} અક્ષર · {matras} માત્રા · {pattern}",
+            synonymReplaced: "{word} મૂકાયો",
             stanzaHelp: "પદ્યખંડો વચ્ચે એક ખાલી પંક્તિ છોડો.",
             activeStanza: "વર્તમાન પદ્યખંડ",
             stanza: "પદ્યખંડ {number} / {total}",
@@ -935,12 +999,17 @@
         pendingConversion: null,
         conversionUndo: null,
         customForms: [],
-        pendingCustomInference: null
+        pendingCustomInference: null,
+        synonymIndex: null,
+        synonymLoadPromise: null,
+        synonymContext: null,
+        synonymRenderToken: 0
     };
 
     function cacheElements() {
         [
             "composition", "highlight-layer", "editor-shell", "draft-state", "cursor-metrics",
+            "synonym-picker", "synonym-word", "synonym-count", "synonym-list",
             "input-scheme", "transliteration-help",
             "language", "new-draft", "saved-poems", "app-update", "copy", "share", "analysis-title",
             "previous-stanza", "next-stanza", "empty-analysis", "analysis-content",
@@ -1027,6 +1096,7 @@
         elements["next-stanza"].setAttribute("aria-label", t("nextStanza"));
         elements["cursor-metrics"].setAttribute("aria-label", t("cursorMetricsLabel"));
         renderCursorMetrics();
+        renderSynonymPicker();
         renderOverlay();
         renderAnalysisPanel();
         if (elements["saved-poems-dialog"].open) {
@@ -2202,6 +2272,352 @@
         });
     }
 
+    const SYNONYM_DATA_URLS = [
+        "data/synonyms/kn-alar-v1.json",
+        "data/synonyms/sa-amarakosha-v1.json"
+    ];
+
+    function hideSynonymPicker() {
+        if (!elements["synonym-picker"]) {
+            return;
+        }
+        elements["synonym-picker"].hidden = true;
+        elements["synonym-picker"].open = false;
+        elements["synonym-word"].textContent = "";
+        elements["synonym-count"].textContent = "";
+        elements["synonym-list"].replaceChildren();
+        state.synonymContext = null;
+    }
+
+    async function loadSynonymIndex() {
+        if (state.synonymIndex) {
+            return state.synonymIndex;
+        }
+        if (!state.synonymLoadPromise) {
+            state.synonymLoadPromise = Promise.all(SYNONYM_DATA_URLS.map(async (url) => {
+                const response = await fetch(url, { cache: "force-cache" });
+                if (!response.ok) {
+                    throw new Error(`Synonym data request failed: ${response.status}`);
+                }
+                return response.json();
+            })).then((documents) => {
+                state.synonymIndex = ChandasSynonyms.createIndex(documents);
+                return state.synonymIndex;
+            }).catch((error) => {
+                console.error(error);
+                state.synonymLoadPromise = null;
+                return null;
+            });
+        }
+        return state.synonymLoadPromise;
+    }
+
+    function nativeTargetForScript(script) {
+        return ["kannada", "devanagari", "telugu", "gujarati"].includes(script)
+            ? script
+            : null;
+    }
+
+    function wordLookupVariants(wordValue, script) {
+        const word = String(wordValue || "").normalize("NFC");
+        const variants = new Set([word]);
+        if (script === "kannada") {
+            const suffixes = [
+                "ಗಳಿಂದ", "ಗಳಲ್ಲಿ", "ವನ್ನು", "ಯನ್ನು", "ಅನ್ನು",
+                "ದಿಂದ", "ದಲ್ಲಿ", "ನಲ್ಲಿ", "ಗಳಿಗೆ", "ಗಳು", "ಗಳ",
+                "ಕ್ಕೆ", "ಗಾಗಿ", "ಇಂದ", "ಯಿಂದ", "ಗೆ"
+            ];
+            for (const suffix of suffixes) {
+                if (word.endsWith(suffix)) {
+                    const stem = word.slice(0, -suffix.length);
+                    if (Array.from(stem).length >= 2) {
+                        variants.add(stem);
+                    }
+                }
+            }
+        } else if (script === "devanagari") {
+            for (const ending of ["ः", "म्", "ं"]) {
+                if (word.endsWith(ending) && Array.from(word).length > 2) {
+                    variants.add(word.slice(0, -ending.length));
+                }
+            }
+        }
+        return Array.from(variants);
+    }
+
+    function synonymContextAtCaret() {
+        if (!elements.composition ||
+            (document.activeElement &&
+                document.activeElement.classList.contains("strong-template-slot"))) {
+            return null;
+        }
+        const range = ChandasSynonyms.wordRange(
+            elements.composition.value,
+            elements.composition.selectionStart
+        );
+        if (!range) {
+            return null;
+        }
+        if (state.inputScheme !== "native") {
+            const conversion = ChandasRoman.convert(
+                range.word,
+                state.inputScheme,
+                "devanagari"
+            );
+            if (!conversion.text || conversion.warnings.length) {
+                return null;
+            }
+            return {
+                ...range,
+                script: "roman",
+                target: state.inputScheme,
+                exactLookupTerms: [conversion.text],
+                lookupTerms: wordLookupVariants(conversion.text, "devanagari")
+            };
+        }
+        const script = Chandas.detectScript(range.word);
+        const target = nativeTargetForScript(script);
+        if (!target) {
+            return null;
+        }
+        const exactLookupTerms = [];
+        const lookupTerms = [];
+        if (script === "kannada") {
+            exactLookupTerms.push(range.word);
+            lookupTerms.push(...wordLookupVariants(range.word, "kannada"));
+        }
+        const devanagari = ChandasRoman.convert(
+            range.word,
+            "native",
+            "devanagari"
+        );
+        if (devanagari.text && !devanagari.warnings.length) {
+            exactLookupTerms.push(devanagari.text);
+            lookupTerms.push(...wordLookupVariants(devanagari.text, "devanagari"));
+        }
+        return {
+            ...range,
+            script,
+            target,
+            exactLookupTerms: Array.from(new Set(exactLookupTerms)),
+            lookupTerms: Array.from(new Set(lookupTerms))
+        };
+    }
+
+    function displaySynonymWord(word, language, context) {
+        if (language === "kn") {
+            return context.target === "kannada" ? word : "";
+        }
+        const target = context.target === "devanagari"
+            ? "devanagari"
+            : context.target;
+        return ChandasRoman.convert(word, "native", target).text;
+    }
+
+    function measureSynonymWord(word) {
+        const analysisText = state.inputScheme === "native"
+            ? word
+            : ChandasRoman.transliterate(word, state.inputScheme).analysisText;
+        const segmented = Chandas.segmentLine(analysisText, 0);
+        const pattern = segmented.syllables.map((syllable) =>
+            syllable.classification === Chandas.GURU ? "G" : "L").join("");
+        const matras = segmented.syllables.reduce((sum, syllable) =>
+            sum + (syllable.classification === Chandas.GURU ? 2 : 1), 0);
+        return { syllables: segmented.syllables.length, matras, pattern };
+    }
+
+    function replaceWithSynonym(word, context) {
+        const current = ChandasSynonyms.wordRange(
+            elements.composition.value,
+            elements.composition.selectionStart
+        );
+        if (!current || current.start !== context.start ||
+            current.end !== context.end || current.word !== context.word) {
+            hideSynonymPicker();
+            return;
+        }
+        elements.composition.focus();
+        elements.composition.setSelectionRange(context.start, context.end);
+        let inserted = false;
+        try {
+            inserted = typeof document.execCommand === "function" &&
+                document.execCommand("insertText", false, word);
+        } catch (error) {
+            inserted = false;
+        }
+        if (!inserted) {
+            elements.composition.setRangeText(
+                word,
+                context.start,
+                context.end,
+                "end"
+            );
+            const inputEvent = typeof InputEvent === "function"
+                ? new InputEvent("input", {
+                    bubbles: true,
+                    inputType: "insertReplacementText",
+                    data: word
+                })
+                : new Event("input", { bubbles: true });
+            elements.composition.dispatchEvent(inputEvent);
+        }
+        hideSynonymPicker();
+        scheduleAnalysis();
+        showToast(t("synonymReplaced", { word }));
+    }
+
+    function synonymSenseHeading(sense, stemmed) {
+        const parts = [];
+        if (sense.pos) {
+            parts.push(sense.pos);
+        }
+        if (sense.category) {
+            parts.push(sense.category);
+        }
+        if (stemmed || sense.language === "sa") {
+            parts.push(t("baseForm"));
+        }
+        parts.push(sense.source.id === "alar" ? "Alar" : "Amarakośa");
+        return parts.join(" · ");
+    }
+
+    function formatSynonymGrammar(value) {
+        const grammar = String(value || "");
+        const parts = [];
+        if (grammar.includes("puM")) {
+            parts.push(t("masculine"));
+        }
+        if (grammar.includes("strI")) {
+            parts.push(t("feminine"));
+        }
+        if (grammar.includes("klI")) {
+            parts.push(t("neuter"));
+        }
+        if (grammar === "a") {
+            parts.push(t("indeclinable"));
+        }
+        if (grammar.endsWith("ba")) {
+            parts.push(t("plural"));
+        }
+        return parts.join("/");
+    }
+
+    function synonymCandidateRecord(wordRecord, sense, context, currentMetrics) {
+        const displayWord = displaySynonymWord(wordRecord[0], sense.language, context);
+        if (!displayWord || displayWord.normalize("NFC") === context.word) {
+            return null;
+        }
+        const metrics = measureSynonymWord(displayWord);
+        const rank = metrics.pattern && metrics.pattern === currentMetrics.pattern
+            ? 0
+            : metrics.matras === currentMetrics.matras
+                ? 1
+                : 2;
+        return {
+            displayWord,
+            metrics,
+            rank,
+            grammar: sense.language === "sa" ? wordRecord[1] || "" : ""
+        };
+    }
+
+    async function renderSynonymPicker() {
+        const token = ++state.synonymRenderToken;
+        const context = synonymContextAtCaret();
+        if (!context || Array.from(context.word).length < 2) {
+            hideSynonymPicker();
+            return;
+        }
+        const index = await loadSynonymIndex();
+        if (token !== state.synonymRenderToken || !index) {
+            return;
+        }
+        const senses = ChandasSynonyms.lookup(index, context.lookupTerms, 8);
+        const currentMetrics = measureSynonymWord(context.word);
+        const renderedSenses = [];
+        const allWords = new Set();
+        for (const sense of senses) {
+            const candidates = sense.words
+                .map((word) => synonymCandidateRecord(
+                    word,
+                    sense,
+                    context,
+                    currentMetrics
+                ))
+                .filter((candidate) => candidate && !allWords.has(candidate.displayWord))
+                .sort((left, right) =>
+                    left.rank - right.rank ||
+                    left.metrics.syllables - right.metrics.syllables ||
+                    left.displayWord.localeCompare(right.displayWord))
+                .slice(0, 12);
+            candidates.forEach((candidate) => allWords.add(candidate.displayWord));
+            if (candidates.length) {
+                renderedSenses.push({ sense, candidates });
+            }
+        }
+        if (!renderedSenses.length) {
+            hideSynonymPicker();
+            return;
+        }
+        const wasOpen = elements["synonym-picker"].open &&
+            state.synonymContext && state.synonymContext.word === context.word;
+        state.synonymContext = context;
+        elements["synonym-picker"].hidden = false;
+        elements["synonym-picker"].open = wasOpen;
+        elements["synonym-word"].textContent = context.word;
+        elements["synonym-picker"].querySelector("summary")
+            .setAttribute("aria-label", t("synonymsFor", { word: context.word }));
+        elements["synonym-count"].textContent = t("synonymCount", {
+            count: allWords.size
+        });
+        const senseNodes = renderedSenses.map(({ sense, candidates }) => {
+            const section = document.createElement("section");
+            section.className = "synonym-sense";
+            const heading = document.createElement("div");
+            heading.className = "synonym-sense-heading";
+            const label = document.createElement("strong");
+            label.textContent = sense.label || sense.category || context.word;
+            const metadata = document.createElement("span");
+            metadata.textContent = synonymSenseHeading(
+                sense,
+                !context.exactLookupTerms.includes(sense.term)
+            );
+            heading.append(label, metadata);
+            const choices = document.createElement("div");
+            choices.className = "synonym-choices";
+            for (const candidate of candidates) {
+                const button = document.createElement("button");
+                button.type = "button";
+                button.className = "synonym-choice";
+                const word = document.createElement("span");
+                word.className = "synonym-choice-word";
+                word.textContent = candidate.displayWord;
+                const fit = document.createElement("span");
+                fit.className = "synonym-choice-fit";
+                fit.textContent = candidate.rank === 0
+                    ? t("sameRhythm")
+                    : candidate.rank === 1
+                        ? t("sameMatras")
+                        : "";
+                const metrics = document.createElement("small");
+                metrics.className = "synonym-choice-metrics";
+                const grammar = formatSynonymGrammar(candidate.grammar);
+                metrics.textContent = t("synonymMetrics", {
+                    syllables: candidate.metrics.syllables,
+                    matras: candidate.metrics.matras,
+                    pattern: candidate.metrics.pattern || "—"
+                }) + (grammar ? ` · ${grammar}` : "");
+                button.append(word, fit, metrics);
+                button.addEventListener("click", () =>
+                    replaceWithSynonym(candidate.displayWord, context));
+                choices.append(button);
+            }
+            section.append(heading, choices);
+            return section;
+        });
+        elements["synonym-list"].replaceChildren(...senseNodes);
+    }
+
     function renderPlainOverlay() {
         elements["highlight-layer"].innerHTML =
             `${escapeHtml(elements.composition.value)}\n`;
@@ -2496,6 +2912,7 @@
 
         renderOverlay();
         renderCursorMetrics();
+        renderSynonymPicker();
         renderAnalysisPanel();
         scheduleSave();
     }
@@ -2518,11 +2935,13 @@
             elements.composition.setSelectionRange(stanza.start, stanza.start);
         }
         renderCursorMetrics();
+        renderSynonymPicker();
         renderAnalysisPanel();
     }
 
     function updateActiveFromCaret() {
         renderCursorMetrics();
+        renderSynonymPicker();
         if (!state.analysis) {
             return;
         }
@@ -4716,6 +5135,7 @@
         elements["strong-template-lines"].addEventListener("focusin", (event) => {
             const input = event.target.closest(".strong-template-slot");
             if (input) {
+                hideSynonymPicker();
                 renderStrongCursorMetrics(input);
             }
         });

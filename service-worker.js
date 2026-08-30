@@ -5,7 +5,7 @@
 
 "use strict";
 
-const CACHE_NAME = "chandas-shell-v59";
+const CACHE_NAME = "chandas-shell-v60";
 const UPDATE_UI_BOOTSTRAP_CACHE = "chandas-shell-v30";
 const CORE_ASSETS = [
     "./",
@@ -16,12 +16,17 @@ const CORE_ASSETS = [
     "./analytics.js",
     "./poem_store.js",
     "./meter_analysis.js",
+    "./synonym_engine.js",
     "./scansion.js",
     "./shithila_dvitva.js",
     "./strong_template.js",
     "./custom_meter.js",
     "./mishra.json",
     "./structural_meters.json",
+    "./data/synonyms/kn-alar-v1.json",
+    "./data/synonyms/sa-amarakosha-v1.json",
+    "./data/synonyms/README.md",
+    "./data/synonyms/DATA_LICENSES.md",
     "./examples/field_guide_corpus.json",
     "./examples/apte_sanskrit_examples.json",
     "./docs/research/archive-meter-audit.md",

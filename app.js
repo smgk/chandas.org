@@ -136,6 +136,9 @@
             synonyms: "Synonyms",
             synonymsFor: "Synonyms for {word}",
             synonymCount: "{count} choices",
+            synonymLoading: "Loading synonyms for {word}…",
+            synonymUnavailable: "Synonyms could not be loaded. Your composition is safe.",
+            retrySynonyms: "Retry",
             synonymHelp: "Choose the intended sense, then a word that fits the line.",
             synonymSourceNote: "Suggestions retain their source and license.",
             dataDetails: "Data details",
@@ -372,6 +375,9 @@
             synonyms: "ಪರ್ಯಾಯ ಪದಗಳು",
             synonymsFor: "{word} ಪದಕ್ಕೆ ಪರ್ಯಾಯಗಳು",
             synonymCount: "{count} ಆಯ್ಕೆಗಳು",
+            synonymLoading: "{word} ಪದಕ್ಕೆ ಪರ್ಯಾಯಗಳನ್ನು ತರಲಾಗುತ್ತಿದೆ…",
+            synonymUnavailable: "ಪರ್ಯಾಯ ಪದಗಳನ್ನು ತರಲಾಗಲಿಲ್ಲ. ನಿಮ್ಮ ರಚನೆ ಸುರಕ್ಷಿತವಾಗಿದೆ.",
+            retrySynonyms: "ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ",
             synonymHelp: "ಬೇಕಾದ ಅರ್ಥವನ್ನು ನೋಡಿ, ಸಾಲಿಗೆ ಒಪ್ಪುವ ಪದವನ್ನು ಆರಿಸಿ.",
             synonymSourceNote: "ಸಲಹೆಗಳ ಮೂಲ ಮತ್ತು ಪರವಾನಗಿ ಉಳಿಯುತ್ತವೆ.",
             dataDetails: "ದತ್ತಾಂಶ ವಿವರಗಳು",
@@ -608,6 +614,9 @@
             synonyms: "పర్యాయపదాలు",
             synonymsFor: "{word}కు పర్యాయపదాలు",
             synonymCount: "{count} ఎంపికలు",
+            synonymLoading: "{word}కు పర్యాయపదాలు లోడ్ అవుతున్నాయి…",
+            synonymUnavailable: "పర్యాయపదాలు లోడ్ కాలేదు. మీ రచన భద్రంగా ఉంది.",
+            retrySynonyms: "మళ్లీ ప్రయత్నించండి",
             synonymHelp: "ఉద్దేశించిన అర్థాన్ని చూసి, పంక్తికి సరిపోయే పదాన్ని ఎంచుకోండి.",
             synonymSourceNote: "సూచనల మూలం, లైసెన్స్ అలాగే ఉంటాయి.",
             dataDetails: "డేటా వివరాలు",
@@ -844,6 +853,9 @@
             synonyms: "સમાનાર્થી શબ્દો",
             synonymsFor: "{word} માટે સમાનાર્થી",
             synonymCount: "{count} વિકલ્પો",
+            synonymLoading: "{word} માટે સમાનાર્થી લોડ થઈ રહ્યા છે…",
+            synonymUnavailable: "સમાનાર્થી લોડ થઈ શક્યા નહીં. તમારી રચના સુરક્ષિત છે.",
+            retrySynonyms: "ફરી પ્રયત્ન કરો",
             synonymHelp: "ઇચ્છિત અર્થ જોઈને પંક્તિને બંધબેસતો શબ્દ પસંદ કરો.",
             synonymSourceNote: "સૂચનોનો સ્રોત અને લાઇસન્સ જળવાય છે.",
             dataDetails: "ડેટાની વિગતો",
@@ -1000,8 +1012,9 @@
         conversionUndo: null,
         customForms: [],
         pendingCustomInference: null,
-        synonymIndex: null,
-        synonymLoadPromise: null,
+        synonymIndexes: Object.create(null),
+        synonymLoadPromises: Object.create(null),
+        synonymLoadErrors: Object.create(null),
         synonymContext: null,
         synonymRenderToken: 0
     };
@@ -1010,6 +1023,7 @@
         [
             "composition", "highlight-layer", "editor-shell", "draft-state", "cursor-metrics",
             "synonym-picker", "synonym-word", "synonym-count", "synonym-list",
+            "synonym-feedback", "synonym-feedback-text", "synonym-retry",
             "input-scheme", "transliteration-help",
             "language", "new-draft", "saved-poems", "app-update", "copy", "share", "analysis-title",
             "previous-stanza", "next-stanza", "empty-analysis", "analysis-content",
@@ -2272,10 +2286,10 @@
         });
     }
 
-    const SYNONYM_DATA_URLS = [
-        "data/synonyms/kn-alar-v1.json",
-        "data/synonyms/sa-amarakosha-v1.json"
-    ];
+    const SYNONYM_DATASETS = Object.freeze({
+        kn: "data/synonyms/kn-alar-v1.json",
+        sa: "data/synonyms/sa-amarakosha-v1.json"
+    });
 
     function hideSynonymPicker() {
         if (!elements["synonym-picker"]) {
@@ -2289,27 +2303,61 @@
         state.synonymContext = null;
     }
 
-    async function loadSynonymIndex() {
-        if (state.synonymIndex) {
-            return state.synonymIndex;
+    function hideSynonymFeedback() {
+        elements["synonym-feedback"].hidden = true;
+        elements["synonym-feedback-text"].textContent = "";
+        elements["synonym-retry"].hidden = true;
+    }
+
+    function showSynonymFeedback(message, retryAvailable = false) {
+        elements["synonym-feedback-text"].textContent = message;
+        elements["synonym-retry"].hidden = !retryAvailable;
+        elements["synonym-feedback"].hidden = false;
+    }
+
+    function synonymLanguagesForContext(context) {
+        // Kannada can use both Alar and Sanskrit loan-word suggestions. Load Alar
+        // first so a failure in the larger secondary source cannot hide it.
+        return context.target === "kannada" ? ["kn", "sa"] : ["sa"];
+    }
+
+    async function loadSynonymIndex(language, retry = false) {
+        if (state.synonymIndexes[language]) {
+            return state.synonymIndexes[language];
         }
-        if (!state.synonymLoadPromise) {
-            state.synonymLoadPromise = Promise.all(SYNONYM_DATA_URLS.map(async (url) => {
-                const response = await fetch(url, { cache: "force-cache" });
+        if (retry) {
+            delete state.synonymLoadErrors[language];
+        } else if (state.synonymLoadErrors[language]) {
+            return null;
+        }
+        if (state.synonymLoadPromises[language]) {
+            return state.synonymLoadPromises[language];
+        }
+        const url = SYNONYM_DATASETS[language];
+        if (!url) {
+            return null;
+        }
+        const promise = (async () => {
+            try {
+                const response = await fetch(url, retry ? { cache: "reload" } : undefined);
                 if (!response.ok) {
                     throw new Error(`Synonym data request failed: ${response.status}`);
                 }
-                return response.json();
-            })).then((documents) => {
-                state.synonymIndex = ChandasSynonyms.createIndex(documents);
-                return state.synonymIndex;
-            }).catch((error) => {
-                console.error(error);
-                state.synonymLoadPromise = null;
+                const documentValue = await response.json();
+                const index = ChandasSynonyms.createIndex([documentValue]);
+                state.synonymIndexes[language] = index;
+                delete state.synonymLoadErrors[language];
+                return index;
+            } catch (error) {
+                console.warn("Synonym data unavailable", error);
+                state.synonymLoadErrors[language] = error;
                 return null;
-            });
-        }
-        return state.synonymLoadPromise;
+            } finally {
+                delete state.synonymLoadPromises[language];
+            }
+        })();
+        state.synonymLoadPromises[language] = promise;
+        return promise;
     }
 
     function nativeTargetForScript(script) {
@@ -2521,18 +2569,26 @@
         };
     }
 
-    async function renderSynonymPicker() {
-        const token = ++state.synonymRenderToken;
-        const context = synonymContextAtCaret();
-        if (!context || Array.from(context.word).length < 2) {
-            hideSynonymPicker();
-            return;
+    function loadedSynonymSenses(context, languages) {
+        const senses = [];
+        const seen = new Set();
+        for (const language of languages) {
+            const index = state.synonymIndexes[language];
+            if (!index) {
+                continue;
+            }
+            for (const sense of ChandasSynonyms.lookup(index, context.lookupTerms, 8)) {
+                if (!seen.has(sense.id)) {
+                    seen.add(sense.id);
+                    senses.push(sense);
+                }
+            }
         }
-        const index = await loadSynonymIndex();
-        if (token !== state.synonymRenderToken || !index) {
-            return;
-        }
-        const senses = ChandasSynonyms.lookup(index, context.lookupTerms, 8);
+        return senses;
+    }
+
+    function renderSynonymResults(context, languages) {
+        const senses = loadedSynonymSenses(context, languages);
         const currentMetrics = measureSynonymWord(context.word);
         const renderedSenses = [];
         const allWords = new Set();
@@ -2556,8 +2612,7 @@
             }
         }
         if (!renderedSenses.length) {
-            hideSynonymPicker();
-            return;
+            return false;
         }
         const wasOpen = elements["synonym-picker"].open &&
             state.synonymContext && state.synonymContext.word === context.word;
@@ -2616,6 +2671,56 @@
             return section;
         });
         elements["synonym-list"].replaceChildren(...senseNodes);
+        return true;
+    }
+
+    async function renderSynonymPicker(options = {}) {
+        const token = ++state.synonymRenderToken;
+        const context = synonymContextAtCaret();
+        if (!context || Array.from(context.word).length < 2) {
+            hideSynonymPicker();
+            hideSynonymFeedback();
+            return;
+        }
+        const languages = synonymLanguagesForContext(context);
+        if (options.retry) {
+            languages.forEach((language) => {
+                delete state.synonymLoadErrors[language];
+            });
+        }
+
+        let hasResults = renderSynonymResults(context, languages);
+        if (hasResults) {
+            hideSynonymFeedback();
+        } else if (languages.some((language) => !state.synonymIndexes[language] &&
+            !state.synonymLoadErrors[language])) {
+            hideSynonymPicker();
+            showSynonymFeedback(t("synonymLoading", { word: context.word }));
+        }
+
+        for (const language of languages) {
+            if (state.synonymIndexes[language]) {
+                continue;
+            }
+            await loadSynonymIndex(language, Boolean(options.retry));
+            if (token !== state.synonymRenderToken) {
+                return;
+            }
+            hasResults = renderSynonymResults(context, languages);
+            if (hasResults) {
+                hideSynonymFeedback();
+            }
+        }
+
+        if (hasResults) {
+            hideSynonymFeedback();
+        } else if (languages.some((language) => state.synonymLoadErrors[language])) {
+            hideSynonymPicker();
+            showSynonymFeedback(t("synonymUnavailable"), true);
+        } else {
+            hideSynonymPicker();
+            hideSynonymFeedback();
+        }
     }
 
     function renderPlainOverlay() {
@@ -4872,6 +4977,9 @@
             if (document.activeElement === elements.composition) {
                 updateActiveFromCaret();
             }
+        });
+        elements["synonym-retry"].addEventListener("click", () => {
+            renderSynonymPicker({ retry: true });
         });
 
         elements.language.addEventListener("change", () => {

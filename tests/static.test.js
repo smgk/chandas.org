@@ -159,7 +159,7 @@ test("original source declares Ganesh Krishna Shankarathota under GPLv3 only", (
     assert.doesNotMatch(read("mishra.json"), /Ganesh Krishna Shankarathota/);
 });
 
-test("service worker pre-caches every core web asset", () => {
+test("service worker pre-caches the core shell and runtime-caches synonym data", () => {
     const worker = read("service-worker.js");
     const expectedAssets = [
         "index.html",
@@ -175,8 +175,6 @@ test("service worker pre-caches every core web asset", () => {
         "poem_store.js",
         "mishra.json",
         "structural_meters.json",
-        "data/synonyms/kn-alar-v1.json",
-        "data/synonyms/sa-amarakosha-v1.json",
         "data/synonyms/DATA_LICENSES.md",
         "examples/field_guide_corpus.json",
         "examples/apte_sanskrit_examples.json",
@@ -203,6 +201,12 @@ test("service worker pre-caches every core web asset", () => {
     assert.match(worker, /event\.request\.mode === "navigate"/);
     assert.match(worker, /cache\.put\(cacheRequest, copy\)/);
     assert.doesNotMatch(worker, /cache\.put\(event\.request, copy\)/);
+    assert.match(worker, /event\.request\.cache !== "reload"/);
+    assert.doesNotMatch(
+        read("app.js"),
+        /fetch\(url,\s*\{\s*cache:\s*"force-cache"/
+    );
+    assert.match(read("app.js"), /cache: "reload"/);
     assert.match(worker, /event\.data\.type === "SKIP_WAITING"/);
     assert.match(worker, /hasLegacyShell \? self\.skipWaiting\(\)/);
     assert.match(read("app.js"), /UPDATE_CHECK_INTERVAL_MS = 15 \* 60 \* 1000/);
@@ -225,6 +229,8 @@ test("the composition control and live regions have accessible labels", () => {
     assert.match(html, /id="cursor-metrics"/);
     assert.match(html, /id="synonym-picker"[^>]*hidden/);
     assert.match(html, /id="synonym-list"/);
+    assert.match(html, /id="synonym-feedback"[^>]*role="status"[^>]*hidden/);
+    assert.match(html, /id="synonym-retry"[^>]*type="button"[^>]*hidden/);
     assert.match(html, /id="show-template"[^>]*type="checkbox"/);
     assert.match(html, /id="detect-shithila-dvitva"[^>]*type="checkbox"/);
     assert.match(html, /id="scansion-mode"/);

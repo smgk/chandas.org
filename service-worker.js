@@ -5,7 +5,7 @@
 
 "use strict";
 
-const CACHE_NAME = "chandas-shell-v60";
+const CACHE_NAME = "chandas-shell-v61";
 const UPDATE_UI_BOOTSTRAP_CACHE = "chandas-shell-v30";
 const CORE_ASSETS = [
     "./",
@@ -23,8 +23,6 @@ const CORE_ASSETS = [
     "./custom_meter.js",
     "./mishra.json",
     "./structural_meters.json",
-    "./data/synonyms/kn-alar-v1.json",
-    "./data/synonyms/sa-amarakosha-v1.json",
     "./data/synonyms/README.md",
     "./data/synonyms/DATA_LICENSES.md",
     "./examples/field_guide_corpus.json",
@@ -92,8 +90,13 @@ self.addEventListener("fetch", (event) => {
     const cacheRequest = isAppQueryNavigation
         ? "./index.html"
         : event.request;
+    const shouldReadCache = event.request.cache !== "reload" &&
+        event.request.cache !== "no-store";
+    const cachedResponse = shouldReadCache
+        ? caches.match(cacheRequest)
+        : Promise.resolve(undefined);
     event.respondWith(
-        caches.match(cacheRequest).then((cached) => {
+        cachedResponse.then((cached) => {
             if (cached) {
                 return cached;
             }

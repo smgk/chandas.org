@@ -32,6 +32,16 @@ module.exports = defineConfig({
             use: {
                 ...devices["Pixel 7"]
             }
+        },
+        {
+            name: "android-firefox",
+            grep: /synonym/i,
+            use: {
+                browserName: "firefox",
+                viewport: { width: 393, height: 873 },
+                hasTouch: true,
+                userAgent: "Mozilla/5.0 (Android 14; Mobile; rv:143.0) Gecko/143.0 Firefox/143.0"
+            }
         }
     ],
     webServer: {

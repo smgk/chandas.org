@@ -160,6 +160,60 @@ test("offers metrical Amarakośa synonyms and replaces only the current word", a
     await expect(page.locator("#composition")).toHaveValue("देवः पातु");
 });
 
+test.describe("synonym source recovery", () => {
+    test.use({ serviceWorkers: "block" });
+
+    test("keeps Kannada synonyms available when the Sanskrit source fails", async ({
+        page
+    }) => {
+        await page.route("**/data/synonyms/sa-amarakosha-v1.json", (route) =>
+            route.fulfill({
+                status: 200,
+                contentType: "application/json",
+                body: "{}"
+            }));
+        await page.locator("#composition").fill("ದೇವ");
+        await page.locator("#composition").evaluate((input) => {
+            input.focus();
+            input.setSelectionRange(input.value.length, input.value.length);
+            input.dispatchEvent(new Event("select", { bubbles: true }));
+        });
+
+        await expect(page.locator("#synonym-picker")).toBeVisible();
+        await page.locator("#synonym-picker summary").click();
+        await expect(page.locator(".synonym-choice-word")
+            .filter({ hasText: /^ಸೂನು$/ })).toBeVisible();
+        await expect(page.locator("#synonym-feedback")).toBeHidden();
+    });
+
+    test("shows a retry action when synonym data cannot be loaded", async ({ page }) => {
+        let failRequest = true;
+        await page.route("**/data/synonyms/sa-amarakosha-v1.json", (route) => {
+            if (failRequest) {
+                return route.fulfill({
+                    status: 200,
+                    contentType: "application/json",
+                    body: "{}"
+                });
+            }
+            return route.continue();
+        });
+        await page.locator("#composition").fill("देव");
+        await page.locator("#composition").evaluate((input) => {
+            input.focus();
+            input.setSelectionRange(input.value.length, input.value.length);
+            input.dispatchEvent(new Event("select", { bubbles: true }));
+        });
+
+        await expect(page.locator("#synonym-feedback")).toBeVisible();
+        await expect(page.locator("#synonym-retry")).toBeVisible();
+        failRequest = false;
+        await page.locator("#synonym-retry").click();
+        await expect(page.locator("#synonym-picker")).toBeVisible();
+        await expect(page.locator("#synonym-feedback")).toBeHidden();
+    });
+});
+
 test("round-trips a Kannada Kanda passage through reversible IAST", async ({
     page
 }) => {

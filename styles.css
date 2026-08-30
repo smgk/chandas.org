@@ -918,6 +918,29 @@ textarea:focus-visible {
     background: color-mix(in srgb, var(--green) 3%, #fffdf8);
 }
 
+.synonym-feedback {
+    display: flex;
+    min-height: 2.35rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.7rem;
+    margin-top: 0.7rem;
+    padding: 0.48rem 0.7rem;
+    border: 1px solid color-mix(in srgb, var(--green) 18%, var(--line));
+    border-radius: 0.78rem;
+    color: var(--muted);
+    background: color-mix(in srgb, var(--green) 2%, #fffdf8);
+    font-size: 0.75rem;
+}
+
+.synonym-feedback[hidden] {
+    display: none;
+}
+
+.synonym-feedback .text-button {
+    flex: none;
+}
+
 .synonym-picker > summary {
     display: flex;
     min-height: 2.35rem;

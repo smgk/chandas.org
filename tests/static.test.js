@@ -37,13 +37,17 @@ test("the web shell has no external runtime asset dependencies", () => {
     assert.match(html, /app\.js/);
 });
 
-test("the Android wrapper bundles the Roman, scansion, and synonym adapters", () => {
+test("the Android wrapper bundles optional Roman, synonym, and English assets", () => {
     const gradle = read("android/app/build.gradle");
     assert.match(gradle, /include "roman_transliteration\.js"/);
     assert.match(gradle, /include "scansion\.js"/);
     assert.match(gradle, /include "custom_meter\.js"/);
     assert.match(gradle, /include "synonym_engine\.js"/);
     assert.match(gradle, /include "data\/synonyms\/\*\*"/);
+    assert.match(gradle, /include "english_analysis\.js"/);
+    assert.match(gradle, /include "english_composer\.js"/);
+    assert.match(gradle, /include "english_meters\.json"/);
+    assert.match(gradle, /include "data\/english\/\*\*"/);
 });
 
 test("Kannada, Telugu, and Gujarati localization cover every interface message", () => {
@@ -117,6 +121,8 @@ test("original source declares Ganesh Krishna Shankarathota under GPLv3 only", (
         "custom_meter.js",
         "analytics.js",
         "meter_analysis.js",
+        "english_analysis.js",
+        "english_composer.js",
         "synonym_engine.js",
         "scansion.js",
         "strong_template.js",
@@ -136,6 +142,7 @@ test("original source declares Ganesh Krishna Shankarathota under GPLv3 only", (
         "scripts/static-server.js",
         "scripts/validate-static.js",
         "scripts/build-synonyms.js",
+        "scripts/build-english-lexicon.js",
         "android/app/src/main/java/org/chandas/app/MainActivity.java"
     ];
 
@@ -159,7 +166,7 @@ test("original source declares Ganesh Krishna Shankarathota under GPLv3 only", (
     assert.doesNotMatch(read("mishra.json"), /Ganesh Krishna Shankarathota/);
 });
 
-test("service worker pre-caches the core shell and runtime-caches synonym data", () => {
+test("service worker keeps English outside the core shell and runtime-caches it", () => {
     const worker = read("service-worker.js");
     const expectedAssets = [
         "index.html",
@@ -202,6 +209,17 @@ test("service worker pre-caches the core shell and runtime-caches synonym data",
     assert.match(worker, /cache\.put\(cacheRequest, copy\)/);
     assert.doesNotMatch(worker, /cache\.put\(event\.request, copy\)/);
     assert.match(worker, /event\.request\.cache !== "reload"/);
+    assert.match(worker, /ENGLISH_CACHE_NAME = "chandas-english-v1"/);
+    assert.match(worker, /data\/english\/en-cmudict-stress-v1\.json/);
+    assert.doesNotMatch(
+        read("index.html"),
+        /<script[^>]+src="english_(?:analysis|composer)\.js"/
+    );
+    const coreAssets = worker.slice(
+        worker.indexOf("const CORE_ASSETS"),
+        worker.indexOf("];", worker.indexOf("const CORE_ASSETS")) + 2
+    );
+    assert.doesNotMatch(coreAssets, /english_|data\/english/);
     assert.doesNotMatch(
         read("app.js"),
         /fetch\(url,\s*\{\s*cache:\s*"force-cache"/
@@ -356,10 +374,11 @@ test("the public roadmap is concise, forward-looking, and available offline", ()
     assert.match(roadmap, /M1 · English rules and corpus/);
     assert.match(roadmap, /M2 · English pronunciation/);
     assert.match(roadmap, /M3 · English meter detection/);
+    assert.match(roadmap, /✓ M4 · English composition/);
     assert.match(roadmap, /M6 · Reviewed Indic rules/);
     assert.match(roadmap, /M7 · Android distribution/);
     assert.match(roadmap, /M9 · Optional infrastructure/);
-    assert.match(roadmap, /M4 is the next\s+proposed milestone/);
+    assert.match(roadmap, /M5 is the next\s+proposed milestone/);
     assert.match(roadmap, /never need a paid/);
     assert.match(roadmap, /Anonymous composition/);
     assert.doesNotMatch(roadmap, /Estimate:|weeks|Target:/);

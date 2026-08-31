@@ -92,6 +92,113 @@ test("analyzes Roman schemes while highlighting the authored letter groups", asy
     await linkedContext.close();
 });
 
+test("loads English prosody only after explicit selection and keeps Indic UI intact", async ({
+    page
+}) => {
+    const initialResources = await page.evaluate(() =>
+        performance.getEntriesByType("resource").map((entry) => entry.name));
+    expect(initialResources.some((url) => /english_(?:analysis|composer)|english_meters|en-cmudict/.test(url)))
+        .toBe(false);
+    await expect(page.locator("#legend")).toBeVisible();
+    await expect(page.locator("#english-legend")).toBeHidden();
+    await expect(page.locator("#analysis-tools")).toBeVisible();
+
+    await page.locator("#input-scheme").selectOption("english");
+    await expect(page.locator("#transliteration-help"))
+        .toHaveText("English stress analysis is ready offline.", { timeout: 15_000 });
+    await expect(page.locator("#legend")).toBeHidden();
+    await expect(page.locator("#english-legend")).toBeVisible();
+    await expect(page.locator("#analysis-tools")).toBeHidden();
+    await expect(page.locator("#learn-pattern")).toBeHidden();
+    await expect(page.locator('#input-scheme option[value="convert:kannada"]'))
+        .toHaveAttribute("disabled", "");
+
+    await page.locator("#composition")
+        .fill("Shall I compare thee to a summer's day?");
+    await expect(page.locator("#highlight-layer .english-weak, " +
+        "#highlight-layer .english-strong")).toHaveCount(10);
+    await expect(page.locator("#highlight-layer .scansion-english-foot"))
+        .toHaveCount(5);
+    await expect(page.locator("#cursor-metrics"))
+        .toContainText("Syllable 10");
+    const firstCandidate = page.locator("#candidate-list .candidate").first();
+    await expect(firstCandidate)
+        .toHaveAttribute("data-meter-id", "english:iambic-pentameter");
+
+    await firstCandidate.click();
+    await expect(page.locator("#selected-meter-name"))
+        .toHaveText("Iambic pentameter");
+    await expect(page.locator("#selected-meter-signature"))
+        .toContainText("w S w S w S w S w S");
+    await page.locator("#show-template").check();
+    await expect(page.locator("#template-mode-strong")).toBeDisabled();
+    await expect(page.locator("#whole-verse-template .whole-template-line-guide"))
+        .toHaveText("w S w S w S w S w S");
+
+    await page.locator("#composition").fill(
+        "Bright bright bright bright bright bright bright bright bright bright"
+    );
+    await expect(page.locator("#highlight-layer .violation"))
+        .toHaveCount(5);
+    await expect(page.locator("#validation-summary")).toContainText(
+        "stress departure"
+    );
+
+    await page.locator("#input-scheme").selectOption("native");
+    await expect(page.locator("#legend")).toBeVisible();
+    await expect(page.locator("#english-legend")).toBeHidden();
+    await expect(page.locator("#analysis-tools")).toBeVisible();
+    await expect(page.locator("#highlight-layer .english-weak, " +
+        "#highlight-layer .english-strong")).toHaveCount(0);
+});
+
+test("round-trips English mode, meter, and Ghost guidance through an analysis URL", async ({
+    page,
+    context,
+    browser
+}) => {
+    await page.locator("#input-scheme").selectOption("english");
+    await expect(page.locator("#transliteration-help"))
+        .toHaveText("English stress analysis is ready offline.", { timeout: 15_000 });
+    await page.locator("#composition")
+        .fill("The time has come, the Walrus said");
+    await page.locator("#meter-picker summary").click();
+    await page.locator("#meter-search").fill("iambic tetrameter");
+    await page.locator("#meter-select")
+        .selectOption("english:iambic-tetrameter");
+    await page.locator("#show-template").check();
+    await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+    await page.locator("#share").click();
+    await page.locator("#copy-analysis-url").click();
+    const copied = new URL(await page.evaluate(() => navigator.clipboard.readText()));
+    expect(copied.searchParams.get("scheme")).toBe("english");
+    expect(copied.searchParams.get("meter1"))
+        .toBe("english:iambic-tetrameter");
+    expect(copied.searchParams.get("template1")).toBe("ghost");
+
+    const linkedContext = await browser.newContext();
+    const linkedPage = await linkedContext.newPage();
+    const localUrl = new URL("/", page.url());
+    localUrl.search = copied.search;
+    await linkedPage.goto(localUrl.toString());
+    await expect(linkedPage.locator("#input-scheme")).toHaveValue("english");
+    await expect(linkedPage.locator("#composition"))
+        .toHaveValue("The time has come, the Walrus said");
+    await expect(linkedPage.locator("#selected-meter-name"))
+        .toHaveText("Iambic tetrameter");
+    await expect(linkedPage.locator("#show-template")).toBeChecked();
+    await linkedPage.reload();
+    await expect(linkedPage.locator("#input-scheme")).toHaveValue("english");
+    await expect(linkedPage.locator("#active-pattern")).not.toHaveText("—");
+    await linkedContext.setOffline(true);
+    await linkedPage.reload();
+    await expect(linkedPage.locator("#input-scheme")).toHaveValue("english");
+    await expect(linkedPage.locator("#selected-meter-name"))
+        .toHaveText("Iambic tetrameter");
+    await expect(linkedPage.locator("#active-pattern")).toHaveText("WSWSWSWS");
+    await linkedContext.close();
+});
+
 test("previews and applies whole-composition conversion without losing meter state", async ({
     page
 }) => {

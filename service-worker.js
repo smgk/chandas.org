@@ -5,8 +5,15 @@
 
 "use strict";
 
-const CACHE_NAME = "chandas-shell-v64";
+const CACHE_NAME = "chandas-shell-v65";
+const ENGLISH_CACHE_NAME = "chandas-english-v1";
 const UPDATE_UI_BOOTSTRAP_CACHE = "chandas-shell-v30";
+const ENGLISH_ASSET_PATHS = [
+    "/english_analysis.js",
+    "/english_composer.js",
+    "/english_meters.json",
+    "/data/english/en-cmudict-stress-v1.json"
+];
 const CORE_ASSETS = [
     "./",
     "./index.html",
@@ -71,7 +78,7 @@ self.addEventListener("activate", (event) => {
     event.waitUntil(
         caches.keys()
             .then((keys) => Promise.all(keys
-                .filter((key) => key !== CACHE_NAME)
+                .filter((key) => ![CACHE_NAME, ENGLISH_CACHE_NAME].includes(key))
                 .map((key) => caches.delete(key))))
             .then(() => self.clients.claim())
     );
@@ -83,6 +90,8 @@ self.addEventListener("fetch", (event) => {
     }
 
     const requestUrl = new URL(event.request.url);
+    const isEnglishAsset = ENGLISH_ASSET_PATHS.some((path) =>
+        requestUrl.pathname.endsWith(path));
     const isAppQueryNavigation = event.request.mode === "navigate" &&
         Boolean(requestUrl.search) &&
         (requestUrl.pathname.endsWith("/") ||
@@ -92,20 +101,22 @@ self.addEventListener("fetch", (event) => {
         : event.request;
     const shouldReadCache = event.request.cache !== "reload" &&
         event.request.cache !== "no-store";
+    const runtimeCacheName = isEnglishAsset ? ENGLISH_CACHE_NAME : CACHE_NAME;
     const cachedResponse = shouldReadCache
-        ? caches.match(cacheRequest)
+        ? caches.open(runtimeCacheName).then((cache) => cache.match(cacheRequest))
         : Promise.resolve(undefined);
     event.respondWith(
         cachedResponse.then((cached) => {
             if (cached) {
                 return cached;
             }
-            return fetch(event.request).then((response) => {
+            return fetch(event.request).then(async (response) => {
                 if (!response || response.status !== 200 || response.type === "opaque") {
                     return response;
                 }
                 const copy = response.clone();
-                caches.open(CACHE_NAME).then((cache) => cache.put(cacheRequest, copy));
+                const cache = await caches.open(runtimeCacheName);
+                await cache.put(cacheRequest, copy);
                 return response;
             }).catch(() => {
                 if (event.request.mode === "navigate") {

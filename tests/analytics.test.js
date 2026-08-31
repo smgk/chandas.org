@@ -161,6 +161,16 @@ test("Roman transliteration emits only an aggregate script event", () => {
     assert.deepEqual(requestPaths(fake.requests), ["writing-script-roman"]);
 });
 
+test("English prosody emits only an aggregate script event", () => {
+    const fake = environment();
+    const analytics = createAnalytics(fake.root);
+
+    analytics.trackCompositionScripts(analysisFor("english", "english", "english"));
+    fake.runTimers();
+
+    assert.deepEqual(requestPaths(fake.requests), ["writing-script-english"]);
+});
+
 test("analytics stays disabled outside the production website", () => {
     const fake = environment("smgk.github.io");
     const analytics = createAnalytics(fake.root);

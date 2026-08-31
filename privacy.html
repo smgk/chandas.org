@@ -23,6 +23,9 @@ SPDX-License-Identifier: GPL-3.0-only
             Android app do not send composition text to a Chandas server.
             Synonym lookup also uses bundled offline indexes; the current word
             and selected suggestion never become dictionary-service requests.
+            English stress analysis uses a static pronunciation pack that is
+            downloaded only after English is selected; no word or poem is sent
+            as a pronunciation query.
         </p>
         <h2>Local saved poems and recovery</h2>
         <p>
@@ -56,7 +59,8 @@ SPDX-License-Identifier: GPL-3.0-only
             for aggregate page and writing-script counts. After at least three
             supported syllables have been present and typing pauses briefly,
             Chandas may count that the editing session used Kannada, Telugu,
-            Gujarati, Devanagari, or more than one supported script. It never sends the composition,
+            Gujarati, Devanagari, English stress mode, or more than one
+            supported script. It never sends the composition,
             selected meter, draft identifier, syllable count, or editor
             position.
         </p>

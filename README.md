@@ -6,16 +6,18 @@ SPDX-License-Identifier: GPL-3.0-only
 # Chandas — say it in-verse
 
 [Chandas.org](https://chandas.org) is an offline-first, pre-beta composition
-companion for Indic prosody. Type or paste Kannada, Telugu, Gujarati, or Devanagari verse
-and it marks syllables as Laghu or Guru, suggests likely meters, and highlights
-departures from a selected meter directly on the text.
+companion for Indic and English prosody. Type or paste Kannada, Telugu,
+Gujarati, or Devanagari verse and it marks syllables as Laghu or Guru.
+Explicitly select English for a separate weak/strong stress analysis. Both
+modes suggest likely meters and highlight departures from a selected meter
+directly on the authored text.
 
 The project is a static website/PWA with an Android WebView wrapper. Analysis
 runs locally; composing does not require an account, server, or cloud database.
 
-An isolated English stress-prosody engine and offline pronunciation pack now
-exist as the completed M1–M3 foundation. They are not yet exposed in the
-composer; that user experience is the separately gated M4 milestone.
+The English pronunciation pack is not part of the initial Indic page load. It
+downloads only after English stress meter is selected and is then cached for
+offline use.
 
 ## What it does
 
@@ -23,6 +25,9 @@ composer; that user experience is the separately gated M4 milestone.
 - Accepts explicitly selected IAST, ISO 15919, ITRANS, and Harvard-Kyoto input;
   an offline Devanagari shadow drives analysis while markings stay on the
   untouched Roman text.
+- Offers an explicitly selected English mode with weak/strong marks, foot
+  boundaries, uncertainty, per-line cursor counts, ranked meters, stanza-level
+  selection, selected-meter feedback, and Ghost guidance.
 - Converts the entire editing buffer among Kannada, Devanagari, Telugu,
   Gujarati, IAST, ISO 15919, ITRANS, and Harvard-Kyoto after an on-device
   preview, with one-step undo. Colloquial Roman is available as a clearly
@@ -143,6 +148,7 @@ Android application is built and released separately.
 | --- | --- |
 | `meter_analysis.js` | Unicode syllable analysis, meter scoring, validation, and prāsa |
 | `english_analysis.js` | Isolated English pronunciation, source alignment, stress-meter scoring, and ambiguity reporting |
+| `english_composer.js` | Lazy English composer adapter, stanza state, source-local stress rendering, and UI-safe ranking |
 | `english_meters.json` | Versioned iambic, trochaic, anapestic, and dactylic M3 catalog |
 | `data/english/` | Pinned CMUdict-derived stress pack, reproducible build notes, and license |
 | `roman_transliteration.js` | Offline Roman parsing, native/Roman buffer conversion, Devanagari shadows, and source-range projection |

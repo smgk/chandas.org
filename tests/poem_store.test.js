@@ -63,6 +63,20 @@ test("preserves Gujarati as a saved interface language", () => {
     assert.equal(restored[0].language, "gu");
 });
 
+test("preserves explicit English stress mode through backup and restore", () => {
+    const englishPoem = poem({
+        text: "Shall I compare thee to a summer's day?",
+        inputScheme: "english",
+        selections: { 0: "english:iambic-pentameter" }
+    });
+    const restored = parseBackup(JSON.stringify(makeBackup([englishPoem])));
+
+    assert.equal(englishPoem.inputScheme, "english");
+    assert.equal(restored[0].inputScheme, "english");
+    assert.deepEqual(restored[0].selections,
+        { 0: "english:iambic-pentameter" });
+});
+
 test("exports and parses a portable versioned backup", () => {
     const customForms = [{
         id: "custom:test",

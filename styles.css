@@ -464,6 +464,22 @@ textarea:focus-visible {
     text-underline-offset: 0.32rem;
 }
 
+.highlight-layer .english-weak {
+    text-decoration-line: underline;
+    text-decoration-style: dotted;
+    text-decoration-color: color-mix(in srgb, var(--green) 72%, transparent);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.32rem;
+}
+
+.highlight-layer .english-strong {
+    text-decoration-line: underline;
+    text-decoration-style: solid;
+    text-decoration-color: var(--saffron);
+    text-decoration-thickness: 3px;
+    text-underline-offset: 0.32rem;
+}
+
 .highlight-layer .violation {
     color: var(--error);
     text-decoration-line: underline;
@@ -635,6 +651,13 @@ textarea:focus-visible {
 
 .scansion-boundary.scansion-amsha {
     border-left-color: color-mix(in srgb, var(--green) 28%, transparent);
+}
+
+.scansion-boundary.scansion-english-foot {
+    top: -0.38em;
+    height: 1.65em;
+    border-left-style: solid;
+    border-left-color: color-mix(in srgb, var(--green) 40%, transparent);
 }
 
 .ghost-template {
@@ -871,6 +894,21 @@ textarea:focus-visible {
 .sample.violation {
     color: var(--error);
     text-decoration: 2px wavy var(--error) underline;
+}
+
+.sample.english-weak {
+    text-decoration: underline dotted var(--green) 2px;
+    text-underline-offset: 0.22rem;
+}
+
+.sample.english-strong {
+    text-decoration: underline solid var(--saffron) 3px;
+    text-underline-offset: 0.22rem;
+}
+
+.sample.uncertain {
+    text-decoration: underline dashed #756e65 2px;
+    text-underline-offset: 0.22rem;
 }
 
 .sample.prasa-match {

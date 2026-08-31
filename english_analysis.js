@@ -830,6 +830,7 @@
             const source = String(text || "");
             const catalog = validateCatalog(catalogValue);
             const lexicon = normalizeLexicon(lexiconValue);
+            const baseOffset = Number(options && options.offset) || 0;
             const sourceLines = splitLines(source);
             const nonempty = sourceLines.filter((line) => tokenize(line.text).length);
             const lastNonemptyStart = nonempty.length ? nonempty.at(-1).start : -1;
@@ -839,7 +840,7 @@
                 catalog,
                 {
                     ...(options || {}),
-                    offset: line.start,
+                    offset: baseOffset + line.start,
                     partial: Boolean(options && options.partialLastLine &&
                         line.start === lastNonemptyStart)
                 }

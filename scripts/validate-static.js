@@ -23,6 +23,7 @@ const required = [
     "strong_template.js",
     "custom_meter.js",
     "english_analysis.js",
+    "english_composer.js",
     "english_meters.json",
     "mishra.json",
     "structural_meters.json",

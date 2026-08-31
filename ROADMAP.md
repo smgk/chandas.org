@@ -77,7 +77,7 @@ with positive, variant, incomplete, ambiguous, and negative checks.
 
 ### M4 — English composer experience
 
-**Status:** Next proposed milestone; owner approval required
+**Status:** Complete in version 1.36.0
 
 - Render weak/strong marks, foot boundaries, line and cursor counts, selected
   meter deviations, uncertainty, and Ghost guides on the authored spelling.
@@ -87,6 +87,8 @@ with positive, variant, incomplete, ambiguous, and negative checks.
   Android-compatible static assets.
 
 ### M5 — English rhyme and named forms
+
+**Status:** Next proposed milestone; owner approval required
 
 - Add perfect end-rhyme and rhyme-scheme analysis.
 - Recognize blank verse, heroic couplets, common and ballad measure,
@@ -150,6 +152,6 @@ with positive, variant, incomplete, ambiguous, and negative checks.
 
 ## Immediate approval gate
 
-The next proposed work is **M4 — English composer experience**. Do not expose
-the completed M1–M3 engine in the composer until the project owner explicitly
-approves M4.
+The next proposed work is **M5 — English rhyme and named forms**. M4 exposes
+stress prosody only after the writer explicitly chooses English, and M5 should
+preserve that boundary unless the project owner approves a different design.

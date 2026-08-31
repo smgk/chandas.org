@@ -103,6 +103,7 @@ SPDX-License-Identifier: GPL-3.0-only
                         <select id="input-scheme" aria-describedby="transliteration-help">
                             <optgroup label="Interpret current text as" data-i18n-label="interpretAs">
                                 <option value="native" data-i18n="schemeNative">Indic scripts · automatic</option>
+                                <option value="english" data-i18n="schemeEnglish">English · stress meter</option>
                                 <option value="iast">IAST</option>
                                 <option value="iso15919">ISO 15919</option>
                                 <option value="itrans">ITRANS</option>
@@ -134,7 +135,7 @@ SPDX-License-Identifier: GPL-3.0-only
                         autocomplete="off"
                         autocapitalize="off"
                         spellcheck="false"
-                        aria-describedby="legend editor-help"
+                        aria-describedby="legend english-legend editor-help"
                         data-i18n-placeholder="placeholder"
                         placeholder="ಕನ್ನಡ,తెలుగు ಅಥವಾ देवनागरीಯಲ್ಲಿ ಬರೆಯಿರಿ…"
                     ></textarea>
@@ -173,6 +174,12 @@ SPDX-License-Identifier: GPL-3.0-only
                         <span class="legend-item"><i class="sample prasa-match" aria-hidden="true">ಪ</i><span data-i18n="prasaMatchLegend">Prāsa found</span></span>
                         <span class="legend-item"><i class="sample prasa-mismatch" aria-hidden="true">ತ</i><span data-i18n="prasaMismatchLegend">Prāsa mismatch</span></span>
                         <span class="legend-item"><i class="sample prasa-weight-mismatch" aria-hidden="true">ಲ</i><span data-i18n="openingWeightLegend">Opening weight mismatch</span></span>
+                    </div>
+                    <div id="english-legend" class="legend" aria-label="English stress legend" hidden>
+                        <span class="legend-item"><i class="sample english-weak" aria-hidden="true">w</i><span data-i18n="englishWeak">Weak</span></span>
+                        <span class="legend-item"><i class="sample english-strong" aria-hidden="true">S</i><span data-i18n="englishStrong">Strong</span></span>
+                        <span class="legend-item"><i class="sample violation" aria-hidden="true">x</i><span data-i18n="englishDeparture">Selected-meter departure</span></span>
+                        <span class="legend-item"><i class="sample uncertain" aria-hidden="true">?</i><span data-i18n="englishUncertain">Guessed pronunciation</span></span>
                     </div>
                     <div class="editor-status">
                         <output id="cursor-metrics" class="cursor-metrics">Syllable 0 · Mātrās 0</output>
@@ -231,7 +238,7 @@ SPDX-License-Identifier: GPL-3.0-only
                             class="amsha-realization-output" hidden></output>
                     </div>
 
-                    <div class="analysis-tools">
+                    <div id="analysis-tools" class="analysis-tools">
                         <label class="scansion-control" for="scansion-mode">
                             <span data-i18n="scansion">Scansion</span>
                             <select id="scansion-mode">

@@ -12,6 +12,7 @@ const test = require("node:test");
 const { performance } = require("node:perf_hooks");
 
 const English = require("../english_analysis.js");
+const EnglishComposer = require("../english_composer.js");
 const meters = require("../english_meters.json");
 const lexiconDocument = require("../data/english/en-cmudict-stress-v1.json");
 const corpus = require("../examples/english_prosody_corpus.json");
@@ -78,6 +79,19 @@ test("tokenization and syllable alignment preserve authored source ranges", () =
             assert.ok(syllable.start < syllable.end);
         });
     }
+});
+
+test("composition offsets project English syllables into their authored stanza", () => {
+    const prefix = "Earlier stanza\n\n";
+    const line = "The time has come, the Walrus said";
+    const result = English.analyzeComposition(line, lexicon, meters, {
+        offset: prefix.length
+    });
+    assert.equal(result.lines[0].start, prefix.length);
+    result.lines[0].syllables.forEach((syllable) => {
+        assert.equal(`${prefix}${line}`.slice(syllable.start, syllable.end),
+            syllable.text);
+    });
 });
 
 test("retains alternatives, local overrides, and honest unknown-word confidence", () => {
@@ -237,6 +251,24 @@ test("an empty English composition makes no metrical claim", () => {
     assert.deepEqual(result.candidates, []);
     assert.equal(result.bestCandidate, null);
     assert.equal(result.ambiguous, false);
+});
+
+test("the M4 adapter keeps stanza selections and deviations source-local", () => {
+    const text = "The time has come, the Walrus said\nA slumber did my spirit seal\n\n" +
+        "Bright bright bright bright bright bright bright bright bright bright";
+    const analysis = EnglishComposer.analyze(text, {
+        0: "english:iambic-tetrameter",
+        1: "english:iambic-pentameter"
+    }, lexicon, meters, English);
+
+    assert.equal(analysis.analysisSystem, "english-stress");
+    assert.equal(analysis.stanzas.length, 2);
+    assert.equal(analysis.stanzas[0].selectedCandidate.matchLevel, "exact");
+    assert.equal(analysis.stanzas[0].violationCount, 0);
+    assert.ok(analysis.stanzas[1].violationCount >= 4);
+    assert.ok(analysis.stanzas[1].lines[0].syllables.every((syllable) =>
+        text.slice(syllable.start, syllable.end) === syllable.text));
+    assert.ok(analysis.segments.every((syllable) => syllable.script === "english"));
 });
 
 test("analyzes a 2,000-character English composition inside the M3 budget", () => {

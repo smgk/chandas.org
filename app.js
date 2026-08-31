@@ -10,6 +10,12 @@
     const LANGUAGE_KEY = "chandas.language.v1";
     const SAVE_DELAY_MS = 280;
     const UPDATE_CHECK_INTERVAL_MS = 15 * 60 * 1000;
+    const ENGLISH_ASSETS = Object.freeze({
+        engine: "english_analysis.js",
+        composer: "english_composer.js",
+        meters: "english_meters.json",
+        lexicon: "data/english/en-cmudict-stress-v1.json"
+    });
 
     const messages = {
         en: {
@@ -52,6 +58,7 @@
             language: "Interface language",
             inputScheme: "Input",
             schemeNative: "Indic scripts · automatic",
+            schemeEnglish: "English · stress meter",
             interpretAs: "Interpret current text as",
             convertTo: "Convert entire composition to",
             romanColloquial: "Roman · colloquial preview",
@@ -108,6 +115,7 @@
             romanInputHelp: "Roman text is analyzed through an offline Devanagari shadow; your spelling stays untouched.",
             romanPlaceholder: "Type Roman transliteration here…",
             romanStrongUnavailable: "Strong templates are not yet available for Roman input; ghost guidance remains available.",
+            englishStrongUnavailable: "English currently supports Ghost guidance; Strong templates come later.",
             newDraft: "New",
             updateAvailable: "Update available",
             updating: "Updating…",
@@ -132,6 +140,30 @@
             syllableShort: "S",
             matraShort: "M",
             cursorMetrics: "Syllable {syllable} · Mātrās {matras}",
+            englishCursorMetrics: "Syllable {syllable} · Stresses {stresses}",
+            englishInputHelp: "English stress analysis loads only when selected, then remains available offline.",
+            englishLoading: "Loading the offline English prosody pack…",
+            englishReady: "English stress analysis is ready offline.",
+            englishLoadFailed: "The English prosody pack could not be loaded. Check the connection and select English again.",
+            englishPlaceholder: "Write English verse here…",
+            englishWeak: "Weak",
+            englishStrong: "Strong",
+            englishDeparture: "Selected-meter departure",
+            englishUncertain: "Guessed pronunciation",
+            englishPattern: "Current stress pattern",
+            englishLineSummary: "{lines} line(s) · {stresses} stressed syllable(s)",
+            englishCandidateDetail: "{observed}/{expected} syllables · {feet} {foot} feet",
+            englishExact: "Exact",
+            englishCompatible: "Compatible",
+            englishIncomplete: "Incomplete",
+            englishApproximate: "Closest",
+            englishNoMeter: "Choose an English meter to check this stanza.",
+            englishValid: "This stanza follows {meter}: {exact}/{lines} line(s) exact.",
+            englishCompatibleValidation: "This stanza is compatible with {meter}; controlled variations are retained.",
+            englishIncompleteValidation: "{meter} remains possible; {missing} metrical position(s) remain.",
+            englishIssues: "{departures} stress departure(s), {extra} extra, and {missing} missing position(s) for {meter}.",
+            englishGuessNote: " {count} word pronunciation(s) are guessed.",
+            englishAmbiguityNote: " Close alternative(s): {meters}.",
             cursorMetricsLabel: "Counts from the beginning of the line to the cursor",
             synonyms: "Synonyms",
             synonymsFor: "Synonyms for {word}",
@@ -292,6 +324,7 @@
             language: "ತೆರೆಯ ಭಾಷೆ",
             inputScheme: "ಬರಹದ ಲಿಪಿ",
             schemeNative: "ಭಾರತೀಯ ಲಿಪಿಗಳು · ಸ್ವಯಂ",
+            schemeEnglish: "ಇಂಗ್ಲಿಷ್ · ಒತ್ತಡದ ಛಂದಸ್ಸು",
             interpretAs: "ಈ ಬರಹವನ್ನು ಹೀಗೆ ಓದಿ",
             convertTo: "ಇಡೀ ಪದ್ಯವನ್ನು ಇದಕ್ಕೆ ಬದಲಿಸಿ",
             romanColloquial: "ರೋಮನ್ · ಆಡುಮಾತಿನ ಮುನ್ನೋಟ",
@@ -348,6 +381,7 @@
             romanInputHelp: "ರೋಮನ್ ಪಠ್ಯವನ್ನು ಆಫ್‌ಲೈನ್ ದೇವನಾಗರಿ ಪ್ರತಿಯ ಮೂಲಕ ವಿಶ್ಲೇಷಿಸುತ್ತದೆ; ನಿಮ್ಮ ಬರಹ ಬದಲಾಗುವುದಿಲ್ಲ.",
             romanPlaceholder: "ರೋಮನ್ ಲಿಪ್ಯಂತರದಲ್ಲಿ ಇಲ್ಲಿ ಬರೆಯಿರಿ…",
             romanStrongUnavailable: "ರೋಮನ್ ಬರಹಕ್ಕೆ ಬಲವಾದ ಟೆಂಪ್ಲೇಟ್ ಇನ್ನೂ ಲಭ್ಯವಿಲ್ಲ; ಮಸುಕಾದ ಮಾರ್ಗದರ್ಶನ ಲಭ್ಯವಿದೆ.",
+            englishStrongUnavailable: "ಇಂಗ್ಲಿಷ್‌ಗೆ ಈಗ ಮಸುಕಾದ ಮಾರ್ಗದರ್ಶನ ಲಭ್ಯ; ಬಲವಾದ ಟೆಂಪ್ಲೇಟ್ ನಂತರ ಬರುತ್ತದೆ.",
             newDraft: "ಹೊಸದು",
             updateAvailable: "ನವೀಕರಣ ಲಭ್ಯ",
             updating: "ನವೀಕರಿಸಲಾಗುತ್ತಿದೆ…",
@@ -372,6 +406,30 @@
             syllableShort: "ಅ",
             matraShort: "ಮಾ",
             cursorMetrics: "ಅಕ್ಷರ {syllable} · ಮಾತ್ರೆ {matras}",
+            englishCursorMetrics: "ಅಕ್ಷರ {syllable} · ಒತ್ತುಗಳು {stresses}",
+            englishInputHelp: "ಆರಿಸಿದಾಗ ಮಾತ್ರ ಇಂಗ್ಲಿಷ್ ಒತ್ತಡ ವಿಶ್ಲೇಷಣೆ ಲೋಡ್ ಆಗುತ್ತದೆ; ನಂತರ ಆಫ್‌ಲೈನ್‌ನಲ್ಲೂ ಲಭ್ಯ.",
+            englishLoading: "ಆಫ್‌ಲೈನ್ ಇಂಗ್ಲಿಷ್ ಛಂದಸ್ಸಿನ ದತ್ತಾಂಶ ಲೋಡ್ ಆಗುತ್ತಿದೆ…",
+            englishReady: "ಇಂಗ್ಲಿಷ್ ಒತ್ತಡ ವಿಶ್ಲೇಷಣೆ ಆಫ್‌ಲೈನ್‌ಗೆ ಸಿದ್ಧವಾಗಿದೆ.",
+            englishLoadFailed: "ಇಂಗ್ಲಿಷ್ ಛಂದಸ್ಸಿನ ದತ್ತಾಂಶ ಲೋಡ್ ಆಗಲಿಲ್ಲ. ಸಂಪರ್ಕ ಪರಿಶೀಲಿಸಿ ಮತ್ತೆ ಇಂಗ್ಲಿಷ್ ಆರಿಸಿ.",
+            englishPlaceholder: "ಇಂಗ್ಲಿಷ್ ಪದ್ಯವನ್ನು ಇಲ್ಲಿ ಬರೆಯಿರಿ…",
+            englishWeak: "ದುರ್ಬಲ ಒತ್ತು",
+            englishStrong: "ಬಲವಾದ ಒತ್ತು",
+            englishDeparture: "ಆಯ್ದ ಛಂದಸ್ಸಿನ ವ್ಯತ್ಯಾಸ",
+            englishUncertain: "ಊಹಿಸಿದ ಉಚ್ಚಾರಣೆ",
+            englishPattern: "ಪ್ರಸ್ತುತ ಒತ್ತಡ ವಿನ್ಯಾಸ",
+            englishLineSummary: "{lines} ಸಾಲು · {stresses} ಒತ್ತಿನ ಅಕ್ಷರಗಳು",
+            englishCandidateDetail: "{observed}/{expected} ಅಕ್ಷರ · {feet} {foot} ಗಣಗಳು",
+            englishExact: "ನಿಖರ",
+            englishCompatible: "ಹೊಂದಿಕೆಯಾಗುತ್ತದೆ",
+            englishIncomplete: "ಅಪೂರ್ಣ",
+            englishApproximate: "ಸಮೀಪದ",
+            englishNoMeter: "ಈ ಪದ್ಯವನ್ನು ಪರಿಶೀಲಿಸಲು ಇಂಗ್ಲಿಷ್ ಛಂದಸ್ಸನ್ನು ಆರಿಸಿ.",
+            englishValid: "ಈ ಪದ್ಯವು {meter} ಅನುಸರಿಸುತ್ತದೆ: {exact}/{lines} ಸಾಲು ನಿಖರ.",
+            englishCompatibleValidation: "ಈ ಪದ್ಯವು {meter}ಗೆ ಹೊಂದಿಕೆಯಾಗುತ್ತದೆ; ಅಂಗೀಕೃತ ವ್ಯತ್ಯಾಸಗಳನ್ನು ಉಳಿಸಲಾಗಿದೆ.",
+            englishIncompleteValidation: "{meter} ಇನ್ನೂ ಸಾಧ್ಯ; {missing} ಛಂದೋಸ್ಥಾನಗಳು ಬಾಕಿ.",
+            englishIssues: "{meter}ಗೆ {departures} ಒತ್ತಡ ವ್ಯತ್ಯಾಸ, {extra} ಹೆಚ್ಚುವರಿ ಮತ್ತು {missing} ಬಾಕಿ ಸ್ಥಾನಗಳು.",
+            englishGuessNote: " {count} ಪದಗಳ ಉಚ್ಚಾರಣೆಯನ್ನು ಊಹಿಸಲಾಗಿದೆ.",
+            englishAmbiguityNote: " ಸಮೀಪದ ಪರ್ಯಾಯಗಳು: {meters}.",
             cursorMetricsLabel: "ಸಾಲಿನ ಆರಂಭದಿಂದ ಕರ್ಸರ್‌ವರೆಗಿನ ಎಣಿಕೆ",
             synonyms: "ಪರ್ಯಾಯ ಪದಗಳು",
             synonymsFor: "{word} ಪದಕ್ಕೆ ಪರ್ಯಾಯಗಳು",
@@ -532,6 +590,7 @@
             language: "తెర భాష",
             inputScheme: "ఇన్‌పుట్",
             schemeNative: "భారతీయ లిపులు · స్వయంచాలకం",
+            schemeEnglish: "ఇంగ్లీష్ · ఒత్తిడి ఛందస్సు",
             interpretAs: "ప్రస్తుత పాఠ్యాన్ని ఇలా చదవండి",
             convertTo: "మొత్తం రచనను దీనికి మార్చండి",
             romanColloquial: "రోమన్ · వాడుక భాష ముందుచూపు",
@@ -588,6 +647,7 @@
             romanInputHelp: "రోమన్ పాఠ్యం ఆఫ్‌లైన్ దేవనాగరి ప్రతిరూపం ద్వారా విశ్లేషించబడుతుంది; మీ వ్రాత మారదు.",
             romanPlaceholder: "రోమన్ లిప్యంతరీకరణలో ఇక్కడ వ్రాయండి…",
             romanStrongUnavailable: "రోమన్ ఇన్‌పుట్‌కు స్ట్రాంగ్ టెంప్లేట్ ఇంకా లేదు; ఘోస్ట్ మార్గదర్శనం అందుబాటులో ఉంది.",
+            englishStrongUnavailable: "ఇంగ్లీష్‌కు ప్రస్తుతం ఘోస్ట్ మార్గదర్శనం ఉంది; స్ట్రాంగ్ టెంప్లేట్ తరువాత వస్తుంది.",
             newDraft: "కొత్తది",
             updateAvailable: "నవీకరణ అందుబాటులో ఉంది",
             updating: "నవీకరిస్తోంది…",
@@ -612,6 +672,30 @@
             syllableShort: "అ",
             matraShort: "మా",
             cursorMetrics: "అక్షరం {syllable} · మాత్రలు {matras}",
+            englishCursorMetrics: "అక్షరం {syllable} · ఒత్తులు {stresses}",
+            englishInputHelp: "ఎంచుకున్నప్పుడే ఇంగ్లీష్ ఒత్తిడి విశ్లేషణ లోడ్ అవుతుంది; తరువాత ఆఫ్‌లైన్‌లోనూ ఉంటుంది.",
+            englishLoading: "ఆఫ్‌లైన్ ఇంగ్లీష్ ఛందస్సు డేటా లోడ్ అవుతోంది…",
+            englishReady: "ఇంగ్లీష్ ఒత్తిడి విశ్లేషణ ఆఫ్‌లైన్‌కు సిద్ధం.",
+            englishLoadFailed: "ఇంగ్లీష్ ఛందస్సు డేటా లోడ్ కాలేదు. కనెక్షన్ చూసి మళ్లీ ఇంగ్లీష్ ఎంచుకోండి.",
+            englishPlaceholder: "ఇంగ్లీష్ పద్యాన్ని ఇక్కడ రాయండి…",
+            englishWeak: "బలహీన ఒత్తు",
+            englishStrong: "బలమైన ఒత్తు",
+            englishDeparture: "ఎంచుకున్న ఛందస్సు వ్యత్యాసం",
+            englishUncertain: "ఊహించిన ఉచ్చారణ",
+            englishPattern: "ప్రస్తుత ఒత్తిడి నమూనా",
+            englishLineSummary: "{lines} పంక్తులు · {stresses} ఒత్తు అక్షరాలు",
+            englishCandidateDetail: "{observed}/{expected} అక్షరాలు · {feet} {foot} గణాలు",
+            englishExact: "ఖచ్చితం",
+            englishCompatible: "సరిపోతుంది",
+            englishIncomplete: "అసంపూర్ణం",
+            englishApproximate: "దగ్గరది",
+            englishNoMeter: "ఈ పద్యాన్ని తనిఖీ చేయడానికి ఇంగ్లీష్ ఛందస్సును ఎంచుకోండి.",
+            englishValid: "ఈ పద్యం {meter}ను అనుసరిస్తుంది: {exact}/{lines} పంక్తులు ఖచ్చితం.",
+            englishCompatibleValidation: "ఈ పద్యం {meter}కు సరిపోతుంది; అనుమతించిన భేదాలు ఉంచబడ్డాయి.",
+            englishIncompleteValidation: "{meter} ఇంకా సాధ్యం; {missing} ఛందోస్థానాలు మిగిలాయి.",
+            englishIssues: "{meter}కు {departures} ఒత్తిడి భేదాలు, {extra} అదనపు, {missing} మిగిలిన స్థానాలు.",
+            englishGuessNote: " {count} పదాల ఉచ్చారణ ఊహించబడింది.",
+            englishAmbiguityNote: " దగ్గరి ప్రత్యామ్నాయాలు: {meters}.",
             cursorMetricsLabel: "పంక్తి మొదలు నుండి కర్సర్ వరకు లెక్క",
             synonyms: "పర్యాయపదాలు",
             synonymsFor: "{word}కు పర్యాయపదాలు",
@@ -772,6 +856,7 @@
             language: "ઇન્ટરફેસની ભાષા",
             inputScheme: "ઇનપુટ",
             schemeNative: "ભારતીય લિપિઓ · આપમેળે",
+            schemeEnglish: "અંગ્રેજી · ભારછંદ",
             interpretAs: "હાલનું લખાણ આ રીતે વાંચો",
             convertTo: "આખી રચનાને આમાં ફેરવો",
             romanColloquial: "રોમન · બોલચાલનું પૂર્વદર્શન",
@@ -828,6 +913,7 @@
             romanInputHelp: "રોમન લખાણનું ઓફલાઇન દેવનાગરી પ્રતિરૂપ દ્વારા વિશ્લેષણ થાય છે; તમારું લખાણ બદલાતું નથી.",
             romanPlaceholder: "રોમન લિપ્યંતરણમાં અહીં લખો…",
             romanStrongUnavailable: "રોમન ઇનપુટ માટે મજબૂત ટેમ્પલેટ હજી ઉપલબ્ધ નથી; ઝાંખું માર્ગદર્શન ઉપલબ્ધ છે.",
+            englishStrongUnavailable: "અંગ્રેજી માટે હાલમાં ઝાંખું માર્ગદર્શન છે; મજબૂત ટેમ્પલેટ પછી આવશે.",
             newDraft: "નવું",
             updateAvailable: "અપડેટ ઉપલબ્ધ",
             updating: "અપડેટ થઈ રહ્યું છે…",
@@ -852,6 +938,30 @@
             syllableShort: "અ",
             matraShort: "મા",
             cursorMetrics: "અક્ષર {syllable} · માત્રા {matras}",
+            englishCursorMetrics: "અક્ષર {syllable} · ભાર {stresses}",
+            englishInputHelp: "પસંદ કર્યા પછી જ અંગ્રેજી ભારવિશ્લેષણ લોડ થાય છે; ત્યારબાદ ઑફલાઇન પણ ઉપલબ્ધ રહે છે.",
+            englishLoading: "ઑફલાઇન અંગ્રેજી છંદસ માહિતી લોડ થઈ રહી છે…",
+            englishReady: "અંગ્રેજી ભારવિશ્લેષણ ઑફલાઇન માટે તૈયાર છે.",
+            englishLoadFailed: "અંગ્રેજી છંદસ માહિતી લોડ થઈ શકી નહીં. જોડાણ તપાસી ફરી અંગ્રેજી પસંદ કરો.",
+            englishPlaceholder: "અંગ્રેજી પદ્ય અહીં લખો…",
+            englishWeak: "નબળો ભાર",
+            englishStrong: "મજબૂત ભાર",
+            englishDeparture: "પસંદ કરેલા છંદથી ફેરફાર",
+            englishUncertain: "અનુમાનિત ઉચ્ચાર",
+            englishPattern: "વર્તમાન ભાર-નમૂનો",
+            englishLineSummary: "{lines} પંક્તિ · {stresses} ભારિત અક્ષરો",
+            englishCandidateDetail: "{observed}/{expected} અક્ષરો · {feet} {foot} ગણ",
+            englishExact: "ચોક્કસ",
+            englishCompatible: "અનુકૂળ",
+            englishIncomplete: "અધૂરું",
+            englishApproximate: "નજીકનું",
+            englishNoMeter: "આ પદ્ય તપાસવા અંગ્રેજી છંદ પસંદ કરો.",
+            englishValid: "આ પદ્ય {meter} અનુસરે છે: {exact}/{lines} પંક્તિ ચોક્કસ.",
+            englishCompatibleValidation: "આ પદ્ય {meter} સાથે અનુકૂળ છે; મંજૂર ફેરફારો રાખવામાં આવ્યા છે.",
+            englishIncompleteValidation: "{meter} હજી શક્ય છે; {missing} છંદસ્થાન બાકી છે.",
+            englishIssues: "{meter} માટે {departures} ભારભેદ, {extra} વધારાના અને {missing} બાકી સ્થાન.",
+            englishGuessNote: " {count} શબ્દોના ઉચ્ચાર અનુમાનિત છે.",
+            englishAmbiguityNote: " નજીકના વિકલ્પો: {meters}.",
             cursorMetricsLabel: "પંક્તિની શરૂઆતથી કર્સર સુધીની ગણતરી",
             synonyms: "સમાનાર્થી શબ્દો",
             synonymsFor: "{word} માટે સમાનાર્થી",
@@ -1020,7 +1130,12 @@
         synonymLoadPromises: Object.create(null),
         synonymLoadErrors: Object.create(null),
         synonymContext: null,
-        synonymRenderToken: 0
+        synonymRenderToken: 0,
+        englishCatalog: null,
+        englishMeters: [],
+        englishLexicon: null,
+        englishLoadPromise: null,
+        englishLoadState: "idle"
     };
 
     function cacheElements() {
@@ -1028,12 +1143,12 @@
             "composition", "highlight-layer", "editor-shell", "draft-state", "cursor-metrics",
             "synonym-picker", "synonym-word", "synonym-count", "synonym-list",
             "synonym-feedback", "synonym-feedback-text", "synonym-retry",
-            "input-scheme", "transliteration-help",
+            "input-scheme", "transliteration-help", "legend", "english-legend",
             "language", "new-draft", "saved-poems", "app-update", "copy", "share", "analysis-title",
             "previous-stanza", "next-stanza", "empty-analysis", "analysis-content",
             "pattern-block", "active-pattern", "active-matras",
             "active-amsha-realization",
-            "scansion-mode", "detect-shithila-dvitva",
+            "analysis-tools", "scansion-mode", "detect-shithila-dvitva",
             "selected-meter-reference", "selected-meter-name",
             "selected-meter-signature", "candidate-list", "meter-picker",
             "suggestion-heading",
@@ -1072,25 +1187,164 @@
         return value;
     }
 
+    function normalizeInputScheme(value) {
+        return String(value || "").toLocaleLowerCase() === "english"
+            ? "english"
+            : ChandasRoman.normalizeScheme(value);
+    }
+
+    function isEnglishMode() {
+        return state.inputScheme === "english";
+    }
+
+    function activeMeters() {
+        return isEnglishMode() ? state.englishMeters : state.meters;
+    }
+
+    function loadDeferredScript(url, globalName) {
+        if (window[globalName]) {
+            return Promise.resolve(window[globalName]);
+        }
+        return new Promise((resolve, reject) => {
+            const existing = document.querySelector(`script[data-deferred-src="${url}"]`);
+            const script = existing || document.createElement("script");
+            const finish = () => window[globalName]
+                ? resolve(window[globalName])
+                : reject(new Error(`${globalName} did not initialize`));
+            script.addEventListener("load", finish, { once: true });
+            script.addEventListener("error", () => {
+                script.remove();
+                reject(new Error(`Could not load ${url}`));
+            }, { once: true });
+            if (!existing) {
+                script.src = url;
+                script.defer = true;
+                script.dataset.deferredSrc = url;
+                document.head.append(script);
+            }
+        });
+    }
+
+    async function ensureEnglishResources(retry = false) {
+        if (state.englishCatalog && state.englishLexicon &&
+            window.ChandasEnglish && window.ChandasEnglishComposer) {
+            state.englishLoadState = "ready";
+            return true;
+        }
+        if (state.englishLoadPromise && !retry) {
+            return state.englishLoadPromise;
+        }
+        state.englishLoadState = "loading";
+        updateInputSchemeUi();
+        renderAnalysisPanel();
+        const requestOptions = retry ? { cache: "reload" } : { cache: "force-cache" };
+        state.englishLoadPromise = Promise.all([
+            loadDeferredScript(ENGLISH_ASSETS.engine, "ChandasEnglish"),
+            loadDeferredScript(ENGLISH_ASSETS.composer, "ChandasEnglishComposer"),
+            fetch(ENGLISH_ASSETS.meters, requestOptions),
+            fetch(ENGLISH_ASSETS.lexicon, requestOptions)
+        ]).then(async ([, , meterResponse, lexiconResponse]) => {
+            if (!meterResponse.ok || !lexiconResponse.ok) {
+                throw new Error(
+                    `English data request failed: ${meterResponse.status}/${
+                        lexiconResponse.status}`
+                );
+            }
+            const [catalog, lexiconDocument] = await Promise.all([
+                meterResponse.json(),
+                lexiconResponse.json()
+            ]);
+            window.ChandasEnglish.validateCatalog(catalog);
+            state.englishCatalog = catalog;
+            state.englishLexicon = window.ChandasEnglish.createLexicon(
+                lexiconDocument
+            );
+            state.englishMeters = window.ChandasEnglishComposer
+                .normalizeMeters(catalog)
+                .map((meter) => ({
+                    ...meter,
+                    searchText: meterSearchKeys(
+                        [meter.name, ...(meter.aliases || [])].join(" ")
+                    ).join(" ")
+                }))
+                .sort((left, right) => left.name.localeCompare(right.name));
+            state.englishLoadState = "ready";
+            return true;
+        }).catch((error) => {
+            console.error(error);
+            state.englishLoadState = "error";
+            state.englishLoadPromise = null;
+            if (isEnglishMode()) {
+                updateInputSchemeUi();
+                renderAnalysisPanel();
+            }
+            return false;
+        });
+        const loaded = await state.englishLoadPromise;
+        if (isEnglishMode()) {
+            updateInputSchemeUi();
+        }
+        return loaded;
+    }
+
     function updateInputSchemeUi() {
-        const roman = state.inputScheme !== "native";
+        const english = isEnglishMode();
+        const roman = state.inputScheme !== "native" && !english;
         if (elements["input-scheme"]) {
             elements["input-scheme"].value = state.inputScheme;
+            elements["input-scheme"].querySelectorAll('option[value^="convert:"]')
+                .forEach((option) => {
+                    option.disabled = english;
+                });
         }
         if (elements["transliteration-help"]) {
-            elements["transliteration-help"].textContent = t(
-                roman ? "romanInputHelp" : "nativeInputHelp"
-            );
+            const englishHelp = state.englishLoadState === "loading"
+                ? "englishLoading"
+                : state.englishLoadState === "error"
+                    ? "englishLoadFailed"
+                    : state.englishLoadState === "ready"
+                        ? "englishReady"
+                        : "englishInputHelp";
+            elements["transliteration-help"].textContent = t(english
+                ? englishHelp
+                : roman ? "romanInputHelp" : "nativeInputHelp");
         }
         if (elements.composition) {
-            elements.composition.placeholder = roman
-                ? t("romanPlaceholder")
-                : t("placeholder");
+            elements.composition.placeholder = english
+                ? t("englishPlaceholder")
+                : roman ? t("romanPlaceholder") : t("placeholder");
+            elements.composition.spellcheck = english;
         }
         if (elements["detect-shithila-dvitva"]) {
-            elements["detect-shithila-dvitva"].disabled = roman;
+            elements["detect-shithila-dvitva"].disabled = roman || english;
             elements["detect-shithila-dvitva"].closest("label")
-                .toggleAttribute("hidden", roman);
+                .toggleAttribute("hidden", roman || english);
+        }
+        if (elements.legend) {
+            elements.legend.hidden = english;
+        }
+        if (elements["english-legend"]) {
+            elements["english-legend"].hidden = !english;
+        }
+        if (elements["analysis-tools"]) {
+            elements["analysis-tools"].hidden = english;
+        }
+        if (elements["learn-pattern"]) {
+            elements["learn-pattern"].hidden = english;
+        }
+        const emptyMark = elements["empty-analysis"] &&
+            elements["empty-analysis"].querySelector("span");
+        if (emptyMark) {
+            emptyMark.textContent = english ? "w · S" : "ಲಘು · ಗುರು";
+        }
+        const patternLabel = elements["pattern-block"] &&
+            elements["pattern-block"].querySelector(".mini-label");
+        if (patternLabel) {
+            patternLabel.textContent = t(english ? "englishPattern" : "pattern");
+        }
+        if (english) {
+            hideSynonymPicker();
+            hideSynonymFeedback();
         }
     }
 
@@ -1162,7 +1416,7 @@
     }
 
     function meterForId(meterId) {
-        return state.meters.find((meter) => meter.id === meterId) || null;
+        return activeMeters().find((meter) => meter.id === meterId) || null;
     }
 
     function decodeQueryPart(value) {
@@ -1270,7 +1524,7 @@
             : null;
         const hasInputScheme = params.has("scheme") || params.has("input");
         const inputScheme = hasInputScheme
-            ? ChandasRoman.normalizeScheme(
+            ? normalizeInputScheme(
                 params.has("scheme") ? params.get("scheme") : params.get("input")
             )
             : null;
@@ -1316,13 +1570,13 @@
         if (!source) {
             return null;
         }
-        const idMatch = state.meters.find((meter) =>
+        const idMatch = activeMeters().find((meter) =>
             meter.id.toLocaleLowerCase() === source.toLocaleLowerCase());
         if (idMatch) {
             return idMatch;
         }
         const tokenKeys = meterSearchKeys(source);
-        return state.meters.find((meter) => {
+        return activeMeters().find((meter) => {
             const identityKeys = [
                 meter.name,
                 ...(meter.aliases || [])
@@ -1343,7 +1597,7 @@
         }
     }
 
-    function importFromUrl() {
+    async function importFromUrl() {
         const payload = parseUrlImport();
         if (!payload) {
             return;
@@ -1358,8 +1612,17 @@
         let importMessage = incoming ? t("urlImported") : "";
         if (payload.inputScheme &&
             (payload.inputScheme !== "native" || !authoredCompositionText())) {
+            if (payload.inputScheme !== state.inputScheme) {
+                state.selections = {};
+                state.templates = {};
+                state.templateModes = {};
+                state.strongDrafts = {};
+            }
             state.inputScheme = payload.inputScheme;
             updateInputSchemeUi();
+            if (isEnglishMode()) {
+                await ensureEnglishResources();
+            }
         }
         if (incoming) {
             const appended = appendAsPadya(authoredCompositionText(), incoming);
@@ -1820,6 +2083,14 @@
     }
 
     function wholeVerseGuideLine(meter, stanza, lineIndex, script) {
+        if (meter.kind === "english") {
+            const line = stanza.lines[lineIndex];
+            const candidate = line && line.chosenCandidate;
+            return englishStressGuide(
+                candidate ? candidate.expectedPattern : meter.patterns[0],
+                0
+            );
+        }
         if (meter.kind === "fixed") {
             return formatWeightGuide(fixedVersePattern(meter, lineIndex), script, 0);
         }
@@ -1843,7 +2114,9 @@
         const meter = stanza && templateMode(state.activeStanzaIndex) === "ghost"
             ? meterForId(stanza.selectedMeterId)
             : null;
-        const lineCount = meterVerseLineCount(meter);
+        const lineCount = meter && meter.kind === "english" && stanza
+            ? Math.max(1, stanza.lines.length)
+            : meterVerseLineCount(meter);
         if (!stanza || !meter || !lineCount) {
             container.hidden = true;
             container.replaceChildren();
@@ -2279,6 +2552,14 @@
         const segments = state.analysis ? state.analysis.segments : [];
         const preceding = segments.filter((segment) => segment.start < caret);
         const precedingOnLine = preceding.filter((segment) => segment.start >= lineStart);
+        if (isEnglishMode()) {
+            elements["cursor-metrics"].textContent = t("englishCursorMetrics", {
+                syllable: precedingOnLine.length,
+                stresses: precedingOnLine.filter((segment) =>
+                    segment.lexicalStress > 0).length
+            });
+            return;
+        }
         const matras = precedingOnLine.reduce(
             (sum, segment) =>
                 sum + (segment.classification === Chandas.GURU ? 2 : 1),
@@ -2398,7 +2679,7 @@
     }
 
     function synonymContextAtCaret() {
-        if (!elements.composition ||
+        if (isEnglishMode() || !elements.composition ||
             (document.activeElement &&
                 document.activeElement.classList.contains("strong-template-slot"))) {
             return null;
@@ -2743,6 +3024,110 @@
         syncScroll();
     }
 
+    function englishStressGuide(pattern, consumed) {
+        return Array.from(pattern || "").slice(consumed || 0)
+            .map((stress) => stress === "S" ? "S" : "w")
+            .join("\u2009");
+    }
+
+    function renderEnglishOverlay() {
+        const text = elements.composition.value;
+        if (!state.analysis || !text) {
+            renderPlainOverlay();
+            return;
+        }
+        const ranges = state.analysis.segments.map((segment) => ({
+            start: segment.start,
+            end: segment.end,
+            className: [
+                segment.lexicalStress > 0 ? "english-strong" : "english-weak",
+                segment.violation ? "violation" : "",
+                segment.uncertain ? "uncertain" : ""
+            ].filter(Boolean).join(" ")
+        })).sort((left, right) => left.start - right.start || left.end - right.end);
+        const annotations = new Map();
+        function annotationAt(position) {
+            const value = annotations.get(position) || {
+                position,
+                metrics: "",
+                ghost: "",
+                scansion: []
+            };
+            annotations.set(position, value);
+            return value;
+        }
+        for (const stanza of state.analysis.stanzas) {
+            const selectedMeter = meterForId(stanza.selectedMeterId);
+            const displayMeter = selectedMeter ||
+                meterForId(stanza.bestCandidate && stanza.bestCandidate.id);
+            const showGhost = selectedMeter &&
+                templateMode(stanza.index) === "ghost";
+            const footLength = displayMeter ? displayMeter.pattern.length : 0;
+            for (const line of stanza.lines) {
+                const syllables = line.syllables || [];
+                const candidate = line.chosenCandidate;
+                if (!syllables.length || !candidate) {
+                    continue;
+                }
+                const finalAnnotation = annotationAt(syllables.at(-1).end);
+                finalAnnotation.metrics = `σ${syllables.length} · /${
+                    line.stressCount}`;
+                if (showGhost) {
+                    const consumed = syllables.reduce((maximum, syllable) =>
+                        Number.isInteger(syllable.expectedIndex)
+                            ? Math.max(maximum, syllable.expectedIndex + 1)
+                            : maximum, 0);
+                    annotationAt(line.end).ghost = englishStressGuide(
+                        candidate.expectedPattern,
+                        consumed
+                    );
+                }
+                if (footLength) {
+                    syllables.forEach((syllable, index) => {
+                        if (index % footLength === 0) {
+                            annotationAt(syllable.start).scansion.push({
+                                kind: "english-foot",
+                                crossed: false
+                            });
+                        }
+                    });
+                }
+            }
+        }
+        const orderedAnnotations = [...annotations.values()]
+            .sort((left, right) => left.position - right.position);
+        let cursor = 0;
+        let annotationIndex = 0;
+        let html = "";
+        function appendAnnotationsThrough(position) {
+            while (annotationIndex < orderedAnnotations.length &&
+                orderedAnnotations[annotationIndex].position <= position) {
+                const annotation = orderedAnnotations[annotationIndex];
+                annotationIndex += 1;
+                if (annotation.position < cursor || annotation.position > text.length) {
+                    continue;
+                }
+                html += escapeHtml(text.slice(cursor, annotation.position));
+                cursor = annotation.position;
+                html += annotationHtml(annotation);
+            }
+        }
+        for (const range of ranges) {
+            appendAnnotationsThrough(range.start);
+            if (range.start < cursor || range.start > text.length) {
+                continue;
+            }
+            html += escapeHtml(text.slice(cursor, range.start));
+            html += highlightedRangeHtml(range, text);
+            cursor = Math.max(cursor, range.end);
+            appendAnnotationsThrough(cursor);
+        }
+        appendAnnotationsThrough(text.length);
+        html += escapeHtml(text.slice(cursor));
+        elements["highlight-layer"].innerHTML = `${html}\n`;
+        syncScroll();
+    }
+
     function positionScansionLabels() {
         if (!elements["highlight-layer"]) {
             return;
@@ -2794,6 +3179,10 @@
     }
 
     function renderOverlay() {
+        if (isEnglishMode()) {
+            renderEnglishOverlay();
+            return;
+        }
         const text = elements.composition.value;
         if (!state.analysis || !text) {
             renderPlainOverlay();
@@ -2997,9 +3386,57 @@
         state.renderTimer = window.setTimeout(runAnalysis, 35);
     }
 
+    function finishAnalysisRender() {
+        state.activeStanzaIndex = stanzaAtOffset(
+            state.analysis.stanzas,
+            elements.composition.selectionStart
+        );
+        if (window.ChandasAnalytics) {
+            window.ChandasAnalytics.trackCompositionScripts(state.analysis);
+        }
+        renderOverlay();
+        renderCursorMetrics();
+        renderSynonymPicker();
+        renderAnalysisPanel();
+        scheduleSave();
+    }
+
+    function runEnglishAnalysis() {
+        const text = elements.composition.value;
+        if (state.englishLoadState !== "ready" ||
+            !state.englishCatalog || !state.englishLexicon ||
+            !window.ChandasEnglish || !window.ChandasEnglishComposer) {
+            state.analysis = null;
+            renderPlainOverlay();
+            renderCursorMetrics();
+            renderAnalysisPanel();
+            scheduleSave();
+            return;
+        }
+        const oldStanzas = state.analysis ? state.analysis.stanzas : null;
+        const parsedStanzas = window.ChandasEnglishComposer.parseStanzas(text);
+        reconcileSelections(
+            oldStanzas,
+            parsedStanzas,
+            elements.composition.selectionStart
+        );
+        state.analysis = window.ChandasEnglishComposer.analyze(
+            text,
+            state.selections,
+            state.englishLexicon,
+            state.englishCatalog,
+            window.ChandasEnglish
+        );
+        finishAnalysisRender();
+    }
+
     function runAnalysis() {
         window.clearTimeout(state.renderTimer);
         state.renderTimer = null;
+        if (isEnglishMode()) {
+            runEnglishAnalysis();
+            return;
+        }
         const text = elements.composition.value;
         const oldStanzas = state.analysis ? state.analysis.stanzas : null;
         const parsedStanzas = Chandas.parseStanzas(text);
@@ -3020,20 +3457,7 @@
                 state.selections
             );
         state.analysis = ChandasRoman.projectAnalysis(rawAnalysis, conversion);
-        state.activeStanzaIndex = stanzaAtOffset(
-            state.analysis.stanzas,
-            elements.composition.selectionStart
-        );
-
-        if (window.ChandasAnalytics) {
-            window.ChandasAnalytics.trackCompositionScripts(state.analysis);
-        }
-
-        renderOverlay();
-        renderCursorMetrics();
-        renderSynonymPicker();
-        renderAnalysisPanel();
-        scheduleSave();
+        finishAnalysisRender();
     }
 
     function setActiveStanza(index, moveCaret) {
@@ -3078,6 +3502,14 @@
         if (candidate.id === selectedMeterId) {
             return t("selected");
         }
+        if (candidate.kind === "english") {
+            return t({
+                exact: "englishExact",
+                compatible: "englishCompatible",
+                incomplete: "englishIncomplete",
+                approximate: "englishApproximate"
+            }[candidate.matchLevel] || "englishApproximate");
+        }
         if (candidate.matchLevel === "exact-verse") {
             return t("exact");
         }
@@ -3095,6 +3527,18 @@
 
     function candidateDetails(candidate) {
         const details = [];
+        if (candidate.kind === "english") {
+            details.push(t("englishCandidateDetail", {
+                observed: candidate.observedSyllables,
+                expected: candidate.expectedSyllables,
+                feet: candidate.feet,
+                foot: candidate.foot
+            }));
+            if (candidate.guessedWordCount) {
+                details.push(t("englishUncertain"));
+            }
+            return details;
+        }
         if (candidate.kind === "fixed" && candidate.expectedSyllables) {
             details.push(t("syllableProgress", {
                 observed: candidate.observedSyllables,
@@ -3161,7 +3605,165 @@
         return button;
     }
 
+    function renderEnglishMeterReference(meter) {
+        elements["selected-meter-reference"].hidden = !meter;
+        if (!meter) {
+            elements["selected-meter-name"].textContent = "";
+            elements["selected-meter-signature"].replaceChildren();
+            return;
+        }
+        elements["selected-meter-name"].textContent = meter.name;
+        const signature = document.createElement("span");
+        signature.textContent = `${englishStressGuide(meter.patterns[0], 0)} · ${
+            meter.feet} ${meter.foot}`;
+        elements["selected-meter-signature"].replaceChildren(signature);
+    }
+
+    function renderEnglishAnalysisPanel() {
+        const ready = state.englishLoadState === "ready" &&
+            state.englishCatalog && state.englishLexicon;
+        const stanzas = ready && state.analysis ? state.analysis.stanzas : [];
+        const hasStanzas = stanzas.length > 0;
+
+        elements["previous-stanza"].disabled = !hasStanzas ||
+            state.activeStanzaIndex <= 0;
+        elements["next-stanza"].disabled = !hasStanzas ||
+            state.activeStanzaIndex >= stanzas.length - 1;
+        elements["prasa-summary"].hidden = true;
+        elements["prasa-summary"].replaceChildren();
+        elements["active-amsha-realization"].hidden = true;
+        elements["active-amsha-realization"].textContent = "";
+        elements["template-mode-strong"].disabled = true;
+        elements["strong-template-availability"].textContent =
+            t("englishStrongUnavailable");
+
+        if (!ready) {
+            elements["empty-analysis"].hidden = false;
+            elements["analysis-content"].hidden = true;
+            elements["analysis-title"].textContent = t(
+                state.englishLoadState === "error"
+                    ? "englishLoadFailed"
+                    : "englishLoading"
+            );
+            renderWholeVerseTemplate();
+            renderStrongTemplate();
+            return;
+        }
+
+        elements["analysis-content"].hidden = false;
+        elements["empty-analysis"].hidden = hasStanzas;
+        if (!hasStanzas) {
+            const selectedMeter = meterForId(state.selections[0]);
+            elements["analysis-title"].textContent = t("chooseMeterFirst");
+            elements["pattern-block"].hidden = true;
+            elements["suggestion-heading"].hidden = true;
+            elements["candidate-list"].hidden = true;
+            elements["candidate-list"].replaceChildren();
+            renderEnglishMeterReference(selectedMeter);
+            elements["show-template"].checked = false;
+            elements["show-template"].disabled = true;
+            elements["template-mode-picker"].hidden = true;
+            filterMeterOptions(elements["meter-search"].value);
+            elements["meter-select"].value = selectedMeter ? selectedMeter.id : "";
+            elements["validation-summary"].classList.remove("has-errors");
+            elements["validation-summary"].textContent = selectedMeter
+                ? t("meterReady", { meter: selectedMeter.name })
+                : t("englishNoMeter");
+            renderWholeVerseTemplate();
+            renderStrongTemplate();
+            return;
+        }
+
+        const stanza = stanzas[state.activeStanzaIndex];
+        const selectedMeter = meterForId(stanza.selectedMeterId);
+        const selectedCandidate = stanza.selectedCandidate;
+        const mode = templateMode(state.activeStanzaIndex) === "strong"
+            ? "ghost"
+            : templateMode(state.activeStanzaIndex);
+        if (mode !== templateMode(state.activeStanzaIndex)) {
+            setTemplateMode(state.activeStanzaIndex, mode);
+        }
+
+        elements["analysis-title"].textContent = t("stanza", {
+            number: state.activeStanzaIndex + 1,
+            total: stanzas.length
+        });
+        elements["pattern-block"].hidden = false;
+        elements["active-pattern"].textContent = stanza.patterns.join(" / ") || "—";
+        elements["active-matras"].textContent = t("englishLineSummary", {
+            lines: stanza.lines.length,
+            stresses: stanza.lines.reduce((sum, line) =>
+                sum + line.stressCount, 0)
+        });
+        elements["suggestion-heading"].hidden = false;
+        elements["candidate-list"].hidden = false;
+        elements["show-template"].disabled = !selectedMeter;
+        elements["show-template"].checked = Boolean(selectedMeter && mode !== "off");
+        elements["template-mode-picker"].hidden = !selectedMeter || mode === "off";
+        elements["template-mode-ghost"].checked = mode === "ghost";
+        elements["template-mode-strong"].checked = false;
+        renderEnglishMeterReference(selectedMeter);
+
+        const candidateScroll = elements["candidate-list"].scrollTop;
+        elements["candidate-list"].replaceChildren(
+            ...stanza.candidates.slice(0, 8).map((candidate, index) =>
+                candidateButton(candidate, stanza.selectedMeterId, index))
+        );
+        elements["candidate-list"].scrollTop = candidateScroll;
+        filterMeterOptions(elements["meter-search"].value);
+        elements["meter-select"].value = stanza.selectedMeterId;
+
+        const summary = elements["validation-summary"];
+        summary.classList.remove("has-errors");
+        if (!selectedCandidate || !selectedMeter) {
+            summary.textContent = t("englishNoMeter");
+        } else if (selectedCandidate.matchLevel === "exact") {
+            summary.textContent = t("englishValid", {
+                meter: selectedMeter.name,
+                exact: selectedCandidate.exactLines,
+                lines: selectedCandidate.lineCount
+            });
+        } else if (selectedCandidate.matchLevel === "compatible") {
+            summary.textContent = t("englishCompatibleValidation", {
+                meter: selectedMeter.name
+            });
+        } else if (selectedCandidate.matchLevel === "incomplete" &&
+            selectedCandidate.deviationCount === 0 &&
+            selectedCandidate.extraCount === 0) {
+            summary.textContent = t("englishIncompleteValidation", {
+                meter: selectedMeter.name,
+                missing: selectedCandidate.missingCount
+            });
+        } else {
+            summary.textContent = t("englishIssues", {
+                meter: selectedMeter.name,
+                departures: selectedCandidate.deviationCount,
+                extra: selectedCandidate.extraCount,
+                missing: selectedCandidate.missingCount
+            });
+            summary.classList.add("has-errors");
+        }
+        const confidenceCandidate = selectedCandidate || stanza.bestCandidate;
+        if (confidenceCandidate && confidenceCandidate.guessedWordCount) {
+            summary.append(t("englishGuessNote", {
+                count: confidenceCandidate.guessedWordCount
+            }));
+        }
+        if (!selectedCandidate && stanza.ambiguous && stanza.nearTies.length) {
+            summary.append(t("englishAmbiguityNote", {
+                meters: stanza.nearTies.slice(0, 2)
+                    .map((candidate) => candidate.name).join(", ")
+            }));
+        }
+        renderWholeVerseTemplate();
+        renderStrongTemplate();
+    }
+
     function renderAnalysisPanel() {
+        if (isEnglishMode()) {
+            renderEnglishAnalysisPanel();
+            return;
+        }
         const stanzas = state.analysis ? state.analysis.stanzas : [];
         const hasStanzas = stanzas.length > 0;
 
@@ -3434,7 +4036,7 @@
             state.analysis.stanzas[state.activeStanzaIndex];
         const selectedId = activeStanza ? activeStanza.selectedMeterId : "";
 
-        const matchingMeters = state.meters.filter((meter) =>
+        const matchingMeters = activeMeters().filter((meter) =>
             !queryKeys.length ||
             queryKeys.some((key) => meter.searchText.includes(key))
         );
@@ -3502,7 +4104,7 @@
 
     function currentDraftSnapshot() {
         return {
-            version: 6,
+            version: 7,
             poemId: state.activePoemId,
             text: elements.composition.value,
             selections: state.selections,
@@ -3579,7 +4181,7 @@
                 return null;
             }
             const draft = JSON.parse(raw);
-            if (!draft || ![1, 2, 3, 4, 5, 6].includes(draft.version) ||
+            if (!draft || ![1, 2, 3, 4, 5, 6, 7].includes(draft.version) ||
                 typeof draft.text !== "string") {
                 return null;
             }
@@ -3606,7 +4208,7 @@
             : {};
         state.scansionMode = ChandasScansion.normalizeMode(poem.scansionMode);
         state.detectShithilaDvitva = poem.detectShithilaDvitva === true;
-        state.inputScheme = ChandasRoman.normalizeScheme(poem.inputScheme);
+        state.inputScheme = normalizeInputScheme(poem.inputScheme);
         state.strongHistory = {};
         state.strongFuture = {};
         state.analysis = null;
@@ -3762,7 +4364,7 @@
         const url = new URL("https://chandas.org/");
         url.searchParams.set("v", "4");
         url.searchParams.set("verse", poem.text);
-        const inputScheme = ChandasRoman.normalizeScheme(poem.inputScheme);
+        const inputScheme = normalizeInputScheme(poem.inputScheme);
         if (inputScheme !== "native") {
             url.searchParams.set("scheme", inputScheme);
         }
@@ -4327,6 +4929,9 @@
         applyStoredPoem(poem);
         await state.repository.setMeta("activePoemId", poem.id);
         updateLanguage();
+        if (isEnglishMode()) {
+            await ensureEnglishResources();
+        }
         runAnalysis();
         elements["saved-poems-dialog"].close();
         elements.composition.focus();
@@ -5003,18 +5608,20 @@
             scheduleSave();
         });
 
-        elements["input-scheme"].addEventListener("change", () => {
+        elements["input-scheme"].addEventListener("change", async () => {
             const selectedValue = elements["input-scheme"].value;
             if (selectedValue.startsWith("convert:")) {
                 openConversionDialog(selectedValue.slice("convert:".length));
                 return;
             }
-            const nextScheme = ChandasRoman.normalizeScheme(
+            const nextScheme = normalizeInputScheme(
                 selectedValue
             );
             if (nextScheme === state.inputScheme) {
                 return;
             }
+            const crossingEnglishBoundary = (nextScheme === "english") !==
+                isEnglishMode();
             if (templateMode(state.activeStanzaIndex) === "strong") {
                 const meterId = state.selections[state.activeStanzaIndex];
                 if (meterId) {
@@ -5022,8 +5629,26 @@
                 }
                 setTemplateMode(state.activeStanzaIndex, "ghost");
             }
+            if (crossingEnglishBoundary) {
+                state.selections = {};
+                state.templates = {};
+                state.templateModes = {};
+                state.strongDrafts = {};
+                state.analysis = null;
+            }
             state.inputScheme = nextScheme;
             updateInputSchemeUi();
+            if (isEnglishMode()) {
+                renderPlainOverlay();
+                renderAnalysisPanel();
+                const loaded = await ensureEnglishResources(
+                    state.englishLoadState === "error"
+                );
+                if (!loaded || !isEnglishMode()) {
+                    scheduleSave();
+                    return;
+                }
+            }
             runAnalysis();
         });
 
@@ -5300,6 +5925,9 @@
         try {
             await loadCustomForms();
             await loadCatalog();
+            if (isEnglishMode()) {
+                await ensureEnglishResources();
+            }
             runAnalysis();
         } catch (error) {
             console.error(error);
@@ -5307,7 +5935,7 @@
             state.catalog = { metres: [] };
             runAnalysis();
         }
-        importFromUrl();
+        await importFromUrl();
 
         initializeServiceWorker();
     }

@@ -5,12 +5,12 @@ SPDX-License-Identifier: GPL-3.0-only
 
 # English Prosody Analysis Plan
 
-**Status:** M1, M2, and M3 complete; M4 awaits owner approval
+**Status:** M1 through M4 complete; M5 awaits owner approval
 
 **Updated:** 2026-08-30
 
-**Approval gate:** Do not begin M4 composer integration until the project owner
-explicitly approves it.
+**Approval gate:** Do not begin M5 rhyme and named-form integration until the
+project owner explicitly approves it.
 
 ## 1. Conclusion
 
@@ -383,7 +383,7 @@ production detector or UI behavior is added.
 
 ### M4 — English composer integration
 
-**Status:** Proposed; owner approval required
+**Status:** Complete in version 1.36.0
 
 - Add explicit English analysis selection.
 - Render stress, foot, progress, uncertainty, and selected-meter feedback.
@@ -446,9 +446,8 @@ production detector or UI behavior is added.
 
 ## 14. Next decision
 
-M1–M3 now provide the sourced rule packet, pinned offline stress lexicon,
+M1–M4 now provide the sourced rule packet, pinned offline stress lexicon,
 source-aligned pronunciation alternatives, 17-meter catalog, ambiguity-aware
-parser, public-domain corpus, and regression/performance gates. The next
-decision is whether to approve **M4 — English composer integration**. Until
-then, the English engine remains isolated and does not change the website's
-input selector or Indic/Roman behavior.
+parser, public-domain corpus, and an explicitly selected composer experience.
+The English pack remains outside the initial load and core cache. The next
+decision is whether to approve **M5 — English rhyme and named forms**.

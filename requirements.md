@@ -650,11 +650,13 @@ recommended, and optional behavior.
    identify incomplete lines, expose source-local deviations, and distinguish
    metrical fit from pronunciation/alignment confidence.
 6. The English stress pack MUST remain outside the initial Indic page load and
-   core service-worker pre-cache. M4 MAY lazy-load and offline-cache it only
-   after the user explicitly selects a future English stress-meter mode.
-7. M1–M3 are an isolated analysis foundation and MUST NOT expose new composer
-   controls. English composer rendering, URL state, Ghost guidance, mobile
-   behavior, and offline lifecycle remain the separately approved M4 scope.
+   core service-worker pre-cache. It MUST lazy-load and enter its own runtime
+   offline cache only after the user explicitly selects English stress meter.
+7. The M4 composer MUST render weak/strong stress, foot boundaries, line and
+   cursor progress, uncertainty, selected-meter departures, and Ghost guidance
+   against the exact authored spelling. Its explicit English selection and
+   stanza-level state MUST survive local recovery and analysis links; switching
+   away MUST restore the existing Indic/Roman interface and behavior.
 8. English analysis MUST be fully on-device. No composition text or
    pronunciation query may be sent to an API.
 
@@ -1398,9 +1400,10 @@ The MVP is acceptable when:
 15. Pañcamātrā Chaupadi initially means the modal written-text Kagga form,
    encoded as `5555 / 5553 / 5555 / 5551`. It remains provisional and does
    not imply that every historical Chaupadi shares that frame.
-16. English M1–M3 are an isolated stress-prosody foundation using a pinned
-    CMUdict-derived offline pack. Composer exposure remains gated as M4 and
-    cannot silently reinterpret Romanized Indic input.
+16. English stress prosody uses an isolated, pinned CMUdict-derived offline
+    pack and appears only when explicitly selected. It cannot silently
+    reinterpret Romanized Indic input; its larger assets remain outside the
+    initial Indic load and are cached after first use.
 
 ### Remaining review and expansion work
 

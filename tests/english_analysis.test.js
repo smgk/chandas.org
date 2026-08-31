@@ -112,6 +112,23 @@ test("retains alternatives, local overrides, and honest unknown-word confidence"
     assert.equal(guessed.bestCandidate.words[0].pronunciationConfidence, "guessed");
 });
 
+test("retains noun-verb stress alternatives without inventing grammar context", () => {
+    const expected = {
+        suspect: ["01", "12"],
+        conflict: ["01", "10"],
+        protest: ["01", "12"],
+        convert: ["01", "10"]
+    };
+
+    for (const [word, patterns] of Object.entries(expected)) {
+        assert.deepEqual(lexicon.entries.get(word), patterns, word);
+        const realizations = English.lineRealizations(word, 0, lexicon, {});
+        assert.deepEqual(realizations.realizations.map((item) =>
+            item.syllables.map((syllable) => syllable.lexicalStress).join("")),
+        patterns, word);
+    }
+});
+
 test("validates the versioned M3 catalog and controlled template variations", () => {
     assert.equal(English.validateCatalog(meters), meters);
     assert.equal(meters.meters.length, 17);

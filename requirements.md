@@ -627,6 +627,37 @@ recommended, and optional behavior.
    visible as a gap; OCR matches MUST be treated as page-finding leads rather
    than meter attribution.
 
+### FR-13: English stress-prosody foundation (post-MVP)
+
+1. English verse MUST use a separate stress-based analyzer. English weak/strong
+   positions MUST NOT be represented as Indic Guru/Laghu, and implementation
+   MUST NOT change existing native-script or Roman-transliteration behavior.
+2. The M1 rule packet and golden corpus MUST record public sources, text rights,
+   human-readable expected scansions, accepted controlled variations,
+   confidence terms, positive cases, negative cases, incomplete prefixes, and
+   ambiguous pronunciations.
+3. The M2 pronunciation layer MUST use a pinned and attributed offline data
+   source, preserve distinct lexical-stress alternatives, retain exact authored
+   word ranges, and mark deterministic out-of-vocabulary results as guessed.
+   Callers MUST be able to supply local word-stress overrides without changing
+   the shared dictionary.
+4. The M3 catalog MUST initially support iambic, trochaic, anapestic, and
+   dactylic line meters. The parser MUST report controlled initial inversion,
+   feminine endings, catalexis, initial slack omission, weak resolution,
+   promotion/demotion, and binary-foot substitution evidence without silently
+   treating every poetic departure as an error.
+5. Line and composition analysis MUST rank candidates, retain close alternatives,
+   identify incomplete lines, expose source-local deviations, and distinguish
+   metrical fit from pronunciation/alignment confidence.
+6. The English stress pack MUST remain outside the initial Indic page load and
+   core service-worker pre-cache. M4 MAY lazy-load and offline-cache it only
+   after the user explicitly selects a future English stress-meter mode.
+7. M1–M3 are an isolated analysis foundation and MUST NOT expose new composer
+   controls. English composer rendering, URL state, Ghost guidance, mobile
+   behavior, and offline lifecycle remain the separately approved M4 scope.
+8. English analysis MUST be fully on-device. No composition text or
+   pronunciation query may be sent to an API.
+
 ## 6. Analysis Engine Requirements
 
 The existing `meter_analysis.js` implementation is the baseline for
@@ -1365,8 +1396,11 @@ The MVP is acceptable when:
     alternatives and lagam, and pairwise end-rhyme while remaining provisional
     pending expert corpus approval.
 15. Pañcamātrā Chaupadi initially means the modal written-text Kagga form,
-    encoded as `5555 / 5553 / 5555 / 5551`. It remains provisional and does
-    not imply that every historical Chaupadi shares that frame.
+   encoded as `5555 / 5553 / 5555 / 5551`. It remains provisional and does
+   not imply that every historical Chaupadi shares that frame.
+16. English M1–M3 are an isolated stress-prosody foundation using a pinned
+    CMUdict-derived offline pack. Composer exposure remains gated as M4 and
+    cannot silently reinterpret Romanized Indic input.
 
 ### Remaining review and expansion work
 

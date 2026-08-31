@@ -26,6 +26,9 @@ material. In particular:
   respective authors and publishers.
 - Poems in `examples/field_guide_corpus.json` retain their stated authorship,
   public-domain status, and transcription/source attribution.
+- `data/english/en-cmudict-stress-v1.json` remains under the CMU Pronouncing
+  Dictionary terms reproduced in `data/english/CMUDICT_LICENSE`; the English
+  golden-corpus poem text retains its stated public-domain authorship.
 
 Where a third-party license conflicts with this general notice, the
 third-party notice controls for that material.

@@ -1,0 +1,278 @@
+{
+  "corpusVersion": "1.0.0",
+  "analysisSystem": "english-stress",
+  "annotationLicense": "GPL-3.0-only",
+  "textPolicy": "Public-domain poem text; original Chandas scansion expectations and metadata",
+  "reviewStatus": "engineering-reviewed; literary expert review welcome",
+  "examples": [
+    {
+      "id": "shakespeare-sonnet-18-1",
+      "text": "Shall I compare thee to a summer's day?",
+      "meterId": "english:iambic-pentameter",
+      "humanGrid": "WSWSWSWSWS",
+      "kind": "positive",
+      "expected": { "topRankMax": 1, "syllables": 10, "levels": ["exact", "compatible"] },
+      "source": { "author": "William Shakespeare", "work": "Sonnet 18", "year": 1609, "url": "https://en.wikisource.org/wiki/Shakespeare's_Sonnets_(1883)/Sonnet_18" },
+      "rights": "Public domain"
+    },
+    {
+      "id": "milton-sonnet-19-1",
+      "text": "When I consider how my light is spent",
+      "meterId": "english:iambic-pentameter",
+      "humanGrid": "WSWSWSWSWS",
+      "kind": "positive",
+      "expected": { "topRankMax": 1, "syllables": 10, "levels": ["exact", "compatible"] },
+      "source": { "author": "John Milton", "work": "Sonnet XIX: When I consider how my light is spent", "url": "https://en.wikisource.org/wiki/Poems_of_Mr._John_Milton,_both_English_and_Latin,_compos'd_at_several_times/Sonnet_19" },
+      "rights": "Public domain"
+    },
+    {
+      "id": "milton-paradise-lost-48",
+      "text": "Nine times the space that measures day and night",
+      "meterId": "english:iambic-pentameter",
+      "humanGrid": "WSWSWSWSWS",
+      "kind": "blank-verse-line",
+      "expected": { "topRankMax": 1, "syllables": 10, "levels": ["exact", "compatible"] },
+      "source": { "author": "John Milton", "work": "Paradise Lost, Book I", "year": 1667, "url": "https://en.wikisource.org/wiki/Paradise_Lost_(1674)/Book_I" },
+      "rights": "Public domain"
+    },
+    {
+      "id": "shakespeare-sonnet-73-1",
+      "text": "That time of year thou mayst in me behold",
+      "meterId": "english:iambic-pentameter",
+      "humanGrid": "WSWSWSWSWS",
+      "kind": "positive",
+      "expected": { "topRankMax": 1, "syllables": 10, "levels": ["compatible", "approximate"] },
+      "source": { "author": "William Shakespeare", "work": "Sonnet 73", "year": 1609, "url": "https://en.wikisource.org/wiki/Shakespeare's_Sonnets_(1883)/Sonnet_73" },
+      "rights": "Public domain"
+    },
+    {
+      "id": "keats-bright-star-1",
+      "text": "Bright star, would I were steadfast as thou art",
+      "meterId": "english:iambic-pentameter",
+      "humanGrid": "WSWSWSWSWS",
+      "kind": "variant",
+      "expected": { "topRankMax": 1, "syllables": 10, "levels": ["compatible", "approximate"] },
+      "source": { "author": "John Keats", "work": "Bright star, would I were stedfast as thou art", "url": "https://en.wikisource.org/wiki/Bright_star,_would_I_were_stedfast_as_thou_art" },
+      "rights": "Public domain"
+    },
+    {
+      "id": "keats-chapmans-homer-1",
+      "text": "Much have I travelled in the realms of gold",
+      "meterId": "english:iambic-pentameter",
+      "humanGrid": "SWWSWSWSWS",
+      "kind": "variant",
+      "expected": { "topRankMax": 1, "syllables": 10, "levels": ["exact", "compatible"], "variation": "initial-inversion" },
+      "source": { "author": "John Keats", "work": "On First Looking into Chapman's Homer", "year": 1816, "url": "https://en.wikisource.org/wiki/On_First_Looking_into_Chapman's_Homer" },
+      "rights": "Public domain"
+    },
+    {
+      "id": "shakespeare-hamlet-feminine-ending",
+      "text": "To be, or not to be, that is the question",
+      "meterId": "english:iambic-pentameter",
+      "humanGrid": "WSWSWSWSWSW",
+      "kind": "variant",
+      "expected": { "topRankMax": 1, "syllables": 11, "levels": ["exact", "compatible"], "variation": "feminine-ending" },
+      "source": { "author": "William Shakespeare", "work": "Hamlet, Act 3, Scene 1", "url": "https://en.wikisource.org/wiki/Hamlet_(1917)_Yale/Text/Act_III" },
+      "rights": "Public domain"
+    },
+    {
+      "id": "wordsworth-slumber-1",
+      "text": "A slumber did my spirit seal",
+      "meterId": "english:iambic-tetrameter",
+      "humanGrid": "WSWSWSWS",
+      "kind": "positive",
+      "expected": { "topRankMax": 1, "syllables": 8, "levels": ["exact", "compatible"] },
+      "source": { "author": "William Wordsworth", "work": "A slumber did my spirit seal", "year": 1800, "url": "https://en.wikisource.org/wiki/A_slumber_did_my_spirit_seal" },
+      "rights": "Public domain"
+    },
+    {
+      "id": "carroll-walrus-1",
+      "text": "The time has come, the Walrus said",
+      "meterId": "english:iambic-tetrameter",
+      "humanGrid": "WSWSWSWS",
+      "kind": "positive",
+      "expected": { "topRankMax": 1, "syllables": 8, "levels": ["exact", "compatible"] },
+      "source": { "author": "Lewis Carroll", "work": "The Walrus and the Carpenter", "year": 1871, "url": "https://en.wikisource.org/wiki/Through_the_Looking-Glass,_and_What_Alice_Found_There/Chapter_IV" },
+      "rights": "Public domain"
+    },
+    {
+      "id": "wordsworth-daffodils-1",
+      "text": "I wandered lonely as a cloud",
+      "meterId": "english:iambic-tetrameter",
+      "humanGrid": "WSWSWSWS",
+      "kind": "variant",
+      "expected": { "topRankMax": 1, "syllables": 8, "levels": ["exact", "compatible"] },
+      "source": { "author": "William Wordsworth", "work": "I Wandered Lonely as a Cloud", "year": 1807, "url": "https://en.wikisource.org/wiki/I_Wandered_Lonely_as_a_Cloud" },
+      "rights": "Public domain"
+    },
+    {
+      "id": "dickinson-because-2",
+      "text": "He kindly stopped for me",
+      "meterId": "english:iambic-trimeter",
+      "humanGrid": "WSWSWS",
+      "kind": "positive",
+      "expected": { "topRankMax": 1, "syllables": 6, "levels": ["exact", "compatible"] },
+      "source": { "author": "Emily Dickinson", "work": "Because I could not stop for Death", "year": 1890, "url": "https://en.wikisource.org/wiki/Because_I_could_not_stop_for_Death" },
+      "rights": "Public domain"
+    },
+    {
+      "id": "blake-tyger-1",
+      "text": "Tyger Tyger, burning bright",
+      "meterId": "english:trochaic-tetrameter",
+      "humanGrid": "SWSWSWS",
+      "kind": "variant",
+      "expected": { "topRankMax": 1, "syllables": 7, "levels": ["exact", "compatible"], "variation": "catalexis" },
+      "source": { "author": "William Blake", "work": "The Tyger", "year": 1794, "url": "https://en.wikisource.org/wiki/Songs_of_Experience_(Blake,_1825)/The_Tyger" },
+      "rights": "Public domain"
+    },
+    {
+      "id": "longfellow-psalm-life-1",
+      "text": "Tell me not, in mournful numbers",
+      "meterId": "english:trochaic-tetrameter",
+      "humanGrid": "SWSWSWSW",
+      "kind": "positive",
+      "expected": { "topRankMax": 1, "syllables": 8, "levels": ["exact", "compatible"] },
+      "source": { "author": "Henry Wadsworth Longfellow", "work": "A Psalm of Life", "year": 1838, "url": "https://en.wikisource.org/wiki/A_Psalm_of_Life" },
+      "rights": "Public domain"
+    },
+    {
+      "id": "poe-raven-1-half",
+      "text": "Once upon a midnight dreary",
+      "meterId": "english:trochaic-tetrameter",
+      "humanGrid": "SWSWSWSW",
+      "kind": "positive",
+      "expected": { "topRankMax": 1, "syllables": 8, "levels": ["exact", "compatible"] },
+      "source": { "author": "Edgar Allan Poe", "work": "The Raven", "year": 1845, "url": "https://en.wikisource.org/wiki/The_Raven_(Poe)" },
+      "rights": "Public domain"
+    },
+    {
+      "id": "longfellow-hiawatha-1",
+      "text": "By the shores of Gitche Gumee",
+      "meterId": "english:trochaic-tetrameter",
+      "humanGrid": "SWSWSWSW",
+      "kind": "ambiguous-pronunciation",
+      "overrides": { "gitche": "10", "gumee": "10" },
+      "expected": { "topRankMax": 1, "syllables": 8, "levels": ["exact", "compatible"] },
+      "source": { "author": "Henry Wadsworth Longfellow", "work": "The Song of Hiawatha", "year": 1855, "url": "https://en.wikisource.org/wiki/The_Song_of_Hiawatha/Introduction" },
+      "rights": "Public domain"
+    },
+    {
+      "id": "moore-st-nicholas-1",
+      "text": "'Twas the night before Christmas, when all through the house",
+      "meterId": "english:anapestic-tetrameter",
+      "humanGrid": "WWSWWSWWSWWS",
+      "kind": "variant",
+      "expected": { "topRankMax": 1, "syllables": 12, "levels": ["compatible", "approximate"] },
+      "source": { "author": "Clement Clarke Moore", "work": "A Visit from St. Nicholas", "year": 1823, "url": "https://en.wikisource.org/wiki/A_Visit_from_St._Nicholas" },
+      "rights": "Public domain"
+    },
+    {
+      "id": "byron-sennacherib-1",
+      "text": "The Assyrian came down like the wolf on the fold",
+      "meterId": "english:anapestic-tetrameter",
+      "humanGrid": "WWSWWWSWWSWWS",
+      "kind": "variant",
+      "expected": { "topRankMax": 1, "syllables": 13, "levels": ["compatible"], "variation": "weak-resolution-4" },
+      "source": { "author": "Lord Byron", "work": "The Destruction of Sennacherib", "year": 1815, "url": "https://en.wikisource.org/wiki/Hebrew_Melodies/The_Destruction_of_Sennacherib" },
+      "rights": "Public domain"
+    },
+    {
+      "id": "byron-sennacherib-2",
+      "text": "And his cohorts were gleaming in purple and gold",
+      "meterId": "english:anapestic-tetrameter",
+      "humanGrid": "WWSWWSWWSWWS",
+      "kind": "positive",
+      "expected": { "topRankMax": 1, "syllables": 12, "levels": ["exact", "compatible"] },
+      "source": { "author": "Lord Byron", "work": "The Destruction of Sennacherib", "year": 1815, "url": "https://en.wikisource.org/wiki/Hebrew_Melodies/The_Destruction_of_Sennacherib" },
+      "rights": "Public domain"
+    },
+    {
+      "id": "tennyson-light-brigade-1",
+      "text": "Half a league, half a league",
+      "meterId": "english:dactylic-dimeter",
+      "humanGrid": "SWWSWW",
+      "kind": "variant",
+      "expected": { "topRankMax": 3, "syllables": 6, "levels": ["compatible", "approximate"] },
+      "source": { "author": "Alfred, Lord Tennyson", "work": "The Charge of the Light Brigade", "year": 1854, "url": "https://en.wikisource.org/wiki/Maud,_and_other_poems/The_Charge_of_the_Light_Brigade" },
+      "rights": "Public domain"
+    },
+    {
+      "id": "tennyson-light-brigade-4",
+      "text": "Cannon to right of them",
+      "meterId": "english:dactylic-dimeter",
+      "humanGrid": "SWWSWW",
+      "kind": "positive",
+      "expected": { "topRankMax": 1, "syllables": 6, "levels": ["exact", "compatible"] },
+      "source": { "author": "Alfred, Lord Tennyson", "work": "The Charge of the Light Brigade", "year": 1854, "url": "https://en.wikisource.org/wiki/Maud,_and_other_poems/The_Charge_of_the_Light_Brigade" },
+      "rights": "Public domain"
+    },
+    {
+      "id": "longfellow-evangeline-1",
+      "text": "This is the forest primeval. The murmuring pines and the hemlocks",
+      "meterId": "english:dactylic-hexameter",
+      "humanGrid": "SWWSWWSWWSWWSWWSW",
+      "kind": "variant",
+      "expected": { "topRankMax": 1, "syllables": 17, "levels": ["exact", "compatible"], "variation": "catalexis" },
+      "source": { "author": "Henry Wadsworth Longfellow", "work": "Evangeline", "year": 1847, "url": "https://en.wikisource.org/wiki/Evangeline:_A_Tale_of_Acadie/Part_the_First" },
+      "rights": "Public domain"
+    }
+  ],
+  "futureFormFixtures": [
+    {
+      "id": "dickinson-common-measure-stanza",
+      "text": "Because I could not stop for Death –\nHe kindly stopped for me –\nThe Carriage held but just Ourselves –\nAnd Immortality.",
+      "targetMilestone": "M5",
+      "form": "common-measure",
+      "expectedLineSyllables": [8, 6, 8, 6],
+      "source": { "author": "Emily Dickinson", "work": "Because I could not stop for Death", "year": 1890, "url": "https://en.wikisource.org/wiki/Because_I_could_not_stop_for_Death" },
+      "rights": "Public domain"
+    },
+    {
+      "id": "lear-beard-limerick",
+      "text": "There was an Old Man with a beard,\nWho said, ‘It is just as I feared!—\nTwo Owls and a Hen,\nFour Larks and a Wren,\nHave all built their nests in my beard!’",
+      "targetMilestone": "M5",
+      "form": "limerick",
+      "expectedBeatShape": [3, 3, 2, 2, 3],
+      "expectedRhymeScheme": "AABBA",
+      "source": { "author": "Edward Lear", "work": "A Book of Nonsense", "year": 1846, "url": "https://en.wikisource.org/wiki/A_Book_of_Nonsense/There_was_an_Old_Man_with_a_beard" },
+      "rights": "Public domain"
+    },
+    {
+      "id": "hickory-dickory-accentual",
+      "text": "Hickory, dickory, dock,\nThe mouse ran up the clock;\nThe clock struck one,\nAnd down he run,\nHickory, dickory, dock.",
+      "targetMilestone": "M6",
+      "form": "accentual-nursery-rhyme",
+      "source": { "author": "Traditional", "work": "Hickory, Dickory, Dock", "url": "https://en.wikisource.org/wiki/The_Oxford_Nursery_Rhyme_Book/Hickory,_Dickory,_Dock" },
+      "rights": "Public domain"
+    }
+  ],
+  "diagnostics": [
+    {
+      "id": "partial-iambic-pentameter",
+      "text": "Shall I compare thee to a summer's",
+      "meterId": "english:iambic-pentameter",
+      "kind": "incomplete",
+      "options": { "partial": true },
+      "expected": { "topRankMax": 4, "level": "incomplete", "missingSyllables": 1 }
+    },
+    {
+      "id": "alternate-record-pronunciations",
+      "text": "record",
+      "kind": "ambiguous-pronunciation",
+      "expected": { "dictionaryPatterns": ["01", "10"] }
+    },
+    {
+      "id": "unknown-name-confidence",
+      "text": "Zorbathiel sings",
+      "kind": "unknown-word",
+      "expected": { "guessedWords": ["Zorbathiel"] }
+    },
+    {
+      "id": "selected-meter-stress-conflict",
+      "text": "Bright bright bright bright bright bright bright bright bright bright",
+      "meterId": "english:iambic-pentameter",
+      "kind": "negative",
+      "expected": { "minimumDeviations": 4, "level": "approximate" }
+    }
+  ]
+}

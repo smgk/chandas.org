@@ -359,7 +359,7 @@ test("the public roadmap is concise, forward-looking, and available offline", ()
     assert.match(roadmap, /M6 · Reviewed Indic rules/);
     assert.match(roadmap, /M7 · Android distribution/);
     assert.match(roadmap, /M9 · Optional infrastructure/);
-    assert.match(roadmap, /M1 is proposed,\s+not started/);
+    assert.match(roadmap, /M4 is the next\s+proposed milestone/);
     assert.match(roadmap, /never need a paid/);
     assert.match(roadmap, /Anonymous composition/);
     assert.doesNotMatch(roadmap, /Estimate:|weeks|Target:/);

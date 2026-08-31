@@ -22,16 +22,23 @@ const required = [
     "shithila_dvitva.js",
     "strong_template.js",
     "custom_meter.js",
+    "english_analysis.js",
+    "english_meters.json",
     "mishra.json",
     "structural_meters.json",
     "data/synonyms/kn-alar-v1.json",
     "data/synonyms/sa-amarakosha-v1.json",
     "data/synonyms/README.md",
     "data/synonyms/DATA_LICENSES.md",
+    "data/english/en-cmudict-stress-v1.json",
+    "data/english/README.md",
+    "data/english/CMUDICT_LICENSE",
     "examples/field_guide_corpus.json",
     "examples/apte_sanskrit_examples.json",
+    "examples/english_prosody_corpus.json",
     "docs/research/archive-meter-audit.md",
     "docs/rules/gujarati-meters.md",
+    "docs/rules/english-stress-meters.md",
     "manifest.webmanifest",
     "service-worker.js",
     "icon.svg",
@@ -76,6 +83,52 @@ if (!structuralCatalog.catalogVersion ||
     !Array.isArray(structuralCatalog.meters) ||
     structuralCatalog.meters.length === 0) {
     throw new Error("structural_meters.json does not contain a versioned meter list");
+}
+
+const englishCatalog = JSON.parse(
+    fs.readFileSync(path.join(root, "english_meters.json"), "utf8")
+);
+if (!englishCatalog.catalogVersion ||
+    englishCatalog.analysisSystem !== "english-stress" ||
+    !Array.isArray(englishCatalog.meters) || englishCatalog.meters.length < 17) {
+    throw new Error("english_meters.json does not contain the versioned M3 catalog");
+}
+const englishIds = new Set();
+for (const meter of englishCatalog.meters) {
+    if (!meter.id || englishIds.has(meter.id) || !meter.name ||
+        !["iamb", "trochee", "anapest", "dactyl"].includes(meter.foot) ||
+        !/^(?:WS|SW|WWS|SWW)$/.test(meter.pattern) ||
+        !Number.isInteger(meter.feet) || meter.feet < 1) {
+        throw new Error(`Invalid English meter metadata: ${meter.id || "(empty)"}`);
+    }
+    englishIds.add(meter.id);
+}
+
+const englishLexicon = JSON.parse(fs.readFileSync(
+    path.join(root, "data", "english", "en-cmudict-stress-v1.json"),
+    "utf8"
+));
+if (englishLexicon.schemaVersion !== 1 || englishLexicon.language !== "en" ||
+    englishLexicon.license !== "BSD-2-Clause" ||
+    englishLexicon.source.revision !==
+        "74790861f652b15e4ac49015a90074ad62a27690" ||
+    !/^[a-f0-9]{64}$/.test(englishLexicon.source.sha256) ||
+    !Array.isArray(englishLexicon.entries) ||
+    englishLexicon.entries.length !== englishLexicon.counts.entries ||
+    englishLexicon.entries.length < 126000) {
+    throw new Error("English pronunciation data has incomplete or stale metadata");
+}
+
+const englishCorpus = JSON.parse(fs.readFileSync(
+    path.join(root, "examples", "english_prosody_corpus.json"),
+    "utf8"
+));
+if (englishCorpus.analysisSystem !== "english-stress" ||
+    !Array.isArray(englishCorpus.examples) || englishCorpus.examples.length < 21 ||
+    englishCorpus.examples.some((example) =>
+        !example.id || !englishIds.has(example.meterId) || !example.text ||
+        !example.source || !example.source.url || example.rights !== "Public domain")) {
+    throw new Error("English golden corpus has incomplete provenance or expectations");
 }
 
 const synonymDocuments = [

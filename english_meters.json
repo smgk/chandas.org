@@ -1,0 +1,46 @@
+{
+  "catalogVersion": "1.0.0",
+  "analysisSystem": "english-stress",
+  "copyright": "Copyright © 2025–2026 Ganesh Krishna Shankarathota",
+  "license": "GPL-3.0-only",
+  "stressSymbols": { "weak": "W", "strong": "S" },
+  "sources": {
+    "poetryFoundationMeter": {
+      "title": "Meter",
+      "publisher": "Poetry Foundation",
+      "url": "https://www.poetryfoundation.org/education/glossary/Meter"
+    },
+    "poetryFoundationFoot": {
+      "title": "Foot",
+      "publisher": "Poetry Foundation",
+      "url": "https://www.poetryfoundation.org/education/glossary/Foot"
+    },
+    "prosodicModel": {
+      "title": "Metrical parsing",
+      "authors": "Ryan Heuser, Josh Falk, Arto Anttila, and contributors",
+      "url": "https://github.com/quadrismegistus/prosodic/blob/master/docs/methods/metrical-parsing.qmd"
+    }
+  },
+  "meters": [
+    { "id": "english:iambic-dimeter", "name": "Iambic dimeter", "aliases": ["iambic 2", "two-foot iambic"], "foot": "iamb", "pattern": "WS", "feet": 2, "prominence": 1, "sourceRef": "poetryFoundationFoot", "rules": { "initialInversion": true, "feminineEnding": true, "weakResolution": 1 } },
+    { "id": "english:iambic-trimeter", "name": "Iambic trimeter", "aliases": ["iambic 3", "three-foot iambic"], "foot": "iamb", "pattern": "WS", "feet": 3, "prominence": 3, "sourceRef": "poetryFoundationFoot", "rules": { "initialInversion": true, "feminineEnding": true, "weakResolution": 1 } },
+    { "id": "english:iambic-tetrameter", "name": "Iambic tetrameter", "aliases": ["iambic 4", "four-foot iambic"], "foot": "iamb", "pattern": "WS", "feet": 4, "prominence": 4, "sourceRef": "poetryFoundationFoot", "rules": { "initialInversion": true, "feminineEnding": true, "weakResolution": 1 } },
+    { "id": "english:iambic-pentameter", "name": "Iambic pentameter", "aliases": ["iambic 5", "five-foot iambic", "heroic verse"], "foot": "iamb", "pattern": "WS", "feet": 5, "prominence": 5, "sourceRef": "poetryFoundationMeter", "rules": { "initialInversion": true, "feminineEnding": true, "weakResolution": 1 } },
+    { "id": "english:iambic-hexameter", "name": "Iambic hexameter", "aliases": ["alexandrine", "iambic 6", "six-foot iambic"], "foot": "iamb", "pattern": "WS", "feet": 6, "prominence": 2, "sourceRef": "poetryFoundationFoot", "rules": { "initialInversion": true, "feminineEnding": true, "weakResolution": 1 } },
+    { "id": "english:iambic-heptameter", "name": "Iambic heptameter", "aliases": ["fourteener", "iambic 7", "seven-foot iambic"], "foot": "iamb", "pattern": "WS", "feet": 7, "prominence": 2, "sourceRef": "poetryFoundationFoot", "rules": { "initialInversion": true, "feminineEnding": true, "weakResolution": 1 } },
+
+    { "id": "english:trochaic-dimeter", "name": "Trochaic dimeter", "aliases": ["trochaic 2", "two-foot trochaic"], "foot": "trochee", "pattern": "SW", "feet": 2, "prominence": 1, "sourceRef": "poetryFoundationFoot", "rules": { "catalexis": true, "weakResolution": 1 } },
+    { "id": "english:trochaic-trimeter", "name": "Trochaic trimeter", "aliases": ["trochaic 3", "three-foot trochaic"], "foot": "trochee", "pattern": "SW", "feet": 3, "prominence": 2, "sourceRef": "poetryFoundationFoot", "rules": { "catalexis": true, "weakResolution": 1 } },
+    { "id": "english:trochaic-tetrameter", "name": "Trochaic tetrameter", "aliases": ["trochaic 4", "four-foot trochaic", "catalectic trochaic tetrameter"], "foot": "trochee", "pattern": "SW", "feet": 4, "prominence": 4, "sourceRef": "poetryFoundationFoot", "rules": { "catalexis": true, "weakResolution": 1 } },
+    { "id": "english:trochaic-pentameter", "name": "Trochaic pentameter", "aliases": ["trochaic 5", "five-foot trochaic"], "foot": "trochee", "pattern": "SW", "feet": 5, "prominence": 1, "sourceRef": "poetryFoundationFoot", "rules": { "catalexis": true, "weakResolution": 1 } },
+    { "id": "english:trochaic-octameter", "name": "Trochaic octameter", "aliases": ["trochaic 8", "eight-foot trochaic"], "foot": "trochee", "pattern": "SW", "feet": 8, "prominence": 2, "sourceRef": "poetryFoundationFoot", "rules": { "catalexis": true, "weakResolution": 1 } },
+
+    { "id": "english:anapestic-dimeter", "name": "Anapestic dimeter", "aliases": ["anapaestic dimeter", "anapestic 2"], "foot": "anapest", "pattern": "WWS", "feet": 2, "prominence": 2, "sourceRef": "prosodicModel", "rules": { "initialSlackOmission": 1, "weakResolution": 1 } },
+    { "id": "english:anapestic-trimeter", "name": "Anapestic trimeter", "aliases": ["anapaestic trimeter", "anapestic 3"], "foot": "anapest", "pattern": "WWS", "feet": 3, "prominence": 3, "sourceRef": "prosodicModel", "rules": { "initialSlackOmission": 1, "weakResolution": 1 } },
+    { "id": "english:anapestic-tetrameter", "name": "Anapestic tetrameter", "aliases": ["anapaestic tetrameter", "anapestic 4"], "foot": "anapest", "pattern": "WWS", "feet": 4, "prominence": 4, "sourceRef": "prosodicModel", "rules": { "initialSlackOmission": 1, "weakResolution": 1 } },
+
+    { "id": "english:dactylic-dimeter", "name": "Dactylic dimeter", "aliases": ["dactylic 2", "two-foot dactylic"], "foot": "dactyl", "pattern": "SWW", "feet": 2, "prominence": 2, "sourceRef": "prosodicModel", "rules": { "catalexis": true } },
+    { "id": "english:dactylic-tetrameter", "name": "Dactylic tetrameter", "aliases": ["dactylic 4", "four-foot dactylic"], "foot": "dactyl", "pattern": "SWW", "feet": 4, "prominence": 2, "sourceRef": "prosodicModel", "rules": { "catalexis": true } },
+    { "id": "english:dactylic-hexameter", "name": "English dactylic hexameter", "aliases": ["dactylic hexameter", "dactylic 6", "six-foot dactylic"], "foot": "dactyl", "pattern": "SWW", "feet": 6, "prominence": 2, "sourceRef": "prosodicModel", "rules": { "catalexis": true } }
+  ]
+}

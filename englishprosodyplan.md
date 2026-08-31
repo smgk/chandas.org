@@ -5,12 +5,12 @@ SPDX-License-Identifier: GPL-3.0-only
 
 # English Prosody Analysis Plan
 
-**Status:** Proposed; implementation has not started
+**Status:** M1, M2, and M3 complete; M4 awaits owner approval
 
 **Updated:** 2026-08-30
 
-**Approval gate:** Do not begin M1 until the project owner explicitly approves
-it.
+**Approval gate:** Do not begin M4 composer integration until the project owner
+explicitly approves it.
 
 ## 1. Conclusion
 
@@ -295,6 +295,9 @@ engineering spike should measure two derived packs:
 
 A preliminary expectation for the stress pack is roughly 0.6–1 MB compressed,
 but this is not an acceptance figure until a deterministic build measures it.
+M2 measured the pinned stress-only pack at 2,532,230 bytes uncompressed and
+462,026 bytes with gzip level 9 (126,045 spellings and 129,142 distinct stress
+patterns).
 
 The English data must not increase the initial Indic page download:
 
@@ -344,7 +347,7 @@ Measure:
 
 ### M1 — English rule specification and golden corpus
 
-**Status:** Proposed; not started; owner approval required
+**Status:** Complete in version 1.35.0
 
 - Pin primary and pedagogically authoritative references.
 - Define the initial meter and variation schema.
@@ -359,6 +362,8 @@ production detector or UI behavior is added.
 
 ### M2 — Pronunciation and source-alignment spike
 
+**Status:** Complete in version 1.35.0
+
 - Pin and attribute CMUdict.
 - Build and measure the compact offline stress pack.
 - Tokenize English while preserving source offsets.
@@ -369,12 +374,16 @@ production detector or UI behavior is added.
 
 ### M3 — Core English stress parser
 
+**Status:** Complete in version 1.35.0
+
 - Implement iambic, trochaic, anapestic, and dactylic line meters.
 - Add controlled variation and confidence scoring.
 - Rank partial lines and whole-poem evidence without overclaiming.
 - Validate against the M1 corpus and performance gates.
 
 ### M4 — English composer integration
+
+**Status:** Proposed; owner approval required
 
 - Add explicit English analysis selection.
 - Render stress, foot, progress, uncertainty, and selected-meter feedback.
@@ -437,6 +446,9 @@ production detector or UI behavior is added.
 
 ## 14. Next decision
 
-The next decision is whether to approve **M1 only**. Approval of M1 does not
-automatically approve the pronunciation engine, production analyzer, UI, or
-later milestones.
+M1–M3 now provide the sourced rule packet, pinned offline stress lexicon,
+source-aligned pronunciation alternatives, 17-meter catalog, ambiguity-aware
+parser, public-domain corpus, and regression/performance gates. The next
+decision is whether to approve **M4 — English composer integration**. Until
+then, the English engine remains isolated and does not change the website's
+input selector or Indic/Roman behavior.

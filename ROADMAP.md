@@ -41,7 +41,7 @@ a provisional entry to an exact scholarly claim.
 
 ### M1 — English rule specification and golden corpus
 
-**Status:** Proposed; not started; explicit owner approval required
+**Status:** Complete in version 1.35.0
 
 - Pin authoritative descriptions for the first English meter families.
 - Define accepted variations and confidence semantics before writing the
@@ -50,10 +50,12 @@ a provisional entry to an exact scholarly claim.
   examples with reviewed scansions.
 - Define accuracy, latency, offline-size, and Indic-regression gates.
 
-**Exit gate:** A reviewable rule packet and golden corpus exist. No production
-English analyzer or UI behavior is part of M1.
+**Delivered:** A reviewable rule packet and 21-line public-domain golden corpus
+with positive, variant, incomplete, ambiguous, and negative checks.
 
 ### M2 — English pronunciation and source alignment
+
+**Status:** Complete in version 1.35.0
 
 - Pin and attribute an offline pronunciation source, initially CMUdict.
 - Build and measure a compact stress lexicon.
@@ -65,6 +67,8 @@ English analyzer or UI behavior is part of M1.
 
 ### M3 — Core English meter analyzer
 
+**Status:** Complete in version 1.35.0
+
 - Implement iambic, trochaic, anapestic, and dactylic meters.
 - Model common inversion, substitution, feminine ending, catalexis,
   resolution, and incomplete-prefix behavior.
@@ -72,6 +76,8 @@ English analyzer or UI behavior is part of M1.
 - Keep English stress analysis isolated from Indic Guru–Laghu classification.
 
 ### M4 — English composer experience
+
+**Status:** Next proposed milestone; owner approval required
 
 - Render weak/strong marks, foot boundaries, line and cursor counts, selected
   meter deviations, uncertainty, and Ghost guides on the authored spelling.
@@ -144,5 +150,6 @@ English analyzer or UI behavior is part of M1.
 
 ## Immediate approval gate
 
-The next proposed work is **M1 — English rule specification and golden
-corpus**. Do not start it until the project owner explicitly approves M1.
+The next proposed work is **M4 — English composer experience**. Do not expose
+the completed M1–M3 engine in the composer until the project owner explicitly
+approves M4.

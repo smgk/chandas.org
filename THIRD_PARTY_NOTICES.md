@@ -169,3 +169,23 @@ remains CC BY-SA 4.0.
 The two databases are separate data works and are not relicensed under the
 GPL license of the Chandas application. The complete data notices are in
 `data/synonyms/DATA_LICENSES.md`.
+
+## English pronunciation data
+
+`data/english/en-cmudict-stress-v1.json` is a deterministic stress-only
+derivative of the
+[CMU Pronouncing Dictionary](https://github.com/cmusphinx/cmudict), pinned to
+commit `74790861f652b15e4ac49015a90074ad62a27690`.
+
+CMUdict is copyright © 1993–2015 Carnegie Mellon University and contributors
+and is redistributed under its BSD-style terms. Those terms are reproduced in
+`data/english/CMUDICT_LICENSE`. The generated data file remains governed by
+those terms; the Chandas builder and analysis implementation are separate
+GPL-3.0-only work.
+
+`examples/english_prosody_corpus.json` contains short lines from attributed
+public-domain poems. The Chandas selection, scansion expectations, test
+metadata, and rule packet are original repository work under GPL-3.0-only.
+No annotations from the externally referenced *For Better For Verse* project
+are bundled because its repository does not publish clear redistribution
+terms.

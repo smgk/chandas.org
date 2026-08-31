@@ -13,6 +13,10 @@ departures from a selected meter directly on the text.
 The project is a static website/PWA with an Android WebView wrapper. Analysis
 runs locally; composing does not require an account, server, or cloud database.
 
+An isolated English stress-prosody engine and offline pronunciation pack now
+exist as the completed M1–M3 foundation. They are not yet exposed in the
+composer; that user experience is the separately gated M4 milestone.
+
 ## What it does
 
 - Analyzes Kannada, Telugu, Gujarati, and Devanagari Unicode while the user types.
@@ -138,6 +142,9 @@ Android application is built and released separately.
 | Path | Purpose |
 | --- | --- |
 | `meter_analysis.js` | Unicode syllable analysis, meter scoring, validation, and prāsa |
+| `english_analysis.js` | Isolated English pronunciation, source alignment, stress-meter scoring, and ambiguity reporting |
+| `english_meters.json` | Versioned iambic, trochaic, anapestic, and dactylic M3 catalog |
+| `data/english/` | Pinned CMUdict-derived stress pack, reproducible build notes, and license |
 | `roman_transliteration.js` | Offline Roman parsing, native/Roman buffer conversion, Devanagari shadows, and source-range projection |
 | `custom_meter.js` | Reviewable custom-form inference, validation schema, local persistence normalization, and catalog projection |
 | `synonym_engine.js` | Caret word detection and separately licensed offline synonym indexing |
@@ -147,6 +154,7 @@ Android application is built and released separately.
 | `structural_meters.json` | Versioned structural, mātrā, aṃśa, and sourced fixed-meter extensions |
 | `examples/field_guide_corpus.json` | Sourced Kannada, Telugu, and Devanagari examples used by tests and Learn |
 | `examples/apte_sanskrit_examples.json` | Public-domain Sanskrit vṛtta examples admitted through source, safety, and scansion checks |
+| `examples/english_prosody_corpus.json` | Public-domain English M1 golden corpus and independent expected scansions |
 | `examples/README.md` | Example provenance and child-safety admission policy |
 | `research/archive_sources.json` | Versioned Internet Archive source inventory |
 | `scripts/audit-meter-sources.js` | Complete catalog coverage and optional OCR-lead audit |

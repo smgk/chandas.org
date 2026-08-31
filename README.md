@@ -158,6 +158,7 @@ Android application is built and released separately.
 | `documentation.html` | User-facing Learn page and supported-meter catalog |
 | `requirements.md` | Product and correctness requirements |
 | `ROADMAP.md` | Post-MVP engineering plan and completed capabilities |
+| `englishprosodyplan.md` | Researched architecture, catalog, risks, and gated milestones for English stress prosody |
 | `docs/` | Rule packets and future script-expansion research |
 | `tests/` | Unit, static, persistence, and Playwright browser tests |
 | `android/` | Offline Android wrapper |

@@ -353,12 +353,13 @@ test("the public roadmap is concise, forward-looking, and available offline", ()
     const items = roadmap.match(/<li>/g) || [];
 
     assert.equal(items.length, 9);
-    assert.match(roadmap, /Review Kannada meter rules/);
-    assert.match(roadmap, /Stronger guided composition/);
-    assert.match(roadmap, /Android distribution/);
-    assert.match(roadmap, /Synonym suggestions/);
-    assert.match(roadmap, /Short analysis links/);
-    assert.match(roadmap, /Better user-owned backups/);
+    assert.match(roadmap, /M1 · English rules and corpus/);
+    assert.match(roadmap, /M2 · English pronunciation/);
+    assert.match(roadmap, /M3 · English meter detection/);
+    assert.match(roadmap, /M6 · Reviewed Indic rules/);
+    assert.match(roadmap, /M7 · Android distribution/);
+    assert.match(roadmap, /M9 · Optional infrastructure/);
+    assert.match(roadmap, /M1 is proposed,\s+not started/);
     assert.match(roadmap, /never need a paid/);
     assert.match(roadmap, /Anonymous composition/);
     assert.doesNotMatch(roadmap, /Estimate:|weeks|Target:/);

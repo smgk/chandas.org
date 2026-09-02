@@ -121,6 +121,7 @@ test("loads English prosody only after explicit selection and keeps Indic UI int
         .toHaveCount(5);
     await expect(page.locator("#cursor-metrics"))
         .toContainText("Syllable 10");
+    await expect(page.locator("#highlight-layer .violation")).toHaveCount(0);
     const firstCandidate = page.locator("#candidate-list .candidate").first();
     await expect(firstCandidate)
         .toHaveAttribute("data-meter-id", "english:iambic-pentameter");

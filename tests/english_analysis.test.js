@@ -288,6 +288,19 @@ test("the M4 adapter keeps stanza selections and deviations source-local", () =>
     assert.ok(analysis.segments.every((syllable) => syllable.script === "english"));
 });
 
+test("automatic English meter suggestions never create red departures", () => {
+    const text = "By Saryu's waters cold\nThe sage to Rāma told\n" +
+        "\"Son, perform Ācaman and purify\"\nWhen Rāma did that deed\n" +
+        "The hermit said, \"Pay heed\nTwo mantras sleep and hunger nullify.'\"";
+    const analysis = EnglishComposer.analyze(text, {}, lexicon, meters, English);
+
+    assert.ok(analysis.stanzas[0].lines.some((line) =>
+        line.chosenCandidate.deviations.length > 0));
+    assert.equal(analysis.stanzas[0].selectedMeterId, "");
+    assert.equal(analysis.stanzas[0].violationCount, 0);
+    assert.ok(analysis.segments.every((syllable) => !syllable.violation));
+});
+
 test("analyzes a 2,000-character English composition inside the M3 budget", () => {
     const line = "The time has come, the Walrus said.\n";
     const text = line.repeat(Math.ceil(2000 / line.length)).slice(0, 2000);

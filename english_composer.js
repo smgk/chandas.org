@@ -144,7 +144,9 @@
 
         function lineView(line, selectedMeterId, index) {
             const chosen = chosenLineCandidate(line, selectedMeterId);
-            const hardDeviations = new Set((chosen && chosen.deviations || [])
+            const hardDeviations = new Set((selectedMeterId && chosen
+                ? chosen.deviations || []
+                : [])
                 .map((item) => `${item.syllable.start}:${item.syllable.end}`));
             const syllables = (chosen && chosen.syllables || []).map((syllable) => ({
                 ...syllable,

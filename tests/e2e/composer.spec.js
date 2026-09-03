@@ -172,6 +172,8 @@ test("detects perfect rhyme and named forms only in English mode", async ({
         .toHaveCount(5);
     await expect(page.locator("#english-form-list"))
         .toContainText("Form · Limerick");
+    await expect(page.locator("#english-form-list"))
+        .toContainText("Possible form · Limerick-y");
     await expect(page.locator("#meter-select option", { hasText: "Limerick" }))
         .toHaveCount(0);
 
@@ -186,6 +188,8 @@ test("detects perfect rhyme and named forms only in English mode", async ({
         .toHaveText("End rhyme · A A B B A");
     await expect(page.locator("#english-form-list"))
         .toContainText("Form · Common limerick");
+    await expect(page.locator("#english-form-list"))
+        .toContainText("Possible form · Limerick-y");
 
     await page.locator("#composition").fill("cat\nhat\nbee\ntree\nbat");
     await expect(page.locator("#english-rhyme-scheme"))

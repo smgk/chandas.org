@@ -676,7 +676,8 @@ recommended, and optional behavior.
     ternary realizations. A lower-confidence **Limerick-y** fallback MUST flag
     any five-line stanza with a fully dictionary-known AABBA scheme without
     claiming a metrical fit. Strict limerick MUST take precedence over common
-    limerick, which in turn MUST take precedence over Limerick-y.
+    limerick, but every qualifying AABBA stanza MUST also retain the
+    lower-confidence Limerick-y label.
 12. The optional M5 engine, form catalog, and rhyme pack MUST load only after
     English stress mode is explicitly selected, share the English runtime
     offline cache, and fail without disabling the core English stress analyzer.

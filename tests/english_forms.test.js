@@ -183,8 +183,7 @@ test("recognizes the public-domain common-measure and limerick fixtures", () => 
         if (fixture.form === "limerick") {
             assert.equal(stanza.forms.some((form) =>
                 form.id === "english-form:common-limerick"), false);
-            assert.equal(stanza.forms.some((form) =>
-                form.id === "english-form:limerick-y"), false);
+            assert.equal(stanza.forms.at(-1).id, "english-form:limerick-y");
         }
     }
 });
@@ -238,6 +237,7 @@ test("recognizes a flexible 3/3/2/2/3 AABBA poem as a common limerick", () => {
 
     assert.equal(stanza.rhyme.scheme, "AABBA");
     assert.equal(stanza.forms[0].id, "english-form:common-limerick");
+    assert.equal(stanza.forms[1].id, "english-form:limerick-y");
     assert.deepEqual(
         stanza.forms[0].meterFits.map((fit) => fit.id),
         [

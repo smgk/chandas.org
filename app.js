@@ -10,7 +10,7 @@
     const LANGUAGE_KEY = "chandas.language.v1";
     const SAVE_DELAY_MS = 280;
     const UPDATE_CHECK_INTERVAL_MS = 15 * 60 * 1000;
-    const ENGLISH_FORM_ASSET_VERSION = "1.2.0";
+    const ENGLISH_FORM_ASSET_VERSION = "1.3.0";
     const ENGLISH_ASSETS = Object.freeze({
         engine: "english_analysis.js",
         composer: "english_composer.js",

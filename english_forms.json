@@ -1,5 +1,5 @@
 {
-  "catalogVersion": "1.2.0",
+  "catalogVersion": "1.3.0",
   "analysisSystem": "english-form",
   "copyright": "Copyright © 2025–2026 Ganesh Krishna Shankarathota",
   "license": "GPL-3.0-only",
@@ -133,7 +133,6 @@
       "rhymeSchemes": ["AABBA"],
       "requireKnownRhymes": true,
       "prominence": 3,
-      "suppressedBy": "english-form:common-limerick",
       "sourceRef": "poeticForms"
     },
     {

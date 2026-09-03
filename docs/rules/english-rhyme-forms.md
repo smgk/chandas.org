@@ -5,7 +5,7 @@ SPDX-License-Identifier: GPL-3.0-only
 
 # English rhyme and named forms — M5 rule packet
 
-**Status:** Implemented in version 1.41.0; limerick fallbacks completed in 1.42.1
+**Status:** Implemented in version 1.41.0; limerick fallbacks completed in 1.42.3
 **Updated:** 2026-09-02
 
 ## Scope
@@ -56,7 +56,8 @@ match, only the stricter Limerick result is returned.
 Limerick-y is the final fallback. It requires exactly five nonempty lines and
 a fully dictionary-known `AABBA` scheme, but deliberately makes no meter claim.
 It is always reported as compatible/possible, never exact. Strict Limerick
-suppresses Common limerick, and either stronger match suppresses Limerick-y.
+suppresses Common limerick, but every qualifying `AABBA` stanza also retains
+the Limerick-y result beneath its strongest rhythmic classification.
 
 The form engine and catalog use a catalog-version query in their lazy-load
 URLs. This prevents a still-active older service worker from returning stale

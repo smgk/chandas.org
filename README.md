@@ -15,9 +15,9 @@ directly on the authored text.
 The project is a static website/PWA with an Android WebView wrapper. Analysis
 runs locally; composing does not require an account, server, or cloud database.
 
-The English pronunciation pack is not part of the initial Indic page load. It
-downloads only after English stress meter is selected and is then cached for
-offline use.
+The English pronunciation and rhyme packs are not part of the initial Indic
+page load. They download only after English stress meter is selected and are
+then cached for offline use.
 
 ## What it does
 
@@ -28,6 +28,9 @@ offline use.
 - Offers an explicitly selected English mode with weak/strong marks, foot
   boundaries, uncertainty, per-line cursor counts, ranked meters, stanza-level
   selection, selected-meter feedback, and Ghost guidance.
+- Shows perfect end-rhyme schemes and advisory named-form matches—including
+  common measure, limericks, sonnets, blank verse, and stanza forms—without
+  mixing form names into the line-meter picker.
 - Converts the entire editing buffer among Kannada, Devanagari, Telugu,
   Gujarati, IAST, ISO 15919, ITRANS, and Harvard-Kyoto after an on-device
   preview, with one-step undo. Colloquial Roman is available as a clearly
@@ -149,8 +152,10 @@ Android application is built and released separately.
 | `meter_analysis.js` | Unicode syllable analysis, meter scoring, validation, and prāsa |
 | `english_analysis.js` | Isolated English pronunciation, source alignment, stress-meter scoring, and ambiguity reporting |
 | `english_composer.js` | Lazy English composer adapter, stanza state, source-local stress rendering, and UI-safe ranking |
+| `english_forms.js` | Optional perfect-rhyme grouping and named-form inference |
 | `english_meters.json` | Versioned iambic, trochaic, anapestic, and dactylic M3 catalog |
-| `data/english/` | Pinned CMUdict-derived stress pack, reproducible build notes, and license |
+| `english_forms.json` | Declarative M5 line-count, meter, and rhyme requirements |
+| `data/english/` | Pinned CMUdict-derived stress/rhyme packs, reproducible build notes, and license |
 | `roman_transliteration.js` | Offline Roman parsing, native/Roman buffer conversion, Devanagari shadows, and source-range projection |
 | `custom_meter.js` | Reviewable custom-form inference, validation schema, local persistence normalization, and catalog projection |
 | `synonym_engine.js` | Caret word detection and separately licensed offline synonym indexing |

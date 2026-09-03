@@ -5,11 +5,11 @@ SPDX-License-Identifier: GPL-3.0-only
 
 # English Prosody Analysis Plan
 
-**Status:** M1 through M4 complete; M5 awaits owner approval
+**Status:** M1 through M5 complete; M6 awaits owner approval
 
-**Updated:** 2026-08-30
+**Updated:** 2026-09-02
 
-**Approval gate:** Do not begin M5 rhyme and named-form integration until the
+**Approval gate:** Do not begin M6 accentual and alliterative integration until the
 project owner explicitly approves it.
 
 ## 1. Conclusion
@@ -393,6 +393,8 @@ production detector or UI behavior is added.
 
 ### M5 — English rhyme and named forms
 
+**Status:** Complete in version 1.41.0
+
 - Detect perfect rhyme and rhyme schemes.
 - Add blank verse, heroic couplets, common/ballad/long/short measure,
   limericks, sonnets, and selected stanza forms.
@@ -446,8 +448,10 @@ production detector or UI behavior is added.
 
 ## 14. Next decision
 
-M1–M4 now provide the sourced rule packet, pinned offline stress lexicon,
+M1–M5 now provide the sourced rule packet, pinned offline stress and rhyme
+lexicons,
 source-aligned pronunciation alternatives, 17-meter catalog, ambiguity-aware
-parser, public-domain corpus, and an explicitly selected composer experience.
+parser, public-domain corpus, explicitly selected composer experience, and a
+separate advisory layer for perfect end rhyme and named poetic forms.
 The English pack remains outside the initial load and core cache. The next
-decision is whether to approve **M5 — English rhyme and named forms**.
+decision is whether to approve **M6 — accentual and alliterative meters**.

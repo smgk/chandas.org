@@ -5,14 +5,17 @@
 
 "use strict";
 
-const CACHE_NAME = "chandas-shell-v67";
-const ENGLISH_CACHE_NAME = "chandas-english-v2";
+const CACHE_NAME = "chandas-shell-v68";
+const ENGLISH_CACHE_NAME = "chandas-english-v3";
 const UPDATE_UI_BOOTSTRAP_CACHE = "chandas-shell-v30";
 const ENGLISH_ASSET_PATHS = [
     "/english_analysis.js",
     "/english_composer.js",
+    "/english_forms.js",
     "/english_meters.json",
-    "/data/english/en-cmudict-stress-v1.json"
+    "/english_forms.json",
+    "/data/english/en-cmudict-stress-v1.json",
+    "/data/english/en-cmudict-rhyme-v1.json"
 ];
 const CORE_ASSETS = [
     "./",

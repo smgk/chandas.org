@@ -171,15 +171,17 @@ test("the M1 public-domain golden corpus has complete provenance", () => {
         assert.equal(example.rights, "Public domain", example.id);
         assert.match(example.humanGrid, /^[WS]+$/, example.id);
     });
-    assert.deepEqual(new Set(corpus.futureFormFixtures.map((example) =>
+    assert.deepEqual(new Set(corpus.formFixtures.map((example) =>
         example.form)), new Set([
-        "common-measure", "limerick", "accentual-nursery-rhyme"
+        "common-measure", "limerick"
     ]));
-    corpus.futureFormFixtures.forEach((example) => {
+    corpus.formFixtures.forEach((example) => {
         assert.ok(example.source.author && example.source.work &&
             /^https:\/\//.test(example.source.url), example.id);
         assert.equal(example.rights, "Public domain", example.id);
     });
+    assert.deepEqual(new Set(corpus.futureFormFixtures.map((example) =>
+        example.form)), new Set(["accentual-nursery-rhyme"]));
 });
 
 test("every M1 golden example meets its independent top-N expectation", () => {

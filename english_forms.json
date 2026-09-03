@@ -1,0 +1,185 @@
+{
+  "catalogVersion": "1.0.0",
+  "analysisSystem": "english-form",
+  "copyright": "Copyright © 2025–2026 Ganesh Krishna Shankarathota",
+  "license": "GPL-3.0-only",
+  "sources": {
+    "rhyme": { "title": "Rhyme", "publisher": "Poetry Foundation", "url": "https://www.poetryfoundation.org/education/glossary/rhyme" },
+    "blankVerse": { "title": "Blank verse", "publisher": "Poetry Foundation", "url": "https://www.poetryfoundation.org/education/glossary/blank-verse" },
+    "commonMeasure": { "title": "Common measure", "publisher": "Poetry Foundation", "url": "https://www.poetryfoundation.org/education/glossary/common-measure" },
+    "poeticForms": { "title": "Poetic forms", "publisher": "Poetry Foundation", "url": "https://www.poetryfoundation.org/education/glossary/poetic-form" }
+  },
+  "forms": [
+    {
+      "id": "english-form:blank-verse",
+      "name": "Blank verse",
+      "aliases": ["unrhymed iambic pentameter"],
+      "lineCount": { "min": 2 },
+      "meterSequence": [["english:iambic-pentameter"]],
+      "repeatMeterSequence": true,
+      "rhymePolicy": "unrhymed",
+      "prominence": 5,
+      "sourceRef": "blankVerse"
+    },
+    {
+      "id": "english-form:heroic-couplet",
+      "name": "Heroic couplet",
+      "aliases": ["rhyming iambic pentameter couplet"],
+      "lineCount": { "exact": 2 },
+      "meterSequence": [["english:iambic-pentameter"]],
+      "repeatMeterSequence": true,
+      "rhymeSchemes": ["AA"],
+      "prominence": 5,
+      "sourceRef": "poeticForms"
+    },
+    {
+      "id": "english-form:common-measure",
+      "name": "Common measure",
+      "aliases": ["common meter", "hymn meter", "8686"],
+      "lineCount": { "exact": 4 },
+      "meterSequence": [["english:iambic-tetrameter"], ["english:iambic-trimeter"], ["english:iambic-tetrameter"], ["english:iambic-trimeter"]],
+      "rhymePolicy": "advisory",
+      "prominence": 5,
+      "sourceRef": "commonMeasure"
+    },
+    {
+      "id": "english-form:ballad-stanza",
+      "name": "Ballad stanza",
+      "aliases": ["ballad meter", "ballad measure"],
+      "lineCount": { "exact": 4 },
+      "meterSequence": [["english:iambic-tetrameter"], ["english:iambic-trimeter"], ["english:iambic-tetrameter"], ["english:iambic-trimeter"]],
+      "rhymeSchemes": ["ABCB"],
+      "prominence": 4,
+      "sourceRef": "poeticForms"
+    },
+    {
+      "id": "english-form:long-measure",
+      "name": "Long measure",
+      "aliases": ["long meter", "8888"],
+      "lineCount": { "exact": 4 },
+      "meterSequence": [["english:iambic-tetrameter"]],
+      "repeatMeterSequence": true,
+      "rhymeSchemes": ["AABB", "ABAB", "ABCB"],
+      "prominence": 3,
+      "sourceRef": "poeticForms"
+    },
+    {
+      "id": "english-form:short-measure",
+      "name": "Short measure",
+      "aliases": ["short meter", "6686"],
+      "lineCount": { "exact": 4 },
+      "meterSequence": [["english:iambic-trimeter"], ["english:iambic-trimeter"], ["english:iambic-tetrameter"], ["english:iambic-trimeter"]],
+      "rhymeSchemes": ["AABB", "ABCB"],
+      "prominence": 3,
+      "sourceRef": "poeticForms"
+    },
+    {
+      "id": "english-form:fourteener-verse",
+      "name": "Fourteener verse",
+      "aliases": ["iambic heptameter verse"],
+      "lineCount": { "min": 2 },
+      "meterSequence": [["english:iambic-heptameter"]],
+      "repeatMeterSequence": true,
+      "rhymePolicy": "advisory",
+      "prominence": 2,
+      "sourceRef": "poeticForms"
+    },
+    {
+      "id": "english-form:poulters-measure",
+      "name": "Poulter’s measure",
+      "aliases": ["poulters measure", "alexandrine and fourteener"],
+      "lineCount": { "exact": 2 },
+      "meterSequence": [["english:iambic-hexameter"], ["english:iambic-heptameter"]],
+      "rhymeSchemes": ["AA"],
+      "prominence": 2,
+      "sourceRef": "poeticForms"
+    },
+    {
+      "id": "english-form:limerick",
+      "name": "Limerick",
+      "aliases": ["aabba limerick"],
+      "lineCount": { "exact": 5 },
+      "meterSequence": [["english:anapestic-trimeter"], ["english:anapestic-trimeter"], ["english:anapestic-dimeter"], ["english:anapestic-dimeter"], ["english:anapestic-trimeter"]],
+      "rhymeSchemes": ["AABBA"],
+      "prominence": 5,
+      "meterTolerance": "ternary",
+      "sourceRef": "poeticForms"
+    },
+    {
+      "id": "english-form:english-sonnet",
+      "name": "English sonnet",
+      "aliases": ["Shakespearean sonnet"],
+      "lineCount": { "exact": 14 },
+      "meterSequence": [["english:iambic-pentameter"]],
+      "repeatMeterSequence": true,
+      "rhymeSchemes": ["ABABCDCDEFEFGG"],
+      "prominence": 5,
+      "sourceRef": "poeticForms"
+    },
+    {
+      "id": "english-form:spenserian-sonnet",
+      "name": "Spenserian sonnet",
+      "aliases": ["interlocking sonnet"],
+      "lineCount": { "exact": 14 },
+      "meterSequence": [["english:iambic-pentameter"]],
+      "repeatMeterSequence": true,
+      "rhymeSchemes": ["ABABBCBCCDCDEE"],
+      "prominence": 3,
+      "sourceRef": "poeticForms"
+    },
+    {
+      "id": "english-form:petrarchan-sonnet",
+      "name": "Petrarchan sonnet",
+      "aliases": ["Italian sonnet"],
+      "lineCount": { "exact": 14 },
+      "meterSequence": [["english:iambic-pentameter"]],
+      "repeatMeterSequence": true,
+      "rhymeSchemes": ["ABBAABBACDECDE", "ABBAABBACDCDCD", "ABBAABBACDEDCE", "ABBAABBACDCDDC"],
+      "prominence": 4,
+      "sourceRef": "poeticForms"
+    },
+    {
+      "id": "english-form:rhyme-royal",
+      "name": "Rhyme royal",
+      "aliases": ["chaucerian stanza"],
+      "lineCount": { "exact": 7 },
+      "meterSequence": [["english:iambic-pentameter"]],
+      "repeatMeterSequence": true,
+      "rhymeSchemes": ["ABABBCC"],
+      "prominence": 3,
+      "sourceRef": "poeticForms"
+    },
+    {
+      "id": "english-form:ottava-rima",
+      "name": "Ottava rima",
+      "aliases": ["abababcc stanza"],
+      "lineCount": { "exact": 8 },
+      "meterSequence": [["english:iambic-pentameter"]],
+      "repeatMeterSequence": true,
+      "rhymeSchemes": ["ABABABCC"],
+      "prominence": 3,
+      "sourceRef": "poeticForms"
+    },
+    {
+      "id": "english-form:terza-rima",
+      "name": "Terza rima",
+      "aliases": ["interlocking tercets"],
+      "lineCount": { "min": 6, "multiple": 3 },
+      "meterSequence": [["english:iambic-pentameter"]],
+      "repeatMeterSequence": true,
+      "rhymePolicy": "terza-rima",
+      "prominence": 3,
+      "sourceRef": "poeticForms"
+    },
+    {
+      "id": "english-form:spenserian-stanza",
+      "name": "Spenserian stanza",
+      "aliases": ["ababbcbcc stanza"],
+      "lineCount": { "exact": 9 },
+      "meterSequence": [["english:iambic-pentameter"], ["english:iambic-pentameter"], ["english:iambic-pentameter"], ["english:iambic-pentameter"], ["english:iambic-pentameter"], ["english:iambic-pentameter"], ["english:iambic-pentameter"], ["english:iambic-pentameter"], ["english:iambic-hexameter"]],
+      "rhymeSchemes": ["ABABBCBCC"],
+      "prominence": 3,
+      "sourceRef": "poeticForms"
+    }
+  ]
+}

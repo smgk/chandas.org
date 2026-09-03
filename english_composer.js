@@ -168,7 +168,7 @@
             };
         }
 
-        function analyze(text, selections, lexicon, catalog, engine) {
+        function analyze(text, selections, lexicon, catalog, engine, formTools) {
             if (!engine || typeof engine.analyzeComposition !== "function") {
                 throw new Error("English analysis engine is unavailable");
             }
@@ -224,6 +224,14 @@
                 const violationCount = lines.reduce((sum, line) =>
                     sum + line.syllables.filter((syllable) => syllable.violation).length,
                 0);
+                const formAnalysis = formTools && formTools.engine &&
+                    formTools.rhymeLexicon && formTools.catalog
+                    ? formTools.engine.analyzeStanza(
+                        lines,
+                        formTools.rhymeLexicon,
+                        formTools.catalog
+                    )
+                    : null;
                 return {
                     ...frame,
                     lines,
@@ -243,7 +251,10 @@
                     ambiguous: result.ambiguous,
                     nearTies: result.nearTies,
                     dominantFeet: result.dominantFeet,
-                    bestCandidate: candidates[0] || null
+                    bestCandidate: candidates[0] || null,
+                    rhyme: formAnalysis ? formAnalysis.rhyme : null,
+                    forms: formAnalysis ? formAnalysis.forms : [],
+                    bestForm: formAnalysis ? formAnalysis.bestForm : null
                 };
             });
             return {

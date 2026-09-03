@@ -217,11 +217,10 @@
       "rights": "Public domain"
     }
   ],
-  "futureFormFixtures": [
+  "formFixtures": [
     {
       "id": "dickinson-common-measure-stanza",
       "text": "Because I could not stop for Death –\nHe kindly stopped for me –\nThe Carriage held but just Ourselves –\nAnd Immortality.",
-      "targetMilestone": "M5",
       "form": "common-measure",
       "expectedLineSyllables": [8, 6, 8, 6],
       "source": { "author": "Emily Dickinson", "work": "Because I could not stop for Death", "year": 1890, "url": "https://en.wikisource.org/wiki/Because_I_could_not_stop_for_Death" },
@@ -230,13 +229,14 @@
     {
       "id": "lear-beard-limerick",
       "text": "There was an Old Man with a beard,\nWho said, ‘It is just as I feared!—\nTwo Owls and a Hen,\nFour Larks and a Wren,\nHave all built their nests in my beard!’",
-      "targetMilestone": "M5",
       "form": "limerick",
       "expectedBeatShape": [3, 3, 2, 2, 3],
       "expectedRhymeScheme": "AABBA",
       "source": { "author": "Edward Lear", "work": "A Book of Nonsense", "year": 1846, "url": "https://en.wikisource.org/wiki/A_Book_of_Nonsense/There_was_an_Old_Man_with_a_beard" },
       "rights": "Public domain"
-    },
+    }
+  ],
+  "futureFormFixtures": [
     {
       "id": "hickory-dickory-accentual",
       "text": "Hickory, dickory, dock,\nThe mouse ran up the clock;\nThe clock struck one,\nAnd down he run,\nHickory, dickory, dock.",

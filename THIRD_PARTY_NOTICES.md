@@ -172,8 +172,9 @@ GPL license of the Chandas application. The complete data notices are in
 
 ## English pronunciation data
 
-`data/english/en-cmudict-stress-v1.json` is a deterministic stress-only
-derivative of the
+`data/english/en-cmudict-stress-v1.json` and
+`data/english/en-cmudict-rhyme-v1.json` are deterministic stress-only and
+final-rime derivatives of the
 [CMU Pronouncing Dictionary](https://github.com/cmusphinx/cmudict), pinned to
 commit `74790861f652b15e4ac49015a90074ad62a27690`.
 

@@ -97,7 +97,7 @@ test("loads English prosody only after explicit selection and keeps Indic UI int
 }) => {
     const initialResources = await page.evaluate(() =>
         performance.getEntriesByType("resource").map((entry) => entry.name));
-    expect(initialResources.some((url) => /english_(?:analysis|composer)|english_meters|en-cmudict/.test(url)))
+    expect(initialResources.some((url) => /english_(?:analysis|composer|forms)|english_(?:meters|forms)|en-cmudict/.test(url)))
         .toBe(false);
     await expect(page.locator("#legend")).toBeVisible();
     await expect(page.locator("#english-legend")).toBeHidden();
@@ -153,6 +153,66 @@ test("loads English prosody only after explicit selection and keeps Indic UI int
         "#highlight-layer .english-strong")).toHaveCount(0);
 });
 
+test("detects perfect rhyme and named forms only in English mode", async ({
+    page
+}) => {
+    await expect(page.locator("#english-form-panel")).toBeHidden();
+    await page.locator("#input-scheme").selectOption("english");
+    await page.locator("#composition").fill(
+        "There was an Old Man with a beard,\n" +
+        "Who said, ‘It is just as I feared!—\n" +
+        "Two Owls and a Hen,\n" +
+        "Four Larks and a Wren,\n" +
+        "Have all built their nests in my beard!’"
+    );
+
+    await expect(page.locator("#english-rhyme-scheme"))
+        .toHaveText("End rhyme · A A B B A", { timeout: 15_000 });
+    await expect(page.locator("#english-rhyme-endings .english-rhyme-ending"))
+        .toHaveCount(5);
+    await expect(page.locator("#english-form-list"))
+        .toContainText("Form · Limerick");
+    await expect(page.locator("#meter-select option", { hasText: "Limerick" }))
+        .toHaveCount(0);
+
+    await page.locator("#composition").fill(
+        "Because I could not stop for Death –\n" +
+        "He kindly stopped for me –\n" +
+        "The Carriage held but just Ourselves –\n" +
+        "And Immortality."
+    );
+    await expect(page.locator("#english-form-list"))
+        .toContainText("Form · Common measure");
+
+    await page.locator("#input-scheme").selectOption("native");
+    await expect(page.locator("#english-form-panel")).toBeHidden();
+});
+
+test.describe("English optional resource recovery", () => {
+    test.use({ serviceWorkers: "block" });
+
+    test("keeps English stress analysis working when optional rhyme data fails", async ({
+        page
+    }) => {
+        await page.route("**/data/english/en-cmudict-rhyme-v1.json", (route) =>
+            route.fulfill({ status: 200, contentType: "application/json", body: "{}" }));
+        await page.locator("#input-scheme").selectOption("english");
+        await expect(page.locator("#transliteration-help"))
+            .toHaveText("English stress analysis is ready offline.", {
+                timeout: 15_000
+            });
+        await page.locator("#composition")
+            .fill("Shall I compare thee to a summer's day?");
+
+        await expect(page.locator("#highlight-layer .english-weak, " +
+            "#highlight-layer .english-strong")).toHaveCount(10);
+        await expect(page.locator("#english-rhyme-scheme"))
+            .toHaveText("Rhyme data is unavailable; stress analysis continues.", {
+                timeout: 15_000
+            });
+    });
+});
+
 test("round-trips English mode, meter, and Ghost guidance through an analysis URL", async ({
     page,
     context,
@@ -188,6 +248,8 @@ test("round-trips English mode, meter, and Ghost guidance through an analysis UR
     await expect(linkedPage.locator("#selected-meter-name"))
         .toHaveText("Iambic tetrameter");
     await expect(linkedPage.locator("#show-template")).toBeChecked();
+    await expect(linkedPage.locator("#english-rhyme-scheme"))
+        .toHaveText("End rhyme · A", { timeout: 15_000 });
     await linkedPage.reload();
     await expect(linkedPage.locator("#input-scheme")).toHaveValue("english");
     await expect(linkedPage.locator("#active-pattern")).not.toHaveText("—");
@@ -197,6 +259,8 @@ test("round-trips English mode, meter, and Ghost guidance through an analysis UR
     await expect(linkedPage.locator("#selected-meter-name"))
         .toHaveText("Iambic tetrameter");
     await expect(linkedPage.locator("#active-pattern")).toHaveText("WSWSWSWS");
+    await expect(linkedPage.locator("#english-rhyme-scheme"))
+        .toHaveText("End rhyme · A");
     await linkedContext.close();
 });
 

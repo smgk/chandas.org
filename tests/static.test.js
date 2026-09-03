@@ -46,7 +46,9 @@ test("the Android wrapper bundles optional Roman, synonym, and English assets", 
     assert.match(gradle, /include "data\/synonyms\/\*\*"/);
     assert.match(gradle, /include "english_analysis\.js"/);
     assert.match(gradle, /include "english_composer\.js"/);
+    assert.match(gradle, /include "english_forms\.js"/);
     assert.match(gradle, /include "english_meters\.json"/);
+    assert.match(gradle, /include "english_forms\.json"/);
     assert.match(gradle, /include "data\/english\/\*\*"/);
 });
 
@@ -123,6 +125,7 @@ test("original source declares Ganesh Krishna Shankarathota under GPLv3 only", (
         "meter_analysis.js",
         "english_analysis.js",
         "english_composer.js",
+        "english_forms.js",
         "synonym_engine.js",
         "scansion.js",
         "strong_template.js",
@@ -143,6 +146,8 @@ test("original source declares Ganesh Krishna Shankarathota under GPLv3 only", (
         "scripts/validate-static.js",
         "scripts/build-synonyms.js",
         "scripts/build-english-lexicon.js",
+        "scripts/build-english-rhyme.js",
+        "docs/rules/english-rhyme-forms.md",
         "android/app/src/main/java/org/chandas/app/MainActivity.java"
     ];
 
@@ -209,11 +214,12 @@ test("service worker keeps English outside the core shell and runtime-caches it"
     assert.match(worker, /cache\.put\(cacheRequest, copy\)/);
     assert.doesNotMatch(worker, /cache\.put\(event\.request, copy\)/);
     assert.match(worker, /event\.request\.cache !== "reload"/);
-    assert.match(worker, /ENGLISH_CACHE_NAME = "chandas-english-v2"/);
+    assert.match(worker, /ENGLISH_CACHE_NAME = "chandas-english-v3"/);
     assert.match(worker, /data\/english\/en-cmudict-stress-v1\.json/);
+    assert.match(worker, /data\/english\/en-cmudict-rhyme-v1\.json/);
     assert.doesNotMatch(
         read("index.html"),
-        /<script[^>]+src="english_(?:analysis|composer)\.js"/
+        /<script[^>]+src="english_(?:analysis|composer|forms)\.js"/
     );
     const coreAssets = worker.slice(
         worker.indexOf("const CORE_ASSETS"),
@@ -375,10 +381,11 @@ test("the public roadmap is concise, forward-looking, and available offline", ()
     assert.match(roadmap, /M2 · English pronunciation/);
     assert.match(roadmap, /M3 · English meter detection/);
     assert.match(roadmap, /✓ M4 · English composition/);
+    assert.match(roadmap, /✓ M5 · English forms and rhyme/);
     assert.match(roadmap, /M6 · Reviewed Indic rules/);
     assert.match(roadmap, /M7 · Android distribution/);
     assert.match(roadmap, /M9 · Optional infrastructure/);
-    assert.match(roadmap, /M5 is the next\s+proposed milestone/);
+    assert.match(roadmap, /M6 is the next\s+proposed milestone/);
     assert.match(roadmap, /never need a paid/);
     assert.match(roadmap, /Anonymous composition/);
     assert.doesNotMatch(roadmap, /Estimate:|weeks|Target:/);
@@ -397,6 +404,8 @@ test("documentation includes the searchable, offline meter catalog", () => {
     assert.match(documentation, /Show template/);
     assert.match(documentation, /Open a verse from a link/);
     assert.match(documentation, /Copy analysis link/);
+    assert.match(documentation, /perfect\s+rhyme/);
+    assert.match(documentation, /Petrarchan sonnet/);
     assert.match(documentation, /\?verse=&lt;verse&gt;&amp;meter=madhu/);
     assert.match(documentation, /hosting request logs/);
     assert.match(documentation, /Kannada Kanda/);

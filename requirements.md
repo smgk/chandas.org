@@ -2,7 +2,7 @@
 
 **Status:** Draft for stakeholder review
 
-**Last updated:** 2026-08-28
+**Last updated:** 2026-09-02
 
 **Products:** `chandas.org` website and Android application
 
@@ -659,6 +659,23 @@ recommended, and optional behavior.
    away MUST restore the existing Indic/Roman interface and behavior.
 8. English analysis MUST be fully on-device. No composition text or
    pronunciation query may be sent to an API.
+9. The M5 rhyme layer MUST compare the final stressed vowel and following
+   sounds from a pinned CMUdict-derived offline pack. It MUST report perfect
+   end rhyme, rhyme schemes, and masculine/feminine endings; unknown words
+   MUST remain visibly unknown rather than being forced into a rhyme group.
+10. M5 form inference MUST combine line count, the existing line-meter
+    evidence, and rhyme evidence. It MUST remain advisory, MUST NOT add poetic
+    forms to the meter dropdown, and MUST NOT create selected-meter departure
+    marks.
+11. The initial named-form catalog MUST include blank verse, heroic couplets,
+    common measure, ballad stanza, long measure, short measure, fourteener
+    verse, Poulter's measure, limerick, English/Spenserian/Petrarchan sonnets,
+    rhyme royal, ottava rima, terza rima, and the Spenserian stanza.
+12. The optional M5 engine, form catalog, and rhyme pack MUST load only after
+    English stress mode is explicitly selected, share the English runtime
+    offline cache, and fail without disabling the core English stress analyzer.
+    Slant, eye, internal, dialect-sensitive, and historical rhyme remain
+    outside M5.
 
 ## 6. Analysis Engine Requirements
 
@@ -1221,6 +1238,11 @@ The MVP is acceptable when:
 - **Golden/regression tests:** Run the reviewed corpus against each analysis
   engine and meter-catalog change. Intentional changes require a reviewed
   fixture update.
+- **English rhyme/form tests:** Rebuild a fixture rhyme pack deterministically;
+  verify perfect masculine/feminine rhyme, unknown endings, every cataloged
+  form, public-domain common-measure and limerick examples, separation from
+  the meter dropdown, lazy loading, mobile rendering, and offline reuse. Keep
+  slant rhyme out of exact assertions.
 - **Property/fuzz tests:** Generate unusual Unicode sequences and editing
   operations to confirm there are no crashes, infinite loops, invalid ranges,
   or mutations of original text.

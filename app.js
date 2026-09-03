@@ -16,6 +16,11 @@
         meters: "english_meters.json",
         lexicon: "data/english/en-cmudict-stress-v1.json"
     });
+    const ENGLISH_FORM_ASSETS = Object.freeze({
+        engine: "english_forms.js",
+        catalog: "english_forms.json",
+        rhyme: "data/english/en-cmudict-rhyme-v1.json"
+    });
 
     const messages = {
         en: {
@@ -164,6 +169,20 @@
             englishIssues: "{departures} stress departure(s), {extra} extra, and {missing} missing position(s) for {meter}.",
             englishGuessNote: " {count} word pronunciation(s) are guessed.",
             englishAmbiguityNote: " Close alternative(s): {meters}.",
+            englishRhymeAndForm: "Rhyme & form",
+            englishRhymeLoading: "Loading the offline perfect-rhyme dictionary…",
+            englishRhymeUnavailable: "Rhyme data is unavailable; stress analysis continues.",
+            englishRhymeScheme: "End rhyme · {scheme}",
+            englishRhymeUnknown: "{count} ending(s) need a dictionary pronunciation.",
+            englishNoForm: "No named form claimed yet.",
+            englishFormExact: "Form · {form}",
+            englishFormCompatible: "Possible form · {form}",
+            englishFormEvidence: "{lines} lines · expected rhyme {scheme}",
+            englishFormLines: "{lines} lines",
+            englishUnrhymed: "unrhymed",
+            englishMasculineRhyme: "masculine rhyme",
+            englishFeminineRhyme: "feminine rhyme",
+            englishAmbiguousRhyme: "ambiguous rhyme",
             cursorMetricsLabel: "Counts from the beginning of the line to the cursor",
             synonyms: "Synonyms",
             synonymsFor: "Synonyms for {word}",
@@ -430,6 +449,20 @@
             englishIssues: "{meter}ಗೆ {departures} ಒತ್ತಡ ವ್ಯತ್ಯಾಸ, {extra} ಹೆಚ್ಚುವರಿ ಮತ್ತು {missing} ಬಾಕಿ ಸ್ಥಾನಗಳು.",
             englishGuessNote: " {count} ಪದಗಳ ಉಚ್ಚಾರಣೆಯನ್ನು ಊಹಿಸಲಾಗಿದೆ.",
             englishAmbiguityNote: " ಸಮೀಪದ ಪರ್ಯಾಯಗಳು: {meters}.",
+            englishRhymeAndForm: "ಪ್ರಾಸ ಮತ್ತು ಪದ್ಯರೂಪ",
+            englishRhymeLoading: "ಆಫ್‌ಲೈನ್ ಪೂರ್ಣಪ್ರಾಸ ನಿಘಂಟು ಲೋಡ್ ಆಗುತ್ತಿದೆ…",
+            englishRhymeUnavailable: "ಪ್ರಾಸದ ದತ್ತಾಂಶ ಲಭ್ಯವಿಲ್ಲ; ಒತ್ತಡ ವಿಶ್ಲೇಷಣೆ ಮುಂದುವರಿಯುತ್ತದೆ.",
+            englishRhymeScheme: "ಅಂತ್ಯಪ್ರಾಸ · {scheme}",
+            englishRhymeUnknown: "{count} ಸಾಲಿನ ಅಂತ್ಯಕ್ಕೆ ನಿಘಂಟಿನ ಉಚ್ಚಾರಣೆ ಬೇಕು.",
+            englishNoForm: "ಇನ್ನೂ ಯಾವುದೇ ನಿರ್ದಿಷ್ಟ ಪದ್ಯರೂಪವನ್ನು ಹೇಳಲಾಗಿಲ್ಲ.",
+            englishFormExact: "ಪದ್ಯರೂಪ · {form}",
+            englishFormCompatible: "ಸಂಭಾವ್ಯ ಪದ್ಯರೂಪ · {form}",
+            englishFormEvidence: "{lines} ಸಾಲು · ನಿರೀಕ್ಷಿತ ಪ್ರಾಸ {scheme}",
+            englishFormLines: "{lines} ಸಾಲು",
+            englishUnrhymed: "ಪ್ರಾಸರಹಿತ",
+            englishMasculineRhyme: "ಪುರುಷ ಪ್ರಾಸ",
+            englishFeminineRhyme: "ಸ್ತ್ರೀ ಪ್ರಾಸ",
+            englishAmbiguousRhyme: "ಅನಿಶ್ಚಿತ ಪ್ರಾಸ",
             cursorMetricsLabel: "ಸಾಲಿನ ಆರಂಭದಿಂದ ಕರ್ಸರ್‌ವರೆಗಿನ ಎಣಿಕೆ",
             synonyms: "ಪರ್ಯಾಯ ಪದಗಳು",
             synonymsFor: "{word} ಪದಕ್ಕೆ ಪರ್ಯಾಯಗಳು",
@@ -696,6 +729,20 @@
             englishIssues: "{meter}కు {departures} ఒత్తిడి భేదాలు, {extra} అదనపు, {missing} మిగిలిన స్థానాలు.",
             englishGuessNote: " {count} పదాల ఉచ్చారణ ఊహించబడింది.",
             englishAmbiguityNote: " దగ్గరి ప్రత్యామ్నాయాలు: {meters}.",
+            englishRhymeAndForm: "ప్రాస మరియు పద్యరూపం",
+            englishRhymeLoading: "ఆఫ్‌లైన్ సంపూర్ణ ప్రాస నిఘంటువు లోడ్ అవుతోంది…",
+            englishRhymeUnavailable: "ప్రాస సమాచారం అందుబాటులో లేదు; ఒత్తిడి విశ్లేషణ కొనసాగుతుంది.",
+            englishRhymeScheme: "అంత్యప్రాస · {scheme}",
+            englishRhymeUnknown: "{count} పంక్తి ముగింపులకు నిఘంటు ఉచ్చారణ కావాలి.",
+            englishNoForm: "ఇంకా ఏ పేరుగల పద్యరూపమూ నిర్ధారించబడలేదు.",
+            englishFormExact: "పద్యరూపం · {form}",
+            englishFormCompatible: "సంభావ్య పద్యరూపం · {form}",
+            englishFormEvidence: "{lines} పంక్తులు · ఆశించిన ప్రాస {scheme}",
+            englishFormLines: "{lines} పంక్తులు",
+            englishUnrhymed: "ప్రాసలేనిది",
+            englishMasculineRhyme: "పురుష ప్రాస",
+            englishFeminineRhyme: "స్త్రీ ప్రాస",
+            englishAmbiguousRhyme: "అనిశ్చిత ప్రాస",
             cursorMetricsLabel: "పంక్తి మొదలు నుండి కర్సర్ వరకు లెక్క",
             synonyms: "పర్యాయపదాలు",
             synonymsFor: "{word}కు పర్యాయపదాలు",
@@ -962,6 +1009,20 @@
             englishIssues: "{meter} માટે {departures} ભારભેદ, {extra} વધારાના અને {missing} બાકી સ્થાન.",
             englishGuessNote: " {count} શબ્દોના ઉચ્ચાર અનુમાનિત છે.",
             englishAmbiguityNote: " નજીકના વિકલ્પો: {meters}.",
+            englishRhymeAndForm: "પ્રાસ અને કાવ્યરૂપ",
+            englishRhymeLoading: "ઓફલાઇન પૂર્ણપ્રાસ શબ્દકોશ લોડ થઈ રહ્યો છે…",
+            englishRhymeUnavailable: "પ્રાસ માહિતી ઉપલબ્ધ નથી; ભારવિશ્લેષણ ચાલુ રહેશે.",
+            englishRhymeScheme: "અંત્યપ્રાસ · {scheme}",
+            englishRhymeUnknown: "{count} પંક્તિના અંત માટે શબ્દકોશ ઉચ્ચાર જરૂરી છે.",
+            englishNoForm: "હજુ કોઈ નામિત કાવ્યરૂપ નક્કી થયું નથી.",
+            englishFormExact: "કાવ્યરૂપ · {form}",
+            englishFormCompatible: "સંભવિત કાવ્યરૂપ · {form}",
+            englishFormEvidence: "{lines} પંક્તિઓ · અપેક્ષિત પ્રાસ {scheme}",
+            englishFormLines: "{lines} પંક્તિઓ",
+            englishUnrhymed: "પ્રાસરહિત",
+            englishMasculineRhyme: "પુલ્લિંગ પ્રાસ",
+            englishFeminineRhyme: "સ્ત્રીલિંગ પ્રાસ",
+            englishAmbiguousRhyme: "અનિશ્ચિત પ્રાસ",
             cursorMetricsLabel: "પંક્તિની શરૂઆતથી કર્સર સુધીની ગણતરી",
             synonyms: "સમાનાર્થી શબ્દો",
             synonymsFor: "{word} માટે સમાનાર્થી",
@@ -1135,7 +1196,11 @@
         englishMeters: [],
         englishLexicon: null,
         englishLoadPromise: null,
-        englishLoadState: "idle"
+        englishLoadState: "idle",
+        englishFormCatalog: null,
+        englishRhymeLexicon: null,
+        englishFormLoadPromise: null,
+        englishFormLoadState: "idle"
     };
 
     function cacheElements() {
@@ -1148,6 +1213,8 @@
             "previous-stanza", "next-stanza", "empty-analysis", "analysis-content",
             "pattern-block", "active-pattern", "active-matras",
             "active-amsha-realization",
+            "english-form-panel", "english-rhyme-scheme",
+            "english-rhyme-endings", "english-form-list", "english-form-note",
             "analysis-tools", "scansion-mode", "detect-shithila-dvitva",
             "selected-meter-reference", "selected-meter-name",
             "selected-meter-signature", "candidate-list", "meter-picker",
@@ -1229,6 +1296,11 @@
         if (state.englishCatalog && state.englishLexicon &&
             window.ChandasEnglish && window.ChandasEnglishComposer) {
             state.englishLoadState = "ready";
+            if (isEnglishMode()) {
+                void ensureEnglishFormResources(
+                    state.englishFormLoadState === "error"
+                );
+            }
             return true;
         }
         if (state.englishLoadPromise && !retry) {
@@ -1283,6 +1355,60 @@
         const loaded = await state.englishLoadPromise;
         if (isEnglishMode()) {
             updateInputSchemeUi();
+            if (loaded) {
+                void ensureEnglishFormResources();
+            }
+        }
+        return loaded;
+    }
+
+    async function ensureEnglishFormResources(retry = false) {
+        if (state.englishFormCatalog && state.englishRhymeLexicon &&
+            window.ChandasEnglishForms) {
+            state.englishFormLoadState = "ready";
+            return true;
+        }
+        if (state.englishFormLoadPromise && !retry) {
+            return state.englishFormLoadPromise;
+        }
+        state.englishFormLoadState = "loading";
+        if (isEnglishMode()) {
+            renderAnalysisPanel();
+        }
+        const requestOptions = retry ? { cache: "reload" } : { cache: "force-cache" };
+        state.englishFormLoadPromise = Promise.all([
+            loadDeferredScript(
+                ENGLISH_FORM_ASSETS.engine,
+                "ChandasEnglishForms"
+            ),
+            fetch(ENGLISH_FORM_ASSETS.catalog, requestOptions),
+            fetch(ENGLISH_FORM_ASSETS.rhyme, requestOptions)
+        ]).then(async ([, catalogResponse, rhymeResponse]) => {
+            if (!catalogResponse.ok || !rhymeResponse.ok) {
+                throw new Error(
+                    `English form data request failed: ${catalogResponse.status}/` +
+                    rhymeResponse.status
+                );
+            }
+            const [catalog, rhymeDocument] = await Promise.all([
+                catalogResponse.json(),
+                rhymeResponse.json()
+            ]);
+            window.ChandasEnglishForms.validateCatalog(catalog);
+            state.englishFormCatalog = catalog;
+            state.englishRhymeLexicon = window.ChandasEnglishForms
+                .createRhymeLexicon(rhymeDocument);
+            state.englishFormLoadState = "ready";
+            return true;
+        }).catch((error) => {
+            console.warn(error);
+            state.englishFormLoadState = "error";
+            state.englishFormLoadPromise = null;
+            return false;
+        });
+        const loaded = await state.englishFormLoadPromise;
+        if (isEnglishMode()) {
+            runAnalysis();
         }
         return loaded;
     }
@@ -1328,6 +1454,9 @@
         }
         if (elements["analysis-tools"]) {
             elements["analysis-tools"].hidden = english;
+        }
+        if (!english && elements["english-form-panel"]) {
+            elements["english-form-panel"].hidden = true;
         }
         if (elements["learn-pattern"]) {
             elements["learn-pattern"].hidden = english;
@@ -3425,7 +3554,14 @@
             state.selections,
             state.englishLexicon,
             state.englishCatalog,
-            window.ChandasEnglish
+            window.ChandasEnglish,
+            state.englishFormLoadState === "ready"
+                ? {
+                    engine: window.ChandasEnglishForms,
+                    rhymeLexicon: state.englishRhymeLexicon,
+                    catalog: state.englishFormCatalog
+                }
+                : null
         );
         finishAnalysisRender();
     }
@@ -3619,6 +3755,88 @@
         elements["selected-meter-signature"].replaceChildren(signature);
     }
 
+    function renderEnglishFormPanel(stanza) {
+        const panel = elements["english-form-panel"];
+        if (!panel) {
+            return;
+        }
+        const hasLines = stanza && stanza.lines && stanza.lines.some((line) =>
+            line.tokens && line.tokens.length);
+        panel.hidden = !isEnglishMode() || !hasLines;
+        if (panel.hidden) {
+            elements["english-rhyme-scheme"].textContent = "";
+            elements["english-rhyme-endings"].replaceChildren();
+            elements["english-form-list"].replaceChildren();
+            elements["english-form-note"].textContent = "";
+            return;
+        }
+        if (state.englishFormLoadState !== "ready" || !stanza.rhyme) {
+            elements["english-rhyme-scheme"].textContent = t(
+                state.englishFormLoadState === "error"
+                    ? "englishRhymeUnavailable"
+                    : "englishRhymeLoading"
+            );
+            elements["english-rhyme-endings"].replaceChildren();
+            elements["english-form-list"].replaceChildren();
+            elements["english-form-note"].textContent = "";
+            return;
+        }
+
+        const rhyme = stanza.rhyme;
+        elements["english-rhyme-scheme"].textContent = t("englishRhymeScheme", {
+            scheme: rhyme.displayScheme || "—"
+        });
+        const kindKey = {
+            masculine: "englishMasculineRhyme",
+            feminine: "englishFeminineRhyme",
+            ambiguous: "englishAmbiguousRhyme"
+        };
+        elements["english-rhyme-endings"].replaceChildren(
+            ...rhyme.endings.map((ending) => {
+                const item = document.createElement("span");
+                item.className = `english-rhyme-ending${
+                    ending.label === "?" ? " is-unknown" : ""}`;
+                item.dataset.rhyme = ending.label;
+                item.textContent = `${ending.line}. ${ending.word || "—"} · ${
+                    ending.label}`;
+                if (kindKey[ending.kind]) {
+                    item.title = t(kindKey[ending.kind]);
+                }
+                return item;
+            })
+        );
+
+        elements["english-form-list"].replaceChildren(
+            ...(stanza.forms || []).slice(0, 3).map((form) => {
+                const item = document.createElement("div");
+                item.className = "english-form-candidate";
+                const name = document.createElement("strong");
+                name.textContent = t(
+                    form.matchLevel === "exact"
+                        ? "englishFormExact"
+                        : "englishFormCompatible",
+                    { form: form.name }
+                );
+                const evidence = document.createElement("small");
+                evidence.textContent = form.expectedRhyme
+                    ? t("englishFormEvidence", {
+                        lines: form.lineCount,
+                        scheme: form.expectedRhyme === "unrhymed"
+                            ? t("englishUnrhymed")
+                            : form.expectedRhyme
+                    })
+                    : t("englishFormLines", { lines: form.lineCount });
+                item.append(name, evidence);
+                return item;
+            })
+        );
+        elements["english-form-note"].textContent = rhyme.unknownCount
+            ? t("englishRhymeUnknown", { count: rhyme.unknownCount })
+            : (stanza.forms || []).length
+                ? ""
+                : t("englishNoForm");
+    }
+
     function renderEnglishAnalysisPanel() {
         const ready = state.englishLoadState === "ready" &&
             state.englishCatalog && state.englishLexicon;
@@ -3645,6 +3863,7 @@
                     ? "englishLoadFailed"
                     : "englishLoading"
             );
+            renderEnglishFormPanel(null);
             renderWholeVerseTemplate();
             renderStrongTemplate();
             return;
@@ -3669,6 +3888,7 @@
             elements["validation-summary"].textContent = selectedMeter
                 ? t("meterReady", { meter: selectedMeter.name })
                 : t("englishNoMeter");
+            renderEnglishFormPanel(null);
             renderWholeVerseTemplate();
             renderStrongTemplate();
             return;
@@ -3703,6 +3923,7 @@
         elements["template-mode-ghost"].checked = mode === "ghost";
         elements["template-mode-strong"].checked = false;
         renderEnglishMeterReference(selectedMeter);
+        renderEnglishFormPanel(stanza);
 
         const candidateScroll = elements["candidate-list"].scrollTop;
         elements["candidate-list"].replaceChildren(

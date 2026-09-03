@@ -24,7 +24,9 @@ const required = [
     "custom_meter.js",
     "english_analysis.js",
     "english_composer.js",
+    "english_forms.js",
     "english_meters.json",
+    "english_forms.json",
     "mishra.json",
     "structural_meters.json",
     "data/synonyms/kn-alar-v1.json",
@@ -32,6 +34,7 @@ const required = [
     "data/synonyms/README.md",
     "data/synonyms/DATA_LICENSES.md",
     "data/english/en-cmudict-stress-v1.json",
+    "data/english/en-cmudict-rhyme-v1.json",
     "data/english/README.md",
     "data/english/CMUDICT_LICENSE",
     "examples/field_guide_corpus.json",
@@ -40,6 +43,7 @@ const required = [
     "docs/research/archive-meter-audit.md",
     "docs/rules/gujarati-meters.md",
     "docs/rules/english-stress-meters.md",
+    "docs/rules/english-rhyme-forms.md",
     "manifest.webmanifest",
     "service-worker.js",
     "icon.svg",
@@ -118,6 +122,33 @@ if (englishLexicon.schemaVersion !== 1 || englishLexicon.language !== "en" ||
     englishLexicon.entries.length !== englishLexicon.counts.entries ||
     englishLexicon.entries.length < 126000) {
     throw new Error("English pronunciation data has incomplete or stale metadata");
+}
+
+const englishRhymeLexicon = JSON.parse(fs.readFileSync(
+    path.join(root, "data", "english", "en-cmudict-rhyme-v1.json"),
+    "utf8"
+));
+if (englishRhymeLexicon.schemaVersion !== 1 ||
+    englishRhymeLexicon.representation !== "final-stressed-vowel-rime" ||
+    englishRhymeLexicon.license !== "BSD-2-Clause" ||
+    englishRhymeLexicon.source.revision !== englishLexicon.source.revision ||
+    englishRhymeLexicon.source.sha256 !== englishLexicon.source.sha256 ||
+    !Array.isArray(englishRhymeLexicon.entries) ||
+    englishRhymeLexicon.entries.length !== englishRhymeLexicon.counts.entries ||
+    englishRhymeLexicon.entries.length < 126000) {
+    throw new Error("English rhyme data has incomplete or stale metadata");
+}
+
+const englishFormCatalog = JSON.parse(fs.readFileSync(
+    path.join(root, "english_forms.json"), "utf8"
+));
+if (!englishFormCatalog.catalogVersion ||
+    englishFormCatalog.analysisSystem !== "english-form" ||
+    !Array.isArray(englishFormCatalog.forms) ||
+    englishFormCatalog.forms.length < 16 ||
+    new Set(englishFormCatalog.forms.map((form) => form.id)).size !==
+        englishFormCatalog.forms.length) {
+    throw new Error("English form catalog is incomplete");
 }
 
 const englishCorpus = JSON.parse(fs.readFileSync(

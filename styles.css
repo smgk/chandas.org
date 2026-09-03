@@ -1193,6 +1193,72 @@ textarea:focus-visible {
     line-height: 1.45;
 }
 
+.english-form-panel {
+    display: grid;
+    gap: 0.55rem;
+    margin-top: 0.75rem;
+    padding: 0.78rem 0.9rem;
+    border: 1px solid color-mix(in srgb, var(--green) 20%, var(--line));
+    border-radius: 0.8rem;
+    background: color-mix(in srgb, var(--green) 4%, #fffdf8);
+}
+
+.english-form-panel[hidden] {
+    display: none;
+}
+
+.english-rhyme-scheme {
+    color: var(--green);
+    font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+    font-size: 0.84rem;
+    font-weight: 750;
+    letter-spacing: 0.04em;
+}
+
+.english-rhyme-endings {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+}
+
+.english-rhyme-ending {
+    border-radius: 999px;
+    padding: 0.2rem 0.48rem;
+    color: var(--ink);
+    background: color-mix(in srgb, var(--saffron) 11%, var(--paper));
+    font-size: 0.68rem;
+}
+
+.english-rhyme-ending.is-unknown {
+    color: var(--muted);
+    background: var(--paper);
+}
+
+.english-form-list {
+    display: grid;
+    gap: 0.35rem;
+}
+
+.english-form-candidate {
+    display: grid;
+    gap: 0.12rem;
+}
+
+.english-form-candidate strong {
+    color: var(--ink);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.english-form-candidate small,
+.english-form-note {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.7rem;
+    line-height: 1.4;
+}
+
 .selected-meter-reference {
     margin-top: 0.75rem;
     padding: 0.85rem 1rem;

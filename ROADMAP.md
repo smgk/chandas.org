@@ -2,7 +2,7 @@
 
 **Status:** Active post-MVP plan
 
-**Updated:** 2026-08-30
+**Updated:** 2026-09-02
 
 **Baseline:** `mvp-baseline`
 
@@ -88,7 +88,7 @@ with positive, variant, incomplete, ambiguous, and negative checks.
 
 ### M5 — English rhyme and named forms
 
-**Status:** Next proposed milestone; owner approval required
+**Status:** Complete in version 1.41.0
 
 - Add perfect end-rhyme and rhyme-scheme analysis.
 - Recognize blank verse, heroic couplets, common and ballad measure,
@@ -152,6 +152,7 @@ with positive, variant, incomplete, ambiguous, and negative checks.
 
 ## Immediate approval gate
 
-The next proposed work is **M5 — English rhyme and named forms**. M4 exposes
-stress prosody only after the writer explicitly chooses English, and M5 should
-preserve that boundary unless the project owner approves a different design.
+The next proposed work is **M6 — Finish reviewed Indic rule families**. M5 now
+adds perfect end rhyme and named forms only after the writer explicitly chooses
+English, while keeping form names out of the line-meter list. M6 remains gated
+on rule-family evidence and owner review.

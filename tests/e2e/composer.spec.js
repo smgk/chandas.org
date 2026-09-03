@@ -177,10 +177,10 @@ test("detects perfect rhyme and named forms only in English mode", async ({
 
     await page.locator("#composition").fill(
         "once there was a bird\n" +
-        "not a song it heard\n" +
-        "pooped a lot\n" +
+        "a song it never heard\n" +
+        "it pooped a lot\n" +
         "in every spot\n" +
-        "so I shot the little bird"
+        "so I shot the damn bird"
     );
     await expect(page.locator("#english-rhyme-scheme"))
         .toHaveText("End rhyme · A A B B A");

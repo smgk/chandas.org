@@ -680,6 +680,9 @@ recommended, and optional behavior.
 12. The optional M5 engine, form catalog, and rhyme pack MUST load only after
     English stress mode is explicitly selected, share the English runtime
     offline cache, and fail without disabling the core English stress analyzer.
+    Mutable English engine and catalog requests MUST carry an explicit asset
+    version so an older service worker cannot combine stale form rules with a
+    newer application shell.
     Slant, eye, internal, dialect-sensitive, and historical rhyme remain
     outside M5.
 

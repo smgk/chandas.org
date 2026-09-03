@@ -10,6 +10,7 @@
     const LANGUAGE_KEY = "chandas.language.v1";
     const SAVE_DELAY_MS = 280;
     const UPDATE_CHECK_INTERVAL_MS = 15 * 60 * 1000;
+    const ENGLISH_FORM_ASSET_VERSION = "1.2.0";
     const ENGLISH_ASSETS = Object.freeze({
         engine: "english_analysis.js",
         composer: "english_composer.js",
@@ -17,8 +18,8 @@
         lexicon: "data/english/en-cmudict-stress-v1.json"
     });
     const ENGLISH_FORM_ASSETS = Object.freeze({
-        engine: "english_forms.js",
-        catalog: "english_forms.json",
+        engine: `english_forms.js?v=${ENGLISH_FORM_ASSET_VERSION}`,
+        catalog: `english_forms.json?v=${ENGLISH_FORM_ASSET_VERSION}`,
         rhyme: "data/english/en-cmudict-rhyme-v1.json"
     });
 

@@ -58,6 +58,11 @@ a fully dictionary-known `AABBA` scheme, but deliberately makes no meter claim.
 It is always reported as compatible/possible, never exact. Strict Limerick
 suppresses Common limerick, and either stronger match suppresses Limerick-y.
 
+The form engine and catalog use a catalog-version query in their lazy-load
+URLs. This prevents a still-active older service worker from returning stale
+form rules to a newer application shell; the much larger unchanged rhyme pack
+keeps its stable cache key.
+
 Common measure accepts its `8/6/8/6` iambic shape with rhyme as advisory because
 historical poems frequently use slant rhyme that M5 intentionally does not
 claim as perfect rhyme. Other forms retain their declared exact rhyme schemes.

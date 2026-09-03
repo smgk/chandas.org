@@ -224,8 +224,8 @@ test("does not guess limerick-y when an AABBA ending is unknown", () => {
 });
 
 test("recognizes a flexible 3/3/2/2/3 AABBA poem as a common limerick", () => {
-    const text = "once there was a bird\nnot a song it heard\n" +
-        "pooped a lot\nin every spot\nso I shot the little bird";
+    const text = "once there was a bird\na song it never heard\n" +
+        "it pooped a lot\nin every spot\nso I shot the damn bird";
     const analysis = Composer.analyze(
         text,
         {},
@@ -242,10 +242,10 @@ test("recognizes a flexible 3/3/2/2/3 AABBA poem as a common limerick", () => {
         stanza.forms[0].meterFits.map((fit) => fit.id),
         [
             "english:trochaic-trimeter",
-            "english:trochaic-trimeter",
-            "english:trochaic-dimeter",
+            "english:iambic-trimeter",
             "english:iambic-dimeter",
-            "english:iambic-trimeter"
+            "english:iambic-dimeter",
+            "english:trochaic-trimeter"
         ]
     );
 });

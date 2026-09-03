@@ -88,7 +88,7 @@ with positive, variant, incomplete, ambiguous, and negative checks.
 
 ### M5 — English rhyme and named forms
 
-**Status:** Complete in version 1.41.0
+**Status:** Complete in version 1.41.0; common-limerick fallback added in 1.42.0
 
 - Add perfect end-rhyme and rhyme-scheme analysis.
 - Recognize blank verse, heroic couplets, common and ballad measure,

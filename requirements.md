@@ -669,8 +669,11 @@ recommended, and optional behavior.
     marks.
 11. The initial named-form catalog MUST include blank verse, heroic couplets,
     common measure, ballad stanza, long measure, short measure, fourteener
-    verse, Poulter's measure, limerick, English/Spenserian/Petrarchan sonnets,
-    rhyme royal, ottava rima, terza rima, and the Spenserian stanza.
+    verse, Poulter's measure, strict limerick, common limerick,
+    English/Spenserian/Petrarchan sonnets, rhyme royal, ottava rima, terza
+    rima, and the Spenserian stanza. Common limerick MUST preserve the AABBA
+    scheme and 3/3/2/2/3 beat contour while accepting compatible binary or
+    ternary realizations; strict limerick MUST take precedence when both fit.
 12. The optional M5 engine, form catalog, and rhyme pack MUST load only after
     English stress mode is explicitly selected, share the English runtime
     offline cache, and fail without disabling the core English stress analyzer.

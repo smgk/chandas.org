@@ -393,7 +393,7 @@ production detector or UI behavior is added.
 
 ### M5 — English rhyme and named forms
 
-**Status:** Complete in version 1.41.0
+**Status:** Complete in version 1.41.0; common-limerick fallback added in 1.42.0
 
 - Detect perfect rhyme and rhyme schemes.
 - Add blank verse, heroic couplets, common/ballad/long/short measure,

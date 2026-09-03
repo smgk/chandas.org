@@ -134,6 +134,7 @@ test("recognizes every cataloged M5 form without adding forms to meter choices",
         ["english-form:fourteener-verse", [hepta, hepta], "AB"],
         ["english-form:poulters-measure", [hexa, hepta], "AA"],
         ["english-form:limerick", [anTri, anTri, anDi, anDi, anTri], "AABBA"],
+        ["english-form:common-limerick", [tri, tri, "english:trochaic-dimeter", "english:iambic-dimeter", tri], "AABBA"],
         ["english-form:english-sonnet", Array(14).fill(penta), "ABABCDCDEFEFGG"],
         ["english-form:spenserian-sonnet", Array(14).fill(penta), "ABABBCBCCDCDEE"],
         ["english-form:petrarchan-sonnet", Array(14).fill(penta), "ABBAABBACDECDE"],
@@ -178,7 +179,38 @@ test("recognizes the public-domain common-measure and limerick fixtures", () => 
         if (fixture.expectedRhymeScheme) {
             assert.equal(stanza.rhyme.scheme, fixture.expectedRhymeScheme);
         }
+        if (fixture.form === "limerick") {
+            assert.equal(stanza.forms.some((form) =>
+                form.id === "english-form:common-limerick"), false);
+        }
     }
+});
+
+test("recognizes a flexible 3/3/2/2/3 AABBA poem as a common limerick", () => {
+    const text = "once there was a bird\nnot a song it heard\n" +
+        "pooped a lot\nin every spot\nso I shot the little bird";
+    const analysis = Composer.analyze(
+        text,
+        {},
+        stressLexicon,
+        meters,
+        English,
+        { engine: Forms, rhymeLexicon, catalog: formCatalog }
+    );
+    const stanza = analysis.stanzas[0];
+
+    assert.equal(stanza.rhyme.scheme, "AABBA");
+    assert.equal(stanza.forms[0].id, "english-form:common-limerick");
+    assert.deepEqual(
+        stanza.forms[0].meterFits.map((fit) => fit.id),
+        [
+            "english:trochaic-trimeter",
+            "english:trochaic-trimeter",
+            "english:trochaic-dimeter",
+            "english:iambic-dimeter",
+            "english:iambic-trimeter"
+        ]
+    );
 });
 
 test("keeps M5 rhyme and form analysis inside the live-composition budget", () => {

@@ -5,7 +5,7 @@ SPDX-License-Identifier: GPL-3.0-only
 
 # English rhyme and named forms — M5 rule packet
 
-**Status:** Implemented in version 1.41.0  
+**Status:** Implemented in version 1.41.0; common limerick added in 1.42.0
 **Updated:** 2026-09-02
 
 ## Scope
@@ -43,9 +43,15 @@ disable stress scansion.
 
 The declarative `english_forms.json` catalog contains blank verse, heroic
 couplets, common measure, ballad stanzas, long measure, short measure,
-fourteener verse, Poulter's measure, limericks, English sonnets, Spenserian
-sonnets, Petrarchan sonnets, rhyme royal, ottava rima, terza rima, and the
-Spenserian stanza.
+fourteener verse, Poulter's measure, strict and common limericks, English
+sonnets, Spenserian sonnets, Petrarchan sonnets, rhyme royal, ottava rima,
+terza rima, and the Spenserian stanza.
+
+Strict limerick retains the anapestic three/three/two/two/three-foot model.
+Common limerick is its lower-prominence fallback: it requires five lines and
+perfect `AABBA` rhyme, preserves the `3/3/2/2/3` beat contour, and accepts
+compatible iambic, trochaic, or anapestic line realizations. When both rules
+match, only the stricter Limerick result is returned.
 
 Common measure accepts its `8/6/8/6` iambic shape with rhyme as advisory because
 historical poems frequently use slant rhyme that M5 intentionally does not

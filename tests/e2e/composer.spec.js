@@ -176,6 +176,18 @@ test("detects perfect rhyme and named forms only in English mode", async ({
         .toHaveCount(0);
 
     await page.locator("#composition").fill(
+        "once there was a bird\n" +
+        "not a song it heard\n" +
+        "pooped a lot\n" +
+        "in every spot\n" +
+        "so I shot the little bird"
+    );
+    await expect(page.locator("#english-rhyme-scheme"))
+        .toHaveText("End rhyme · A A B B A");
+    await expect(page.locator("#english-form-list"))
+        .toContainText("Form · Common limerick");
+
+    await page.locator("#composition").fill(
         "Because I could not stop for Death –\n" +
         "He kindly stopped for me –\n" +
         "The Carriage held but just Ourselves –\n" +

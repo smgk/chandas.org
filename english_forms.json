@@ -106,6 +106,25 @@
       "sourceRef": "poeticForms"
     },
     {
+      "id": "english-form:common-limerick",
+      "name": "Common limerick",
+      "aliases": ["flexible limerick", "accentual limerick"],
+      "lineCount": { "exact": 5 },
+      "beatSequence": [3, 3, 2, 2, 3],
+      "meterSequence": [
+        ["english:anapestic-trimeter", "english:iambic-trimeter", "english:trochaic-trimeter"],
+        ["english:anapestic-trimeter", "english:iambic-trimeter", "english:trochaic-trimeter"],
+        ["english:anapestic-dimeter", "english:dactylic-dimeter", "english:iambic-dimeter", "english:trochaic-dimeter"],
+        ["english:anapestic-dimeter", "english:dactylic-dimeter", "english:iambic-dimeter", "english:trochaic-dimeter"],
+        ["english:anapestic-trimeter", "english:iambic-trimeter", "english:trochaic-trimeter"]
+      ],
+      "rhymeSchemes": ["AABBA"],
+      "prominence": 4,
+      "meterTolerance": "flexible",
+      "suppressedBy": "english-form:limerick",
+      "sourceRef": "poeticForms"
+    },
+    {
       "id": "english-form:english-sonnet",
       "name": "English sonnet",
       "aliases": ["Shakespearean sonnet"],

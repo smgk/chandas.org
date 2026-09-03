@@ -80,6 +80,18 @@
                 }
                 ids.add(form.id);
             }
+            for (const form of catalog.forms) {
+                if (form.suppressedBy && !ids.has(form.suppressedBy)) {
+                    throw new Error(`Unknown suppressing form: ${form.suppressedBy}`);
+                }
+                if (form.beatSequence &&
+                    (!Array.isArray(form.beatSequence) ||
+                        form.beatSequence.length !== form.meterSequence.length ||
+                        form.beatSequence.some((beat) =>
+                            !Number.isInteger(beat) || beat < 1))) {
+                    throw new Error(`Invalid beat sequence: ${form.id}`);
+                }
+            }
             return catalog;
         }
 
@@ -252,13 +264,16 @@
             if (!candidates.length) {
                 return null;
             }
+            const flexible = tolerance === "ternary" || tolerance === "flexible";
+            const maximumDistance = flexible ? 1 : 0;
+            const maximumApproximateScore = flexible ? 0.34 : 0.24;
             const normalized = candidates.map((candidate) => {
                 const canonicalDistance = Math.abs(
                     candidate.canonicalPattern.length - candidate.syllables.length
                 );
                 const recoverPartial = candidate.matchLevel === "incomplete" &&
                     (canonicalDistance === 0 ||
-                        (tolerance === "ternary" && canonicalDistance <= 1));
+                        (flexible && canonicalDistance <= 1));
                 return {
                     candidate,
                     canonicalDistance,
@@ -269,12 +284,11 @@
                 (MATCH_COST[left.level] ?? 1) - (MATCH_COST[right.level] ?? 1) ||
                 left.score - right.score);
             const best = normalized[0];
-            const maximumDistance = tolerance === "ternary" ? 1 : 0;
             if (best.level === "incomplete" ||
                 best.canonicalDistance > maximumDistance ||
                 best.candidate.extraCount > maximumDistance ||
                 (best.level === "approximate" && best.score >
-                    (tolerance === "ternary" ? 0.34 : 0.24))) {
+                    maximumApproximateScore)) {
                 return null;
             }
             return {
@@ -296,7 +310,7 @@
         function analyzeForms(lines, rhyme, catalog) {
             validateCatalog(catalog);
             const lineCount = lines.length;
-            return catalog.forms.map((form) => {
+            const matches = catalog.forms.map((form) => {
                 if (!lineCountMatches(form.lineCount, lineCount)) {
                     return null;
                 }
@@ -333,11 +347,16 @@
                     unknownRhymes: rhyme.unknownCount,
                     prominence: form.prominence || 0,
                     specificity,
+                    suppressedBy: form.suppressedBy || "",
                     score: meterScore + rhyme.unknownCount * 0.08 -
                         (form.prominence || 0) * 0.008 - specificity * 0.002,
                     sourceRef: form.sourceRef
                 };
-            }).filter(Boolean).sort(compareForms);
+            }).filter(Boolean);
+            const matchedIds = new Set(matches.map((form) => form.id));
+            return matches.filter((form) =>
+                !form.suppressedBy || !matchedIds.has(form.suppressedBy))
+                .sort(compareForms);
         }
 
         function analyzeStanza(lines, rhymeLexicon, catalog) {

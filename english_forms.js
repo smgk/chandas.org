@@ -74,8 +74,10 @@
             const ids = new Set();
             for (const form of catalog.forms) {
                 if (!form.id || !form.name || ids.has(form.id) ||
-                    !form.lineCount || !Array.isArray(form.meterSequence) ||
-                    !form.meterSequence.length) {
+                    !form.lineCount ||
+                    (form.meterPolicy !== "advisory" &&
+                        (!Array.isArray(form.meterSequence) ||
+                            !form.meterSequence.length))) {
                     throw new Error(`Invalid English form: ${form.id || "(missing id)"}`);
                 }
                 ids.add(form.id);
@@ -86,6 +88,7 @@
                 }
                 if (form.beatSequence &&
                     (!Array.isArray(form.beatSequence) ||
+                        !Array.isArray(form.meterSequence) ||
                         form.beatSequence.length !== form.meterSequence.length ||
                         form.beatSequence.some((beat) =>
                             !Number.isInteger(beat) || beat < 1))) {
@@ -314,24 +317,31 @@
                 if (!lineCountMatches(form.lineCount, lineCount)) {
                     return null;
                 }
-                const meterFits = lines.map((line, index) =>
-                    lineMeterFit(
-                        line,
-                        meterChoices(form, index),
-                        form.meterTolerance
-                    ));
-                if (meterFits.some((fit) => !fit)) {
+                const meterFits = form.meterPolicy === "advisory"
+                    ? []
+                    : lines.map((line, index) =>
+                        lineMeterFit(
+                            line,
+                            meterChoices(form, index),
+                            form.meterTolerance
+                        ));
+                if (form.meterPolicy !== "advisory" &&
+                    meterFits.some((fit) => !fit)) {
                     return null;
                 }
                 const rhymeResult = rhymeFit(form, rhyme, lineCount);
-                if (rhymeResult.mismatchCount > 0) {
+                if (rhymeResult.mismatchCount > 0 ||
+                    (form.requireKnownRhymes && rhyme.unknownCount > 0)) {
                     return null;
                 }
                 const approximateMeters = meterFits.filter((fit) =>
                     fit.level === "approximate").length;
-                const meterScore = meterFits.reduce((sum, fit) =>
-                    sum + fit.score, 0) / lineCount;
-                const exact = !approximateMeters && rhymeResult.exact;
+                const meterScore = meterFits.length
+                    ? meterFits.reduce((sum, fit) => sum + fit.score, 0) /
+                        lineCount
+                    : 0;
+                const exact = form.meterPolicy !== "advisory" &&
+                    !approximateMeters && rhymeResult.exact;
                 const specificity = Number.isInteger(form.lineCount.exact)
                     ? form.lineCount.exact
                     : 1;

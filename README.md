@@ -29,8 +29,8 @@ then cached for offline use.
   boundaries, uncertainty, per-line cursor counts, ranked meters, stanza-level
   selection, selected-meter feedback, and Ghost guidance.
 - Shows perfect end-rhyme schemes and advisory named-form matches—including
-  common measure, strict and common limericks, sonnets, blank verse, and stanza
-  forms—without mixing form names into the line-meter picker.
+  common measure, strict/common/“Limerick-y” limericks, sonnets, blank verse,
+  and stanza forms—without mixing form names into the line-meter picker.
 - Converts the entire editing buffer among Kannada, Devanagari, Telugu,
   Gujarati, IAST, ISO 15919, ITRANS, and Harvard-Kyoto after an on-device
   preview, with one-step undo. Colloquial Roman is available as a clearly

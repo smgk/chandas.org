@@ -125,6 +125,18 @@
       "sourceRef": "poeticForms"
     },
     {
+      "id": "english-form:limerick-y",
+      "name": "Limerick-y",
+      "aliases": ["loose limerick", "aabba verse"],
+      "lineCount": { "exact": 5 },
+      "meterPolicy": "advisory",
+      "rhymeSchemes": ["AABBA"],
+      "requireKnownRhymes": true,
+      "prominence": 3,
+      "suppressedBy": "english-form:common-limerick",
+      "sourceRef": "poeticForms"
+    },
+    {
       "id": "english-form:english-sonnet",
       "name": "English sonnet",
       "aliases": ["Shakespearean sonnet"],

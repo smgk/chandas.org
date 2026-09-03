@@ -145,7 +145,7 @@ const englishFormCatalog = JSON.parse(fs.readFileSync(
 if (!englishFormCatalog.catalogVersion ||
     englishFormCatalog.analysisSystem !== "english-form" ||
     !Array.isArray(englishFormCatalog.forms) ||
-    englishFormCatalog.forms.length < 17 ||
+    englishFormCatalog.forms.length < 18 ||
     new Set(englishFormCatalog.forms.map((form) => form.id)).size !==
         englishFormCatalog.forms.length) {
     throw new Error("English form catalog is incomplete");

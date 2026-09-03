@@ -135,6 +135,7 @@ test("recognizes every cataloged M5 form without adding forms to meter choices",
         ["english-form:poulters-measure", [hexa, hepta], "AA"],
         ["english-form:limerick", [anTri, anTri, anDi, anDi, anTri], "AABBA"],
         ["english-form:common-limerick", [tri, tri, "english:trochaic-dimeter", "english:iambic-dimeter", tri], "AABBA"],
+        ["english-form:limerick-y", Array(5).fill(penta), "AABBA"],
         ["english-form:english-sonnet", Array(14).fill(penta), "ABABCDCDEFEFGG"],
         ["english-form:spenserian-sonnet", Array(14).fill(penta), "ABABBCBCCDCDEE"],
         ["english-form:petrarchan-sonnet", Array(14).fill(penta), "ABBAABBACDECDE"],
@@ -182,8 +183,44 @@ test("recognizes the public-domain common-measure and limerick fixtures", () => 
         if (fixture.form === "limerick") {
             assert.equal(stanza.forms.some((form) =>
                 form.id === "english-form:common-limerick"), false);
+            assert.equal(stanza.forms.some((form) =>
+                form.id === "english-form:limerick-y"), false);
         }
     }
+});
+
+test("recognizes any fully known five-line AABBA verse as limerick-y", () => {
+    const analysis = Composer.analyze(
+        "cat\nhat\nbee\ntree\nbat",
+        {},
+        stressLexicon,
+        meters,
+        English,
+        { engine: Forms, rhymeLexicon, catalog: formCatalog }
+    );
+    const stanza = analysis.stanzas[0];
+
+    assert.equal(stanza.rhyme.scheme, "AABBA");
+    assert.deepEqual(stanza.forms.map((form) => form.id), [
+        "english-form:limerick-y"
+    ]);
+    assert.equal(stanza.forms[0].matchLevel, "compatible");
+    assert.deepEqual(stanza.forms[0].meterFits, []);
+});
+
+test("does not guess limerick-y when an AABBA ending is unknown", () => {
+    const analysis = Composer.analyze(
+        "cat\nhat\nbee\ntree\nZorbathiel",
+        {},
+        stressLexicon,
+        meters,
+        English,
+        { engine: Forms, rhymeLexicon, catalog: formCatalog }
+    );
+
+    assert.equal(analysis.stanzas[0].rhyme.scheme, "AABB?");
+    assert.equal(analysis.stanzas[0].forms.some((form) =>
+        form.id === "english-form:limerick-y"), false);
 });
 
 test("recognizes a flexible 3/3/2/2/3 AABBA poem as a common limerick", () => {

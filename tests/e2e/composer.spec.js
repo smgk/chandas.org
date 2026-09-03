@@ -187,6 +187,12 @@ test("detects perfect rhyme and named forms only in English mode", async ({
     await expect(page.locator("#english-form-list"))
         .toContainText("Form · Common limerick");
 
+    await page.locator("#composition").fill("cat\nhat\nbee\ntree\nbat");
+    await expect(page.locator("#english-rhyme-scheme"))
+        .toHaveText("End rhyme · A A B B A");
+    await expect(page.locator("#english-form-list"))
+        .toContainText("Possible form · Limerick-y");
+
     await page.locator("#composition").fill(
         "Because I could not stop for Death –\n" +
         "He kindly stopped for me –\n" +

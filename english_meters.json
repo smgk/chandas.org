@@ -1,5 +1,5 @@
 {
-  "catalogVersion": "1.0.0",
+  "catalogVersion": "2.0.0",
   "analysisSystem": "english-stress",
   "copyright": "Copyright © 2025–2026 Ganesh Krishna Shankarathota",
   "license": "GPL-3.0-only",
@@ -19,6 +19,11 @@
       "title": "Metrical parsing",
       "authors": "Ryan Heuser, Josh Falk, Arto Anttila, and contributors",
       "url": "https://github.com/quadrismegistus/prosodic/blob/master/docs/methods/metrical-parsing.qmd"
+    },
+    "poetryFoundationAccentual": {
+      "title": "Accentual verse",
+      "publisher": "Poetry Foundation",
+      "url": "https://www.poetryfoundation.org/education/glossary/accentual-verse"
     }
   },
   "meters": [
@@ -41,6 +46,10 @@
 
     { "id": "english:dactylic-dimeter", "name": "Dactylic dimeter", "aliases": ["dactylic 2", "two-foot dactylic"], "foot": "dactyl", "pattern": "SWW", "feet": 2, "prominence": 2, "sourceRef": "prosodicModel", "rules": { "catalexis": true } },
     { "id": "english:dactylic-tetrameter", "name": "Dactylic tetrameter", "aliases": ["dactylic 4", "four-foot dactylic"], "foot": "dactyl", "pattern": "SWW", "feet": 4, "prominence": 2, "sourceRef": "prosodicModel", "rules": { "catalexis": true } },
-    { "id": "english:dactylic-hexameter", "name": "English dactylic hexameter", "aliases": ["dactylic hexameter", "dactylic 6", "six-foot dactylic"], "foot": "dactyl", "pattern": "SWW", "feet": 6, "prominence": 2, "sourceRef": "prosodicModel", "rules": { "catalexis": true } }
+    { "id": "english:dactylic-hexameter", "name": "English dactylic hexameter", "aliases": ["dactylic hexameter", "dactylic 6", "six-foot dactylic"], "foot": "dactyl", "pattern": "SWW", "feet": 6, "prominence": 2, "sourceRef": "prosodicModel", "rules": { "catalexis": true } },
+
+    { "id": "english:accentual-two-beat", "name": "Two-beat accentual line", "aliases": ["accentual dimeter", "two stress", "2 beat"], "analysisMode": "accentual", "foot": "accentual", "beats": 2, "prominence": 2, "sourceRef": "poetryFoundationAccentual", "rules": { "variableSlack": true } },
+    { "id": "english:accentual-three-beat", "name": "Three-beat accentual line", "aliases": ["accentual trimeter", "three stress", "3 beat", "limerick beat"], "analysisMode": "accentual", "foot": "accentual", "beats": 3, "prominence": 4, "sourceRef": "poetryFoundationAccentual", "rules": { "variableSlack": true } },
+    { "id": "english:accentual-four-beat", "name": "Four-beat accentual line", "aliases": ["accentual tetrameter", "four stress", "4 beat", "nursery rhyme"], "analysisMode": "accentual", "foot": "accentual", "beats": 4, "prominence": 4, "sourceRef": "poetryFoundationAccentual", "rules": { "variableSlack": true } }
   ]
 }

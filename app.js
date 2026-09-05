@@ -10,7 +10,7 @@
     const LANGUAGE_KEY = "chandas.language.v1";
     const SAVE_DELAY_MS = 280;
     const UPDATE_CHECK_INTERVAL_MS = 15 * 60 * 1000;
-    const ENGLISH_FORM_ASSET_VERSION = "1.3.0";
+    const ENGLISH_FORM_ASSET_VERSION = "2.0.0";
     const ENGLISH_ASSETS = Object.freeze({
         engine: "english_analysis.js",
         composer: "english_composer.js",
@@ -184,6 +184,36 @@
             englishMasculineRhyme: "masculine rhyme",
             englishFeminineRhyme: "feminine rhyme",
             englishAmbiguousRhyme: "ambiguous rhyme",
+            englishWriteAs: "Write as",
+            englishNoChosenForm: "No chosen form",
+            englishFormLine: "Line {line} of {total}",
+            englishRhymeTarget: "rhyme {rhyme}",
+            englishBeatTarget: "about {beats} beats",
+            englishFormMeterProgress: "{matching}/{typed} lines fit the rhythm",
+            englishFormRhymeProgress: "{matching}/{expected} rhyme links found",
+            englishFormPlausibleRhymes: "{count} near or eye rhyme link(s)",
+            englishReviewPronunciation: "Review pronunciation",
+            englishPronunciationHelp: "Choose how a word is spoken here; your choice stays on this device.",
+            englishPronunciation: "Pronunciation",
+            englishStressPatternHelp: "Use 0 for weak, 1 for primary stress, and 2 for secondary stress.",
+            englishCustomStress: "Custom stress pattern",
+            englishUseDictionary: "Use dictionary",
+            englishUsePronunciation: "Use this reading",
+            englishGuessedReading: "guessed",
+            englishContextReading: "context suggests {role}",
+            englishPerfectRhyme: "perfect rhyme",
+            englishNearRhyme: "near rhyme",
+            englishEyeRhyme: "eye rhyme",
+            englishUserRhyme: "your rhyme",
+            englishAccentualDetail: "{beats} beats · variable slack",
+            englishFormGuidance: "Writing toward {form}: {matching}/{typed} typed line(s) fit its rhythm.",
+            englishChooseRhymePartner: "Choose another line ending to declare the intended rhyme.",
+            englishAccentualLesson: "This line is heard as {beats} beats; the unstressed space between them may vary.",
+            englishInitialInversionLesson: "The opening iamb is reversed to a trochee—a common variation.",
+            englishFeminineEndingLesson: "One unstressed syllable follows the final beat: a feminine ending.",
+            englishCatalexisLesson: "The final weak position is omitted: catalexis.",
+            englishResolutionLesson: "Two light syllables share one weak metrical position.",
+            englishAmbiguousLesson: "More than one reading is plausible; tap a word below if your pronunciation differs.",
             cursorMetricsLabel: "Counts from the beginning of the line to the cursor",
             synonyms: "Synonyms",
             synonymsFor: "Synonyms for {word}",
@@ -464,6 +494,36 @@
             englishMasculineRhyme: "ಪುರುಷ ಪ್ರಾಸ",
             englishFeminineRhyme: "ಸ್ತ್ರೀ ಪ್ರಾಸ",
             englishAmbiguousRhyme: "ಅನಿಶ್ಚಿತ ಪ್ರಾಸ",
+            englishWriteAs: "ಈ ರೂಪದಲ್ಲಿ ಬರೆಯಿರಿ",
+            englishNoChosenForm: "ಪದ್ಯರೂಪ ಆಯ್ದಿಲ್ಲ",
+            englishFormLine: "ಸಾಲು {line}/{total}",
+            englishRhymeTarget: "ಪ್ರಾಸ {rhyme}",
+            englishBeatTarget: "ಸುಮಾರು {beats} ಒತ್ತುಗಳು",
+            englishFormMeterProgress: "{matching}/{typed} ಸಾಲುಗಳ ಲಯ ಹೊಂದುತ್ತದೆ",
+            englishFormRhymeProgress: "{matching}/{expected} ಪ್ರಾಸ ಕೊಂಡಿಗಳು ದೊರೆತಿವೆ",
+            englishFormPlausibleRhymes: "{count} ಸಮೀಪ ಅಥವಾ ದೃಶ್ಯ ಪ್ರಾಸ ಕೊಂಡಿ(ಗಳು)",
+            englishReviewPronunciation: "ಉಚ್ಚಾರಣೆ ಪರಿಶೀಲಿಸಿ",
+            englishPronunciationHelp: "ಇಲ್ಲಿ ಪದವನ್ನು ಹೇಗೆ ಉಚ್ಚರಿಸಬೇಕು ಎಂದು ಆರಿಸಿ; ಆಯ್ಕೆ ಈ ಸಾಧನದಲ್ಲೇ ಇರುತ್ತದೆ.",
+            englishPronunciation: "ಉಚ್ಚಾರಣೆ",
+            englishStressPatternHelp: "ದುರ್ಬಲಕ್ಕೆ 0, ಮುಖ್ಯ ಒತ್ತಿಗೆ 1 ಮತ್ತು ಉಪಒತ್ತಿಗೆ 2 ಬಳಸಿ.",
+            englishCustomStress: "ಸ್ವಂತ ಒತ್ತು ಮಾದರಿ",
+            englishUseDictionary: "ನಿಘಂಟಿನ ಉಚ್ಚಾರಣೆ",
+            englishUsePronunciation: "ಈ ಉಚ್ಚಾರಣೆ ಬಳಸಿ",
+            englishGuessedReading: "ಊಹಿಸಿದ್ದು",
+            englishContextReading: "ಸಂದರ್ಭವು {role} ಎಂದು ಸೂಚಿಸುತ್ತದೆ",
+            englishPerfectRhyme: "ಸಂಪೂರ್ಣ ಪ್ರಾಸ",
+            englishNearRhyme: "ಸಮೀಪ ಪ್ರಾಸ",
+            englishEyeRhyme: "ದೃಶ್ಯ ಪ್ರಾಸ",
+            englishUserRhyme: "ನಿಮ್ಮ ಪ್ರಾಸ",
+            englishAccentualDetail: "{beats} ಒತ್ತುಗಳು · ಬದಲಾಗುವ ದುರ್ಬಲಾಕ್ಷರಗಳು",
+            englishFormGuidance: "{form} ರೂಪದ ಕಡೆ ಬರೆಯುತ್ತಿದ್ದೀರಿ: ಬರೆದ {typed} ಸಾಲುಗಳಲ್ಲಿ {matching} ಲಯಕ್ಕೆ ಹೊಂದುತ್ತವೆ.",
+            englishChooseRhymePartner: "ಉದ್ದೇಶಿತ ಪ್ರಾಸವನ್ನು ಗುರುತಿಸಲು ಇನ್ನೊಂದು ಸಾಲಿನ ಕೊನೆಯ ಪದವನ್ನು ಆರಿಸಿ.",
+            englishAccentualLesson: "ಈ ಸಾಲಿನಲ್ಲಿ {beats} ಒತ್ತುಗಳು ಕೇಳುತ್ತವೆ; ಅವುಗಳ ನಡುವಿನ ಒತ್ತಿಲ್ಲದ ಅಕ್ಷರಗಳು ಬದಲಾಗಬಹುದು.",
+            englishInitialInversionLesson: "ಆರಂಭದ iamb trochee ಆಗಿ ತಿರುಗಿದೆ—ಇದು ಸಾಮಾನ್ಯ ಬದಲಾವಣೆ.",
+            englishFeminineEndingLesson: "ಕೊನೆಯ ಒತ್ತಿನ ಬಳಿಕ ಒಂದು ಒತ್ತಿಲ್ಲದ ಅಕ್ಷರವಿದೆ: feminine ending.",
+            englishCatalexisLesson: "ಕೊನೆಯ ದುರ್ಬಲ ಸ್ಥಾನ ಬಿಟ್ಟಿದೆ: catalexis.",
+            englishResolutionLesson: "ಎರಡು ಹಗುರ ಅಕ್ಷರಗಳು ಒಂದೇ ದುರ್ಬಲ ಛಂದಸ್ಥಾನವನ್ನು ಹಂಚಿಕೊಂಡಿವೆ.",
+            englishAmbiguousLesson: "ಒಂದಕ್ಕಿಂತ ಹೆಚ್ಚು ಓದು ಸಾಧ್ಯ; ನಿಮ್ಮ ಉಚ್ಚಾರಣೆ ಬೇರೆ ಇದ್ದರೆ ಕೆಳಗಿನ ಪದವನ್ನು ಒತ್ತಿ.",
             cursorMetricsLabel: "ಸಾಲಿನ ಆರಂಭದಿಂದ ಕರ್ಸರ್‌ವರೆಗಿನ ಎಣಿಕೆ",
             synonyms: "ಪರ್ಯಾಯ ಪದಗಳು",
             synonymsFor: "{word} ಪದಕ್ಕೆ ಪರ್ಯಾಯಗಳು",
@@ -744,6 +804,36 @@
             englishMasculineRhyme: "పురుష ప్రాస",
             englishFeminineRhyme: "స్త్రీ ప్రాస",
             englishAmbiguousRhyme: "అనిశ్చిత ప్రాస",
+            englishWriteAs: "ఈ రూపంలో రాయండి",
+            englishNoChosenForm: "ఎంచుకున్న పద్యరూపం లేదు",
+            englishFormLine: "పంక్తి {line}/{total}",
+            englishRhymeTarget: "ప్రాస {rhyme}",
+            englishBeatTarget: "సుమారు {beats} ఒత్తులు",
+            englishFormMeterProgress: "{matching}/{typed} పంక్తుల లయ సరిపోతుంది",
+            englishFormRhymeProgress: "{matching}/{expected} ప్రాస జతలు దొరికాయి",
+            englishFormPlausibleRhymes: "{count} సమీప లేదా దృశ్య ప్రాస జత(లు)",
+            englishReviewPronunciation: "ఉచ్చారణను పరిశీలించండి",
+            englishPronunciationHelp: "ఇక్కడ పదాన్ని ఎలా పలకాలో ఎంచుకోండి; ఎంపిక ఈ పరికరంలోనే ఉంటుంది.",
+            englishPronunciation: "ఉచ్చారణ",
+            englishStressPatternHelp: "బలహీనానికి 0, ప్రధాన ఒత్తుకు 1, ద్వితీయ ఒత్తుకు 2 వాడండి.",
+            englishCustomStress: "స్వంత ఒత్తు నమూనా",
+            englishUseDictionary: "నిఘంటు ఉచ్చారణ",
+            englishUsePronunciation: "ఈ ఉచ్చారణను వాడండి",
+            englishGuessedReading: "ఊహించబడింది",
+            englishContextReading: "సందర్భం {role} అని సూచిస్తోంది",
+            englishPerfectRhyme: "సంపూర్ణ ప్రాస",
+            englishNearRhyme: "సమీప ప్రాస",
+            englishEyeRhyme: "దృశ్య ప్రాస",
+            englishUserRhyme: "మీ ప్రాస",
+            englishAccentualDetail: "{beats} ఒత్తులు · మారే బలహీన అక్షరాలు",
+            englishFormGuidance: "{form} రూపానికి రాస్తున్నారు: రాసిన {typed} పంక్తుల్లో {matching} లయకు సరిపోతున్నాయి.",
+            englishChooseRhymePartner: "ఉద్దేశించిన ప్రాసను గుర్తించడానికి మరో పంక్తి చివరను ఎంచుకోండి.",
+            englishAccentualLesson: "ఈ పంక్తిలో {beats} ఒత్తులు వినిపిస్తున్నాయి; వాటి మధ్య బలహీన అక్షరాల సంఖ్య మారవచ్చు.",
+            englishInitialInversionLesson: "మొదటి iamb trocheeగా మారింది—ఇది సాధారణ వైవిధ్యం.",
+            englishFeminineEndingLesson: "చివరి ఒత్తు తరువాత ఒక బలహీన అక్షరం ఉంది: feminine ending.",
+            englishCatalexisLesson: "చివరి బలహీన స్థానం వదిలివేయబడింది: catalexis.",
+            englishResolutionLesson: "రెండు తేలిక అక్షరాలు ఒక బలహీన ఛందోస్థానాన్ని పంచుకున్నాయి.",
+            englishAmbiguousLesson: "ఒకటి కంటే ఎక్కువ పఠనాలు సాధ్యం; మీ ఉచ్చారణ వేరైతే క్రింది పదాన్ని నొక్కండి.",
             cursorMetricsLabel: "పంక్తి మొదలు నుండి కర్సర్ వరకు లెక్క",
             synonyms: "పర్యాయపదాలు",
             synonymsFor: "{word}కు పర్యాయపదాలు",
@@ -1024,6 +1114,36 @@
             englishMasculineRhyme: "પુલ્લિંગ પ્રાસ",
             englishFeminineRhyme: "સ્ત્રીલિંગ પ્રાસ",
             englishAmbiguousRhyme: "અનિશ્ચિત પ્રાસ",
+            englishWriteAs: "આ રૂપમાં લખો",
+            englishNoChosenForm: "કોઈ પસંદ કરેલું કાવ્યરૂપ નથી",
+            englishFormLine: "પંક્તિ {line}/{total}",
+            englishRhymeTarget: "પ્રાસ {rhyme}",
+            englishBeatTarget: "લગભગ {beats} ભાર",
+            englishFormMeterProgress: "{matching}/{typed} પંક્તિની લય મળે છે",
+            englishFormRhymeProgress: "{matching}/{expected} પ્રાસ કડીઓ મળી",
+            englishFormPlausibleRhymes: "{count} નજીકની અથવા દૃશ્ય પ્રાસ કડી(ઓ)",
+            englishReviewPronunciation: "ઉચ્ચાર તપાસો",
+            englishPronunciationHelp: "અહીં શબ્દ કેવી રીતે બોલાય તે પસંદ કરો; પસંદગી આ ઉપકરણમાં જ રહે છે.",
+            englishPronunciation: "ઉચ્ચાર",
+            englishStressPatternHelp: "નબળા માટે 0, મુખ્ય ભાર માટે 1 અને ગૌણ ભાર માટે 2 વાપરો.",
+            englishCustomStress: "પોતાની ભાર-રચના",
+            englishUseDictionary: "શબ્દકોશનો ઉચ્ચાર",
+            englishUsePronunciation: "આ ઉચ્ચાર વાપરો",
+            englishGuessedReading: "અનુમાનિત",
+            englishContextReading: "સંદર્ભ {role} સૂચવે છે",
+            englishPerfectRhyme: "સંપૂર્ણ પ્રાસ",
+            englishNearRhyme: "નજીકનો પ્રાસ",
+            englishEyeRhyme: "દૃશ્ય પ્રાસ",
+            englishUserRhyme: "તમારો પ્રાસ",
+            englishAccentualDetail: "{beats} ભાર · બદલાતા નબળા અક્ષરો",
+            englishFormGuidance: "{form} સ્વરૂપ તરફ લખાઈ રહ્યું છે: લખેલી {typed} પંક્તિમાંથી {matching} લયમાં બેસે છે.",
+            englishChooseRhymePartner: "ઇચ્છિત પ્રાસ જણાવવા બીજી પંક્તિનો અંત પસંદ કરો.",
+            englishAccentualLesson: "આ પંક્તિમાં {beats} ભાર સંભળાય છે; વચ્ચેના નિર્બળ અક્ષરો બદલાઈ શકે છે.",
+            englishInitialInversionLesson: "શરૂઆતનો iamb trocheeમાં ઊલટાયો છે—આ સામાન્ય ફેરફાર છે.",
+            englishFeminineEndingLesson: "છેલ્લા ભાર પછી એક નિર્બળ અક્ષર છે: feminine ending.",
+            englishCatalexisLesson: "છેલ્લું નિર્બળ સ્થાન છોડાયું છે: catalexis.",
+            englishResolutionLesson: "બે હળવા અક્ષરો એક નિર્બળ છંદસ્થાન વહેંચે છે.",
+            englishAmbiguousLesson: "એકથી વધુ વાંચન શક્ય છે; તમારો ઉચ્ચાર જુદો હોય તો નીચેનો શબ્દ દબાવો.",
             cursorMetricsLabel: "પંક્તિની શરૂઆતથી કર્સર સુધીની ગણતરી",
             synonyms: "સમાનાર્થી શબ્દો",
             synonymsFor: "{word} માટે સમાનાર્થી",
@@ -1201,7 +1321,12 @@
         englishFormCatalog: null,
         englishRhymeLexicon: null,
         englishFormLoadPromise: null,
-        englishFormLoadState: "idle"
+        englishFormLoadState: "idle",
+        englishFormSelections: {},
+        englishOverrides: {},
+        englishRhymeOverrides: {},
+        pendingEnglishRhymeEnding: null,
+        activeEnglishPronunciation: null
     };
 
     function cacheElements() {
@@ -1215,7 +1340,16 @@
             "pattern-block", "active-pattern", "active-matras",
             "active-amsha-realization",
             "english-form-panel", "english-rhyme-scheme",
-            "english-rhyme-endings", "english-form-list", "english-form-note",
+            "english-form-select", "english-form-progress",
+            "english-form-progress-summary", "english-form-progress-details",
+            "english-reading-note",
+            "english-rhyme-endings", "english-rhyme-relations",
+            "english-form-list", "english-form-note",
+            "english-pronunciation-review", "english-pronunciation-list",
+            "english-pronunciation-dialog", "english-pronunciation-title",
+            "english-pronunciation-choices", "english-custom-stress",
+            "close-english-pronunciation", "reset-english-pronunciation",
+            "save-english-pronunciation",
             "analysis-tools", "scansion-mode", "detect-shithila-dvitva",
             "selected-meter-reference", "selected-meter-name",
             "selected-meter-signature", "candidate-list", "meter-picker",
@@ -1606,7 +1740,7 @@
             : null;
         const stanzaOptions = {};
         for (const [key, value] of params.entries()) {
-            const match = /^(meter|template|slots)[._-]?(\d+)$/i.exec(key);
+            const match = /^(meter|form|template|slots)[._-]?(\d+)$/i.exec(key);
             if (!match) {
                 continue;
             }
@@ -1619,6 +1753,8 @@
             const optionType = match[1].toLocaleLowerCase();
             if (optionType === "meter") {
                 option.meter = value;
+            } else if (optionType === "form") {
+                option.form = value;
             } else if (optionType === "template") {
                 option.guideMode = guideModeFromUrl(value);
             } else {
@@ -1658,8 +1794,24 @@
                 params.has("scheme") ? params.get("scheme") : params.get("input")
             )
             : null;
+        function queryObject(name) {
+            if (linkVersion < 5 || !params.has(name)) {
+                return null;
+            }
+            try {
+                const value = JSON.parse(params.get(name));
+                return value && typeof value === "object" && !Array.isArray(value)
+                    ? value
+                    : null;
+            } catch (error) {
+                return null;
+            }
+        }
+        const englishOverrides = queryObject("eo");
+        const englishRhymeOverrides = queryObject("ero");
         const consumed = verse !== null || meter !== null || hasTemplate ||
             hasShithilaOption || hasScansionMode || hasInputScheme ||
+            englishOverrides || englishRhymeOverrides ||
             Object.keys(stanzaOptions).length > 0;
         return consumed
             ? {
@@ -1669,7 +1821,9 @@
                 stanzaOptions,
                 detectShithilaDvitva,
                 scansionMode,
-                inputScheme
+                inputScheme,
+                englishOverrides,
+                englishRhymeOverrides
             }
             : null;
     }
@@ -1747,12 +1901,19 @@
                 state.templates = {};
                 state.templateModes = {};
                 state.strongDrafts = {};
+                state.englishFormSelections = {};
             }
             state.inputScheme = payload.inputScheme;
             updateInputSchemeUi();
             if (isEnglishMode()) {
                 await ensureEnglishResources();
             }
+        }
+        if (payload.englishOverrides && isEnglishMode()) {
+            state.englishOverrides = payload.englishOverrides;
+        }
+        if (payload.englishRhymeOverrides && isEnglishMode()) {
+            state.englishRhymeOverrides = payload.englishRhymeOverrides;
         }
         if (incoming) {
             const appended = appendAsPadya(authoredCompositionText(), incoming);
@@ -1787,6 +1948,11 @@
             : [];
         let selectionChanged = false;
         let missingMeter = false;
+        if (!targetIndices.length && payload.stanzaOptions[0] &&
+            payload.stanzaOptions[0].form) {
+            state.englishFormSelections[0] = payload.stanzaOptions[0].form;
+            selectionChanged = true;
+        }
         if (!targetIndices.length && payload.meter !== null &&
             payload.meter !== undefined) {
             const meter = meterFromUrlToken(payload.meter);
@@ -1812,6 +1978,13 @@
             }
             state.selections[stanzaIndex] = meter.id;
             selectionChanged = true;
+        });
+        targetIndices.forEach((stanzaIndex, relativeIndex) => {
+            const option = payload.stanzaOptions[relativeIndex] || {};
+            if (option.form) {
+                state.englishFormSelections[stanzaIndex] = option.form;
+                selectionChanged = true;
+            }
         });
         if (missingMeter) {
             importMessage = t("urlMeterMissing");
@@ -3171,6 +3344,8 @@
             end: segment.end,
             className: [
                 segment.lexicalStress > 0 ? "english-strong" : "english-weak",
+                segment.expectedStress === "S" &&
+                    segment.expectedIndex !== null ? "english-beat" : "",
                 segment.violation ? "violation" : "",
                 segment.uncertain ? "uncertain" : ""
             ].filter(Boolean).join(" ")
@@ -3192,7 +3367,9 @@
                 meterForId(stanza.bestCandidate && stanza.bestCandidate.id);
             const showGhost = selectedMeter &&
                 templateMode(stanza.index) === "ghost";
-            const footLength = displayMeter ? displayMeter.pattern.length : 0;
+            const footLength = displayMeter && displayMeter.pattern
+                ? displayMeter.pattern.length
+                : 0;
             for (const line of stanza.lines) {
                 const syllables = line.syllables || [];
                 const candidate = line.chosenCandidate;
@@ -3445,10 +3622,12 @@
         const oldTemplates = { ...state.templates };
         const oldModes = { ...state.templateModes };
         const oldStrongDrafts = { ...state.strongDrafts };
+        const oldEnglishForms = { ...state.englishFormSelections };
         const nextSelections = {};
         const nextTemplates = {};
         const nextModes = {};
         const nextStrongDrafts = {};
+        const nextEnglishForms = {};
         const usedOld = new Set();
 
         function copyStanzaState(oldIndex, newIndex) {
@@ -3460,6 +3639,9 @@
             }
             if (oldModes[oldIndex]) {
                 nextModes[newIndex] = oldModes[oldIndex];
+            }
+            if (oldEnglishForms[oldIndex]) {
+                nextEnglishForms[newIndex] = oldEnglishForms[oldIndex];
             }
             Object.entries(oldStrongDrafts).forEach(([key, draft]) => {
                 const separator = key.indexOf("|");
@@ -3489,13 +3671,20 @@
         const selectedOldIndex = Object.keys(oldSelections)
             .map(Number)
             .find((index) => Number.isInteger(index) && oldSelections[index]);
-        const sourceOldIndex = oldSelections[previouslyActive]
+        const selectedOldFormIndex = Object.keys(oldEnglishForms)
+            .map(Number)
+            .find((index) => Number.isInteger(index) && oldEnglishForms[index]);
+        const sourceOldIndex = oldSelections[previouslyActive] ||
+            oldEnglishForms[previouslyActive]
             ? previouslyActive
-            : oldSelections[oldActive]
+            : oldSelections[oldActive] || oldEnglishForms[oldActive]
                 ? oldActive
-                : selectedOldIndex;
+                : selectedOldIndex !== undefined
+                    ? selectedOldIndex
+                    : selectedOldFormIndex;
         if (sourceOldIndex !== undefined &&
-            !nextSelections[newActive] && oldSelections[sourceOldIndex]) {
+            ((!nextSelections[newActive] && oldSelections[sourceOldIndex]) ||
+                (!nextEnglishForms[newActive] && oldEnglishForms[sourceOldIndex]))) {
             copyStanzaState(sourceOldIndex, newActive);
         }
 
@@ -3503,6 +3692,7 @@
         state.templates = nextTemplates;
         state.templateModes = nextModes;
         state.strongDrafts = nextStrongDrafts;
+        state.englishFormSelections = nextEnglishForms;
         state.strongHistory = {};
         state.strongFuture = {};
     }
@@ -3556,13 +3746,16 @@
             state.englishLexicon,
             state.englishCatalog,
             window.ChandasEnglish,
-            state.englishFormLoadState === "ready"
-                ? {
-                    engine: window.ChandasEnglishForms,
-                    rhymeLexicon: state.englishRhymeLexicon,
-                    catalog: state.englishFormCatalog
-                }
-                : null
+            {
+                engine: state.englishFormLoadState === "ready"
+                    ? window.ChandasEnglishForms
+                    : null,
+                rhymeLexicon: state.englishRhymeLexicon,
+                catalog: state.englishFormCatalog,
+                selectedForms: state.englishFormSelections,
+                overrides: state.englishOverrides,
+                rhymeOverrides: state.englishRhymeOverrides
+            }
         );
         finishAnalysisRender();
     }
@@ -3665,12 +3858,18 @@
     function candidateDetails(candidate) {
         const details = [];
         if (candidate.kind === "english") {
-            details.push(t("englishCandidateDetail", {
-                observed: candidate.observedSyllables,
-                expected: candidate.expectedSyllables,
-                feet: candidate.feet,
-                foot: candidate.foot
-            }));
+            if (candidate.analysisMode === "accentual") {
+                details.push(t("englishAccentualDetail", {
+                    beats: candidate.beats
+                }));
+            } else {
+                details.push(t("englishCandidateDetail", {
+                    observed: candidate.observedSyllables,
+                    expected: candidate.expectedSyllables,
+                    feet: candidate.feet,
+                    foot: candidate.foot
+                }));
+            }
             if (candidate.guessedWordCount) {
                 details.push(t("englishUncertain"));
             }
@@ -3751,9 +3950,207 @@
         }
         elements["selected-meter-name"].textContent = meter.name;
         const signature = document.createElement("span");
-        signature.textContent = `${englishStressGuide(meter.patterns[0], 0)} · ${
-            meter.feet} ${meter.foot}`;
+        signature.textContent = meter.analysisMode === "accentual"
+            ? t("englishAccentualDetail", { beats: meter.beats })
+            : `${englishStressGuide(meter.patterns[0], 0)} · ${
+                meter.feet} ${meter.foot}`;
         elements["selected-meter-signature"].replaceChildren(signature);
+    }
+
+    function renderEnglishFormSelect() {
+        const select = elements["english-form-select"];
+        if (!select) {
+            return;
+        }
+        const selectedId = state.englishFormSelections[state.activeStanzaIndex] || "";
+        const options = [document.createElement("option")];
+        options[0].value = "";
+        options[0].textContent = t("englishNoChosenForm");
+        for (const form of state.englishFormCatalog &&
+            state.englishFormCatalog.forms || []) {
+            const option = document.createElement("option");
+            option.value = form.id;
+            option.textContent = form.name;
+            options.push(option);
+        }
+        select.replaceChildren(...options);
+        select.value = selectedId;
+        select.disabled = state.englishFormLoadState !== "ready";
+    }
+
+    function renderEnglishFormProgress(stanza) {
+        const progress = stanza && stanza.formProgress;
+        const container = elements["english-form-progress"];
+        container.hidden = !progress;
+        elements["english-form-progress-summary"].textContent = "";
+        elements["english-form-progress-details"].textContent = "";
+        if (!progress) {
+            return;
+        }
+        const targets = [t("englishFormLine", {
+            line: progress.currentLine,
+            total: progress.targetLines
+        })];
+        if (progress.currentRhyme) {
+            targets.push(t("englishRhymeTarget", {
+                rhyme: progress.currentRhyme
+            }));
+        }
+        if (progress.currentBeatTarget) {
+            targets.push(t("englishBeatTarget", {
+                beats: progress.currentBeatTarget
+            }));
+        }
+        elements["english-form-progress-summary"].textContent =
+            `${progress.name} · ${targets.join(" · ")}`;
+        const details = [];
+        if (progress.meterLines.length) {
+            details.push(t("englishFormMeterProgress", {
+                matching: progress.matchingMeterLines,
+                typed: progress.meterLines.length
+            }));
+        }
+        if (progress.rhyme.expectedPairs) {
+            details.push(t("englishFormRhymeProgress", {
+                matching: progress.rhyme.matchedPairs,
+                expected: progress.rhyme.expectedPairs
+            }));
+        }
+        if (progress.rhyme.plausiblePairs) {
+            details.push(t("englishFormPlausibleRhymes", {
+                count: progress.rhyme.plausiblePairs
+            }));
+        }
+        elements["english-form-progress-details"].textContent = details.join(" · ");
+    }
+
+    function renderEnglishReadingNote(stanza) {
+        const output = elements["english-reading-note"];
+        const lines = stanza && stanza.lines || [];
+        const line = lines.at(-1);
+        const candidate = line && line.chosenCandidate;
+        const lessons = [];
+        if (candidate && candidate.analysisMode === "accentual") {
+            lessons.push(t("englishAccentualLesson", {
+                beats: candidate.beatCount || candidate.beats
+            }));
+        }
+        const variations = new Set(candidate && candidate.variations || []);
+        if (variations.has("initial-inversion")) {
+            lessons.push(t("englishInitialInversionLesson"));
+        }
+        if (variations.has("feminine-ending")) {
+            lessons.push(t("englishFeminineEndingLesson"));
+        }
+        if (variations.has("catalexis")) {
+            lessons.push(t("englishCatalexisLesson"));
+        }
+        if ([...variations].some((variation) =>
+            variation.startsWith("weak-resolution-"))) {
+            lessons.push(t("englishResolutionLesson"));
+        }
+        if (stanza && stanza.ambiguous) {
+            lessons.push(t("englishAmbiguousLesson"));
+        }
+        output.hidden = !lessons.length;
+        output.textContent = lessons.slice(0, 2).join(" ");
+    }
+
+    function chooseEnglishRhymeEnding(ending) {
+        if (!ending || !Number.isInteger(ending.start)) {
+            return;
+        }
+        const pending = state.pendingEnglishRhymeEnding;
+        if (!pending) {
+            state.pendingEnglishRhymeEnding = ending;
+            renderEnglishFormPanel(
+                state.analysis && state.analysis.stanzas[state.activeStanzaIndex]
+            );
+            return;
+        }
+        if (pending.start === ending.start) {
+            state.pendingEnglishRhymeEnding = null;
+            renderEnglishFormPanel(
+                state.analysis && state.analysis.stanzas[state.activeStanzaIndex]
+            );
+            return;
+        }
+        const key = [pending.start, ending.start]
+            .sort((left, right) => left - right).join(":");
+        state.englishRhymeOverrides[key] = true;
+        state.pendingEnglishRhymeEnding = null;
+        runAnalysis();
+    }
+
+    function englishPronunciationWords(stanza) {
+        const words = [];
+        const seen = new Set();
+        for (const line of stanza && stanza.lines || []) {
+            for (const word of line.chosenCandidate &&
+                line.chosenCandidate.words || []) {
+                const alternatives = word.pronunciationAlternatives || [word.stress];
+                const key = `${word.start}:${word.end}`;
+                if (seen.has(key) ||
+                    (alternatives.length < 2 &&
+                        word.pronunciationConfidence !== "guessed" &&
+                        word.contextualRole === "unknown")) {
+                    continue;
+                }
+                seen.add(key);
+                words.push({ ...word, alternatives, key });
+            }
+        }
+        return words;
+    }
+
+    function openEnglishPronunciation(word) {
+        if (!word || !isEnglishMode()) {
+            return;
+        }
+        state.activeEnglishPronunciation = word;
+        elements["english-pronunciation-title"].textContent = word.text;
+        elements["english-custom-stress"].value =
+            state.englishOverrides[word.key] || word.stress || "";
+        elements["english-pronunciation-choices"].replaceChildren(
+            ...word.alternatives.map((pattern) => {
+                const button = document.createElement("button");
+                button.type = "button";
+                button.className = "english-pronunciation-choice";
+                button.textContent = pattern;
+                button.addEventListener("click", () => {
+                    elements["english-custom-stress"].value = pattern;
+                });
+                return button;
+            })
+        );
+        elements["english-pronunciation-dialog"].showModal();
+        elements["english-custom-stress"].focus();
+        elements["english-custom-stress"].select();
+    }
+
+    function renderEnglishPronunciations(stanza) {
+        const words = englishPronunciationWords(stanza);
+        elements["english-pronunciation-review"].hidden = !words.length;
+        elements["english-pronunciation-list"].replaceChildren(
+            ...words.map((word) => {
+                const button = document.createElement("button");
+                button.type = "button";
+                button.className = `english-pronunciation-word${
+                    word.pronunciationConfidence === "guessed"
+                        ? " is-guessed" : ""}`;
+                button.textContent = `${word.text} · ${word.stress}${
+                    word.pronunciationConfidence === "guessed"
+                        ? ` · ${t("englishGuessedReading")}` : ""}`;
+                if (["noun", "verb"].includes(word.contextualRole)) {
+                    button.title = t("englishContextReading", {
+                        role: word.contextualRole
+                    });
+                }
+                button.addEventListener("click", () =>
+                    openEnglishPronunciation(word));
+                return button;
+            })
+        );
     }
 
     function renderEnglishFormPanel(stanza) {
@@ -3761,29 +4158,60 @@
         if (!panel) {
             return;
         }
-        const hasLines = stanza && stanza.lines && stanza.lines.some((line) =>
+        let view = stanza;
+        const selectedFormId = state.englishFormSelections[
+            state.activeStanzaIndex] || "";
+        if (!view && state.englishFormLoadState === "ready" && selectedFormId) {
+            view = window.ChandasEnglishForms.analyzeStanza(
+                [],
+                state.englishRhymeLexicon,
+                state.englishFormCatalog,
+                { selectedFormId }
+            );
+        }
+        const hasLines = view && view.lines && view.lines.some((line) =>
             line.tokens && line.tokens.length);
-        panel.hidden = !isEnglishMode() || !hasLines;
+        panel.hidden = !isEnglishMode();
         if (panel.hidden) {
+            renderEnglishFormSelect();
+            renderEnglishFormProgress(null);
+            elements["english-reading-note"].hidden = true;
+            elements["english-reading-note"].textContent = "";
             elements["english-rhyme-scheme"].textContent = "";
             elements["english-rhyme-endings"].replaceChildren();
+            elements["english-rhyme-relations"].replaceChildren();
+            elements["english-form-list"].replaceChildren();
+            elements["english-form-note"].textContent = "";
+            elements["english-pronunciation-review"].hidden = true;
+            elements["english-pronunciation-list"].replaceChildren();
+            return;
+        }
+        renderEnglishFormSelect();
+        renderEnglishFormProgress(view);
+        renderEnglishReadingNote(view);
+        renderEnglishPronunciations(view);
+        if (!hasLines) {
+            elements["english-rhyme-scheme"].textContent = "";
+            elements["english-rhyme-endings"].replaceChildren();
+            elements["english-rhyme-relations"].replaceChildren();
             elements["english-form-list"].replaceChildren();
             elements["english-form-note"].textContent = "";
             return;
         }
-        if (state.englishFormLoadState !== "ready" || !stanza.rhyme) {
+        if (state.englishFormLoadState !== "ready" || !view || !view.rhyme) {
             elements["english-rhyme-scheme"].textContent = t(
                 state.englishFormLoadState === "error"
                     ? "englishRhymeUnavailable"
                     : "englishRhymeLoading"
             );
             elements["english-rhyme-endings"].replaceChildren();
+            elements["english-rhyme-relations"].replaceChildren();
             elements["english-form-list"].replaceChildren();
             elements["english-form-note"].textContent = "";
             return;
         }
 
-        const rhyme = stanza.rhyme;
+        const rhyme = view.rhyme;
         elements["english-rhyme-scheme"].textContent = t("englishRhymeScheme", {
             scheme: rhyme.displayScheme || "—"
         });
@@ -3794,21 +4222,56 @@
         };
         elements["english-rhyme-endings"].replaceChildren(
             ...rhyme.endings.map((ending) => {
-                const item = document.createElement("span");
+                const item = document.createElement("button");
+                item.type = "button";
                 item.className = `english-rhyme-ending${
-                    ending.label === "?" ? " is-unknown" : ""}`;
+                    ending.label === "?" ? " is-unknown" : ""}${
+                    state.pendingEnglishRhymeEnding &&
+                    state.pendingEnglishRhymeEnding.start === ending.start
+                        ? " is-pending" : ""}`;
                 item.dataset.rhyme = ending.label;
                 item.textContent = `${ending.line}. ${ending.word || "—"} · ${
                     ending.label}`;
                 if (kindKey[ending.kind]) {
                     item.title = t(kindKey[ending.kind]);
                 }
+                item.addEventListener("click", () =>
+                    chooseEnglishRhymeEnding(ending));
+                return item;
+            })
+        );
+        const rhymeKindLabel = {
+            perfect: "englishPerfectRhyme",
+            user: "englishUserRhyme",
+            eye: "englishEyeRhyme",
+            assonance: "englishNearRhyme",
+            consonance: "englishNearRhyme"
+        };
+        elements["english-rhyme-relations"].replaceChildren(
+            ...(rhyme.relations || []).filter((relation) =>
+                relation.kind !== "perfect").slice(0, 8).map((relation) => {
+                const item = document.createElement(
+                    relation.kind === "user" ? "button" : "span"
+                );
+                if (relation.kind === "user") {
+                    item.type = "button";
+                }
+                item.className = "english-rhyme-relation";
+                item.dataset.kind = relation.kind;
+                item.textContent = `${relation.words.join(" / ")} · ${
+                    t(rhymeKindLabel[relation.kind] || "englishNearRhyme")}`;
+                if (relation.kind === "user") {
+                    item.addEventListener("click", () => {
+                        delete state.englishRhymeOverrides[relation.key];
+                        runAnalysis();
+                    });
+                }
                 return item;
             })
         );
 
         elements["english-form-list"].replaceChildren(
-            ...(stanza.forms || []).slice(0, 3).map((form) => {
+            ...(view.forms || []).slice(0, 3).map((form) => {
                 const item = document.createElement("div");
                 item.className = "english-form-candidate";
                 const name = document.createElement("strong");
@@ -3831,9 +4294,12 @@
                 return item;
             })
         );
-        elements["english-form-note"].textContent = rhyme.unknownCount
+        elements["english-form-note"].textContent =
+            state.pendingEnglishRhymeEnding
+                ? t("englishChooseRhymePartner")
+                : rhyme.unknownCount
             ? t("englishRhymeUnknown", { count: rhyme.unknownCount })
-            : (stanza.forms || []).length
+            : (view.forms || []).length
                 ? ""
                 : t("englishNoForm");
     }
@@ -3874,6 +4340,10 @@
         elements["empty-analysis"].hidden = hasStanzas;
         if (!hasStanzas) {
             const selectedMeter = meterForId(state.selections[0]);
+            const selectedFormId = state.englishFormSelections[0] || "";
+            const selectedForm = state.englishFormCatalog &&
+                state.englishFormCatalog.forms.find((form) =>
+                    form.id === selectedFormId);
             elements["analysis-title"].textContent = t("chooseMeterFirst");
             elements["pattern-block"].hidden = true;
             elements["suggestion-heading"].hidden = true;
@@ -3888,7 +4358,13 @@
             elements["validation-summary"].classList.remove("has-errors");
             elements["validation-summary"].textContent = selectedMeter
                 ? t("meterReady", { meter: selectedMeter.name })
-                : t("englishNoMeter");
+                : selectedForm
+                    ? t("englishFormGuidance", {
+                        form: selectedForm.name,
+                        matching: 0,
+                        typed: 0
+                    })
+                    : t("englishNoMeter");
             renderEnglishFormPanel(null);
             renderWholeVerseTemplate();
             renderStrongTemplate();
@@ -3937,7 +4413,17 @@
 
         const summary = elements["validation-summary"];
         summary.classList.remove("has-errors");
-        if (!selectedCandidate || !selectedMeter) {
+        if (!selectedCandidate && stanza.selectedForm && stanza.formProgress) {
+            summary.textContent = t("englishFormGuidance", {
+                form: stanza.selectedForm.name,
+                matching: stanza.formProgress.matchingMeterLines,
+                typed: stanza.formProgress.observedLines
+            });
+            if (stanza.formProgress.overflowLines ||
+                stanza.formProgress.rhyme.mismatchedPairs) {
+                summary.classList.add("has-errors");
+            }
+        } else if (!selectedCandidate || !selectedMeter) {
             summary.textContent = t("englishNoMeter");
         } else if (selectedCandidate.matchLevel === "exact") {
             summary.textContent = t("englishValid", {
@@ -4318,6 +4804,52 @@
         runAnalysis();
     }
 
+    function selectEnglishForm(formId) {
+        if (!isEnglishMode()) {
+            return;
+        }
+        const valid = !formId || state.englishFormCatalog &&
+            state.englishFormCatalog.forms.some((form) => form.id === formId);
+        if (!valid) {
+            return;
+        }
+        if (formId) {
+            state.englishFormSelections[state.activeStanzaIndex] = formId;
+        } else {
+            delete state.englishFormSelections[state.activeStanzaIndex];
+        }
+        state.pendingEnglishRhymeEnding = null;
+        runAnalysis();
+    }
+
+    function closeEnglishPronunciationDialog() {
+        if (elements["english-pronunciation-dialog"].open) {
+            elements["english-pronunciation-dialog"].close();
+        }
+        state.activeEnglishPronunciation = null;
+    }
+
+    function applyEnglishPronunciation() {
+        const word = state.activeEnglishPronunciation;
+        const pattern = elements["english-custom-stress"].value.trim();
+        if (!word || !/^[012]+$/.test(pattern)) {
+            elements["english-custom-stress"].focus();
+            return;
+        }
+        state.englishOverrides[word.key] = pattern;
+        closeEnglishPronunciationDialog();
+        runAnalysis();
+    }
+
+    function resetEnglishPronunciation() {
+        const word = state.activeEnglishPronunciation;
+        if (word) {
+            delete state.englishOverrides[word.key];
+        }
+        closeEnglishPronunciationDialog();
+        runAnalysis();
+    }
+
     function scheduleSave() {
         window.clearTimeout(state.saveTimer);
         elements["draft-state"].textContent = t("saving");
@@ -4326,7 +4858,7 @@
 
     function currentDraftSnapshot() {
         return {
-            version: 7,
+            version: 8,
             poemId: state.activePoemId,
             text: elements.composition.value,
             selections: state.selections,
@@ -4336,6 +4868,9 @@
             scansionMode: state.scansionMode,
             detectShithilaDvitva: state.detectShithilaDvitva,
             inputScheme: state.inputScheme,
+            englishFormSelections: state.englishFormSelections,
+            englishOverrides: state.englishOverrides,
+            englishRhymeOverrides: state.englishRhymeOverrides,
             language: state.language,
             selectionStart: elements.composition.selectionStart,
             selectionEnd: elements.composition.selectionEnd,
@@ -4347,6 +4882,9 @@
         return Boolean(draft.text || Object.keys(draft.selections).length ||
             Object.keys(draft.templates).length ||
             Object.keys(draft.strongDrafts).length ||
+            Object.keys(draft.englishFormSelections || {}).length ||
+            Object.keys(draft.englishOverrides || {}).length ||
+            Object.keys(draft.englishRhymeOverrides || {}).length ||
             draft.scansionMode !== "auto" ||
             draft.detectShithilaDvitva ||
             draft.inputScheme !== "native");
@@ -4403,7 +4941,7 @@
                 return null;
             }
             const draft = JSON.parse(raw);
-            if (!draft || ![1, 2, 3, 4, 5, 6, 7].includes(draft.version) ||
+            if (!draft || ![1, 2, 3, 4, 5, 6, 7, 8].includes(draft.version) ||
                 typeof draft.text !== "string") {
                 return null;
             }
@@ -4431,6 +4969,19 @@
         state.scansionMode = ChandasScansion.normalizeMode(poem.scansionMode);
         state.detectShithilaDvitva = poem.detectShithilaDvitva === true;
         state.inputScheme = normalizeInputScheme(poem.inputScheme);
+        state.englishFormSelections = poem.englishFormSelections &&
+            typeof poem.englishFormSelections === "object"
+            ? poem.englishFormSelections
+            : {};
+        state.englishOverrides = poem.englishOverrides &&
+            typeof poem.englishOverrides === "object"
+            ? poem.englishOverrides
+            : {};
+        state.englishRhymeOverrides = poem.englishRhymeOverrides &&
+            typeof poem.englishRhymeOverrides === "object"
+            ? poem.englishRhymeOverrides
+            : {};
+        state.pendingEnglishRhymeEnding = null;
         state.strongHistory = {};
         state.strongFuture = {};
         state.analysis = null;
@@ -4517,6 +5068,10 @@
         state.scansionMode = "auto";
         state.detectShithilaDvitva = false;
         state.inputScheme = "native";
+        state.englishFormSelections = {};
+        state.englishOverrides = {};
+        state.englishRhymeOverrides = {};
+        state.pendingEnglishRhymeEnding = null;
         state.strongHistory = {};
         state.strongFuture = {};
         state.analysis = null;
@@ -4542,7 +5097,7 @@
             return savedPoemAnalysisUrl(state.sharingPoem);
         }
         const url = new URL("https://chandas.org/");
-        url.searchParams.set("v", "4");
+        url.searchParams.set("v", "5");
         url.searchParams.set("verse", authoredCompositionText());
         if (state.inputScheme !== "native") {
             url.searchParams.set("scheme", state.inputScheme);
@@ -4553,15 +5108,29 @@
         if (state.scansionMode !== "auto") {
             url.searchParams.set("scan", state.scansionMode);
         }
+        if (isEnglishMode() && Object.keys(state.englishOverrides).length) {
+            url.searchParams.set("eo", JSON.stringify(state.englishOverrides));
+        }
+        if (isEnglishMode() && Object.keys(state.englishRhymeOverrides).length) {
+            url.searchParams.set("ero", JSON.stringify(state.englishRhymeOverrides));
+        }
         const stanzas = state.analysis ? state.analysis.stanzas : [];
         if (!stanzas.length && state.selections[0]) {
             url.searchParams.set("meter", state.selections[0]);
+        }
+        if (!stanzas.length && isEnglishMode() &&
+            state.englishFormSelections[0]) {
+            url.searchParams.set("form1", state.englishFormSelections[0]);
         }
         stanzas.forEach((stanza, index) => {
             const meterId = state.selections[stanza.index] ||
                 stanza.selectedMeterId;
             if (meterId) {
                 url.searchParams.set(`meter${index + 1}`, meterId);
+            }
+            const formId = state.englishFormSelections[stanza.index];
+            if (isEnglishMode() && formId) {
+                url.searchParams.set(`form${index + 1}`, formId);
             }
             const mode = templateMode(stanza.index);
             if (mode !== "off") {
@@ -4584,7 +5153,7 @@
 
     function savedPoemAnalysisUrl(poem) {
         const url = new URL("https://chandas.org/");
-        url.searchParams.set("v", "4");
+        url.searchParams.set("v", "5");
         url.searchParams.set("verse", poem.text);
         const inputScheme = normalizeInputScheme(poem.inputScheme);
         if (inputScheme !== "native") {
@@ -4597,8 +5166,17 @@
         if (scansionMode !== "auto") {
             url.searchParams.set("scan", scansionMode);
         }
+        if (inputScheme === "english" &&
+            Object.keys(poem.englishOverrides || {}).length) {
+            url.searchParams.set("eo", JSON.stringify(poem.englishOverrides));
+        }
+        if (inputScheme === "english" &&
+            Object.keys(poem.englishRhymeOverrides || {}).length) {
+            url.searchParams.set("ero", JSON.stringify(poem.englishRhymeOverrides));
+        }
         const stanzaIndexes = new Set([
             ...Object.keys(poem.selections || {}),
+            ...Object.keys(poem.englishFormSelections || {}),
             ...Object.keys(poem.templateModes || {}),
             ...Object.keys(poem.templates || {}),
             ...Object.keys(poem.strongDrafts || {}).map((key) => key.split(":")[0])
@@ -4608,6 +5186,11 @@
                 const meterId = poem.selections && poem.selections[index];
                 if (meterId) {
                     url.searchParams.set(`meter${index + 1}`, meterId);
+                }
+                const formId = poem.englishFormSelections &&
+                    poem.englishFormSelections[index];
+                if (inputScheme === "english" && formId) {
+                    url.searchParams.set(`form${index + 1}`, formId);
                 }
                 const mode = poem.templateModes && poem.templateModes[index] ||
                     (poem.templates && poem.templates[index] ? "ghost" : "off");
@@ -5856,6 +6439,8 @@
                 state.templates = {};
                 state.templateModes = {};
                 state.strongDrafts = {};
+                state.englishFormSelections = {};
+                state.pendingEnglishRhymeEnding = null;
                 state.analysis = null;
             }
             state.inputScheme = nextScheme;
@@ -5970,6 +6555,34 @@
             filterMeterOptions(elements["meter-search"].value));
         elements["meter-select"].addEventListener("change", () =>
             selectMeter(elements["meter-select"].value));
+        elements["english-form-select"].addEventListener("change", () =>
+            selectEnglishForm(elements["english-form-select"].value));
+        elements["close-english-pronunciation"].addEventListener(
+            "click",
+            closeEnglishPronunciationDialog
+        );
+        elements["english-pronunciation-dialog"].addEventListener(
+            "click",
+            (event) => {
+                if (event.target === elements["english-pronunciation-dialog"]) {
+                    closeEnglishPronunciationDialog();
+                }
+            }
+        );
+        elements["save-english-pronunciation"].addEventListener(
+            "click",
+            applyEnglishPronunciation
+        );
+        elements["reset-english-pronunciation"].addEventListener(
+            "click",
+            resetEnglishPronunciation
+        );
+        elements["english-custom-stress"].addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                applyEnglishPronunciation();
+            }
+        });
         elements["clear-meter"].addEventListener("click", () => selectMeter(""));
         elements["detect-shithila-dvitva"].addEventListener("change", () => {
             state.detectShithilaDvitva =

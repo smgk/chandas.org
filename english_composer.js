@@ -56,7 +56,9 @@
             return catalog.meters.map((meter) => ({
                 ...meter,
                 kind: "english",
-                patterns: [meter.pattern.repeat(meter.feet)],
+                patterns: [meter.analysisMode === "accentual"
+                    ? "S".repeat(meter.beats)
+                    : meter.pattern.repeat(meter.feet)],
                 linePolicy: {
                     type: "repeating",
                     unit: "line",
@@ -88,10 +90,14 @@
         });
 
         function compareComposerCandidates(left, right) {
-            return (MATCH_LEVEL_RANK[left.matchLevel] ?? 4) -
-                    (MATCH_LEVEL_RANK[right.matchLevel] ?? 4) ||
-                (left.effectiveScore ?? left.score ?? Infinity) -
+            // effectiveScore already includes completion, family, and
+            // prominence priors. Rank by that evidence before the coarse
+            // human-facing label so a generic accentual "exact" does not
+            // outrank a materially stronger named-foot reading.
+            return (left.effectiveScore ?? left.score ?? Infinity) -
                     (right.effectiveScore ?? right.score ?? Infinity) ||
+                (MATCH_LEVEL_RANK[left.matchLevel] ?? 4) -
+                    (MATCH_LEVEL_RANK[right.matchLevel] ?? 4) ||
                 (left.missingCount || 0) - (right.missingCount || 0) ||
                 String(left.id).localeCompare(String(right.id));
         }
@@ -113,7 +119,11 @@
                 kind: "english",
                 aliases: meter.aliases || [],
                 prominence: meter.prominence || 0,
-                patterns: [meter.pattern.repeat(meter.feet)],
+                patterns: [meter.analysisMode === "accentual"
+                    ? "S".repeat(meter.beats)
+                    : meter.pattern.repeat(meter.feet)],
+                analysisMode: meter.analysisMode || "accentual-syllabic",
+                beats: meter.beats || meter.feet,
                 matchLevel,
                 status: matchLevel,
                 missingCount,
@@ -122,8 +132,10 @@
                 guessedWords,
                 guessedWordCount: guessedWords.length,
                 observedSyllables: activeLine ? activeLine.syllables.length : 0,
-                expectedSyllables: activeLine ? activeLine.expectedPattern.length :
-                    meter.pattern.length * meter.feet,
+                expectedSyllables: meter.analysisMode === "accentual"
+                    ? null
+                    : activeLine ? activeLine.expectedPattern.length :
+                        meter.pattern.length * meter.feet,
                 activeLine,
                 confidence: guessedWords.length || matchLevel === "approximate"
                     ? "low"
@@ -133,18 +145,49 @@
             };
         }
 
-        function chosenLineCandidate(line, selectedMeterId) {
+        function bestAllowedCandidate(line, meterIds) {
+            const allowed = new Set(meterIds || []);
+            return [...(line.candidates || [])]
+                .filter((candidate) => allowed.has(candidate.id))
+                .sort((left, right) =>
+                    (MATCH_LEVEL_RANK[left.matchLevel] ?? 4) -
+                        (MATCH_LEVEL_RANK[right.matchLevel] ?? 4) ||
+                    compareComposerCandidates(left, right))[0] || null;
+        }
+
+        function chosenLineCandidate(line, selectedMeterId, formMeterIds,
+            dominantMeterId) {
             if (selectedMeterId) {
                 return line.candidates.find((candidate) =>
                     candidate.id === selectedMeterId) || line.bestCandidate;
+            }
+            const formCandidate = bestAllowedCandidate(line, formMeterIds);
+            if (formCandidate) {
+                return formCandidate;
+            }
+            if (dominantMeterId) {
+                const dominant = line.candidates.find((candidate) =>
+                    candidate.id === dominantMeterId);
+                if (dominant && ["exact", "compatible", "incomplete"]
+                    .includes(dominant.matchLevel)) {
+                    return dominant;
+                }
             }
             return [...line.candidates].sort(compareComposerCandidates)[0] ||
                 line.bestCandidate;
         }
 
-        function lineView(line, selectedMeterId, index) {
-            const chosen = chosenLineCandidate(line, selectedMeterId);
-            const hardDeviations = new Set((selectedMeterId && chosen
+        function lineView(line, selectedMeterId, index, options) {
+            const formMeterIds = options && options.formMeterIds;
+            const formSelected = Boolean(formMeterIds && formMeterIds.length);
+            const chosen = chosenLineCandidate(
+                line,
+                selectedMeterId,
+                formMeterIds,
+                options && options.dominantMeterId
+            );
+            const validates = Boolean(selectedMeterId || formSelected);
+            const hardDeviations = new Set((validates && chosen
                 ? chosen.deviations || []
                 : [])
                 .map((item) => `${item.syllable.start}:${item.syllable.end}`));
@@ -164,8 +207,20 @@
                 stressCount: syllables.filter((syllable) =>
                     syllable.lexicalStress > 0).length,
                 chosenCandidate: chosen,
-                selectedCandidate: selectedMeterId ? chosen : null
+                selectedCandidate: selectedMeterId ? chosen : null,
+                formTargetCandidate: formSelected ? chosen : null,
+                validationCandidate: validates ? chosen : null
             };
+        }
+
+        function formMeterChoices(form, lineIndex) {
+            if (!form || form.meterPolicy === "advisory") {
+                return [];
+            }
+            if (form.repeatMeterSequence) {
+                return form.meterSequence[lineIndex % form.meterSequence.length] || [];
+            }
+            return form.meterSequence[lineIndex] || [];
         }
 
         function analyze(text, selections, lexicon, catalog, engine, formTools) {
@@ -182,6 +237,13 @@
                 const selectedMeterId = meterById.has(selections[frame.index])
                     ? selections[frame.index]
                     : "";
+                const selectedFormId = formTools && formTools.selectedForms
+                    ? formTools.selectedForms[frame.index] || ""
+                    : "";
+                const selectedForm = formTools && formTools.catalog
+                    ? formTools.catalog.forms.find((form) =>
+                        form.id === selectedFormId) || null
+                    : null;
                 const result = engine.analyzeComposition(
                     frame.text,
                     lexicon,
@@ -189,11 +251,16 @@
                     {
                         offset: frame.start,
                         selectedMeterId,
-                        partialLastLine: true
+                        partialLastLine: true,
+                        overrides: formTools && formTools.overrides
                     }
                 );
                 const lines = result.lines.map((line, index) =>
-                    lineView(line, selectedMeterId, index));
+                    lineView(line, selectedMeterId, index, {
+                        formMeterIds: formMeterChoices(selectedForm, index),
+                        dominantMeterId: result.bestCandidate &&
+                            result.bestCandidate.id
+                    }));
                 lines.forEach((line) => {
                     segments.push(...line.syllables);
                     (line.chosenCandidate && line.chosenCandidate.words || [])
@@ -229,7 +296,11 @@
                     ? formTools.engine.analyzeStanza(
                         lines,
                         formTools.rhymeLexicon,
-                        formTools.catalog
+                        formTools.catalog,
+                        {
+                            selectedFormId,
+                            rhymeOverrides: formTools.rhymeOverrides
+                        }
                     )
                     : null;
                 return {
@@ -254,11 +325,13 @@
                     bestCandidate: candidates[0] || null,
                     rhyme: formAnalysis ? formAnalysis.rhyme : null,
                     forms: formAnalysis ? formAnalysis.forms : [],
-                    bestForm: formAnalysis ? formAnalysis.bestForm : null
+                    bestForm: formAnalysis ? formAnalysis.bestForm : null,
+                    selectedForm: formAnalysis ? formAnalysis.selectedForm : null,
+                    formProgress: formAnalysis ? formAnalysis.formProgress : null
                 };
             });
             return {
-                analysisVersion: "english-stress-1.0.0",
+                analysisVersion: "english-stress-2.0.0",
                 analysisSystem: "english-stress",
                 text: source,
                 stanzas,

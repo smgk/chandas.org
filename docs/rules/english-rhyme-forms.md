@@ -5,8 +5,8 @@ SPDX-License-Identifier: GPL-3.0-only
 
 # English rhyme and named forms — M5 rule packet
 
-**Status:** Implemented in version 1.41.0; limerick fallbacks completed in 1.42.3
-**Updated:** 2026-09-02
+**Status:** English Ear v2 implemented in version 1.50.0
+**Updated:** 2026-09-05
 
 ## Scope
 
@@ -22,9 +22,11 @@ The layer reports:
 - a stanza rhyme scheme, retaining `?` for endings absent from the dictionary;
 - named-form matches that combine line count, meter evidence, and rhyme.
 
-Slant rhyme, eye rhyme, internal rhyme, dialect profiles, historical
-pronunciation, and semantic or spelling-based guesses are deliberately not
-treated as perfect rhyme in this milestone.
+Assonance/consonance and eye rhyme are displayed as separately labeled
+evidence. A writer may also tap two line endings to declare the rhyme intended
+in their reading; the declaration stays local, is removable, and never becomes
+dictionary-perfect evidence. Internal rhyme, dialect profiles, and historical
+pronunciation remain later work.
 
 ## Data and reproducibility
 
@@ -50,8 +52,8 @@ terza rima, and the Spenserian stanza.
 Strict limerick retains the anapestic three/three/two/two/three-foot model.
 Common limerick is its lower-prominence fallback: it requires five lines and
 perfect `AABBA` rhyme, preserves the `3/3/2/2/3` beat contour, and accepts
-compatible iambic, trochaic, or anapestic line realizations. When both rules
-match, only the stricter Limerick result is returned.
+compatible accentual, iambic, trochaic, or anapestic line realizations. When
+both rules match, only the stricter Limerick result is returned.
 
 Limerick-y is the final fallback. It requires exactly five nonempty lines and
 a fully dictionary-known `AABBA` scheme, but deliberately makes no meter claim.
@@ -69,6 +71,11 @@ historical poems frequently use slant rhyme that M5 intentionally does not
 claim as perfect rhyme. Other forms retain their declared exact rhyme schemes.
 An exact label requires known rhyme endings and compatible line-meter evidence;
 otherwise the interface says “Possible form” or makes no form claim.
+
+In English mode, “Write as…” exposes the forms as composition targets rather
+than meter names. A selected form reports the current line, rhyme letter, beat
+or meter target, and graded progress before the poem is complete. Automatic
+form matches remain advisory and cannot create red correction marks.
 
 ## Sources
 

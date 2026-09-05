@@ -684,8 +684,42 @@ recommended, and optional behavior.
     Mutable English engine and catalog requests MUST carry an explicit asset
     version so an older service worker cannot combine stale form rules with a
     newer application shell.
-    Slant, eye, internal, dialect-sensitive, and historical rhyme remain
-    outside M5.
+    Internal, dialect-profile, and historical-rhyme inference remain outside
+    M5.
+13. English Ear v2 MUST use distinct binary, ternary, and accentual scoring
+    profiles. Ternary feet MUST tolerate variable slack more readily than a
+    missing principal beat, while binary meters retain their stronger
+    weak/strong-position constraints.
+14. Contextual pronunciation ranking MAY use conservative local grammatical
+    cues (including common noun/verb stress alternations), but MUST retain the
+    dictionary alternatives and explain that the choice is contextual rather
+    than certain. Completed-line and poem-level evidence MAY rescan an
+    ambiguous line without discarding close alternatives.
+15. In explicit English mode the writer MUST be able to choose a named form
+    before typing. The composer MUST report the current line, target rhyme,
+    target beats or line meter, and graded meter/rhyme progress. Automatically
+    inferred forms remain advisory; only a chosen form or chosen line meter
+    may produce corrective highlights.
+16. The English analyzer MUST include isolated two-, three-, and four-beat
+    accentual meters. These count principal beats while permitting variable
+    pickups and intervening unstressed syllables; accentual analysis MUST NOT
+    reinterpret Indic syllables or alter the Guru–Laghu engine.
+17. Rhyme evidence MUST keep perfect dictionary rhyme distinct from labeled
+    assonance/consonance, eye rhyme, and a user-declared intended rhyme. A
+    declaration MUST be local, removable, and shareable in a versioned
+    analysis link; it MUST NOT masquerade as dictionary-perfect evidence.
+18. A writer MUST be able to review an uncertain or multiply pronounced word
+    and store a source-local stress pattern, including a custom syllable
+    expansion or contraction. This override MUST survive local draft storage,
+    saved poems, backup/restore, and analysis links without modifying the
+    shared pronunciation pack.
+19. English feedback SHOULD explain common named variations and accentual
+    rhythm in short, nonjudgmental language. Automatic suggestions MUST NOT
+    create red departure marks when neither a form nor a meter is selected.
+20. All English v2 assets MUST remain lazy-loaded only after explicit English
+    selection, live in the separate English runtime cache, work offline after
+    that first load, and pass the complete Indic, native-script,
+    transliteration, storage, and browser regression suites.
 
 ## 6. Analysis Engine Requirements
 

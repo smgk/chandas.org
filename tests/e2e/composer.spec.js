@@ -210,6 +210,49 @@ test("detects perfect rhyme and named forms only in English mode", async ({
     await expect(page.locator("#english-form-panel")).toBeHidden();
 });
 
+test("guides English forms and keeps poet-supplied readings local", async ({
+    page,
+    context
+}) => {
+    await page.locator("#input-scheme").selectOption("english");
+    await expect(page.locator("#transliteration-help"))
+        .toHaveText("English stress analysis is ready offline.", {
+            timeout: 15_000
+        });
+
+    await page.locator("#english-form-select")
+        .selectOption("english-form:english-sonnet");
+    await expect(page.locator("#english-form-progress-summary"))
+        .toContainText("English sonnet · Line 1 of 14 · rhyme A");
+
+    await page.locator("#composition").fill("we suspect the suspect");
+    await expect(page.locator("#english-pronunciation-review")).toBeVisible();
+    await page.locator("#english-pronunciation-review summary").click();
+    await page.locator("#english-pronunciation-list button", {
+        hasText: "suspect"
+    }).first().click();
+    await page.locator("#english-custom-stress").fill("01");
+    await page.locator("#save-english-pronunciation").click();
+    await expect(page.locator("#english-pronunciation-dialog")).toBeHidden();
+
+    await page.locator("#composition").fill("love\nmove");
+    const endings = page.locator("#english-rhyme-endings button");
+    await endings.nth(0).click();
+    await expect(page.locator("#english-form-note"))
+        .toContainText("Choose another line ending");
+    await endings.nth(1).click();
+    await expect(page.locator('#english-rhyme-relations [data-kind="user"]'))
+        .toContainText("your rhyme");
+
+    await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+    await page.locator("#share").click();
+    await page.locator("#copy-analysis-url").click();
+    const copied = new URL(await page.evaluate(() => navigator.clipboard.readText()));
+    expect(copied.searchParams.get("form1"))
+        .toBe("english-form:english-sonnet");
+    expect(copied.searchParams.get("ero")).toBeTruthy();
+});
+
 test.describe("English optional resource recovery", () => {
     test.use({ serviceWorkers: "block" });
 
@@ -1956,7 +1999,7 @@ test("copies and round-trips a per-stanza analysis link", async ({ page, browser
     const copied = new URL(await page.evaluate(() => navigator.clipboard.readText()));
 
     expect(copied.origin).toBe("https://chandas.org");
-    expect(copied.searchParams.get("v")).toBe("4");
+    expect(copied.searchParams.get("v")).toBe("5");
     expect(copied.searchParams.get("verse")).toBe(composition);
     expect(copied.searchParams.get("meter1")).toBe("madhu");
     expect(copied.searchParams.get("template1")).toBe("ghost");
@@ -2230,12 +2273,12 @@ test("opens the concise public roadmap from the footer and keeps it offline", as
 
     await expect(page).toHaveURL(/roadmap\.html$/);
     await expect(page.locator("h1")).toHaveText("Roadmap");
-    await expect(page.locator(".public-roadmap li")).toHaveCount(9);
+    await expect(page.locator(".public-roadmap li")).toHaveCount(10);
     await expect(page.locator("main")).toContainText("Anonymous composition");
 
     await context.setOffline(true);
     await page.reload();
-    await expect(page.locator(".public-roadmap li")).toHaveCount(9);
+    await expect(page.locator(".public-roadmap li")).toHaveCount(10);
 });
 
 test("has no horizontal overflow at the target viewport", async ({ page }) => {

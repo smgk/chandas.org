@@ -115,6 +115,46 @@
             return left.some((record) => rightKeys.has(record.key));
         }
 
+        function phonemeParts(record) {
+            return String(record && record.key || "").split(".").filter(Boolean);
+        }
+
+        function slantRhymeKind(left, right) {
+            for (const leftRecord of left || []) {
+                const leftParts = phonemeParts(leftRecord);
+                for (const rightRecord of right || []) {
+                    const rightParts = phonemeParts(rightRecord);
+                    if (!leftParts.length || !rightParts.length) {
+                        continue;
+                    }
+                    if (leftParts[0] === rightParts[0]) {
+                        return "assonance";
+                    }
+                    if (leftParts.at(-1) === rightParts.at(-1)) {
+                        return "consonance";
+                    }
+                }
+            }
+            return "";
+        }
+
+        function spellingRime(word) {
+            const normalized = normalizeWord(word).replace(/[^a-z]/g, "");
+            const vowel = Math.max(
+                normalized.lastIndexOf("a"),
+                normalized.lastIndexOf("e"),
+                normalized.lastIndexOf("i"),
+                normalized.lastIndexOf("o"),
+                normalized.lastIndexOf("u"),
+                normalized.lastIndexOf("y")
+            );
+            return vowel >= 0 ? normalized.slice(vowel) : normalized.slice(-2);
+        }
+
+        function overridePairKey(left, right) {
+            return [left.start, right.start].sort((a, b) => a - b).join(":");
+        }
+
         function rhymeKind(records) {
             if (!records || !records.length) {
                 return "unknown";
@@ -129,7 +169,7 @@
             return index < 26 ? letter : `${letter}${Math.floor(index / 26)}`;
         }
 
-        function analyzeRhymes(lines, lexicon) {
+        function analyzeRhymes(lines, lexicon, options) {
             const groups = [];
             const endings = (lines || []).map((line, lineIndex) => {
                 const token = line.tokens && line.tokens.at(-1);
@@ -177,6 +217,39 @@
                 };
             });
             const repeatedGroups = groups.filter((group) => group.lines.length > 1);
+            const relations = [];
+            for (let leftIndex = 0; leftIndex < endings.length; leftIndex += 1) {
+                for (let rightIndex = leftIndex + 1;
+                    rightIndex < endings.length; rightIndex += 1) {
+                    const left = endings[leftIndex];
+                    const right = endings[rightIndex];
+                    let kind = "";
+                    if (left.label !== "?" && left.label === right.label) {
+                        kind = "perfect";
+                    } else if (options && options.rhymeOverrides &&
+                        options.rhymeOverrides[overridePairKey(left, right)]) {
+                        kind = "user";
+                    } else if (left.keys.length && right.keys.length) {
+                        kind = slantRhymeKind(
+                            left.keys.map((key) => ({ key })),
+                            right.keys.map((key) => ({ key }))
+                        );
+                    }
+                    if (!kind && left.word && right.word &&
+                        spellingRime(left.word).length > 1 &&
+                        spellingRime(left.word) === spellingRime(right.word)) {
+                        kind = "eye";
+                    }
+                    if (kind) {
+                        relations.push({
+                            lines: [left.line, right.line],
+                            words: [left.word, right.word],
+                            kind,
+                            key: overridePairKey(left, right)
+                        });
+                    }
+                }
+            }
             return {
                 scheme: endings.map((ending) => ending.label).join(""),
                 displayScheme: endings.map((ending) => ending.label).join(" "),
@@ -187,7 +260,8 @@
                     label: schemeLabel(groups.indexOf(group)),
                     lines: group.lines,
                     kind: rhymeKind(group.records)
-                }))
+                })),
+                relations
             };
         }
 
@@ -271,9 +345,15 @@
             const maximumDistance = flexible ? 1 : 0;
             const maximumApproximateScore = flexible ? 0.34 : 0.24;
             const normalized = candidates.map((candidate) => {
-                const canonicalDistance = Math.abs(
-                    candidate.canonicalPattern.length - candidate.syllables.length
-                );
+                // Accentual verse counts beats, not syllables. Comparing its
+                // three-beat signature with a five- or seven-syllable line
+                // would reject exactly the variable slack it is meant to
+                // permit.
+                const canonicalDistance = candidate.analysisMode === "accentual"
+                    ? 0
+                    : Math.abs(
+                        candidate.canonicalPattern.length - candidate.syllables.length
+                    );
                 const recoverPartial = candidate.matchLevel === "incomplete" &&
                     (canonicalDistance === 0 ||
                         (flexible && canonicalDistance <= 1));
@@ -369,21 +449,163 @@
                 .sort(compareForms);
         }
 
-        function analyzeStanza(lines, rhymeLexicon, catalog) {
+        function expectedLineCount(form, observedCount) {
+            if (Number.isInteger(form.lineCount.exact)) {
+                return form.lineCount.exact;
+            }
+            if (Number.isInteger(form.lineCount.multiple)) {
+                return Math.max(
+                    form.lineCount.min || form.lineCount.multiple,
+                    Math.ceil(Math.max(observedCount, 1) /
+                        form.lineCount.multiple) * form.lineCount.multiple
+                );
+            }
+            return Math.max(form.lineCount.min || 1, observedCount);
+        }
+
+        function bestProgressScheme(form, totalLines) {
+            const schemes = expectedSchemes(form, totalLines);
+            return schemes[0] || "";
+        }
+
+        function rhymeProgress(expected, rhyme) {
+            if (!expected || expected === "unrhymed") {
+                return {
+                    expectedPairs: 0,
+                    matchedPairs: 0,
+                    plausiblePairs: 0,
+                    mismatchedPairs: 0,
+                    unknownPairs: 0
+                };
+            }
+            const typed = Math.min(expected.length, rhyme.endings.length);
+            const relationByLines = new Map((rhyme.relations || []).map((relation) =>
+                [relation.lines.join(":"), relation.kind]));
+            let expectedPairs = 0;
+            let matchedPairs = 0;
+            let plausiblePairs = 0;
+            let mismatchedPairs = 0;
+            let unknownPairs = 0;
+            for (let left = 0; left < typed; left += 1) {
+                for (let right = left + 1; right < typed; right += 1) {
+                    if (expected[left] !== expected[right]) {
+                        continue;
+                    }
+                    expectedPairs += 1;
+                    const relation = relationByLines.get(`${left + 1}:${right + 1}`);
+                    if (relation === "perfect" || relation === "user") {
+                        matchedPairs += 1;
+                    } else if (["assonance", "consonance", "eye"]
+                        .includes(relation)) {
+                        plausiblePairs += 1;
+                    } else if (rhyme.endings[left].label === "?" ||
+                        rhyme.endings[right].label === "?") {
+                        unknownPairs += 1;
+                    } else {
+                        mismatchedPairs += 1;
+                    }
+                }
+            }
+            return {
+                expectedPairs,
+                matchedPairs,
+                plausiblePairs,
+                mismatchedPairs,
+                unknownPairs
+            };
+        }
+
+        function analyzeFormProgress(form, lines, rhyme) {
+            if (!form) {
+                return null;
+            }
+            const observedLines = lines.length;
+            const targetLines = expectedLineCount(form, observedLines);
+            const expectedRhyme = form.rhymePolicy === "unrhymed"
+                ? "unrhymed"
+                : bestProgressScheme(form, targetLines);
+            const meterLines = lines.map((line, index) => {
+                if (form.meterPolicy === "advisory") {
+                    return { line: index + 1, status: "advisory", fit: null };
+                }
+                const choices = meterChoices(form, index);
+                const candidates = (line.candidates || [])
+                    .filter((candidate) => choices.includes(candidate.id))
+                    .sort((left, right) =>
+                        (MATCH_COST[left.matchLevel] ?? 1) -
+                            (MATCH_COST[right.matchLevel] ?? 1) ||
+                        (left.effectiveScore ?? left.score ?? Infinity) -
+                            (right.effectiveScore ?? right.score ?? Infinity));
+                const candidate = candidates[0] || null;
+                return {
+                    line: index + 1,
+                    choices,
+                    candidateId: candidate && candidate.id,
+                    status: candidate ? candidate.matchLevel : "unknown",
+                    fit: candidate
+                };
+            });
+            const rhymeEvidence = rhymeProgress(expectedRhyme, rhyme);
+            const matchingMeterLines = meterLines.filter((item) =>
+                item.status === "exact" || item.status === "compatible").length;
+            const plausibleMeterLines = meterLines.filter((item) =>
+                item.status === "incomplete" || item.status === "approximate").length;
+            const nextLineIndex = observedLines >= targetLines
+                ? targetLines - 1
+                : Math.max(0, observedLines - 1);
+            const nextChoices = form.meterPolicy === "advisory"
+                ? []
+                : meterChoices(form, nextLineIndex);
+            const beatTarget = Array.isArray(form.beatSequence)
+                ? form.beatSequence[nextLineIndex % form.beatSequence.length]
+                : null;
+            return {
+                id: form.id,
+                name: form.name,
+                observedLines,
+                targetLines,
+                remainingLines: Math.max(0, targetLines - observedLines),
+                overflowLines: Math.max(0, observedLines - targetLines),
+                expectedRhyme,
+                currentLine: Math.min(Math.max(observedLines, 1), targetLines),
+                currentRhyme: expectedRhyme && expectedRhyme !== "unrhymed"
+                    ? expectedRhyme[Math.min(Math.max(observedLines - 1, 0),
+                        expectedRhyme.length - 1)]
+                    : "",
+                currentMeterChoices: nextChoices,
+                currentBeatTarget: beatTarget,
+                matchingMeterLines,
+                plausibleMeterLines,
+                meterLines,
+                rhyme: rhymeEvidence,
+                complete: observedLines === targetLines &&
+                    !rhymeEvidence.mismatchedPairs &&
+                    !rhymeEvidence.unknownPairs &&
+                    (form.meterPolicy === "advisory" ||
+                        matchingMeterLines === observedLines)
+            };
+        }
+
+        function analyzeStanza(lines, rhymeLexicon, catalog, options) {
             const activeLines = (lines || []).filter((line) =>
                 line.tokens && line.tokens.length);
-            const rhyme = analyzeRhymes(activeLines, rhymeLexicon);
+            const rhyme = analyzeRhymes(activeLines, rhymeLexicon, options);
             const forms = analyzeForms(activeLines, rhyme, catalog);
+            const selectedForm = catalog.forms.find((form) =>
+                form.id === (options && options.selectedFormId)) || null;
             return {
                 analysisSystem: "english-form",
                 rhyme,
                 forms,
-                bestForm: forms[0] || null
+                bestForm: forms[0] || null,
+                selectedForm,
+                formProgress: analyzeFormProgress(selectedForm, activeLines, rhyme)
             };
         }
 
         return {
             analyzeForms,
+            analyzeFormProgress,
             analyzeRhymes,
             analyzeStanza,
             canonicalTerzaRima,

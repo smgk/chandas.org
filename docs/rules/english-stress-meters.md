@@ -3,10 +3,11 @@ Copyright © 2025–2026 Ganesh Krishna Shankarathota
 SPDX-License-Identifier: GPL-3.0-only
 -->
 
-# English stress-meter rules — M1 packet
+# English stress-meter rules — English Ear v2
 
-**Rule version:** 1.0.0  
-**Analysis system:** `english-stress`  
+**Rule version:** 2.0.0
+
+**Analysis system:** `english-stress`
 **Status:** engineering-reviewed baseline; expert literary review remains
 welcome
 
@@ -26,6 +27,10 @@ The four initial foot families are:
 | Trochee | `SW` | 2–5 and 8 feet |
 | Anapest | `WWS` | 2–4 feet |
 | Dactyl | `SWW` | 2, 4, and 6 feet |
+
+The v2 catalog also includes two-, three-, and four-beat **accentual**
+lines. Their signatures count principal beats rather than syllables; pickups
+and the amount of unstressed slack may vary.
 
 These definitions follow the Poetry Foundation's pedagogical descriptions of
 [meter](https://www.poetryfoundation.org/education/glossary/Meter),
@@ -54,6 +59,18 @@ stress is intermediate. Monosyllabic function words may be promoted or
 demoted at low cost. A primary-stressed polysyllabic syllable in `W`, or an
 unstressed content syllable in `S`, is stronger contrary evidence.
 
+For multiply pronounced words, a conservative local grammar cue may rank one
+reading first—for example, *the suspect* versus *we suspect*. This is a
+contextual preference, not a deletion: all dictionary readings remain
+available, and the writer may tap the word to choose or enter the spoken
+stress pattern. Such overrides are source-local and travel with local saves
+and analysis links.
+
+Binary and ternary meters use different mismatch profiles. Ternary verse
+protects its principal beat more strongly while allowing greater freedom in
+the weak positions. Completed-line evidence may help an ambiguous line follow
+the poem's dominant family, but near-equal scans remain visible.
+
 ## Controlled variations
 
 M3 admits only the following named departures. They are encoded on a meter
@@ -75,7 +92,7 @@ feet.
   and deviation list; they do not automatically disqualify the dominant
   meter.
 
-The first release does not claim syntactic stress, historical pronunciation,
+The release does not claim full syntactic parsing, historical pronunciation,
 dialect inference, sprung rhythm, or genuine Old English scansion.
 
 ## Result vocabulary

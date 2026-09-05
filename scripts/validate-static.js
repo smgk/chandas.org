@@ -100,10 +100,14 @@ if (!englishCatalog.catalogVersion ||
 }
 const englishIds = new Set();
 for (const meter of englishCatalog.meters) {
+    const accentual = meter.analysisMode === "accentual";
     if (!meter.id || englishIds.has(meter.id) || !meter.name ||
-        !["iamb", "trochee", "anapest", "dactyl"].includes(meter.foot) ||
-        !/^(?:WS|SW|WWS|SWW)$/.test(meter.pattern) ||
-        !Number.isInteger(meter.feet) || meter.feet < 1) {
+        (accentual
+            ? meter.foot !== "accentual" ||
+                !Number.isInteger(meter.beats) || meter.beats < 1
+            : !["iamb", "trochee", "anapest", "dactyl"].includes(meter.foot) ||
+                !/^(?:WS|SW|WWS|SWW)$/.test(meter.pattern) ||
+                !Number.isInteger(meter.feet) || meter.feet < 1)) {
         throw new Error(`Invalid English meter metadata: ${meter.id || "(empty)"}`);
     }
     englishIds.add(meter.id);

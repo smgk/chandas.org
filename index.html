@@ -241,10 +241,34 @@ SPDX-License-Identifier: GPL-3.0-only
                     <section id="english-form-panel" class="english-form-panel"
                         aria-live="polite" hidden>
                         <span class="mini-label" data-i18n="englishRhymeAndForm">Rhyme &amp; form</span>
+                        <label class="english-form-goal" for="english-form-select">
+                            <span data-i18n="englishWriteAs">Write as</span>
+                            <select id="english-form-select">
+                                <option value="" data-i18n="englishNoChosenForm">No chosen form</option>
+                            </select>
+                        </label>
+                        <div id="english-form-progress" class="english-form-progress" hidden>
+                            <strong id="english-form-progress-summary"></strong>
+                            <div id="english-form-progress-details"></div>
+                        </div>
+                        <p id="english-reading-note" class="english-reading-note"
+                            hidden></p>
                         <output id="english-rhyme-scheme" class="english-rhyme-scheme"></output>
                         <div id="english-rhyme-endings" class="english-rhyme-endings"></div>
+                        <div id="english-rhyme-relations" class="english-rhyme-relations"></div>
                         <div id="english-form-list" class="english-form-list"></div>
                         <p id="english-form-note" class="english-form-note"></p>
+                        <details id="english-pronunciation-review"
+                            class="english-pronunciation-review" hidden>
+                            <summary data-i18n="englishReviewPronunciation">
+                                Review pronunciation
+                            </summary>
+                            <p data-i18n="englishPronunciationHelp">
+                                Choose how a word is spoken here; your choice stays on this device.
+                            </p>
+                            <div id="english-pronunciation-list"
+                                class="english-pronunciation-list"></div>
+                        </details>
                     </section>
 
                     <div id="analysis-tools" class="analysis-tools">
@@ -422,6 +446,38 @@ SPDX-License-Identifier: GPL-3.0-only
             <button id="cancel-conversion" type="button" class="quiet-button" data-i18n="cancel">Cancel</button>
             <button id="copy-conversion" type="button" class="destination-button" data-i18n="copyConversion">Copy conversion</button>
             <button id="apply-conversion" type="button" class="primary-button" data-i18n="replaceComposition">Replace composition</button>
+        </div>
+    </dialog>
+
+    <dialog id="english-pronunciation-dialog" class="english-pronunciation-dialog"
+        aria-labelledby="english-pronunciation-title">
+        <div class="dialog-heading">
+            <div>
+                <p class="eyebrow" data-i18n="englishPronunciation">Pronunciation</p>
+                <h2 id="english-pronunciation-title"></h2>
+            </div>
+            <button id="close-english-pronunciation" class="close-button"
+                type="button" aria-label="Close">×</button>
+        </div>
+        <p data-i18n="englishStressPatternHelp">
+            Use 0 for weak, 1 for primary stress, and 2 for secondary stress.
+        </p>
+        <div id="english-pronunciation-choices"
+            class="english-pronunciation-choices"></div>
+        <label for="english-custom-stress" data-i18n="englishCustomStress">
+            Custom stress pattern
+        </label>
+        <input id="english-custom-stress" type="text" inputmode="numeric"
+            pattern="[012]+" maxlength="12" placeholder="01">
+        <div class="conversion-actions">
+            <button id="reset-english-pronunciation" type="button"
+                class="quiet-button" data-i18n="englishUseDictionary">
+                Use dictionary
+            </button>
+            <button id="save-english-pronunciation" type="button"
+                class="primary-button" data-i18n="englishUsePronunciation">
+                Use this reading
+            </button>
         </div>
     </dialog>
 

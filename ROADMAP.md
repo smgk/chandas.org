@@ -2,13 +2,15 @@
 
 **Status:** Active post-MVP plan
 
-**Updated:** 2026-09-02
+**Updated:** 2026-09-05
 
 **Baseline:** `mvp-baseline`
 
 This roadmap records what remains after the large post-MVP implementation
-cycle. `requirements.md` remains the product authority. Detailed English
-research is in [englishprosodyplan.md](englishprosodyplan.md).
+cycle. `requirements.md` remains the product authority. Detailed foundation
+research is in [englishprosodyplan.md](englishprosodyplan.md); the newer
+listening-and-guidance plan is in
+[english-stress-plan.md](english-stress-plan.md).
 
 ## Completed foundation
 
@@ -96,7 +98,22 @@ with positive, variant, incomplete, ambiguous, and negative checks.
 - Keep form inference separate from its underlying line meter so equivalent
   rhythm names do not crowd the candidate list.
 
-### M6 — Finish reviewed Indic rule families
+### M6 — English Ear v2
+
+**Status:** Complete in version 1.50.0
+
+- Apply family-specific parsing and conservative contextual pronunciation
+  ranking while retaining alternate readings.
+- Add local tap-to-correct stress, guided “Write as…” forms, and graded
+  line/rhyme progress.
+- Add isolated two-, three-, and four-beat accentual meters for rhythms with
+  variable slack, including the common-limerick contour.
+- Label near, eye, and user-declared rhyme evidence without promoting it to
+  dictionary-perfect rhyme.
+- Teach common variations gently and keep automatic detection free of red
+  corrective marks.
+
+### M7 — Finish reviewed Indic rule families
 
 - Complete scholarly review gates for Kanda, Ragale, Ṣaṭpadi, Tripadi,
   Sāṅgatya, Akkara, Telugu yati-maitri, Gujarati pronunciation-dependent
@@ -107,7 +124,7 @@ with positive, variant, incomplete, ambiguous, and negative checks.
 - Continue the sourced, child-safe example corpus and promote provisional
   claims individually.
 
-### M7 — Android distribution
+### M8 — Android distribution
 
 - Rebuild the wrapper from the settled web assets.
 - Complete device, offline-update, file hand-off, accessibility, and backup
@@ -116,18 +133,19 @@ with positive, variant, incomplete, ambiguous, and negative checks.
   public download or store channel.
 - Keep the website deployable independently while Android is prepared.
 
-### M8 — Further language and prosody expansion
+### M9 — Further language and prosody expansion
 
 - Add additional Indic scripts one at a time using the existing
   normalization, source-range, golden-corpus, and regression gates.
-- Expand English into accentual and modern alliterative verse, then separately
-  research genuine Old English and sprung rhythm.
+- Expand English into modern alliterative and syllabic verse, then separately
+  research genuine Old English, dialect profiles, historical rhyme, sprung
+  rhythm, and nonjudgmental free-verse pattern summaries.
 - Add optional performance/timing layers to custom forms without changing the
   reproducible written-text model.
 - Improve dictionary register, dialect, and provenance labels where licensed
   evidence permits.
 
-### M9 — Optional user-owned infrastructure
+### M10 — Optional user-owned infrastructure
 
 - Evaluate client-side-compressed analysis links before considering any
   hosted short-code service.
@@ -152,7 +170,7 @@ with positive, variant, incomplete, ambiguous, and negative checks.
 
 ## Immediate approval gate
 
-The next proposed work is **M6 — Finish reviewed Indic rule families**. M5 now
-adds perfect end rhyme and named forms only after the writer explicitly chooses
-English, while keeping form names out of the line-meter list. M6 remains gated
-on rule-family evidence and owner review.
+The next proposed work is **M7 — Finish reviewed Indic rule families**. English
+Ear v2 is delivered only after the writer explicitly chooses English and keeps
+its analyzer, data, state, and cache separate from Indic prosody. M7 remains
+gated on rule-family evidence and owner review.

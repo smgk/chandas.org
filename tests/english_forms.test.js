@@ -245,9 +245,84 @@ test("recognizes a flexible 3/3/2/2/3 AABBA poem as a common limerick", () => {
             "english:iambic-trimeter",
             "english:iambic-dimeter",
             "english:iambic-dimeter",
-            "english:trochaic-trimeter"
+            "english:accentual-three-beat"
         ]
     );
+});
+
+test("a selected form supplies line-by-line targets before exact recognition", () => {
+    const selectedFormId = "english-form:english-sonnet";
+    const analysis = Composer.analyze(
+        "Shall I compare thee to a summer's day?",
+        {},
+        stressLexicon,
+        meters,
+        English,
+        {
+            engine: Forms,
+            rhymeLexicon,
+            catalog: formCatalog,
+            selectedForms: { 0: selectedFormId }
+        }
+    );
+    const stanza = analysis.stanzas[0];
+
+    assert.equal(stanza.selectedForm.id, selectedFormId);
+    assert.equal(stanza.formProgress.targetLines, 14);
+    assert.equal(stanza.formProgress.currentRhyme, "A");
+    assert.ok(stanza.formProgress.currentMeterChoices.includes(
+        "english:iambic-pentameter"));
+    assert.equal(stanza.lines[0].formTargetCandidate.id,
+        "english:iambic-pentameter");
+});
+
+test("the public-domain nursery fixture receives its accentual beat contour", () => {
+    const fixture = corpus.accentualFixtures[0];
+    const analysis = Composer.analyze(
+        fixture.text,
+        {},
+        stressLexicon,
+        meters,
+        English,
+        {
+            engine: Forms,
+            rhymeLexicon,
+            catalog: formCatalog,
+            selectedForms: { 0: "english-form:common-limerick" }
+        }
+    );
+    const stanza = analysis.stanzas[0];
+
+    assert.equal(stanza.rhyme.scheme, "AABBA");
+    assert.deepEqual(stanza.lines.map((line) =>
+        line.formTargetCandidate.expectedPattern.replace(/W/g, "").length),
+    fixture.expectedBeatShape);
+    assert.equal(stanza.violationCount, 0,
+        "a selected accentual contour must not punish variable slack");
+});
+
+test("near and user-declared rhymes remain labeled evidence", () => {
+    const lines = ["love", "move", "stone", "gone"].map((word, index) => ({
+        index,
+        start: index * 10,
+        end: index * 10 + word.length,
+        tokens: [{
+            text: word,
+            normalized: word,
+            start: index * 10,
+            end: index * 10 + word.length
+        }]
+    }));
+    const result = Forms.analyzeRhymes(lines, rhymeLexicon, {
+        rhymeOverrides: { "0:10": true }
+    });
+
+    assert.ok(result.relations.some((relation) =>
+        relation.kind === "user" && relation.key === "0:10"));
+    assert.ok(result.relations.some((relation) =>
+        ["assonance", "consonance", "eye"].includes(relation.kind)));
+    assert.notEqual(result.scheme[0], result.scheme[1],
+        "declared rhyme must not masquerade as dictionary-perfect rhyme");
 });
 
 test("keeps M5 rhyme and form analysis inside the live-composition budget", () => {

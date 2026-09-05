@@ -112,7 +112,7 @@ test("retains alternatives, local overrides, and honest unknown-word confidence"
     assert.equal(guessed.bestCandidate.words[0].pronunciationConfidence, "guessed");
 });
 
-test("retains noun-verb stress alternatives without inventing grammar context", () => {
+test("retains noun-verb alternatives and conservatively ranks grammar context", () => {
     const expected = {
         suspect: ["01", "12"],
         conflict: ["01", "10"],
@@ -127,13 +127,20 @@ test("retains noun-verb stress alternatives without inventing grammar context", 
             item.syllables.map((syllable) => syllable.lexicalStress).join("")),
         patterns, word);
     }
+
+    const noun = English.lineRealizations("the suspect", 0, lexicon, {});
+    const verb = English.lineRealizations("we suspect", 0, lexicon, {});
+    assert.equal(noun.realizations[0].words[1].stress, "12");
+    assert.equal(noun.realizations[0].words[1].contextualRole, "noun");
+    assert.equal(verb.realizations[0].words[1].stress, "01");
+    assert.equal(verb.realizations[0].words[1].contextualRole, "verb");
 });
 
-test("validates the versioned M3 catalog and controlled template variations", () => {
+test("validates the English v2 catalog and controlled template variations", () => {
     assert.equal(English.validateCatalog(meters), meters);
-    assert.equal(meters.meters.length, 17);
+    assert.equal(meters.meters.length, 20);
     assert.deepEqual(new Set(meters.meters.map((meter) => meter.foot)),
-        new Set(["iamb", "trochee", "anapest", "dactyl"]));
+        new Set(["iamb", "trochee", "anapest", "dactyl", "accentual"]));
 
     const iamb = meters.meters.find((meter) =>
         meter.id === "english:iambic-pentameter");
@@ -156,6 +163,52 @@ test("validates the versioned M3 catalog and controlled template variations", ()
         item.variations.includes("initial-slack-omission")));
     assert.ok(English.templateVariants(anapest).some((item) =>
         item.variations.some((variation) => variation.startsWith("weak-resolution-"))));
+
+    const threeBeat = meters.meters.find((meter) =>
+        meter.id === "english:accentual-three-beat");
+    assert.deepEqual(English.templateVariants(threeBeat), [{
+        pattern: "SSS",
+        cost: 0,
+        variations: []
+    }]);
+});
+
+test("accentual lines retain their beat count while allowing variable slack", () => {
+    const short = English.analyzeLine(
+        "Hickory dickory dock",
+        lexicon,
+        meters,
+        { selectedMeterId: "english:accentual-three-beat" }
+    ).selected;
+    const long = English.analyzeLine(
+        "The little mouse ran all the way up the old clock",
+        lexicon,
+        meters,
+        { selectedMeterId: "english:accentual-three-beat" }
+    ).selected;
+
+    assert.equal(short.analysisMode, "accentual");
+    assert.equal(short.syllables.filter((item) => item.expectedStress === "S").length,
+        3);
+    assert.equal(long.syllables.filter((item) => item.expectedStress === "S").length,
+        3);
+    assert.notEqual(short.syllables.length, long.syllables.length);
+    assert.equal(long.extraCount, 0);
+});
+
+test("a source-local pronunciation override changes only the tapped word", () => {
+    const text = "record the record";
+    const tokens = English.tokenize(text, 0);
+    const secondKey = `${tokens[2].start}:${tokens[2].end}`;
+    const result = English.lineRealizations(text, 0, lexicon, {
+        overrides: { [secondKey]: "10" }
+    });
+
+    assert.equal(result.realizations[0].words[2].stress, "10");
+    assert.equal(result.realizations[0].words[2].pronunciationProvenance,
+        "override");
+    assert.notEqual(result.realizations[0].words[0].pronunciationProvenance,
+        "override");
 });
 
 test("the M1 public-domain golden corpus has complete provenance", () => {
@@ -180,7 +233,7 @@ test("the M1 public-domain golden corpus has complete provenance", () => {
             /^https:\/\//.test(example.source.url), example.id);
         assert.equal(example.rights, "Public domain", example.id);
     });
-    assert.deepEqual(new Set(corpus.futureFormFixtures.map((example) =>
+    assert.deepEqual(new Set(corpus.accentualFixtures.map((example) =>
         example.form)), new Set(["accentual-nursery-rhyme"]));
 });
 

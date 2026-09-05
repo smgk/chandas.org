@@ -153,8 +153,8 @@ Android application is built and released separately.
 | `english_analysis.js` | Isolated English pronunciation, source alignment, stress-meter scoring, and ambiguity reporting |
 | `english_composer.js` | Lazy English composer adapter, stanza state, source-local stress rendering, and UI-safe ranking |
 | `english_forms.js` | Optional perfect-rhyme grouping and named-form inference |
-| `english_meters.json` | Versioned iambic, trochaic, anapestic, and dactylic M3 catalog |
-| `english_forms.json` | Declarative M5 line-count, meter, and rhyme requirements |
+| `english_meters.json` | Versioned iambic, trochaic, anapestic, dactylic, and accentual English catalog |
+| `english_forms.json` | Declarative named-form targets, line rhythm, and rhyme requirements |
 | `data/english/` | Pinned CMUdict-derived stress/rhyme packs, reproducible build notes, and license |
 | `roman_transliteration.js` | Offline Roman parsing, native/Roman buffer conversion, Devanagari shadows, and source-range projection |
 | `custom_meter.js` | Reviewable custom-form inference, validation schema, local persistence normalization, and catalog projection |
@@ -178,6 +178,7 @@ Android application is built and released separately.
 | `requirements.md` | Product and correctness requirements |
 | `ROADMAP.md` | Post-MVP engineering plan and completed capabilities |
 | `englishprosodyplan.md` | Researched architecture, catalog, risks, and gated milestones for English stress prosody |
+| `english-stress-plan.md` | English Ear v2 listening, correction, guided-form, accentual, rhyme, and teaching plan |
 | `docs/` | Rule packets and future script-expansion research |
 | `tests/` | Unit, static, persistence, and Playwright browser tests |
 | `android/` | Offline Android wrapper |

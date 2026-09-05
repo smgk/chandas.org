@@ -30,6 +30,17 @@
             "was", "we", "were", "what", "when", "where", "which", "who",
             "whom", "whose", "why", "will", "with", "would", "you", "your"
         ]);
+        const VERB_CUES = new Set([
+            "to", "can", "could", "did", "do", "does", "may", "might",
+            "must", "shall", "should", "will", "would"
+        ]);
+        const SUBJECT_CUES = new Set([
+            "i", "you", "he", "she", "it", "we", "they", "who"
+        ]);
+        const NOUN_CUES = new Set([
+            "a", "an", "the", "this", "that", "these", "those", "my",
+            "your", "his", "her", "its", "our", "their", "each", "every"
+        ]);
         const LEXICON_CACHE = new WeakMap();
 
         function compareText(left, right) {
@@ -264,23 +275,65 @@
                 index === primary ? "1" : "0").join("");
         }
 
-        function overridePatterns(word, overrides) {
+        function overridePatterns(word, overrides, token) {
             if (!overrides) {
                 return [];
             }
-            const value = overrides[word];
+            const sourceKey = token && Number.isInteger(token.start) &&
+                Number.isInteger(token.end)
+                ? `${token.start}:${token.end}`
+                : "";
+            const value = sourceKey && overrides[sourceKey] !== undefined
+                ? overrides[sourceKey]
+                : overrides[word];
             const values = Array.isArray(value) ? value : [value];
             return [...new Set(values.map(String).filter((item) => /^[012]+$/.test(item)))];
         }
 
-        function lookupPatterns(token, lexicon, overrides) {
-            const overridden = overridePatterns(token.normalized, overrides);
+        function contextualRole(tokens, tokenIndex) {
+            const previous = tokens[tokenIndex - 1] &&
+                tokens[tokenIndex - 1].normalized;
+            const previousPrevious = tokens[tokenIndex - 2] &&
+                tokens[tokenIndex - 2].normalized;
+            if (VERB_CUES.has(previous) || SUBJECT_CUES.has(previous) ||
+                (previous === "not" && (VERB_CUES.has(previousPrevious) ||
+                    SUBJECT_CUES.has(previousPrevious)))) {
+                return { role: "verb", reason: "verb-context" };
+            }
+            if (NOUN_CUES.has(previous)) {
+                return { role: "noun", reason: "noun-context" };
+            }
+            return { role: "unknown", reason: "context-ambiguous" };
+        }
+
+        function contextualPatternCost(pattern, alternatives, context) {
+            if (!context || context.role === "unknown" ||
+                pattern.length < 2 || alternatives.length < 2) {
+                return 0;
+            }
+            // CMUdict's digits are categories, not numeric intensity:
+            // primary (1) is stronger than secondary (2).
+            const strength = (stress) => stress === "1" ? 2 : stress === "2" ? 1 : 0;
+            const first = strength(pattern[0]);
+            const last = strength(pattern.at(-1));
+            const initiallyStressed = first > last;
+            const finallyStressed = last > first;
+            if (context.role === "noun") {
+                return initiallyStressed ? -0.08 : finallyStressed ? 0.2 : 0;
+            }
+            return finallyStressed ? -0.08 : initiallyStressed ? 0.2 : 0;
+        }
+
+        function lookupPatterns(token, lexicon, overrides, tokens) {
+            const overridden = overridePatterns(token.normalized, overrides, token);
             if (overridden.length) {
                 return overridden.map((pattern) => ({
                     pattern,
                     provenance: "override",
                     confidence: "certain",
-                    cost: 0
+                    cost: 0,
+                    contextualRole: "user",
+                    contextualReason: "user-override"
                 }));
             }
             const exact = lexicon.entries.get(token.normalized);
@@ -289,11 +342,15 @@
                     exact.every((pattern) => pattern.length === 1)
                     ? [exact.includes("0") ? "0" : exact[0]]
                     : exact;
+                const context = contextualRole(tokens || [token], token.index || 0);
                 return patterns.map((pattern, index) => ({
                     pattern,
                     provenance: "cmudict",
                     confidence: "dictionary",
-                    cost: index * 0.02
+                    cost: Math.max(0, index * 0.02 +
+                        contextualPatternCost(pattern, patterns, context)),
+                    contextualRole: context.role,
+                    contextualReason: context.reason
                 }));
             }
             if (token.normalized.endsWith("'s")) {
@@ -303,7 +360,9 @@
                         pattern,
                         provenance: "cmudict-possessive",
                         confidence: "derived",
-                        cost: 0.12 + index * 0.02
+                        cost: 0.12 + index * 0.02,
+                        contextualRole: "noun",
+                        contextualReason: "possessive"
                     }));
                 }
             }
@@ -311,7 +370,9 @@
                 pattern: heuristicStressPattern(token.normalized),
                 provenance: "heuristic",
                 confidence: "guessed",
-                cost: 1.25
+                cost: 1.25,
+                contextualRole: "unknown",
+                contextualReason: "out-of-vocabulary"
             }];
         }
 
@@ -324,7 +385,8 @@
                 const pronunciations = lookupPatterns(
                     token,
                     lexicon,
-                    options && options.overrides
+                    options && options.overrides,
+                    tokens
                 );
                 const next = [];
                 for (const beam of beams) {
@@ -333,7 +395,9 @@
                             .map((syllable) => ({
                                 ...syllable,
                                 pronunciationProvenance: pronunciation.provenance,
-                                pronunciationConfidence: pronunciation.confidence
+                                pronunciationConfidence: pronunciation.confidence,
+                                contextualRole: pronunciation.contextualRole,
+                                contextualReason: pronunciation.contextualReason
                             }));
                         next.push({
                             syllables: [...beam.syllables, ...syllables],
@@ -341,7 +405,11 @@
                                 ...token,
                                 stress: pronunciation.pattern,
                                 pronunciationProvenance: pronunciation.provenance,
-                                pronunciationConfidence: pronunciation.confidence
+                                pronunciationConfidence: pronunciation.confidence,
+                                contextualRole: pronunciation.contextualRole,
+                                contextualReason: pronunciation.contextualReason,
+                                pronunciationAlternatives: pronunciations.map((item) =>
+                                    item.pattern)
                             }],
                             pronunciationCost: beam.pronunciationCost + pronunciation.cost
                         });
@@ -371,6 +439,13 @@
         }
 
         function templateVariants(meter) {
+            if (meter.analysisMode === "accentual") {
+                return [{
+                    pattern: "S".repeat(meter.beats),
+                    cost: 0,
+                    variations: []
+                }];
+            }
             const canonical = meter.pattern.repeat(meter.feet);
             const variants = [{ pattern: canonical, cost: 0, variations: [] }];
             const rules = meter.rules || {};
@@ -425,39 +500,58 @@
             return [...unique.values()];
         }
 
-        function stressCost(syllable, expected) {
+        function stressCost(syllable, expected, meter) {
             const stress = syllable.lexicalStress;
             const flexible = syllable.start !== syllable.end &&
                 FUNCTION_WORDS.has(syllable.normalizedWord) &&
                 syllable.wordIndex !== undefined;
+            const ternary = meter && ["anapest", "dactyl"].includes(meter.foot);
             if (expected === "S") {
                 if (stress === 1) {
                     return { cost: 0, kind: null };
                 }
                 if (stress === 2) {
-                    return { cost: 0.12, kind: "secondary-as-beat" };
+                    return {
+                        cost: ternary ? 0.08 : 0.12,
+                        kind: "secondary-as-beat"
+                    };
                 }
                 if (flexible) {
-                    return { cost: 0.16, kind: "promotion" };
+                    return {
+                        cost: ternary ? 0.22 : 0.16,
+                        kind: "promotion"
+                    };
                 }
-                return { cost: 1.35, kind: "unstressed-in-strong" };
+                return {
+                    cost: ternary ? 1.05 : 1.35,
+                    kind: "unstressed-in-strong"
+                };
             }
             if (stress === 0) {
                 return { cost: 0, kind: null };
             }
             if (stress === 2) {
-                return { cost: 0.4, kind: "secondary-in-weak" };
+                return {
+                    cost: ternary ? 0.12 : 0.4,
+                    kind: "secondary-in-weak"
+                };
             }
             if (flexible) {
                 return { cost: 0.18, kind: "demotion" };
             }
             if (syllable.wordSyllableCount === 1) {
-                return { cost: 0.72, kind: "content-word-in-weak" };
+                return {
+                    cost: ternary ? 0.16 : 0.72,
+                    kind: ternary ? "stress-in-slack" : "content-word-in-weak"
+                };
             }
-            return { cost: 1.5, kind: "primary-in-weak" };
+            return {
+                cost: ternary ? 0.72 : 1.5,
+                kind: "primary-in-weak"
+            };
         }
 
-        function alignToTemplate(syllables, template, partial) {
+        function alignToTemplate(syllables, template, partial, meter) {
             const observedCount = syllables.length;
             const expectedCount = template.length;
             const rows = Array.from({ length: observedCount + 1 }, () =>
@@ -481,7 +575,8 @@
                 for (let expected = 1; expected <= expectedCount; expected += 1) {
                     const match = stressCost(
                         syllables[observed - 1],
-                        template[expected - 1]
+                        template[expected - 1],
+                        meter
                     );
                     const choices = [
                         {
@@ -561,7 +656,130 @@
             };
         }
 
+        function naturalBeatCost(syllable) {
+            if (syllable.lexicalStress === 1) {
+                return FUNCTION_WORDS.has(syllable.normalizedWord) ? 0.25 : 0;
+            }
+            if (syllable.lexicalStress === 2) {
+                return 0.08;
+            }
+            if (FUNCTION_WORDS.has(syllable.normalizedWord)) {
+                return 0.48;
+            }
+            return syllable.wordSyllableCount === 1 ? 0.12 : 0.8;
+        }
+
+        function chooseAccentualBeats(syllables, beatCount) {
+            if (!syllables.length || beatCount < 1) {
+                return { indexes: [], cost: beatCount * 1.5 };
+            }
+            const rows = Array.from({ length: beatCount + 1 }, () =>
+                Array(syllables.length).fill(null));
+            for (let index = 0; index < syllables.length; index += 1) {
+                rows[1][index] = {
+                    cost: naturalBeatCost(syllables[index]) + index * 0.015,
+                    previous: -1
+                };
+            }
+            for (let count = 2; count <= beatCount; count += 1) {
+                for (let index = count - 1; index < syllables.length; index += 1) {
+                    let best = null;
+                    for (let previous = count - 2; previous < index; previous += 1) {
+                        const prior = rows[count - 1][previous];
+                        if (!prior) {
+                            continue;
+                        }
+                        const candidate = {
+                            cost: prior.cost + naturalBeatCost(syllables[index]) +
+                                (index - previous === 1 ? 0.16 : 0),
+                            previous
+                        };
+                        if (!best || candidate.cost < best.cost) {
+                            best = candidate;
+                        }
+                    }
+                    rows[count][index] = best;
+                }
+            }
+            let finalIndex = -1;
+            let final = null;
+            for (let index = beatCount - 1; index < syllables.length; index += 1) {
+                const cell = rows[beatCount][index];
+                if (!cell) {
+                    continue;
+                }
+                const cost = cell.cost +
+                    (syllables.length - 1 - index) * 0.015;
+                if (!final || cost < final.cost) {
+                    final = { ...cell, cost };
+                    finalIndex = index;
+                }
+            }
+            if (!final) {
+                return {
+                    indexes: syllables.map((_, index) => index),
+                    cost: Math.max(0, beatCount - syllables.length) * 1.5
+                };
+            }
+            const indexes = [];
+            let count = beatCount;
+            let index = finalIndex;
+            while (count > 0 && index >= 0) {
+                indexes.push(index);
+                index = rows[count][index].previous;
+                count -= 1;
+            }
+            return { indexes: indexes.reverse(), cost: final.cost };
+        }
+
+        function fitAccentualRealization(realization, meter, options) {
+            const partial = Boolean(options && options.partial);
+            const requested = meter.beats;
+            const available = realization.syllables.length;
+            const chosenCount = Math.min(requested, available);
+            const chosen = chooseAccentualBeats(realization.syllables, chosenCount);
+            const beatIndexes = new Set(chosen.indexes);
+            const assignments = realization.syllables.map((syllable, index) => ({
+                expectedStress: beatIndexes.has(index) ? "S" : "W",
+                expectedIndex: beatIndexes.has(index)
+                    ? chosen.indexes.indexOf(index)
+                    : null,
+                deviation: null,
+                cost: beatIndexes.has(index) ? naturalBeatCost(syllable) : 0
+            }));
+            const audibleStrong = realization.syllables.filter((syllable) =>
+                syllable.lexicalStress > 0 &&
+                !FUNCTION_WORDS.has(syllable.normalizedWord)).length;
+            const surplusProminence = Math.max(0, audibleStrong - requested);
+            const missingCount = Math.max(0, requested - chosenCount);
+            const rawScore = chosen.cost + surplusProminence * 0.16 +
+                (partial ? 0 : missingCount * 1.5) + realization.pronunciationCost;
+            return {
+                rawScore,
+                score: rawScore / Math.max(requested, 1),
+                variant: {
+                    pattern: "S".repeat(requested),
+                    cost: 0,
+                    variations: []
+                },
+                aligned: {
+                    cost: rawScore,
+                    assignments,
+                    deviations: [],
+                    missingCount,
+                    extraCount: 0
+                },
+                realization,
+                beatCount: chosenCount,
+                partial,
+                analysisMode: "accentual"
+            };
+        }
+
         function fitRealization(realization, meter, options) {
+            if (meter.analysisMode === "accentual") {
+                return fitAccentualRealization(realization, meter, options);
+            }
             const partial = Boolean(options && options.partial);
             let best = null;
             const variants = templateVariants(meter);
@@ -578,7 +796,8 @@
                 const aligned = alignToTemplate(
                     realization.syllables,
                     variant.pattern,
-                    partial
+                    partial,
+                    meter
                 );
                 const rawScore = aligned.cost + variant.cost +
                     realization.pronunciationCost;
@@ -599,6 +818,18 @@
         }
 
         function matchLevel(fit) {
+            if (fit.analysisMode === "accentual") {
+                if (fit.aligned.missingCount) {
+                    return fit.partial ? "incomplete" : "approximate";
+                }
+                if (fit.score <= 0.13) {
+                    return "exact";
+                }
+                if (fit.score <= 0.38) {
+                    return "compatible";
+                }
+                return "approximate";
+            }
             if (fit.aligned.extraCount ||
                 (fit.aligned.missingCount && !fit.partial)) {
                 return "approximate";
@@ -616,7 +847,8 @@
         }
 
         function footSubstitutions(syllables, meter, variations) {
-            if (!["iamb", "trochee"].includes(meter.foot) ||
+            if (meter.analysisMode === "accentual" ||
+                !["iamb", "trochee"].includes(meter.foot) ||
                 (variations || []).some((variation) =>
                     variation.startsWith("weak-resolution-"))) {
                 return [];
@@ -704,13 +936,19 @@
                 aliases: meter.aliases || [],
                 foot: meter.foot,
                 feet: meter.feet,
-                canonicalPattern: meter.pattern.repeat(meter.feet),
+                analysisMode: meter.analysisMode || "accentual-syllabic",
+                beats: meter.beats || meter.feet,
+                canonicalPattern: meter.analysisMode === "accentual"
+                    ? "S".repeat(meter.beats)
+                    : meter.pattern.repeat(meter.feet),
                 expectedPattern: best.variant.pattern,
                 observedLexicalPattern: syllables.map((syllable) =>
                     syllable.lexicalStress === 0 ? "W" : "S").join(""),
                 score: best.score,
                 rawScore: best.rawScore,
-                effectiveScore: best.score + completionPenalty -
+                effectiveScore: best.score + completionPenalty +
+                    (meter.analysisMode === "accentual" ? 0.25 : 0) +
+                    (["anapest", "dactyl"].includes(meter.foot) ? 0.05 : 0) -
                     (Number(meter.prominence) || 0) * 0.008,
                 matchLevel: level,
                 confidence,
@@ -739,9 +977,13 @@
             }
             const ids = new Set();
             for (const meter of document.meters) {
+                const accentual = meter.analysisMode === "accentual";
                 if (!meter.id || ids.has(meter.id) || !meter.name ||
-                    !/^(?:WS|SW|WWS|SWW)$/.test(meter.pattern) ||
-                    !Number.isInteger(meter.feet) || meter.feet < 1) {
+                    (accentual
+                        ? (!Number.isInteger(meter.beats) || meter.beats < 1 ||
+                            meter.beats > 8)
+                        : (!/^(?:WS|SW|WWS|SWW)$/.test(meter.pattern) ||
+                            !Number.isInteger(meter.feet) || meter.feet < 1))) {
                     throw new Error(`Invalid English meter: ${meter.id || "(missing id)"}`);
                 }
                 ids.add(meter.id);
@@ -866,6 +1108,10 @@
                     ? perLine.reduce((sum, candidate) => sum + candidate.score, 0) /
                         perLine.length
                     : Infinity;
+                const effectiveScore = perLine.length
+                    ? perLine.reduce((sum, candidate) =>
+                        sum + candidate.effectiveScore, 0) / perLine.length
+                    : Infinity;
                 return {
                     id: meter.id,
                     name: meter.name,
@@ -874,7 +1120,7 @@
                     lineCount: perLine.length,
                     rawScore,
                     score,
-                    effectiveScore: score - (Number(meter.prominence) || 0) * 0.008,
+                    effectiveScore,
                     exactLines: perLine.filter((candidate) =>
                         candidate.matchLevel === "exact").length,
                     compatibleLines: perLine.filter((candidate) =>
@@ -887,13 +1133,14 @@
                 const byFoot = new Map();
                 for (const candidate of line.candidates) {
                     const previous = byFoot.get(candidate.foot);
-                    if (!previous || candidate.score < previous.score) {
+                    if (!previous || candidate.effectiveScore <
+                        previous.effectiveScore) {
                         byFoot.set(candidate.foot, candidate);
                     }
                 }
                 for (const [foot, candidate] of byFoot) {
                     const current = footScores.get(foot) || { total: 0, lines: 0 };
-                    current.total += candidate.score;
+                    current.total += candidate.effectiveScore;
                     current.lines += 1;
                     footScores.set(foot, current);
                 }

@@ -214,10 +214,10 @@ test("service worker keeps English outside the core shell and runtime-caches it"
     assert.match(worker, /cache\.put\(cacheRequest, copy\)/);
     assert.doesNotMatch(worker, /cache\.put\(event\.request, copy\)/);
     assert.match(worker, /event\.request\.cache !== "reload"/);
-    assert.match(worker, /ENGLISH_CACHE_NAME = "chandas-english-v7"/);
+    assert.match(worker, /ENGLISH_CACHE_NAME = "chandas-english-v8"/);
     assert.match(worker, /data\/english\/en-cmudict-stress-v1\.json/);
     assert.match(worker, /data\/english\/en-cmudict-rhyme-v1\.json/);
-    assert.match(read("app.js"), /ENGLISH_FORM_ASSET_VERSION = "1\.3\.0"/);
+    assert.match(read("app.js"), /ENGLISH_FORM_ASSET_VERSION = "2\.0\.0"/);
     assert.match(
         read("app.js"),
         /english_forms\.js\?v=\$\{ENGLISH_FORM_ASSET_VERSION\}/
@@ -385,16 +385,17 @@ test("the public roadmap is concise, forward-looking, and available offline", ()
     const roadmap = read("roadmap.html");
     const items = roadmap.match(/<li>/g) || [];
 
-    assert.equal(items.length, 9);
+    assert.equal(items.length, 10);
     assert.match(roadmap, /M1 · English rules and corpus/);
     assert.match(roadmap, /M2 · English pronunciation/);
     assert.match(roadmap, /M3 · English meter detection/);
     assert.match(roadmap, /✓ M4 · English composition/);
     assert.match(roadmap, /✓ M5 · English forms and rhyme/);
-    assert.match(roadmap, /M6 · Reviewed Indic rules/);
-    assert.match(roadmap, /M7 · Android distribution/);
-    assert.match(roadmap, /M9 · Optional infrastructure/);
-    assert.match(roadmap, /M6 is the next\s+proposed milestone/);
+    assert.match(roadmap, /✓ M6 · English Ear v2/);
+    assert.match(roadmap, /M7 · Reviewed Indic rules/);
+    assert.match(roadmap, /M8 · Android distribution/);
+    assert.match(roadmap, /M10 · Optional infrastructure/);
+    assert.match(roadmap, /M7 is the next\s+proposed milestone/);
     assert.match(roadmap, /never need a paid/);
     assert.match(roadmap, /Anonymous composition/);
     assert.doesNotMatch(roadmap, /Estimate:|weeks|Target:/);

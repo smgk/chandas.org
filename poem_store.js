@@ -85,6 +85,9 @@
             templates: objectOrEmpty(value.templates),
             templateModes: objectOrEmpty(value.templateModes),
             strongDrafts: objectOrEmpty(value.strongDrafts),
+            englishFormSelections: objectOrEmpty(value.englishFormSelections),
+            englishOverrides: objectOrEmpty(value.englishOverrides),
+            englishRhymeOverrides: objectOrEmpty(value.englishRhymeOverrides),
             scansionMode: [
                 "auto", "weights", "amsha", "matra-35", "matra-53", "off"
             ].includes(value.scansionMode) ? value.scansionMode : "auto",

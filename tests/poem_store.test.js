@@ -67,7 +67,10 @@ test("preserves explicit English stress mode through backup and restore", () => 
     const englishPoem = poem({
         text: "Shall I compare thee to a summer's day?",
         inputScheme: "english",
-        selections: { 0: "english:iambic-pentameter" }
+        selections: { 0: "english:iambic-pentameter" },
+        englishFormSelections: { 0: "english-form:english-sonnet" },
+        englishOverrides: { "0:5": "10" },
+        englishRhymeOverrides: { "5:28": true }
     });
     const restored = parseBackup(JSON.stringify(makeBackup([englishPoem])));
 
@@ -75,6 +78,10 @@ test("preserves explicit English stress mode through backup and restore", () => 
     assert.equal(restored[0].inputScheme, "english");
     assert.deepEqual(restored[0].selections,
         { 0: "english:iambic-pentameter" });
+    assert.deepEqual(restored[0].englishFormSelections,
+        { 0: "english-form:english-sonnet" });
+    assert.deepEqual(restored[0].englishOverrides, { "0:5": "10" });
+    assert.deepEqual(restored[0].englishRhymeOverrides, { "5:28": true });
 });
 
 test("exports and parses a portable versioned backup", () => {

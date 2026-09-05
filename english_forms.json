@@ -1,5 +1,5 @@
 {
-  "catalogVersion": "1.3.0",
+  "catalogVersion": "2.0.0",
   "analysisSystem": "english-form",
   "copyright": "Copyright © 2025–2026 Ganesh Krishna Shankarathota",
   "license": "GPL-3.0-only",
@@ -37,7 +37,7 @@
       "name": "Common measure",
       "aliases": ["common meter", "hymn meter", "8686"],
       "lineCount": { "exact": 4 },
-      "meterSequence": [["english:iambic-tetrameter"], ["english:iambic-trimeter"], ["english:iambic-tetrameter"], ["english:iambic-trimeter"]],
+      "meterSequence": [["english:iambic-tetrameter", "english:accentual-four-beat"], ["english:iambic-trimeter", "english:accentual-three-beat"], ["english:iambic-tetrameter", "english:accentual-four-beat"], ["english:iambic-trimeter", "english:accentual-three-beat"]],
       "rhymePolicy": "advisory",
       "prominence": 5,
       "sourceRef": "commonMeasure"
@@ -47,7 +47,7 @@
       "name": "Ballad stanza",
       "aliases": ["ballad meter", "ballad measure"],
       "lineCount": { "exact": 4 },
-      "meterSequence": [["english:iambic-tetrameter"], ["english:iambic-trimeter"], ["english:iambic-tetrameter"], ["english:iambic-trimeter"]],
+      "meterSequence": [["english:iambic-tetrameter", "english:accentual-four-beat"], ["english:iambic-trimeter", "english:accentual-three-beat"], ["english:iambic-tetrameter", "english:accentual-four-beat"], ["english:iambic-trimeter", "english:accentual-three-beat"]],
       "rhymeSchemes": ["ABCB"],
       "prominence": 4,
       "sourceRef": "poeticForms"
@@ -112,11 +112,11 @@
       "lineCount": { "exact": 5 },
       "beatSequence": [3, 3, 2, 2, 3],
       "meterSequence": [
-        ["english:anapestic-trimeter", "english:iambic-trimeter", "english:trochaic-trimeter"],
-        ["english:anapestic-trimeter", "english:iambic-trimeter", "english:trochaic-trimeter"],
-        ["english:anapestic-dimeter", "english:dactylic-dimeter", "english:iambic-dimeter", "english:trochaic-dimeter"],
-        ["english:anapestic-dimeter", "english:dactylic-dimeter", "english:iambic-dimeter", "english:trochaic-dimeter"],
-        ["english:anapestic-trimeter", "english:iambic-trimeter", "english:trochaic-trimeter"]
+        ["english:accentual-three-beat", "english:anapestic-trimeter", "english:iambic-trimeter", "english:trochaic-trimeter"],
+        ["english:accentual-three-beat", "english:anapestic-trimeter", "english:iambic-trimeter", "english:trochaic-trimeter"],
+        ["english:accentual-two-beat", "english:anapestic-dimeter", "english:dactylic-dimeter", "english:iambic-dimeter", "english:trochaic-dimeter"],
+        ["english:accentual-two-beat", "english:anapestic-dimeter", "english:dactylic-dimeter", "english:iambic-dimeter", "english:trochaic-dimeter"],
+        ["english:accentual-three-beat", "english:anapestic-trimeter", "english:iambic-trimeter", "english:trochaic-trimeter"]
       ],
       "rhymeSchemes": ["AABBA"],
       "prominence": 4,

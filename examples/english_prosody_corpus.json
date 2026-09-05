@@ -172,7 +172,7 @@
       "meterId": "english:anapestic-tetrameter",
       "humanGrid": "WWSWWWSWWSWWS",
       "kind": "variant",
-      "expected": { "topRankMax": 1, "syllables": 13, "levels": ["compatible"], "variation": "weak-resolution-4" },
+      "expected": { "topRankMax": 1, "syllables": 13, "levels": ["exact", "compatible"], "variation": "weak-resolution-4" },
       "source": { "author": "Lord Byron", "work": "The Destruction of Sennacherib", "year": 1815, "url": "https://en.wikisource.org/wiki/Hebrew_Melodies/The_Destruction_of_Sennacherib" },
       "rights": "Public domain"
     },
@@ -192,7 +192,7 @@
       "meterId": "english:dactylic-dimeter",
       "humanGrid": "SWWSWW",
       "kind": "variant",
-      "expected": { "topRankMax": 3, "syllables": 6, "levels": ["compatible", "approximate"] },
+      "expected": { "topRankMax": 3, "syllables": 6, "levels": ["exact", "compatible", "approximate"] },
       "source": { "author": "Alfred, Lord Tennyson", "work": "The Charge of the Light Brigade", "year": 1854, "url": "https://en.wikisource.org/wiki/Maud,_and_other_poems/The_Charge_of_the_Light_Brigade" },
       "rights": "Public domain"
     },
@@ -236,12 +236,13 @@
       "rights": "Public domain"
     }
   ],
-  "futureFormFixtures": [
+  "accentualFixtures": [
     {
       "id": "hickory-dickory-accentual",
       "text": "Hickory, dickory, dock,\nThe mouse ran up the clock;\nThe clock struck one,\nAnd down he run,\nHickory, dickory, dock.",
-      "targetMilestone": "M6",
+      "deliveredIn": "English Ear v2",
       "form": "accentual-nursery-rhyme",
+      "expectedBeatShape": [3, 3, 2, 2, 3],
       "source": { "author": "Traditional", "work": "Hickory, Dickory, Dock", "url": "https://en.wikisource.org/wiki/The_Oxford_Nursery_Rhyme_Book/Hickory,_Dickory,_Dock" },
       "rights": "Public domain"
     }

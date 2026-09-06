@@ -16,6 +16,10 @@ function read(file) {
     return fs.readFileSync(path.join(root, file), "utf8");
 }
 
+test("the deployment static validator accepts every shipped asset catalog", () => {
+    assert.doesNotThrow(() => require("../scripts/validate-static.js"));
+});
+
 test("the web shell has no external runtime asset dependencies", () => {
     const html = read("index.html");
     const externalAssets = Array.from(

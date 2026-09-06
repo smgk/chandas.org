@@ -5,12 +5,11 @@ SPDX-License-Identifier: GPL-3.0-only
 
 # English Prosody Analysis Plan
 
-**Status:** M1 through M5 complete; M6 awaits owner approval
+**Status:** M1 through M7 complete in version 1.60.0
 
 **Updated:** 2026-09-02
 
-**Approval gate:** Do not begin M6 accentual and alliterative integration until the
-project owner explicitly approves it.
+**Approval gate:** Cleared by the project owner; M6 and M7 are implemented.
 
 ## 1. Conclusion
 
@@ -402,6 +401,8 @@ production detector or UI behavior is added.
 
 ### M6 — Accentual and alliterative meters
 
+**Status:** Complete in version 1.60.0
+
 - Add generic two-, three-, and four-beat verse.
 - Add modern alliterative verse with half-line and caesura guidance.
 - Treat genuine Old English language and Sievers-type classification as a
@@ -409,6 +410,8 @@ production detector or UI behavior is added.
   data can analyze *Beowulf* correctly.
 
 ### M7 — Advanced English prosody
+
+**Status:** Complete in version 1.60.0
 
 - Sprung rhythm.
 - Slant and internal rhyme.
@@ -448,10 +451,9 @@ production detector or UI behavior is added.
 
 ## 14. Next decision
 
-M1–M5 now provide the sourced rule packet, pinned offline stress and rhyme
-lexicons,
-source-aligned pronunciation alternatives, 17-meter catalog, ambiguity-aware
-parser, public-domain corpus, explicitly selected composer experience, and a
-separate advisory layer for perfect end rhyme and named poetic forms.
-The English pack remains outside the initial load and core cache. The next
-decision is whether to approve **M6 — accentual and alliterative meters**.
+M1–M7 now provide the isolated English stress analyzer, pronunciation and
+rhyme packs, named forms, accentual and sprung meters, modern half-line
+alliteration guidance, internal/slant rhyme evidence, cautious reading
+profiles, whole-word Strong guides, and private learned English forms. Genuine
+Old English/Sievers classification remains a separate research project; the
+modern analyzer does not claim it.

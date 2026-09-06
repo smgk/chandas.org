@@ -8,13 +8,16 @@
 
     const DRAFT_KEY = "chandas.draft.v1";
     const LANGUAGE_KEY = "chandas.language.v1";
+    const ENGLISH_CUSTOM_FORMS_KEY = "chandas.englishCustomForms.v1";
+    const ENGLISH_CUSTOM_FORMS_META_KEY = "englishCustomForms.v1";
     const SAVE_DELAY_MS = 280;
     const UPDATE_CHECK_INTERVAL_MS = 15 * 60 * 1000;
-    const ENGLISH_FORM_ASSET_VERSION = "2.0.0";
+    const ENGLISH_ASSET_VERSION = "3.0.0";
+    const ENGLISH_FORM_ASSET_VERSION = "3.0.0";
     const ENGLISH_ASSETS = Object.freeze({
-        engine: "english_analysis.js",
-        composer: "english_composer.js",
-        meters: "english_meters.json",
+        engine: `english_analysis.js?v=${ENGLISH_ASSET_VERSION}`,
+        composer: `english_composer.js?v=${ENGLISH_ASSET_VERSION}`,
+        meters: `english_meters.json?v=${ENGLISH_ASSET_VERSION}`,
         lexicon: "data/english/en-cmudict-stress-v1.json"
     });
     const ENGLISH_FORM_ASSETS = Object.freeze({
@@ -121,7 +124,7 @@
             romanInputHelp: "Roman text is analyzed through an offline Devanagari shadow; your spelling stays untouched.",
             romanPlaceholder: "Type Roman transliteration here…",
             romanStrongUnavailable: "Strong templates are not yet available for Roman input; ghost guidance remains available.",
-            englishStrongUnavailable: "English currently supports Ghost guidance; Strong templates come later.",
+            englishStrongUnavailable: "Strong keeps whole words together in metrical groups.",
             newDraft: "New",
             updateAvailable: "Update available",
             updating: "Updating…",
@@ -431,7 +434,7 @@
             romanInputHelp: "ರೋಮನ್ ಪಠ್ಯವನ್ನು ಆಫ್‌ಲೈನ್ ದೇವನಾಗರಿ ಪ್ರತಿಯ ಮೂಲಕ ವಿಶ್ಲೇಷಿಸುತ್ತದೆ; ನಿಮ್ಮ ಬರಹ ಬದಲಾಗುವುದಿಲ್ಲ.",
             romanPlaceholder: "ರೋಮನ್ ಲಿಪ್ಯಂತರದಲ್ಲಿ ಇಲ್ಲಿ ಬರೆಯಿರಿ…",
             romanStrongUnavailable: "ರೋಮನ್ ಬರಹಕ್ಕೆ ಬಲವಾದ ಟೆಂಪ್ಲೇಟ್ ಇನ್ನೂ ಲಭ್ಯವಿಲ್ಲ; ಮಸುಕಾದ ಮಾರ್ಗದರ್ಶನ ಲಭ್ಯವಿದೆ.",
-            englishStrongUnavailable: "ಇಂಗ್ಲಿಷ್‌ಗೆ ಈಗ ಮಸುಕಾದ ಮಾರ್ಗದರ್ಶನ ಲಭ್ಯ; ಬಲವಾದ ಟೆಂಪ್ಲೇಟ್ ನಂತರ ಬರುತ್ತದೆ.",
+            englishStrongUnavailable: "ಬಲವಾದ ಮಾರ್ಗದರ್ಶನವು ಸಂಪೂರ್ಣ ಪದಗಳನ್ನು ಛಂದೋವಿಭಾಗಗಳಲ್ಲಿ ಒಟ್ಟಾಗಿ ಇಡುತ್ತದೆ.",
             newDraft: "ಹೊಸದು",
             updateAvailable: "ನವೀಕರಣ ಲಭ್ಯ",
             updating: "ನವೀಕರಿಸಲಾಗುತ್ತಿದೆ…",
@@ -741,7 +744,7 @@
             romanInputHelp: "రోమన్ పాఠ్యం ఆఫ్‌లైన్ దేవనాగరి ప్రతిరూపం ద్వారా విశ్లేషించబడుతుంది; మీ వ్రాత మారదు.",
             romanPlaceholder: "రోమన్ లిప్యంతరీకరణలో ఇక్కడ వ్రాయండి…",
             romanStrongUnavailable: "రోమన్ ఇన్‌పుట్‌కు స్ట్రాంగ్ టెంప్లేట్ ఇంకా లేదు; ఘోస్ట్ మార్గదర్శనం అందుబాటులో ఉంది.",
-            englishStrongUnavailable: "ఇంగ్లీష్‌కు ప్రస్తుతం ఘోస్ట్ మార్గదర్శనం ఉంది; స్ట్రాంగ్ టెంప్లేట్ తరువాత వస్తుంది.",
+            englishStrongUnavailable: "స్ట్రాంగ్ మార్గదర్శనం పూర్తి పదాలను ఛందస్సు గుంపుల్లో కలిపి ఉంచుతుంది.",
             newDraft: "కొత్తది",
             updateAvailable: "నవీకరణ అందుబాటులో ఉంది",
             updating: "నవీకరిస్తోంది…",
@@ -1051,7 +1054,7 @@
             romanInputHelp: "રોમન લખાણનું ઓફલાઇન દેવનાગરી પ્રતિરૂપ દ્વારા વિશ્લેષણ થાય છે; તમારું લખાણ બદલાતું નથી.",
             romanPlaceholder: "રોમન લિપ્યંતરણમાં અહીં લખો…",
             romanStrongUnavailable: "રોમન ઇનપુટ માટે મજબૂત ટેમ્પલેટ હજી ઉપલબ્ધ નથી; ઝાંખું માર્ગદર્શન ઉપલબ્ધ છે.",
-            englishStrongUnavailable: "અંગ્રેજી માટે હાલમાં ઝાંખું માર્ગદર્શન છે; મજબૂત ટેમ્પલેટ પછી આવશે.",
+            englishStrongUnavailable: "મજબૂત માર્ગદર્શન આખા શબ્દોને છંદના જૂથોમાં સાથે રાખે છે.",
             newDraft: "નવું",
             updateAvailable: "અપડેટ ઉપલબ્ધ",
             updating: "અપડેટ થઈ રહ્યું છે…",
@@ -1319,12 +1322,15 @@
         englishLoadPromise: null,
         englishLoadState: "idle",
         englishFormCatalog: null,
+        englishBaseFormCatalog: null,
         englishRhymeLexicon: null,
         englishFormLoadPromise: null,
         englishFormLoadState: "idle",
         englishFormSelections: {},
         englishOverrides: {},
         englishRhymeOverrides: {},
+        englishReadingProfile: "dictionary",
+        englishCustomForms: [],
         pendingEnglishRhymeEnding: null,
         activeEnglishPronunciation: null
     };
@@ -1344,6 +1350,8 @@
             "english-form-progress-summary", "english-form-progress-details",
             "english-reading-note",
             "english-rhyme-endings", "english-rhyme-relations",
+            "english-alliteration", "english-reading-profile",
+            "learn-english-form", "delete-english-form",
             "english-form-list", "english-form-note",
             "english-pronunciation-review", "english-pronunciation-list",
             "english-pronunciation-dialog", "english-pronunciation-title",
@@ -1530,7 +1538,11 @@
                 rhymeResponse.json()
             ]);
             window.ChandasEnglishForms.validateCatalog(catalog);
-            state.englishFormCatalog = catalog;
+            state.englishBaseFormCatalog = catalog;
+            state.englishFormCatalog = {
+                ...catalog,
+                forms: [...catalog.forms, ...state.englishCustomForms]
+            };
             state.englishRhymeLexicon = window.ChandasEnglishForms
                 .createRhymeLexicon(rhymeDocument);
             state.englishFormLoadState = "ready";
@@ -1809,9 +1821,11 @@
         }
         const englishOverrides = queryObject("eo");
         const englishRhymeOverrides = queryObject("ero");
+        const englishReadingProfile = ["dictionary", "non-rhotic", "early-modern"]
+            .includes(params.get("erp")) ? params.get("erp") : null;
         const consumed = verse !== null || meter !== null || hasTemplate ||
             hasShithilaOption || hasScansionMode || hasInputScheme ||
-            englishOverrides || englishRhymeOverrides ||
+            englishOverrides || englishRhymeOverrides || englishReadingProfile ||
             Object.keys(stanzaOptions).length > 0;
         return consumed
             ? {
@@ -1823,7 +1837,8 @@
                 scansionMode,
                 inputScheme,
                 englishOverrides,
-                englishRhymeOverrides
+                englishRhymeOverrides,
+                englishReadingProfile
             }
             : null;
     }
@@ -1914,6 +1929,9 @@
         }
         if (payload.englishRhymeOverrides && isEnglishMode()) {
             state.englishRhymeOverrides = payload.englishRhymeOverrides;
+        }
+        if (payload.englishReadingProfile && isEnglishMode()) {
+            state.englishReadingProfile = payload.englishReadingProfile;
         }
         if (incoming) {
             const appended = appendAsPadya(authoredCompositionText(), incoming);
@@ -2043,7 +2061,7 @@
                 return;
             }
             const draft = strongDraftFor(stanza, meter, true);
-            if (ChandasStrongTemplate.restoreSlots(draft, option.strongSlots)) {
+            if (restoreStrongDraft(draft, option.strongSlots)) {
                 restoredStrongSlots = true;
             }
         });
@@ -2083,6 +2101,9 @@
     }
 
     function supportsStrongTemplate(meter) {
+        if (isEnglishMode()) {
+            return Boolean(meter && meter.kind === "english");
+        }
         return Boolean(
             state.inputScheme === "native" &&
             meter &&
@@ -2118,6 +2139,71 @@
         return `mishra-baseline+structural-${structuralVersion || "unknown"}`;
     }
 
+    function isEnglishStrongDraft(draft) {
+        return Boolean(draft && draft.kind === "english-word");
+    }
+
+    function englishStrongLineCount(stanza) {
+        const formId = state.englishFormSelections[stanza.index];
+        const form = state.englishFormCatalog &&
+            state.englishFormCatalog.forms.find((item) => item.id === formId);
+        return form && Number.isInteger(form.lineCount.exact)
+            ? form.lineCount.exact
+            : Math.max(1, stanza.lines.length);
+    }
+
+    function createEnglishStrongDraft(stanza, meter) {
+        const cellCount = Math.max(1, meter.beats || meter.feet || 1);
+        const expected = ["accentual", "sprung"].includes(meter.analysisMode)
+            ? "S" : meter.pattern;
+        const authoredLines = stanza.text.split(/\r?\n/);
+        const lines = Array.from({ length: englishStrongLineCount(stanza) },
+            (_, lineIndex) => {
+                const words = String(authoredLines[lineIndex] || "").trim()
+                    .split(/\s+/).filter(Boolean);
+                const cells = Array(cellCount).fill("");
+                words.forEach((word, index) => {
+                    const cell = Math.min(cellCount - 1,
+                        Math.floor(index * cellCount / Math.max(words.length, 1)));
+                    cells[cell] += `${cells[cell] ? " " : ""}${word}`;
+                });
+                return { expected: Array(cellCount).fill(expected), cells };
+            });
+        return {
+            kind: "english-word",
+            meterId: meter.id,
+            sourceStart: stanza.start,
+            lines
+        };
+    }
+
+    function cloneStrongDraft(draft) {
+        return isEnglishStrongDraft(draft)
+            ? draft.lines.map((line) => [...line.cells])
+            : ChandasStrongTemplate.cloneSlots(draft);
+    }
+
+    function restoreStrongDraft(draft, snapshot) {
+        if (!isEnglishStrongDraft(draft)) {
+            return ChandasStrongTemplate.restoreSlots(draft, snapshot);
+        }
+        if (!Array.isArray(snapshot) || snapshot.length !== draft.lines.length) {
+            return false;
+        }
+        draft.lines.forEach((line, index) => {
+            line.cells = [...snapshot[index]];
+        });
+        return true;
+    }
+
+    function serializeStrongDraft(draft) {
+        if (!isEnglishStrongDraft(draft)) {
+            return ChandasStrongTemplate.serializeDraft(draft);
+        }
+        return draft.lines.map((line) => line.cells
+            .map((cell) => cell.trim()).filter(Boolean).join(" ")).join("\n");
+    }
+
     function strongSourceFrame(stanza, meter) {
         const prefix = elements.composition.value.slice(0, stanza.start);
         const lineCount = Array.isArray(meter.versePatterns)
@@ -2146,14 +2232,21 @@
     function strongDraftFor(stanza, meter, create) {
         const key = strongDraftKey(stanza.index, meter.id);
         const existing = state.strongDrafts[key];
-        if (ChandasStrongTemplate.isCompatibleDraft(existing, meter)) {
+        if ((isEnglishMode() && isEnglishStrongDraft(existing) &&
+            existing.meterId === meter.id) ||
+            (!isEnglishMode() && ChandasStrongTemplate.isCompatibleDraft(
+                existing,
+                meter
+            ))) {
             return existing;
         }
         if (!create) {
             return null;
         }
         const sourceFrame = strongSourceFrame(stanza, meter);
-        const draft = ChandasStrongTemplate.createFixedDraft(meter, stanza, {
+        const draft = isEnglishMode()
+            ? createEnglishStrongDraft(stanza, meter)
+            : ChandasStrongTemplate.createFixedDraft(meter, stanza, {
             catalogVersion: strongCatalogVersion(),
             analysisVersion: state.analysis && state.analysis.analysisVersion,
             ...sourceFrame
@@ -2192,7 +2285,7 @@
                     ? draft.sourceStart
                     : stanza.start,
                 end: stanza.end,
-                text: ChandasStrongTemplate.serializeDraft(draft)
+                text: serializeStrongDraft(draft)
             });
         });
         replacements.sort((left, right) => right.start - left.start)
@@ -2517,6 +2610,103 @@
         return inspection;
     }
 
+    function inspectEnglishStrongCell(value, expected) {
+        if (!value.trim()) {
+            return { pattern: "", status: "empty", syllables: 0 };
+        }
+        const result = window.ChandasEnglish.analyzeLine(
+            value,
+            state.englishLexicon,
+            state.englishCatalog,
+            { selectedMeterId: "" }
+        );
+        const pattern = (result.bestCandidate && result.bestCandidate.syllables || [])
+            .map((syllable) => syllable.lexicalStress === 0 ? "W" : "S").join("");
+        const expectedBeats = (expected.match(/S/g) || []).length;
+        const observedBeats = (pattern.match(/S/g) || []).length;
+        const lengthFit = Math.abs(pattern.length - expected.length) <= 1;
+        return {
+            pattern,
+            syllables: pattern.length,
+            status: observedBeats === expectedBeats &&
+                (expected === "S" || lengthFit) ? "match" : "mismatch"
+        };
+    }
+
+    function renderEnglishStrongTemplate(context, draft, focusPosition) {
+        const fragment = document.createDocumentFragment();
+        let issues = 0;
+        let missing = 0;
+        const patterns = [];
+        draft.lines.forEach((line, lineIndex) => {
+            const row = document.createElement("div");
+            row.className = "strong-template-line";
+            const reference = document.createElement("span");
+            reference.className = "strong-template-line-reference";
+            const label = document.createElement("span");
+            label.className = "strong-template-line-label";
+            label.textContent = `Line ${lineIndex + 1}`;
+            const metrics = document.createElement("output");
+            metrics.className = "strong-template-line-metrics";
+            reference.append(label, metrics);
+            const slots = document.createElement("div");
+            slots.className = "strong-template-slots";
+            let lineSyllables = 0;
+            const linePatterns = [];
+            line.cells.forEach((value, slotIndex) => {
+                const inspection = inspectEnglishStrongCell(
+                    value,
+                    line.expected[slotIndex]
+                );
+                lineSyllables += inspection.syllables;
+                linePatterns.push(inspection.pattern || "·");
+                issues += inspection.status === "mismatch" ? 1 : 0;
+                missing += inspection.status === "empty" ? 1 : 0;
+                const slot = document.createElement("label");
+                slot.className = "strong-template-position";
+                const symbol = document.createElement("span");
+                symbol.className = "strong-template-symbol";
+                symbol.textContent = line.expected[slotIndex];
+                const input = document.createElement("input");
+                input.type = "text";
+                input.className = `strong-template-slot english-word-slot is-${
+                    inspection.status}`;
+                input.value = value;
+                input.spellcheck = true;
+                input.autocomplete = "off";
+                input.dataset.lineIndex = String(lineIndex);
+                input.dataset.slotIndex = String(slotIndex);
+                input.setAttribute("aria-label",
+                    `Line ${lineIndex + 1}, word group ${slotIndex + 1}, ` +
+                    `target ${line.expected[slotIndex]}`);
+                slot.append(symbol, input);
+                slots.append(slot);
+            });
+            patterns.push(linePatterns.join(" "));
+            metrics.textContent = `${lineSyllables} syllables · ${line.cells.length} word groups`;
+            row.append(reference, slots);
+            fragment.append(row);
+        });
+        elements["strong-template-lines"].replaceChildren(fragment);
+        elements["editor-shell"].hidden = true;
+        elements["strong-template-editor"].hidden = false;
+        elements["active-pattern"].textContent = patterns.join(" / ");
+        elements["active-matras"].textContent = "Whole words stay together inside each metrical group.";
+        elements["validation-summary"].classList.toggle("has-errors", issues > 0);
+        elements["validation-summary"].textContent = issues
+            ? `${issues} word group(s) depart from ${context.meter.name}; ${missing} remain blank.`
+            : `${context.meter.name} word guide · ${missing} group(s) remain blank.`;
+        if (focusPosition) {
+            const target = elements["strong-template-lines"].querySelector(
+                `[data-line-index="${focusPosition.lineIndex}"]` +
+                `[data-slot-index="${focusPosition.slotIndex}"]`
+            );
+            if (target) {
+                target.focus();
+            }
+        }
+    }
+
     function renderStrongTemplate(focusPosition) {
         const context = activeStrongContext();
         const editor = elements["strong-template-editor"];
@@ -2529,6 +2719,10 @@
         }
 
         const draft = strongDraftFor(context.stanza, context.meter, true);
+        if (isEnglishStrongDraft(draft)) {
+            renderEnglishStrongTemplate(context, draft, focusPosition);
+            return;
+        }
         const script = context.stanza.scripts[0] ||
             (context.stanza.lines[0] && context.stanza.lines[0].script) ||
             "unknown";
@@ -2599,7 +2793,7 @@
 
     function pushStrongHistory(key, draft, snapshot) {
         const history = state.strongHistory[key] || (state.strongHistory[key] = []);
-        const nextSnapshot = snapshot || ChandasStrongTemplate.cloneSlots(draft);
+        const nextSnapshot = snapshot || cloneStrongDraft(draft);
         const previous = history.at(-1);
         if (!previous ||
             JSON.stringify(previous) !== JSON.stringify(nextSnapshot)) {
@@ -2626,9 +2820,9 @@
         const to = direction === "undo"
             ? state.strongFuture[context.key] || (state.strongFuture[context.key] = [])
             : state.strongHistory[context.key] || (state.strongHistory[context.key] = []);
-        to.push(ChandasStrongTemplate.cloneSlots(draft));
+        to.push(cloneStrongDraft(draft));
         const snapshot = from.pop();
-        if (ChandasStrongTemplate.restoreSlots(draft, snapshot)) {
+        if (restoreStrongDraft(draft, snapshot)) {
             renderStrongTemplate(focusPosition);
             scheduleSave();
         }
@@ -2640,7 +2834,7 @@
         if (!stanza || !draft) {
             return;
         }
-        const authored = ChandasStrongTemplate.serializeDraft(draft);
+        const authored = serializeStrongDraft(draft);
         const text = elements.composition.value;
         const sourceStart = Number.isFinite(draft.sourceStart)
             ? draft.sourceStart
@@ -3754,7 +3948,8 @@
                 catalog: state.englishFormCatalog,
                 selectedForms: state.englishFormSelections,
                 overrides: state.englishOverrides,
-                rhymeOverrides: state.englishRhymeOverrides
+                rhymeOverrides: state.englishRhymeOverrides,
+                readingProfile: state.englishReadingProfile
             }
         );
         finishAnalysisRender();
@@ -3858,10 +4053,10 @@
     function candidateDetails(candidate) {
         const details = [];
         if (candidate.kind === "english") {
-            if (candidate.analysisMode === "accentual") {
-                details.push(t("englishAccentualDetail", {
-                    beats: candidate.beats
-                }));
+            if (["accentual", "sprung"].includes(candidate.analysisMode)) {
+                details.push(candidate.analysisMode === "sprung"
+                    ? `${candidate.beats} sprung beats · variable 1–4-syllable feet`
+                    : t("englishAccentualDetail", { beats: candidate.beats }));
             } else {
                 details.push(t("englishCandidateDetail", {
                     observed: candidate.observedSyllables,
@@ -3950,8 +4145,10 @@
         }
         elements["selected-meter-name"].textContent = meter.name;
         const signature = document.createElement("span");
-        signature.textContent = meter.analysisMode === "accentual"
-            ? t("englishAccentualDetail", { beats: meter.beats })
+        signature.textContent = ["accentual", "sprung"].includes(meter.analysisMode)
+            ? meter.analysisMode === "sprung"
+                ? `${meter.beats} sprung beats · variable 1–4-syllable feet`
+                : t("englishAccentualDetail", { beats: meter.beats })
             : `${englishStressGuide(meter.patterns[0], 0)} · ${
                 meter.feet} ${meter.foot}`;
         elements["selected-meter-signature"].replaceChildren(signature);
@@ -3976,6 +4173,13 @@
         select.replaceChildren(...options);
         select.value = selectedId;
         select.disabled = state.englishFormLoadState !== "ready";
+        if (elements["delete-english-form"]) {
+            elements["delete-english-form"].hidden =
+                !state.englishCustomForms.some((form) => form.id === selectedId);
+        }
+        if (elements["english-reading-profile"]) {
+            elements["english-reading-profile"].value = state.englishReadingProfile;
+        }
     }
 
     function renderEnglishFormProgress(stanza) {
@@ -4021,6 +4225,10 @@
                 count: progress.rhyme.plausiblePairs
             }));
         }
+        if (progress.alliteration) {
+            details.push(`${progress.alliteration.matching}/` +
+                `${progress.alliteration.typed} lines link the half-lines`);
+        }
         elements["english-form-progress-details"].textContent = details.join(" · ");
     }
 
@@ -4034,6 +4242,9 @@
             lessons.push(t("englishAccentualLesson", {
                 beats: candidate.beatCount || candidate.beats
             }));
+        }
+        if (candidate && candidate.analysisMode === "sprung") {
+            lessons.push("Sprung rhythm counts stress-led feet; adjacent beats and variable slack are allowed.");
         }
         const variations = new Set(candidate && candidate.variations || []);
         if (variations.has("initial-inversion")) {
@@ -4180,6 +4391,7 @@
             elements["english-rhyme-scheme"].textContent = "";
             elements["english-rhyme-endings"].replaceChildren();
             elements["english-rhyme-relations"].replaceChildren();
+            elements["english-alliteration"].replaceChildren();
             elements["english-form-list"].replaceChildren();
             elements["english-form-note"].textContent = "";
             elements["english-pronunciation-review"].hidden = true;
@@ -4194,6 +4406,7 @@
             elements["english-rhyme-scheme"].textContent = "";
             elements["english-rhyme-endings"].replaceChildren();
             elements["english-rhyme-relations"].replaceChildren();
+            elements["english-alliteration"].replaceChildren();
             elements["english-form-list"].replaceChildren();
             elements["english-form-note"].textContent = "";
             return;
@@ -4206,6 +4419,7 @@
             );
             elements["english-rhyme-endings"].replaceChildren();
             elements["english-rhyme-relations"].replaceChildren();
+            elements["english-alliteration"].replaceChildren();
             elements["english-form-list"].replaceChildren();
             elements["english-form-note"].textContent = "";
             return;
@@ -4247,9 +4461,16 @@
             assonance: "englishNearRhyme",
             consonance: "englishNearRhyme"
         };
-        elements["english-rhyme-relations"].replaceChildren(
+        const allRelations = [
             ...(rhyme.relations || []).filter((relation) =>
-                relation.kind !== "perfect").slice(0, 8).map((relation) => {
+                relation.kind !== "perfect"),
+            ...(rhyme.internalRelations || []).map((relation) => ({
+                ...relation,
+                internal: true
+            }))
+        ];
+        elements["english-rhyme-relations"].replaceChildren(
+            ...allRelations.slice(0, 12).map((relation) => {
                 const item = document.createElement(
                     relation.kind === "user" ? "button" : "span"
                 );
@@ -4258,14 +4479,33 @@
                 }
                 item.className = "english-rhyme-relation";
                 item.dataset.kind = relation.kind;
-                item.textContent = `${relation.words.join(" / ")} · ${
-                    t(rhymeKindLabel[relation.kind] || "englishNearRhyme")}`;
+                const relationLabel = relation.kind === "dialect"
+                    ? "dialect rhyme hint"
+                    : relation.kind === "historical-candidate"
+                        ? "historical rhyme hint"
+                        : t(rhymeKindLabel[relation.kind] || "englishNearRhyme");
+                item.textContent = `${relation.internal ? "Inside line · " : ""}` +
+                    `${relation.words.join(" / ")} · ${relationLabel}`;
                 if (relation.kind === "user") {
                     item.addEventListener("click", () => {
                         delete state.englishRhymeOverrides[relation.key];
                         runAnalysis();
                     });
                 }
+                return item;
+            })
+        );
+        const showAlliteration = view.selectedForm &&
+            view.selectedForm.alliterationPolicy === "modern-half-line";
+        elements["english-alliteration"].replaceChildren(
+            ...(showAlliteration ? view.alliteration || [] : []).map((line) => {
+                const item = document.createElement("span");
+                item.className = line.status === "match" ? "is-match" : "";
+                item.textContent = line.status === "match"
+                    ? `Line ${line.line} · ${line.leftBeats}+${line.rightBeats} beats · ` +
+                        `${line.key === "V" ? "vowel" : line.key} alliteration${
+                            line.caesura.explicit ? " · caesura marked" : " · inferred half-line"}`
+                    : `Line ${line.line} · mark a caesura (||) and link a stressed onset across it`;
                 return item;
             })
         );
@@ -4318,7 +4558,7 @@
         elements["prasa-summary"].replaceChildren();
         elements["active-amsha-realization"].hidden = true;
         elements["active-amsha-realization"].textContent = "";
-        elements["template-mode-strong"].disabled = true;
+        elements["template-mode-strong"].disabled = false;
         elements["strong-template-availability"].textContent =
             t("englishStrongUnavailable");
 
@@ -4374,12 +4614,7 @@
         const stanza = stanzas[state.activeStanzaIndex];
         const selectedMeter = meterForId(stanza.selectedMeterId);
         const selectedCandidate = stanza.selectedCandidate;
-        const mode = templateMode(state.activeStanzaIndex) === "strong"
-            ? "ghost"
-            : templateMode(state.activeStanzaIndex);
-        if (mode !== templateMode(state.activeStanzaIndex)) {
-            setTemplateMode(state.activeStanzaIndex, mode);
-        }
+        const mode = templateMode(state.activeStanzaIndex);
 
         elements["analysis-title"].textContent = t("stanza", {
             number: state.activeStanzaIndex + 1,
@@ -4398,7 +4633,7 @@
         elements["show-template"].checked = Boolean(selectedMeter && mode !== "off");
         elements["template-mode-picker"].hidden = !selectedMeter || mode === "off";
         elements["template-mode-ghost"].checked = mode === "ghost";
-        elements["template-mode-strong"].checked = false;
+        elements["template-mode-strong"].checked = mode === "strong";
         renderEnglishMeterReference(selectedMeter);
         renderEnglishFormPanel(stanza);
 
@@ -4858,7 +5093,7 @@
 
     function currentDraftSnapshot() {
         return {
-            version: 8,
+            version: 9,
             poemId: state.activePoemId,
             text: elements.composition.value,
             selections: state.selections,
@@ -4871,6 +5106,7 @@
             englishFormSelections: state.englishFormSelections,
             englishOverrides: state.englishOverrides,
             englishRhymeOverrides: state.englishRhymeOverrides,
+            englishReadingProfile: state.englishReadingProfile,
             language: state.language,
             selectionStart: elements.composition.selectionStart,
             selectionEnd: elements.composition.selectionEnd,
@@ -4885,6 +5121,7 @@
             Object.keys(draft.englishFormSelections || {}).length ||
             Object.keys(draft.englishOverrides || {}).length ||
             Object.keys(draft.englishRhymeOverrides || {}).length ||
+            draft.englishReadingProfile !== "dictionary" ||
             draft.scansionMode !== "auto" ||
             draft.detectShithilaDvitva ||
             draft.inputScheme !== "native");
@@ -4941,7 +5178,7 @@
                 return null;
             }
             const draft = JSON.parse(raw);
-            if (!draft || ![1, 2, 3, 4, 5, 6, 7, 8].includes(draft.version) ||
+            if (!draft || ![1, 2, 3, 4, 5, 6, 7, 8, 9].includes(draft.version) ||
                 typeof draft.text !== "string") {
                 return null;
             }
@@ -4981,6 +5218,9 @@
             typeof poem.englishRhymeOverrides === "object"
             ? poem.englishRhymeOverrides
             : {};
+        state.englishReadingProfile = ["dictionary", "non-rhotic", "early-modern"]
+            .includes(poem.englishReadingProfile)
+            ? poem.englishReadingProfile : "dictionary";
         state.pendingEnglishRhymeEnding = null;
         state.strongHistory = {};
         state.strongFuture = {};
@@ -5071,6 +5311,7 @@
         state.englishFormSelections = {};
         state.englishOverrides = {};
         state.englishRhymeOverrides = {};
+        state.englishReadingProfile = "dictionary";
         state.pendingEnglishRhymeEnding = null;
         state.strongHistory = {};
         state.strongFuture = {};
@@ -5114,6 +5355,9 @@
         if (isEnglishMode() && Object.keys(state.englishRhymeOverrides).length) {
             url.searchParams.set("ero", JSON.stringify(state.englishRhymeOverrides));
         }
+        if (isEnglishMode() && state.englishReadingProfile !== "dictionary") {
+            url.searchParams.set("erp", state.englishReadingProfile);
+        }
         const stanzas = state.analysis ? state.analysis.stanzas : [];
         if (!stanzas.length && state.selections[0]) {
             url.searchParams.set("meter", state.selections[0]);
@@ -5143,7 +5387,7 @@
                 if (draft) {
                     url.searchParams.set(
                         `slots${index + 1}`,
-                        JSON.stringify(ChandasStrongTemplate.cloneSlots(draft))
+                        JSON.stringify(cloneStrongDraft(draft))
                     );
                 }
             }
@@ -5173,6 +5417,10 @@
         if (inputScheme === "english" &&
             Object.keys(poem.englishRhymeOverrides || {}).length) {
             url.searchParams.set("ero", JSON.stringify(poem.englishRhymeOverrides));
+        }
+        if (inputScheme === "english" && poem.englishReadingProfile &&
+            poem.englishReadingProfile !== "dictionary") {
+            url.searchParams.set("erp", poem.englishReadingProfile);
         }
         const stanzaIndexes = new Set([
             ...Object.keys(poem.selections || {}),
@@ -5204,7 +5452,7 @@
                     if (draft) {
                         url.searchParams.set(
                             `slots${index + 1}`,
-                            JSON.stringify(ChandasStrongTemplate.cloneSlots(draft))
+                            JSON.stringify(cloneStrongDraft(draft))
                         );
                     }
                 }
@@ -5894,7 +6142,8 @@
     function backupFile(poems) {
         const json = JSON.stringify(ChandasPoemStore.makeBackup(
             poems,
-            state.customForms
+            state.customForms,
+            state.englishCustomForms
         ), null, 2);
         const date = new Date().toISOString().slice(0, 10);
         return new File([json], `chandas-backup-${date}.json`, {
@@ -6005,8 +6254,18 @@
                 workspace.customForms
             );
             state.customForms = mergedForms.forms;
+            const knownEnglishForms = new Set(state.englishCustomForms.map((form) =>
+                form.id));
+            for (const form of workspace.englishCustomForms || []) {
+                if (form && form.customEnglish && !knownEnglishForms.has(form.id)) {
+                    knownEnglishForms.add(form.id);
+                    state.englishCustomForms.push(form);
+                }
+            }
             await saveCustomForms();
+            await saveEnglishCustomForms();
             rebuildMeterCatalog();
+            rebuildEnglishFormCatalog();
             runAnalysis();
             await refreshSavedPoems();
             showToast(t("backupImported", result) +
@@ -6213,6 +6472,95 @@
         state.customForms = ChandasCustomMeter.normalizeForms(stored);
     }
 
+    function rebuildEnglishFormCatalog() {
+        if (!state.englishBaseFormCatalog) {
+            return;
+        }
+        state.englishFormCatalog = {
+            ...state.englishBaseFormCatalog,
+            forms: [
+                ...state.englishBaseFormCatalog.forms,
+                ...state.englishCustomForms
+            ]
+        };
+    }
+
+    async function loadEnglishCustomForms() {
+        let stored;
+        if (state.repository) {
+            stored = await state.repository.getMeta(ENGLISH_CUSTOM_FORMS_META_KEY);
+        }
+        if (!Array.isArray(stored)) {
+            try {
+                stored = JSON.parse(localStorage.getItem(
+                    ENGLISH_CUSTOM_FORMS_KEY
+                ) || "[]");
+            } catch (error) {
+                stored = [];
+            }
+        }
+        state.englishCustomForms = Array.isArray(stored)
+            ? stored.filter((form) => form && form.customEnglish).slice(0, 100)
+            : [];
+    }
+
+    async function saveEnglishCustomForms() {
+        try {
+            localStorage.setItem(
+                ENGLISH_CUSTOM_FORMS_KEY,
+                JSON.stringify(state.englishCustomForms)
+            );
+        } catch (error) {
+            // IndexedDB remains the primary store where available.
+        }
+        if (state.repository) {
+            await state.repository.setMeta(
+                ENGLISH_CUSTOM_FORMS_META_KEY,
+                state.englishCustomForms
+            );
+        }
+    }
+
+    async function learnCurrentEnglishForm() {
+        const stanza = state.analysis && state.analysis.stanzas[
+            state.activeStanzaIndex];
+        if (!isEnglishMode() || !stanza || !stanza.lines.some((line) =>
+            line.tokens && line.tokens.length)) {
+            showToast("Write at least one English line first.");
+            return;
+        }
+        const suggested = `My English form ${state.englishCustomForms.length + 1}`;
+        const name = window.prompt("Name this English stress form", suggested);
+        if (!name || !name.trim()) {
+            return;
+        }
+        const form = window.ChandasEnglishForms.inferCustomForm(
+            stanza.lines,
+            stanza.rhyme,
+            name.trim()
+        );
+        state.englishCustomForms.push(form);
+        await saveEnglishCustomForms();
+        rebuildEnglishFormCatalog();
+        state.englishFormSelections[state.activeStanzaIndex] = form.id;
+        showToast(`Saved and selected ${form.name}.`);
+        runAnalysis();
+    }
+
+    async function deleteSelectedEnglishForm() {
+        const id = state.englishFormSelections[state.activeStanzaIndex];
+        const form = state.englishCustomForms.find((item) => item.id === id);
+        if (!form || !window.confirm(`Delete learned form “${form.name}”?`)) {
+            return;
+        }
+        state.englishCustomForms = state.englishCustomForms.filter((item) =>
+            item.id !== id);
+        delete state.englishFormSelections[state.activeStanzaIndex];
+        await saveEnglishCustomForms();
+        rebuildEnglishFormCatalog();
+        runAnalysis();
+    }
+
     async function loadCatalog() {
         const [fixedResponse, structuralResponse] = await Promise.all([
             fetch("mishra.json", { cache: "force-cache" }),
@@ -6253,7 +6601,9 @@
         const boundedLine = Math.max(0, Math.min(lineIndex, draft.lines.length - 1));
         const boundedSlot = Math.max(
             0,
-            Math.min(slotIndex, draft.lines[boundedLine].slots.length - 1)
+            Math.min(slotIndex, (isEnglishStrongDraft(draft)
+                ? draft.lines[boundedLine].cells
+                : draft.lines[boundedLine].slots).length - 1)
         );
         const target = elements["strong-template-lines"].querySelector(
             `[data-line-index="${boundedLine}"]` +
@@ -6272,9 +6622,15 @@
             return;
         }
         const position = strongInputPosition(input);
-        draft.lines[position.lineIndex].slots[position.slotIndex] = input.value;
+        const line = draft.lines[position.lineIndex];
+        (isEnglishStrongDraft(draft) ? line.cells : line.slots)[position.slotIndex] =
+            input.value;
         if (!state.strongComposing) {
-            renderStrongValidation(draft, context.meter);
+            if (isEnglishStrongDraft(draft)) {
+                renderEnglishStrongTemplate(context, draft, position);
+            } else {
+                renderStrongValidation(draft, context.meter);
+            }
             renderStrongCursorMetrics(input);
             scheduleSave();
         }
@@ -6290,9 +6646,26 @@
         const caret = input.selectionStart === null
             ? input.value.length
             : input.selectionStart;
-        const textThroughCaret = line.slots
+        const cells = isEnglishStrongDraft(draft) ? line.cells : line.slots;
+        const textThroughCaret = cells
             .slice(0, position.slotIndex)
-            .join("") + input.value.slice(0, caret);
+            .join(isEnglishStrongDraft(draft) ? " " : "") +
+                input.value.slice(0, caret);
+        if (isEnglishStrongDraft(draft)) {
+            const result = window.ChandasEnglish.analyzeLine(
+                textThroughCaret,
+                state.englishLexicon,
+                state.englishCatalog,
+                {}
+            );
+            const syllables = result.bestCandidate &&
+                result.bestCandidate.syllables || [];
+            elements["cursor-metrics"].textContent = t("englishCursorMetrics", {
+                syllable: syllables.length,
+                stresses: syllables.filter((item) => item.lexicalStress > 0).length
+            });
+            return;
+        }
         const segmented = Chandas.segmentLine(textThroughCaret, 0);
         const matras = segmented.syllables.reduce(
             (sum, syllable) =>
@@ -6315,6 +6688,25 @@
         event.preventDefault();
         pushStrongHistory(context.key, draft);
         const position = strongInputPosition(input);
+        if (isEnglishStrongDraft(draft)) {
+            const words = text.trim().split(/\s+/).filter(Boolean);
+            let lineIndex = position.lineIndex;
+            let slotIndex = position.slotIndex;
+            for (const word of words) {
+                draft.lines[lineIndex].cells[slotIndex] +=
+                    `${draft.lines[lineIndex].cells[slotIndex] ? " " : ""}${word}`;
+                slotIndex += 1;
+                if (slotIndex >= draft.lines[lineIndex].cells.length) {
+                    lineIndex = Math.min(draft.lines.length - 1, lineIndex + 1);
+                    slotIndex = lineIndex === draft.lines.length - 1
+                        ? Math.min(slotIndex, draft.lines[lineIndex].cells.length - 1)
+                        : 0;
+                }
+            }
+            renderStrongTemplate({ lineIndex, slotIndex });
+            scheduleSave();
+            return;
+        }
         const finalPosition = ChandasStrongTemplate.distributeText(
             draft,
             position.lineIndex,
@@ -6332,6 +6724,8 @@
             return;
         }
         const position = strongInputPosition(input);
+        const slotsFor = (line) => isEnglishStrongDraft(draft)
+            ? line.cells : line.slots;
         const commandKey = event.ctrlKey || event.metaKey;
         if (commandKey && !event.altKey && event.key.toLowerCase() === "z") {
             event.preventDefault();
@@ -6357,12 +6751,12 @@
             } else if (position.lineIndex > 0) {
                 focusStrongSlot(
                     position.lineIndex - 1,
-                    draft.lines[position.lineIndex - 1].slots.length - 1
+                    slotsFor(draft.lines[position.lineIndex - 1]).length - 1
                 );
             }
         } else if (event.key === "ArrowRight" && atEnd) {
             event.preventDefault();
-            if (position.slotIndex < draft.lines[position.lineIndex].slots.length - 1) {
+            if (position.slotIndex < slotsFor(draft.lines[position.lineIndex]).length - 1) {
                 focusStrongSlot(position.lineIndex, position.slotIndex + 1);
             } else if (position.lineIndex < draft.lines.length - 1) {
                 focusStrongSlot(position.lineIndex + 1, 0);
@@ -6557,6 +6951,18 @@
             selectMeter(elements["meter-select"].value));
         elements["english-form-select"].addEventListener("change", () =>
             selectEnglishForm(elements["english-form-select"].value));
+        elements["english-reading-profile"].addEventListener("change", () => {
+            state.englishReadingProfile = elements["english-reading-profile"].value;
+            runAnalysis();
+        });
+        elements["learn-english-form"].addEventListener(
+            "click",
+            learnCurrentEnglishForm
+        );
+        elements["delete-english-form"].addEventListener(
+            "click",
+            deleteSelectedEnglishForm
+        );
         elements["close-english-pronunciation"].addEventListener(
             "click",
             closeEnglishPronunciationDialog
@@ -6647,12 +7053,17 @@
             }
             const existingDraft = strongDraftFor(stanza, meter, false);
             if (existingDraft &&
-                ChandasStrongTemplate.serializeDraft(existingDraft) !== stanza.text) {
+                serializeStrongDraft(existingDraft) !== stanza.text) {
                 pushStrongHistory(
                     strongDraftKey(stanza.index, meter.id),
                     existingDraft
                 );
-                ChandasStrongTemplate.synchronizeFixedDraft(existingDraft, stanza);
+                if (isEnglishStrongDraft(existingDraft)) {
+                    state.strongDrafts[strongDraftKey(stanza.index, meter.id)] =
+                        createEnglishStrongDraft(stanza, meter);
+                } else {
+                    ChandasStrongTemplate.synchronizeFixedDraft(existingDraft, stanza);
+                }
             }
             setTemplateMode(state.activeStanzaIndex, "strong");
             strongDraftFor(stanza, meter, true);
@@ -6683,7 +7094,7 @@
             const draft = activeStrongDraft(false);
             if (context && draft) {
                 state.strongCompositionSnapshot =
-                    ChandasStrongTemplate.cloneSlots(draft);
+                    cloneStrongDraft(draft);
                 state.strongComposing = true;
             }
         });
@@ -6758,7 +7169,7 @@
         renderPlainOverlay();
 
         try {
-            await loadCustomForms();
+            await Promise.all([loadCustomForms(), loadEnglishCustomForms()]);
             await loadCatalog();
             if (isEnglishMode()) {
                 await ensureEnglishResources();

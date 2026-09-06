@@ -138,9 +138,9 @@ test("retains noun-verb alternatives and conservatively ranks grammar context", 
 
 test("validates the English v2 catalog and controlled template variations", () => {
     assert.equal(English.validateCatalog(meters), meters);
-    assert.equal(meters.meters.length, 20);
+    assert.equal(meters.meters.length, 24);
     assert.deepEqual(new Set(meters.meters.map((meter) => meter.foot)),
-        new Set(["iamb", "trochee", "anapest", "dactyl", "accentual"]));
+        new Set(["iamb", "trochee", "anapest", "dactyl", "accentual", "sprung"]));
 
     const iamb = meters.meters.find((meter) =>
         meter.id === "english:iambic-pentameter");
@@ -194,6 +194,19 @@ test("accentual lines retain their beat count while allowing variable slack", ()
         3);
     assert.notEqual(short.syllables.length, long.syllables.length);
     assert.equal(long.extraCount, 0);
+});
+
+test("sprung rhythm permits adjacent beats and variable stress-led feet", () => {
+    const selected = English.analyzeLine(
+        "Glory be to God for dappled things",
+        lexicon,
+        meters,
+        { selectedMeterId: "english:sprung-four-beat" }
+    ).selected;
+    assert.equal(selected.analysisMode, "sprung");
+    assert.equal(selected.beatCount, 4);
+    assert.equal(selected.extraCount, 0);
+    assert.ok(["exact", "compatible"].includes(selected.matchLevel));
 });
 
 test("a source-local pronunciation override changes only the tapped word", () => {

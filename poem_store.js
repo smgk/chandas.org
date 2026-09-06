@@ -88,6 +88,9 @@
             englishFormSelections: objectOrEmpty(value.englishFormSelections),
             englishOverrides: objectOrEmpty(value.englishOverrides),
             englishRhymeOverrides: objectOrEmpty(value.englishRhymeOverrides),
+            englishReadingProfile: ["dictionary", "non-rhotic", "early-modern"]
+                .includes(value.englishReadingProfile)
+                ? value.englishReadingProfile : "dictionary",
             scansionMode: [
                 "auto", "weights", "amsha", "matra-35", "matra-53", "off"
             ].includes(value.scansionMode) ? value.scansionMode : "auto",
@@ -121,13 +124,15 @@
         return JSON.stringify(copy);
     }
 
-    function makeBackup(poems, customForms) {
+    function makeBackup(poems, customForms, englishCustomForms) {
         return {
             format: BACKUP_FORMAT,
             version: BACKUP_VERSION,
             exportedAt: new Date().toISOString(),
             poems: poems.map((poem) => normalizePoem(poem)),
-            customForms: Array.isArray(customForms) ? clone(customForms) : []
+            customForms: Array.isArray(customForms) ? clone(customForms) : [],
+            englishCustomForms: Array.isArray(englishCustomForms)
+                ? clone(englishCustomForms) : []
         };
     }
 
@@ -154,6 +159,11 @@
                 data.customForms.length > MAX_CUSTOM_FORMS)) {
             throw new Error("Backup contains invalid custom forms");
         }
+        if (data.englishCustomForms !== undefined &&
+            (!Array.isArray(data.englishCustomForms) ||
+                data.englishCustomForms.length > MAX_CUSTOM_FORMS)) {
+            throw new Error("Backup contains invalid custom English forms");
+        }
         const seen = new Set();
         const poems = data.poems.map((poem) => {
             if (!poem || typeof poem !== "object" || Array.isArray(poem) ||
@@ -170,7 +180,8 @@
         });
         return {
             poems,
-            customForms: clone(data.customForms || [])
+            customForms: clone(data.customForms || []),
+            englishCustomForms: clone(data.englishCustomForms || [])
         };
     }
 

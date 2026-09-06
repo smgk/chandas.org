@@ -34,6 +34,9 @@ roadmap item:
 - Offline Kannada and Sanskrit synonym suggestions with metrical-fit guidance.
 - User-facing Learn, About, privacy, roadmap, examples, update notification,
   and four interface localizations.
+- English M6/M7: modern alliterative half-lines, sprung rhythm, internal and
+  profile-aware rhyme hints, whole-word Strong guides, and learned private
+  English stress forms.
 
 Some native meter entries remain provisional until scholarly examples and
 exception rules are reviewed. Engineering support does not by itself promote
@@ -137,9 +140,10 @@ with positive, variant, incomplete, ambiguous, and negative checks.
 
 - Add additional Indic scripts one at a time using the existing
   normalization, source-range, golden-corpus, and regression gates.
-- Expand English into modern alliterative and syllabic verse, then separately
-  research genuine Old English, dialect profiles, historical rhyme, sprung
-  rhythm, and nonjudgmental free-verse pattern summaries.
+- Research genuine Old English/Sievers classification separately, then explore
+  syllabic verse and nonjudgmental free-verse pattern summaries. Modern
+  alliteration, sprung rhythm, internal rhyme, and cautious reading profiles
+  are already delivered.
 - Add optional performance/timing layers to custom forms without changing the
   reproducible written-text model.
 - Improve dictionary register, dialect, and provenance labels where licensed

@@ -132,9 +132,15 @@ test("loads English prosody only after explicit selection and keeps Indic UI int
     await expect(page.locator("#selected-meter-signature"))
         .toContainText("w S w S w S w S w S");
     await page.locator("#show-template").check();
-    await expect(page.locator("#template-mode-strong")).toBeDisabled();
+    await expect(page.locator("#template-mode-strong")).toBeEnabled();
     await expect(page.locator("#whole-verse-template .whole-template-line-guide"))
         .toHaveText("w S w S w S w S w S");
+    await page.locator("#template-mode-strong").check();
+    await expect(page.locator("#strong-template-lines .english-word-slot"))
+        .toHaveCount(5);
+    await expect(page.locator("#strong-template-availability"))
+        .toContainText("whole words");
+    await page.locator("#template-mode-ghost").check();
 
     await page.locator("#composition").fill(
         "Bright bright bright bright bright bright bright bright bright bright"
@@ -151,6 +157,54 @@ test("loads English prosody only after explicit selection and keeps Indic UI int
     await expect(page.locator("#analysis-tools")).toBeVisible();
     await expect(page.locator("#highlight-layer .english-weak, " +
         "#highlight-layer .english-strong")).toHaveCount(0);
+});
+
+test("guides M6/M7 alliteration, sprung rhythm, whole words, and learned forms", async ({
+    page
+}) => {
+    await page.locator("#input-scheme").selectOption("english");
+    await expect(page.locator("#transliteration-help"))
+        .toHaveText("English stress analysis is ready offline.", { timeout: 15_000 });
+    await page.locator("#composition").fill(
+        "Bold blades || break bitter shields\n" +
+        "Strong stones || stand storm-fast"
+    );
+    await page.locator("#english-form-select")
+        .selectOption("english-form:modern-alliterative");
+    await expect(page.locator("#english-alliteration .is-match")).toHaveCount(2);
+    await expect(page.locator("#english-alliteration"))
+        .toContainText("caesura marked");
+
+    await page.locator("#meter-picker summary").click();
+    await page.locator("#meter-select").selectOption("english:sprung-four-beat");
+    await expect(page.locator("#selected-meter-signature"))
+        .toContainText("sprung beats");
+    await page.locator("#show-template").check();
+    await page.locator("#template-mode-strong").check();
+    await expect(page.locator("#strong-template-lines .english-word-slot"))
+        .toHaveCount(8);
+    await page.locator("#strong-template-lines .english-word-slot").first()
+        .fill("Bright blades");
+    await expect(page.locator("#strong-template-lines .english-word-slot").first())
+        .toHaveValue("Bright blades");
+    await page.locator("#template-mode-ghost").check();
+
+    await page.locator("#composition").fill("Bright birds fly\nDark drums reply");
+    page.once("dialog", (dialog) => dialog.accept("My beat-and-rhyme form"));
+    await page.locator(".english-advanced-tools summary").click();
+    await page.locator("#learn-english-form").click();
+    await expect(page.locator("#english-form-select"))
+        .toHaveValue(/english-custom:/);
+    const stored = await page.evaluate(() =>
+        JSON.parse(localStorage.getItem("chandas.englishCustomForms.v1") || "[]"));
+    expect(stored.some((form) => form.name === "My beat-and-rhyme form")).toBe(true);
+
+    await page.locator("#english-reading-profile").selectOption("non-rhotic");
+    await expect(page.locator("#english-reading-profile"))
+        .toHaveValue("non-rhotic");
+    await page.locator("#composition").fill("bright was the flight into night");
+    await expect(page.locator("#english-rhyme-relations"))
+        .toContainText("Inside line");
 });
 
 test("detects perfect rhyme and named forms only in English mode", async ({

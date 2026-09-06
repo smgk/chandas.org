@@ -438,8 +438,12 @@
             return { tokens, realizations: beams };
         }
 
+        function isBeatMeter(meter) {
+            return meter && ["accentual", "sprung"].includes(meter.analysisMode);
+        }
+
         function templateVariants(meter) {
-            if (meter.analysisMode === "accentual") {
+            if (isBeatMeter(meter)) {
                 return [{
                     pattern: "S".repeat(meter.beats),
                     cost: 0,
@@ -669,7 +673,7 @@
             return syllable.wordSyllableCount === 1 ? 0.12 : 0.8;
         }
 
-        function chooseAccentualBeats(syllables, beatCount) {
+        function chooseAccentualBeats(syllables, beatCount, sprung) {
             if (!syllables.length || beatCount < 1) {
                 return { indexes: [], cost: beatCount * 1.5 };
             }
@@ -691,7 +695,7 @@
                         }
                         const candidate = {
                             cost: prior.cost + naturalBeatCost(syllables[index]) +
-                                (index - previous === 1 ? 0.16 : 0),
+                                (!sprung && index - previous === 1 ? 0.16 : 0),
                             previous
                         };
                         if (!best || candidate.cost < best.cost) {
@@ -737,7 +741,12 @@
             const requested = meter.beats;
             const available = realization.syllables.length;
             const chosenCount = Math.min(requested, available);
-            const chosen = chooseAccentualBeats(realization.syllables, chosenCount);
+            const sprung = meter.analysisMode === "sprung";
+            const chosen = chooseAccentualBeats(
+                realization.syllables,
+                chosenCount,
+                sprung
+            );
             const beatIndexes = new Set(chosen.indexes);
             const assignments = realization.syllables.map((syllable, index) => ({
                 expectedStress: beatIndexes.has(index) ? "S" : "W",
@@ -751,8 +760,14 @@
                 syllable.lexicalStress > 0 &&
                 !FUNCTION_WORDS.has(syllable.normalizedWord)).length;
             const surplusProminence = Math.max(0, audibleStrong - requested);
+            const beatGaps = chosen.indexes.slice(0, -1).map((index, beatIndex) =>
+                chosen.indexes[beatIndex + 1] - index);
+            const overlongSprungFeet = sprung
+                ? beatGaps.filter((gap) => gap > 4).length
+                : 0;
             const missingCount = Math.max(0, requested - chosenCount);
-            const rawScore = chosen.cost + surplusProminence * 0.16 +
+            const rawScore = chosen.cost + surplusProminence * (sprung ? 0.1 : 0.16) +
+                overlongSprungFeet * 0.35 +
                 (partial ? 0 : missingCount * 1.5) + realization.pronunciationCost;
             return {
                 rawScore,
@@ -772,12 +787,12 @@
                 realization,
                 beatCount: chosenCount,
                 partial,
-                analysisMode: "accentual"
+                analysisMode: meter.analysisMode
             };
         }
 
         function fitRealization(realization, meter, options) {
-            if (meter.analysisMode === "accentual") {
+            if (isBeatMeter(meter)) {
                 return fitAccentualRealization(realization, meter, options);
             }
             const partial = Boolean(options && options.partial);
@@ -818,7 +833,7 @@
         }
 
         function matchLevel(fit) {
-            if (fit.analysisMode === "accentual") {
+            if (["accentual", "sprung"].includes(fit.analysisMode)) {
                 if (fit.aligned.missingCount) {
                     return fit.partial ? "incomplete" : "approximate";
                 }
@@ -847,7 +862,7 @@
         }
 
         function footSubstitutions(syllables, meter, variations) {
-            if (meter.analysisMode === "accentual" ||
+            if (isBeatMeter(meter) ||
                 !["iamb", "trochee"].includes(meter.foot) ||
                 (variations || []).some((variation) =>
                     variation.startsWith("weak-resolution-"))) {
@@ -938,7 +953,8 @@
                 feet: meter.feet,
                 analysisMode: meter.analysisMode || "accentual-syllabic",
                 beats: meter.beats || meter.feet,
-                canonicalPattern: meter.analysisMode === "accentual"
+                beatCount: best.beatCount,
+                canonicalPattern: isBeatMeter(meter)
                     ? "S".repeat(meter.beats)
                     : meter.pattern.repeat(meter.feet),
                 expectedPattern: best.variant.pattern,
@@ -947,7 +963,8 @@
                 score: best.score,
                 rawScore: best.rawScore,
                 effectiveScore: best.score + completionPenalty +
-                    (meter.analysisMode === "accentual" ? 0.25 : 0) +
+                    (meter.analysisMode === "accentual" ? 0.25 :
+                        meter.analysisMode === "sprung" ? 0.42 : 0) +
                     (["anapest", "dactyl"].includes(meter.foot) ? 0.05 : 0) -
                     (Number(meter.prominence) || 0) * 0.008,
                 matchLevel: level,
@@ -977,7 +994,7 @@
             }
             const ids = new Set();
             for (const meter of document.meters) {
-                const accentual = meter.analysisMode === "accentual";
+                const accentual = isBeatMeter(meter);
                 if (!meter.id || ids.has(meter.id) || !meter.name ||
                     (accentual
                         ? (!Number.isInteger(meter.beats) || meter.beats < 1 ||

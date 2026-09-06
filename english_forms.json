@@ -1,5 +1,5 @@
 {
-  "catalogVersion": "2.0.0",
+  "catalogVersion": "3.0.0",
   "analysisSystem": "english-form",
   "copyright": "Copyright © 2025–2026 Ganesh Krishna Shankarathota",
   "license": "GPL-3.0-only",
@@ -7,9 +7,22 @@
     "rhyme": { "title": "Rhyme", "publisher": "Poetry Foundation", "url": "https://www.poetryfoundation.org/education/glossary/rhyme" },
     "blankVerse": { "title": "Blank verse", "publisher": "Poetry Foundation", "url": "https://www.poetryfoundation.org/education/glossary/blank-verse" },
     "commonMeasure": { "title": "Common measure", "publisher": "Poetry Foundation", "url": "https://www.poetryfoundation.org/education/glossary/common-measure" },
-    "poeticForms": { "title": "Poetic forms", "publisher": "Poetry Foundation", "url": "https://www.poetryfoundation.org/education/glossary/poetic-form" }
+    "poeticForms": { "title": "Poetic forms", "publisher": "Poetry Foundation", "url": "https://www.poetryfoundation.org/education/glossary/poetic-form" },
+    "alliterativeVerse": { "title": "Alliterative verse", "publisher": "Poetry Foundation", "url": "https://www.poetryfoundation.org/education/glossary/alliterative-verse" }
   },
   "forms": [
+    {
+      "id": "english-form:modern-alliterative",
+      "name": "Modern alliterative verse",
+      "aliases": ["alliterative verse", "half-line verse", "caesura verse"],
+      "lineCount": { "min": 2 },
+      "meterSequence": [["english:accentual-four-beat", "english:sprung-four-beat"]],
+      "repeatMeterSequence": true,
+      "rhymePolicy": "advisory",
+      "alliterationPolicy": "modern-half-line",
+      "prominence": 4,
+      "sourceRef": "alliterativeVerse"
+    },
     {
       "id": "english-form:blank-verse",
       "name": "Blank verse",

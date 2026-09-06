@@ -56,7 +56,7 @@
             return catalog.meters.map((meter) => ({
                 ...meter,
                 kind: "english",
-                patterns: [meter.analysisMode === "accentual"
+                patterns: [["accentual", "sprung"].includes(meter.analysisMode)
                     ? "S".repeat(meter.beats)
                     : meter.pattern.repeat(meter.feet)],
                 linePolicy: {
@@ -119,7 +119,7 @@
                 kind: "english",
                 aliases: meter.aliases || [],
                 prominence: meter.prominence || 0,
-                patterns: [meter.analysisMode === "accentual"
+                patterns: [["accentual", "sprung"].includes(meter.analysisMode)
                     ? "S".repeat(meter.beats)
                     : meter.pattern.repeat(meter.feet)],
                 analysisMode: meter.analysisMode || "accentual-syllabic",
@@ -132,7 +132,7 @@
                 guessedWords,
                 guessedWordCount: guessedWords.length,
                 observedSyllables: activeLine ? activeLine.syllables.length : 0,
-                expectedSyllables: meter.analysisMode === "accentual"
+                expectedSyllables: ["accentual", "sprung"].includes(meter.analysisMode)
                     ? null
                     : activeLine ? activeLine.expectedPattern.length :
                         meter.pattern.length * meter.feet,
@@ -214,7 +214,7 @@
         }
 
         function formMeterChoices(form, lineIndex) {
-            if (!form || form.meterPolicy === "advisory") {
+            if (!form || ["advisory", "custom"].includes(form.meterPolicy)) {
                 return [];
             }
             if (form.repeatMeterSequence) {
@@ -299,7 +299,8 @@
                         formTools.catalog,
                         {
                             selectedFormId,
-                            rhymeOverrides: formTools.rhymeOverrides
+                            rhymeOverrides: formTools.rhymeOverrides,
+                            readingProfile: formTools.readingProfile
                         }
                     )
                     : null;
@@ -324,6 +325,7 @@
                     dominantFeet: result.dominantFeet,
                     bestCandidate: candidates[0] || null,
                     rhyme: formAnalysis ? formAnalysis.rhyme : null,
+                    alliteration: formAnalysis ? formAnalysis.alliteration : [],
                     forms: formAnalysis ? formAnalysis.forms : [],
                     bestForm: formAnalysis ? formAnalysis.bestForm : null,
                     selectedForm: formAnalysis ? formAnalysis.selectedForm : null,
@@ -331,7 +333,7 @@
                 };
             });
             return {
-                analysisVersion: "english-stress-2.0.0",
+                analysisVersion: "english-stress-3.0.0",
                 analysisSystem: "english-stress",
                 text: source,
                 stanzas,

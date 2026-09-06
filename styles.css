@@ -1239,6 +1239,41 @@ textarea:focus-visible {
     font: inherit;
 }
 
+.english-advanced-tools {
+    color: var(--muted);
+    font-size: 0.68rem;
+}
+
+.english-advanced-tools summary {
+    cursor: pointer;
+    color: var(--saffron-dark);
+    font-weight: 700;
+}
+
+.english-advanced-tools > label {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.55rem;
+}
+
+.english-advanced-tools select {
+    min-width: 0;
+    padding: 0.32rem 0.42rem;
+    border: 1px solid var(--line);
+    border-radius: 0.5rem;
+    background: var(--paper);
+    color: var(--ink);
+    font: inherit;
+}
+
+.english-custom-form-actions {
+    display: flex;
+    gap: 0.45rem;
+    margin: 0.55rem 0 0.35rem;
+}
+
 .english-form-progress {
     display: grid;
     gap: 0.3rem;
@@ -1296,6 +1331,22 @@ textarea:focus-visible {
     display: flex;
     flex-wrap: wrap;
     gap: 0.28rem;
+}
+
+.english-alliteration {
+    display: grid;
+    gap: 0.22rem;
+    color: var(--muted);
+    font-size: 0.66rem;
+}
+
+.english-alliteration .is-match {
+    color: var(--green);
+}
+
+.strong-template-slot.english-word-slot {
+    width: 9rem;
+    text-align: left;
 }
 
 .english-rhyme-relation {

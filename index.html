@@ -247,6 +247,22 @@ SPDX-License-Identifier: GPL-3.0-only
                                 <option value="" data-i18n="englishNoChosenForm">No chosen form</option>
                             </select>
                         </label>
+                        <details class="english-advanced-tools">
+                            <summary>English ear tools</summary>
+                            <label for="english-reading-profile">
+                                <span>Reading profile</span>
+                                <select id="english-reading-profile">
+                                    <option value="dictionary">North American dictionary</option>
+                                    <option value="non-rhotic">Non-rhotic rhyme hints</option>
+                                    <option value="early-modern">Early Modern rhyme hints · experimental</option>
+                                </select>
+                            </label>
+                            <div class="english-custom-form-actions">
+                                <button id="learn-english-form" class="quiet-button" type="button">Learn this form</button>
+                                <button id="delete-english-form" class="text-button" type="button" hidden>Delete learned form</button>
+                            </div>
+                            <small>Reading profiles add cautious rhyme hints; they do not rewrite dictionary stress.</small>
+                        </details>
                         <div id="english-form-progress" class="english-form-progress" hidden>
                             <strong id="english-form-progress-summary"></strong>
                             <div id="english-form-progress-details"></div>
@@ -256,6 +272,7 @@ SPDX-License-Identifier: GPL-3.0-only
                         <output id="english-rhyme-scheme" class="english-rhyme-scheme"></output>
                         <div id="english-rhyme-endings" class="english-rhyme-endings"></div>
                         <div id="english-rhyme-relations" class="english-rhyme-relations"></div>
+                        <div id="english-alliteration" class="english-alliteration"></div>
                         <div id="english-form-list" class="english-form-list"></div>
                         <p id="english-form-note" class="english-form-note"></p>
                         <details id="english-pronunciation-review"

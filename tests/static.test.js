@@ -214,10 +214,10 @@ test("service worker keeps English outside the core shell and runtime-caches it"
     assert.match(worker, /cache\.put\(cacheRequest, copy\)/);
     assert.doesNotMatch(worker, /cache\.put\(event\.request, copy\)/);
     assert.match(worker, /event\.request\.cache !== "reload"/);
-    assert.match(worker, /ENGLISH_CACHE_NAME = "chandas-english-v8"/);
+    assert.match(worker, /ENGLISH_CACHE_NAME = "chandas-english-v9"/);
     assert.match(worker, /data\/english\/en-cmudict-stress-v1\.json/);
     assert.match(worker, /data\/english\/en-cmudict-rhyme-v1\.json/);
-    assert.match(read("app.js"), /ENGLISH_FORM_ASSET_VERSION = "2\.0\.0"/);
+    assert.match(read("app.js"), /ENGLISH_FORM_ASSET_VERSION = "3\.0\.0"/);
     assert.match(
         read("app.js"),
         /english_forms\.js\?v=\$\{ENGLISH_FORM_ASSET_VERSION\}/

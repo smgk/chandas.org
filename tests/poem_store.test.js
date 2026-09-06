@@ -70,7 +70,8 @@ test("preserves explicit English stress mode through backup and restore", () => 
         selections: { 0: "english:iambic-pentameter" },
         englishFormSelections: { 0: "english-form:english-sonnet" },
         englishOverrides: { "0:5": "10" },
-        englishRhymeOverrides: { "5:28": true }
+        englishRhymeOverrides: { "5:28": true },
+        englishReadingProfile: "non-rhotic"
     });
     const restored = parseBackup(JSON.stringify(makeBackup([englishPoem])));
 
@@ -82,6 +83,7 @@ test("preserves explicit English stress mode through backup and restore", () => 
         { 0: "english-form:english-sonnet" });
     assert.deepEqual(restored[0].englishOverrides, { "0:5": "10" });
     assert.deepEqual(restored[0].englishRhymeOverrides, { "5:28": true });
+    assert.equal(restored[0].englishReadingProfile, "non-rhotic");
 });
 
 test("exports and parses a portable versioned backup", () => {
@@ -90,7 +92,13 @@ test("exports and parses a portable versioned backup", () => {
         name: "My cadence",
         rules: [{ syllables: { min: 2, max: 2 } }]
     }];
-    const backup = makeBackup([poem()], customForms);
+    const englishCustomForms = [{
+        id: "english-custom:test",
+        name: "My English cadence",
+        customEnglish: true,
+        customLineRules: [{ pattern: "WS", beats: 1, syllables: 2 }]
+    }];
+    const backup = makeBackup([poem()], customForms, englishCustomForms);
     assert.equal(backup.format, BACKUP_FORMAT);
     assert.equal(backup.version, 1);
     const restored = parseBackup(JSON.stringify(backup));
@@ -101,6 +109,7 @@ test("exports and parses a portable versioned backup", () => {
     assert.equal(restored[0].scansionMode, "amsha");
     const workspace = parseWorkspaceBackup(JSON.stringify(backup));
     assert.deepEqual(workspace.customForms, customForms);
+    assert.deepEqual(workspace.englishCustomForms, englishCustomForms);
 });
 
 test("rejects foreign, malformed, and duplicate-id backups", () => {

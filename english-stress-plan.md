@@ -5,7 +5,8 @@ SPDX-License-Identifier: GPL-3.0-only
 
 # English Stress Prosody Improvement Plan
 
-**Status:** E1–E6 implemented in version 1.50.0; E7 remains future work
+**Status:** E1–E6 implemented in version 1.50.0; most E7 composition tools
+implemented in version 1.60.0
 
 **Updated:** 2026-09-05
 
@@ -94,9 +95,11 @@ Useful descriptions include:
 
 ## 4. Proposed milestones
 
-Implementation note: E1–E6 now form the English Ear v2 release. E7 remains
-deliberately separate because historical language traditions and free verse
-need their own evidence and interaction design.
+Implementation note: E1–E6 form the English Ear v2 release. Version 1.60.0
+implements E7's modern alliterative, reading-profile, sprung-rhythm, and
+whole-word Strong composition tools. Syllabic/free-verse profiles and genuine
+Old/Middle English remain separate because they need their own evidence and
+interaction design.
 
 ### E1 — English Ear v2
 
@@ -212,6 +215,9 @@ Use progressive disclosure:
   alternative scans.
 
 ### E7 — Later traditions
+
+**Status:** Partly complete in version 1.60.0; genuine historical-language,
+syllabic, and free-verse items remain research work.
 
 After the central listening and composition model is trustworthy, consider:
 

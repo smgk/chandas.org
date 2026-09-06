@@ -5,7 +5,7 @@ SPDX-License-Identifier: GPL-3.0-only
 
 # English rhyme and named forms — M5 rule packet
 
-**Status:** English Ear v2 implemented in version 1.50.0
+**Status:** English Ear v2 and advanced M6/M7 implemented in version 1.60.0
 **Updated:** 2026-09-05
 
 ## Scope
@@ -22,11 +22,19 @@ The layer reports:
 - a stanza rhyme scheme, retaining `?` for endings absent from the dictionary;
 - named-form matches that combine line count, meter evidence, and rhyme.
 
-Assonance/consonance and eye rhyme are displayed as separately labeled
-evidence. A writer may also tap two line endings to declare the rhyme intended
-in their reading; the declaration stays local, is removable, and never becomes
-dictionary-perfect evidence. Internal rhyme, dialect profiles, and historical
-pronunciation remain later work.
+Assonance/consonance, eye rhyme, and internal rhyme are displayed as separately
+labeled evidence. A writer may also tap two line endings to declare the rhyme
+intended in their reading. Optional non-rhotic and experimental Early Modern
+profiles add cautious hints; none becomes dictionary-perfect evidence.
+
+Sprung rhythm is a separate stress-led meter family that permits adjacent
+beats and variable one-to-four-syllable feet. Modern alliterative verse checks
+half-lines, caesura, beat balance, and stressed onsets. It deliberately does
+not claim genuine Old English language or Sievers-type classification.
+
+The compact “English ear tools” disclosure also contains on-device custom-form
+learning. Strong guidance uses whole-word phrase cells, never rewritten or
+synthetically split spelling.
 
 ## Data and reproducibility
 
@@ -82,6 +90,9 @@ form matches remain advisory and cannot create red correction marks.
 - [Poetry Foundation: Rhyme](https://www.poetryfoundation.org/education/glossary/rhyme)
 - [Poetry Foundation: Blank verse](https://www.poetryfoundation.org/education/glossary/blank-verse)
 - [Poetry Foundation: Common measure](https://www.poetryfoundation.org/education/glossary/common-measure)
+- [Poetry Foundation: Alliterative verse](https://www.poetryfoundation.org/education/glossary/alliterative-verse)
+- [Poetry Foundation: Sprung rhythm](https://www.poetryfoundation.org/education/glossary/sprung-rhythm)
+- [Folger Shakespeare Library: Original pronunciation](https://www.folger.edu/podcasts/shakespeare-unlimited/original-pronunciation/)
 - [CMU Pronouncing Dictionary](https://github.com/cmusphinx/cmudict)
 
 Public-domain fixtures are recorded with provenance in

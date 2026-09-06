@@ -148,7 +148,8 @@ test("recognizes every cataloged M5 form without adding forms to meter choices",
     ];
 
     Forms.validateCatalog(formCatalog);
-    assert.equal(formCatalog.forms.length, cases.length);
+    assert.equal(formCatalog.forms.length, cases.length + 1,
+        "modern alliterative verse is tested with real line evidence below");
     for (const [expectedId, meterIds, scheme] of cases) {
         const result = Forms.analyzeStanza(
             mockLines(meterIds, scheme),
@@ -323,6 +324,65 @@ test("near and user-declared rhymes remain labeled evidence", () => {
         ["assonance", "consonance", "eye"].includes(relation.kind)));
     assert.notEqual(result.scheme[0], result.scheme[1],
         "declared rhyme must not masquerade as dictionary-perfect rhyme");
+});
+
+test("modern alliterative verse checks caesura, half-line beats, and onset", () => {
+    const analysis = Composer.analyze(
+        "Bold blades || break bitter shields\nStrong stones || stand storm-fast",
+        {}, stressLexicon, meters, English,
+        { engine: Forms, rhymeLexicon, catalog: formCatalog,
+            selectedForms: { 0: "english-form:modern-alliterative" } }
+    );
+    const stanza = analysis.stanzas[0];
+    assert.ok(stanza.alliteration.every((line) =>
+        line.status === "match" && line.caesura.explicit));
+    assert.ok(stanza.forms.some((form) =>
+        form.id === "english-form:modern-alliterative"));
+    assert.equal(stanza.formProgress.complete, true);
+});
+
+test("internal rhyme and optional reading profiles stay labeled evidence", () => {
+    const internalLine = English.analyzeLine(
+        "bright was the flight into night",
+        stressLexicon,
+        meters,
+        {}
+    );
+    const internal = Forms.analyzeRhymes([internalLine], rhymeLexicon, {});
+    assert.ok(internal.internalRelations.some((relation) =>
+        relation.kind === "perfect" && relation.scope === "internal-to-end"));
+
+    const profileLines = ["more", "law"].map((word, index) => ({
+        start: index * 10,
+        end: index * 10 + word.length,
+        tokens: [{ text: word, normalized: word, start: index * 10,
+            end: index * 10 + word.length }]
+    }));
+    const profiled = Forms.analyzeRhymes(profileLines, rhymeLexicon, {
+        readingProfile: "non-rhotic"
+    });
+    assert.ok(profiled.relations.some((relation) => relation.kind === "dialect"));
+});
+
+test("learns a private custom English stress form from the current stanza", () => {
+    const analysis = Composer.analyze(
+        "Bold blades break shields\nStrong stones stand fast",
+        {}, stressLexicon, meters, English,
+        { engine: Forms, rhymeLexicon, catalog: formCatalog }
+    );
+    const stanza = analysis.stanzas[0];
+    const learned = Forms.inferCustomForm(
+        stanza.lines,
+        stanza.rhyme,
+        "Forge song",
+        "english-custom:forge-song"
+    );
+    const catalog = { ...formCatalog, forms: [...formCatalog.forms, learned] };
+    const replay = Forms.analyzeStanza(stanza.lines, rhymeLexicon, catalog, {
+        selectedFormId: learned.id
+    });
+    assert.equal(replay.formProgress.complete, true);
+    assert.equal(replay.formProgress.matchingMeterLines, 2);
 });
 
 test("keeps M5 rhyme and form analysis inside the live-composition budget", () => {

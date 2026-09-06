@@ -720,6 +720,29 @@ recommended, and optional behavior.
     selection, live in the separate English runtime cache, work offline after
     that first load, and pass the complete Indic, native-script,
     transliteration, storage, and browser regression suites.
+21. Modern alliterative verse MUST remain a distinct English form. It SHOULD
+    guide a writer toward two stress-bearing half-lines, expose a marked or
+    cautiously inferred caesura, and compare the stressed onset across the
+    caesura. It MUST NOT claim Old English or Sievers classification.
+22. Sprung-rhythm candidates MUST use stress-led feet with variable slack and
+    allow adjacent beats. They MUST be labeled sprung rhythm rather than
+    ordinary accentual or accentual-syllabic meter.
+23. Internal rhyme MUST be displayed as separately labeled evidence and MUST
+    NOT alter the exact end-rhyme scheme. Slant, eye, user-declared, dialect,
+    and historical hints MUST remain distinguishable from dictionary-perfect
+    rhyme.
+24. The initial dictionary reading MUST identify its North American basis.
+    Optional non-rhotic and Early Modern profiles MAY add cautious rhyme hints,
+    but MUST NOT silently rewrite lexical stress or assert a definitive
+    historical pronunciation.
+25. English Strong guidance MUST keep authored words intact. A metrical cell
+    MAY contain a whole word or phrase; the UI MUST NOT split spelling into
+    synthetic syllable fragments.
+26. A writer MUST be able to learn and name an English stress form from the
+    current stanza. Learned line patterns and rhyme evidence MUST be labeled as
+    the writer's private form, stored on-device, and included in full backup.
+27. Items 21–26 MUST activate only in explicit English stress mode and MUST NOT
+    change Indic catalogs, analysis, templates, or startup behavior.
 
 ## 6. Analysis Engine Requirements
 

@@ -1,5 +1,5 @@
 {
-  "catalogVersion": "2.0.0",
+  "catalogVersion": "3.0.0",
   "analysisSystem": "english-stress",
   "copyright": "Copyright © 2025–2026 Ganesh Krishna Shankarathota",
   "license": "GPL-3.0-only",
@@ -24,6 +24,11 @@
       "title": "Accentual verse",
       "publisher": "Poetry Foundation",
       "url": "https://www.poetryfoundation.org/education/glossary/accentual-verse"
+    },
+    "poetryFoundationSprung": {
+      "title": "Sprung rhythm",
+      "publisher": "Poetry Foundation",
+      "url": "https://www.poetryfoundation.org/education/glossary/sprung-rhythm"
     }
   },
   "meters": [
@@ -50,6 +55,11 @@
 
     { "id": "english:accentual-two-beat", "name": "Two-beat accentual line", "aliases": ["accentual dimeter", "two stress", "2 beat"], "analysisMode": "accentual", "foot": "accentual", "beats": 2, "prominence": 2, "sourceRef": "poetryFoundationAccentual", "rules": { "variableSlack": true } },
     { "id": "english:accentual-three-beat", "name": "Three-beat accentual line", "aliases": ["accentual trimeter", "three stress", "3 beat", "limerick beat"], "analysisMode": "accentual", "foot": "accentual", "beats": 3, "prominence": 4, "sourceRef": "poetryFoundationAccentual", "rules": { "variableSlack": true } },
-    { "id": "english:accentual-four-beat", "name": "Four-beat accentual line", "aliases": ["accentual tetrameter", "four stress", "4 beat", "nursery rhyme"], "analysisMode": "accentual", "foot": "accentual", "beats": 4, "prominence": 4, "sourceRef": "poetryFoundationAccentual", "rules": { "variableSlack": true } }
+    { "id": "english:accentual-four-beat", "name": "Four-beat accentual line", "aliases": ["accentual tetrameter", "four stress", "4 beat", "nursery rhyme"], "analysisMode": "accentual", "foot": "accentual", "beats": 4, "prominence": 4, "sourceRef": "poetryFoundationAccentual", "rules": { "variableSlack": true } },
+
+    { "id": "english:sprung-two-beat", "name": "Two-beat sprung rhythm", "aliases": ["sprung dimeter", "two stress sprung"], "analysisMode": "sprung", "foot": "sprung", "beats": 2, "prominence": 1, "sourceRef": "poetryFoundationSprung", "rules": { "variableSlack": true, "adjacentBeats": true, "maxFootSyllables": 4 } },
+    { "id": "english:sprung-three-beat", "name": "Three-beat sprung rhythm", "aliases": ["sprung trimeter", "three stress sprung"], "analysisMode": "sprung", "foot": "sprung", "beats": 3, "prominence": 2, "sourceRef": "poetryFoundationSprung", "rules": { "variableSlack": true, "adjacentBeats": true, "maxFootSyllables": 4 } },
+    { "id": "english:sprung-four-beat", "name": "Four-beat sprung rhythm", "aliases": ["sprung tetrameter", "four stress sprung", "Hopkins rhythm"], "analysisMode": "sprung", "foot": "sprung", "beats": 4, "prominence": 3, "sourceRef": "poetryFoundationSprung", "rules": { "variableSlack": true, "adjacentBeats": true, "maxFootSyllables": 4 } },
+    { "id": "english:sprung-five-beat", "name": "Five-beat sprung rhythm", "aliases": ["sprung pentameter", "five stress sprung", "Hopkins rhythm"], "analysisMode": "sprung", "foot": "sprung", "beats": 5, "prominence": 2, "sourceRef": "poetryFoundationSprung", "rules": { "variableSlack": true, "adjacentBeats": true, "maxFootSyllables": 4 } }
   ]
 }

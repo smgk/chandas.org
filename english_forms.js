@@ -22,6 +22,10 @@
             incomplete: 0.8,
             approximate: 0.65
         });
+        const RHYME_FUNCTION_WORDS = new Set([
+            "a", "an", "and", "as", "at", "by", "for", "from", "in", "into",
+            "of", "on", "or", "the", "to", "with"
+        ]);
 
         function normalizeWord(value) {
             return String(value || "")
@@ -76,6 +80,7 @@
                 if (!form.id || !form.name || ids.has(form.id) ||
                     !form.lineCount ||
                     (form.meterPolicy !== "advisory" &&
+                        form.meterPolicy !== "custom" &&
                         (!Array.isArray(form.meterSequence) ||
                             !form.meterSequence.length))) {
                     throw new Error(`Invalid English form: ${form.id || "(missing id)"}`);
@@ -85,6 +90,11 @@
             for (const form of catalog.forms) {
                 if (form.suppressedBy && !ids.has(form.suppressedBy)) {
                     throw new Error(`Unknown suppressing form: ${form.suppressedBy}`);
+                }
+                if (form.customLineRules &&
+                    (!Array.isArray(form.customLineRules) ||
+                        form.customLineRules.length !== form.lineCount.exact)) {
+                    throw new Error(`Invalid custom English form: ${form.id}`);
                 }
                 if (form.beatSequence &&
                     (!Array.isArray(form.beatSequence) ||
@@ -113,6 +123,24 @@
         function recordsIntersect(left, right) {
             const rightKeys = new Set(right.map((record) => record.key));
             return left.some((record) => rightKeys.has(record.key));
+        }
+
+        function profileKey(key, profile) {
+            const parts = String(key || "").split(".").filter(Boolean);
+            if (profile === "non-rhotic") {
+                return parts.filter((part) => part !== "R").join(".");
+            }
+            return parts.join(".");
+        }
+
+        function profileRecordsIntersect(left, right, profile) {
+            if (!profile || profile === "dictionary") {
+                return false;
+            }
+            const keys = new Set((right || []).map((record) =>
+                profileKey(record.key, profile)));
+            return (left || []).some((record) =>
+                keys.has(profileKey(record.key, profile)));
         }
 
         function phonemeParts(record) {
@@ -169,6 +197,139 @@
             return index < 26 ? letter : `${letter}${Math.floor(index / 26)}`;
         }
 
+        function relationKind(left, right, options) {
+            const leftRecords = (left.keys || []).map((key) => ({ key }));
+            const rightRecords = (right.keys || []).map((key) => ({ key }));
+            if (left.keys.length && right.keys.length &&
+                recordsIntersect(leftRecords, rightRecords)) {
+                return "perfect";
+            }
+            if (options && options.rhymeOverrides &&
+                options.rhymeOverrides[overridePairKey(left, right)]) {
+                return "user";
+            }
+            if (profileRecordsIntersect(
+                leftRecords,
+                rightRecords,
+                options && options.readingProfile
+            )) {
+                return "dialect";
+            }
+            if (left.keys.length && right.keys.length) {
+                const slant = slantRhymeKind(leftRecords, rightRecords);
+                if (slant) {
+                    return slant;
+                }
+            }
+            if (left.word && right.word && spellingRime(left.word).length > 1 &&
+                spellingRime(left.word) === spellingRime(right.word)) {
+                return options && options.readingProfile === "early-modern"
+                    ? "historical-candidate"
+                    : "eye";
+            }
+            return "";
+        }
+
+        function internalRhymes(lines, lexicon, options) {
+            const relations = [];
+            for (const [lineIndex, line] of (lines || []).entries()) {
+                const tokens = line.tokens || [];
+                const ending = tokens.at(-1);
+                const candidates = tokens.map((token) => ({
+                    line: lineIndex + 1,
+                    word: token.text,
+                    start: token.start,
+                    end: token.end,
+                    keys: (lookupRecords(token.normalized || token.text, lexicon) || [])
+                        .map((record) => record.key)
+                }));
+                for (let leftIndex = 0; leftIndex < candidates.length; leftIndex += 1) {
+                    for (let rightIndex = leftIndex + 2;
+                        rightIndex < candidates.length; rightIndex += 1) {
+                        const left = candidates[leftIndex];
+                        const right = candidates[rightIndex];
+                        if (!left.keys.length || !right.keys.length ||
+                            normalizeWord(left.word) === normalizeWord(right.word) ||
+                            RHYME_FUNCTION_WORDS.has(normalizeWord(left.word)) ||
+                            RHYME_FUNCTION_WORDS.has(normalizeWord(right.word))) {
+                            continue;
+                        }
+                        const kind = relationKind(left, right, options);
+                        if (!kind || kind === "eye" ||
+                            (right.end !== (ending && ending.end) && kind !== "perfect")) {
+                            continue;
+                        }
+                        relations.push({
+                            line: lineIndex + 1,
+                            words: [left.word, right.word],
+                            ranges: [[left.start, left.end], [right.start, right.end]],
+                            kind,
+                            scope: right.end === (ending && ending.end)
+                                ? "internal-to-end"
+                                : "internal"
+                        });
+                    }
+                }
+            }
+            const rank = { perfect: 0, dialect: 1, "historical-candidate": 2,
+                assonance: 3, consonance: 4 };
+            return relations.sort((left, right) =>
+                (rank[left.kind] ?? 9) - (rank[right.kind] ?? 9) ||
+                left.line - right.line).slice(0, 12);
+        }
+
+        function onsetKey(word) {
+            const normalized = normalizeWord(word).replace(/[^a-z]/g, "");
+            if (!normalized) {
+                return "";
+            }
+            if (/^[aeiou]/.test(normalized)) {
+                return "V";
+            }
+            return (/^(?:ch|sh|th|ph|wh|qu)/.exec(normalized) ||
+                /^./.exec(normalized) || [""])[0];
+        }
+
+        function analyzeAlliteration(lines) {
+            return (lines || []).map((line, lineIndex) => {
+                const words = line.chosenCandidate && line.chosenCandidate.words || [];
+                const prominent = words.filter((word) => /[12]/.test(word.stress || ""));
+                const explicit = /\|\||\/\/|[—–;:]/g.exec(line.text || "");
+                const localCut = explicit ? explicit.index : Math.floor((line.text || "").length / 2);
+                const cut = line.start + localCut;
+                const left = prominent.filter((word) => word.end <= cut);
+                const right = prominent.filter((word) => word.start >= cut);
+                const fallbackIndex = Math.max(1, Math.floor(prominent.length / 2));
+                const leftBeats = left.length && right.length
+                    ? left : prominent.slice(0, fallbackIndex);
+                const rightBeats = left.length && right.length
+                    ? right : prominent.slice(fallbackIndex);
+                const head = rightBeats[0] || null;
+                const key = head ? onsetKey(head.text) : "";
+                const matches = key
+                    ? leftBeats.filter((word) => onsetKey(word.text) === key)
+                    : [];
+                return {
+                    line: lineIndex + 1,
+                    caesura: {
+                        start: cut,
+                        explicit: Boolean(explicit),
+                        marker: explicit ? explicit[0] : ""
+                    },
+                    leftBeats: leftBeats.length,
+                    rightBeats: rightBeats.length,
+                    key,
+                    words: head ? [...matches, head].map((word) => ({
+                        word: word.text,
+                        start: word.start,
+                        end: word.end
+                    })) : [],
+                    status: leftBeats.length >= 1 && rightBeats.length >= 1 &&
+                        matches.length ? "match" : "incomplete"
+                };
+            });
+        }
+
         function analyzeRhymes(lines, lexicon, options) {
             const groups = [];
             const endings = (lines || []).map((line, lineIndex) => {
@@ -223,23 +384,7 @@
                     rightIndex < endings.length; rightIndex += 1) {
                     const left = endings[leftIndex];
                     const right = endings[rightIndex];
-                    let kind = "";
-                    if (left.label !== "?" && left.label === right.label) {
-                        kind = "perfect";
-                    } else if (options && options.rhymeOverrides &&
-                        options.rhymeOverrides[overridePairKey(left, right)]) {
-                        kind = "user";
-                    } else if (left.keys.length && right.keys.length) {
-                        kind = slantRhymeKind(
-                            left.keys.map((key) => ({ key })),
-                            right.keys.map((key) => ({ key }))
-                        );
-                    }
-                    if (!kind && left.word && right.word &&
-                        spellingRime(left.word).length > 1 &&
-                        spellingRime(left.word) === spellingRime(right.word)) {
-                        kind = "eye";
-                    }
+                    const kind = relationKind(left, right, options);
                     if (kind) {
                         relations.push({
                             lines: [left.line, right.line],
@@ -261,7 +406,9 @@
                     lines: group.lines,
                     kind: rhymeKind(group.records)
                 })),
-                relations
+                relations,
+                internalRelations: internalRhymes(lines, lexicon, options),
+                readingProfile: options && options.readingProfile || "dictionary"
             };
         }
 
@@ -349,7 +496,8 @@
                 // three-beat signature with a five- or seven-syllable line
                 // would reject exactly the variable slack it is meant to
                 // permit.
-                const canonicalDistance = candidate.analysisMode === "accentual"
+                const canonicalDistance = ["accentual", "sprung"]
+                    .includes(candidate.analysisMode)
                     ? 0
                     : Math.abs(
                         candidate.canonicalPattern.length - candidate.syllables.length
@@ -381,6 +529,32 @@
             };
         }
 
+        function customLineFit(line, rule) {
+            if (!rule) {
+                return null;
+            }
+            const pattern = String(line.pattern || "");
+            const beats = (pattern.match(/S/g) || []).length;
+            const syllables = pattern.length;
+            const patternDistance = [...String(rule.pattern || "")]
+                .reduce((count, stress, index) =>
+                    count + (pattern[index] && pattern[index] !== stress ? 1 : 0), 0) +
+                Math.abs(pattern.length - String(rule.pattern || "").length);
+            const beatDistance = Math.abs(beats - Number(rule.beats || 0));
+            const syllableDistance = Math.abs(syllables - Number(rule.syllables || 0));
+            const tolerance = Number(rule.tolerance) || 0;
+            const score = patternDistance * 0.08 + beatDistance * 0.2 +
+                syllableDistance * 0.08;
+            if (beatDistance > tolerance || syllableDistance > tolerance + 1) {
+                return null;
+            }
+            return {
+                id: "custom-line",
+                level: patternDistance === 0 ? "exact" : "compatible",
+                score
+            };
+        }
+
         function compareForms(left, right) {
             const levelRank = { exact: 0, compatible: 1 };
             return levelRank[left.matchLevel] - levelRank[right.matchLevel] ||
@@ -390,14 +564,17 @@
                 left.name.localeCompare(right.name, "en");
         }
 
-        function analyzeForms(lines, rhyme, catalog) {
+        function analyzeForms(lines, rhyme, catalog, alliteration) {
             validateCatalog(catalog);
             const lineCount = lines.length;
             const matches = catalog.forms.map((form) => {
                 if (!lineCountMatches(form.lineCount, lineCount)) {
                     return null;
                 }
-                const meterFits = form.meterPolicy === "advisory"
+                const meterFits = Array.isArray(form.customLineRules)
+                    ? lines.map((line, index) =>
+                        customLineFit(line, form.customLineRules[index]))
+                    : form.meterPolicy === "advisory"
                     ? []
                     : lines.map((line, index) =>
                         lineMeterFit(
@@ -405,8 +582,13 @@
                             meterChoices(form, index),
                             form.meterTolerance
                         ));
-                if (form.meterPolicy !== "advisory" &&
+                if ((form.meterPolicy !== "advisory" ||
+                    Array.isArray(form.customLineRules)) &&
                     meterFits.some((fit) => !fit)) {
+                    return null;
+                }
+                if (form.alliterationPolicy === "modern-half-line" &&
+                    (alliteration || []).some((line) => line.status !== "match")) {
                     return null;
                 }
                 const rhymeResult = rhymeFit(form, rhyme, lineCount);
@@ -421,7 +603,9 @@
                         lineCount
                     : 0;
                 const exact = form.meterPolicy !== "advisory" &&
-                    !approximateMeters && rhymeResult.exact;
+                    !approximateMeters && rhymeResult.exact &&
+                    (!form.alliterationPolicy || (alliteration || []).every((line) =>
+                        line.caesura.explicit));
                 const specificity = Number.isInteger(form.lineCount.exact)
                     ? form.lineCount.exact
                     : 1;
@@ -515,7 +699,7 @@
             };
         }
 
-        function analyzeFormProgress(form, lines, rhyme) {
+        function analyzeFormProgress(form, lines, rhyme, alliteration) {
             if (!form) {
                 return null;
             }
@@ -525,6 +709,16 @@
                 ? "unrhymed"
                 : bestProgressScheme(form, targetLines);
             const meterLines = lines.map((line, index) => {
+                if (Array.isArray(form.customLineRules)) {
+                    const fit = customLineFit(line, form.customLineRules[index]);
+                    return {
+                        line: index + 1,
+                        choices: [],
+                        candidateId: "custom-line",
+                        status: fit ? fit.level : "approximate",
+                        fit
+                    };
+                }
                 if (form.meterPolicy === "advisory") {
                     return { line: index + 1, status: "advisory", fit: null };
                 }
@@ -553,12 +747,15 @@
             const nextLineIndex = observedLines >= targetLines
                 ? targetLines - 1
                 : Math.max(0, observedLines - 1);
-            const nextChoices = form.meterPolicy === "advisory"
+            const nextChoices = ["advisory", "custom"].includes(form.meterPolicy)
                 ? []
                 : meterChoices(form, nextLineIndex);
             const beatTarget = Array.isArray(form.beatSequence)
                 ? form.beatSequence[nextLineIndex % form.beatSequence.length]
-                : null;
+                : Array.isArray(form.customLineRules) &&
+                    form.customLineRules[nextLineIndex]
+                    ? form.customLineRules[nextLineIndex].beats
+                    : null;
             return {
                 id: form.id,
                 name: form.name,
@@ -578,6 +775,15 @@
                 plausibleMeterLines,
                 meterLines,
                 rhyme: rhymeEvidence,
+                alliteration: form.alliterationPolicy === "modern-half-line"
+                    ? {
+                        matching: (alliteration || []).filter((line) =>
+                            line.status === "match").length,
+                        typed: lines.length,
+                        explicitCaesuras: (alliteration || []).filter((line) =>
+                            line.caesura.explicit).length
+                    }
+                    : null,
                 complete: observedLines === targetLines &&
                     !rhymeEvidence.mismatchedPairs &&
                     !rhymeEvidence.unknownPairs &&
@@ -586,30 +792,70 @@
             };
         }
 
+        function inferCustomForm(lines, rhyme, name, id) {
+            const activeLines = (lines || []).filter((line) =>
+                line.tokens && line.tokens.length);
+            if (!activeLines.length) {
+                throw new Error("A custom English form needs at least one line");
+            }
+            return {
+                id: id || `english-custom:${Date.now().toString(36)}`,
+                name: String(name || "My English form").trim(),
+                aliases: [],
+                lineCount: { exact: activeLines.length },
+                meterPolicy: "custom",
+                customEnglish: true,
+                customLineRules: activeLines.map((line) => ({
+                    pattern: line.pattern,
+                    beats: (String(line.pattern).match(/S/g) || []).length,
+                    syllables: String(line.pattern).length,
+                    tolerance: 1
+                })),
+                rhymeSchemes: rhyme && rhyme.unknownCount === 0 &&
+                    rhyme.repeatedGroups && rhyme.repeatedGroups.length && rhyme.scheme
+                    ? [rhyme.scheme] : [],
+                rhymePolicy: rhyme && rhyme.unknownCount === 0 &&
+                    rhyme.repeatedGroups && rhyme.repeatedGroups.length && rhyme.scheme
+                    ? undefined : "advisory",
+                prominence: 6,
+                sourceRef: "user",
+                createdAt: new Date().toISOString()
+            };
+        }
+
         function analyzeStanza(lines, rhymeLexicon, catalog, options) {
             const activeLines = (lines || []).filter((line) =>
                 line.tokens && line.tokens.length);
             const rhyme = analyzeRhymes(activeLines, rhymeLexicon, options);
-            const forms = analyzeForms(activeLines, rhyme, catalog);
+            const alliteration = analyzeAlliteration(activeLines);
+            const forms = analyzeForms(activeLines, rhyme, catalog, alliteration);
             const selectedForm = catalog.forms.find((form) =>
                 form.id === (options && options.selectedFormId)) || null;
             return {
                 analysisSystem: "english-form",
                 rhyme,
+                alliteration,
                 forms,
                 bestForm: forms[0] || null,
                 selectedForm,
-                formProgress: analyzeFormProgress(selectedForm, activeLines, rhyme)
+                formProgress: analyzeFormProgress(
+                    selectedForm,
+                    activeLines,
+                    rhyme,
+                    alliteration
+                )
             };
         }
 
         return {
             analyzeForms,
             analyzeFormProgress,
+            analyzeAlliteration,
             analyzeRhymes,
             analyzeStanza,
             canonicalTerzaRima,
             createRhymeLexicon,
+            inferCustomForm,
             normalizeWord,
             validateCatalog,
             validateRhymeDocument

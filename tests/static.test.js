@@ -420,6 +420,10 @@ test("documentation includes the searchable, offline meter catalog", () => {
     assert.match(documentation, /Copy analysis link/);
     assert.match(documentation, /perfect\s+rhyme/);
     assert.match(documentation, /Petrarchan sonnet/);
+    assert.match(documentation, /Pickup, anacrusis, and the first beat/);
+    assert.match(documentation, /extrametrical anacrusis/);
+    assert.match(documentation, /Hypercatalectic/);
+    assert.match(documentation, /epicapital/);
     assert.match(documentation, /\?verse=&lt;verse&gt;&amp;meter=madhu/);
     assert.match(documentation, /hosting request logs/);
     assert.match(documentation, /Kannada Kanda/);

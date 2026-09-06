@@ -2080,7 +2080,8 @@ button.english-rhyme-relation {
     font-size: 0.74rem;
 }
 
-.meter-definitions {
+.meter-definitions,
+.prosody-definitions {
     display: grid;
     grid-template-columns: minmax(7rem, auto) 1fr;
     gap: 0.4rem 0.8rem;
@@ -2088,12 +2089,14 @@ button.english-rhyme-relation {
     font-size: 0.82rem;
 }
 
-.meter-definitions dt {
+.meter-definitions dt,
+.prosody-definitions dt {
     color: var(--muted);
     font-weight: 650;
 }
 
-.meter-definitions dd {
+.meter-definitions dd,
+.prosody-definitions dd {
     margin: 0;
 }
 
@@ -2812,11 +2815,13 @@ button.english-rhyme-relation {
         grid-template-columns: 1fr;
     }
 
-    .meter-definitions {
+    .meter-definitions,
+    .prosody-definitions {
         grid-template-columns: 1fr;
     }
 
-    .meter-definitions dd + dt {
+    .meter-definitions dd + dt,
+    .prosody-definitions dd + dt {
         margin-top: 0.35rem;
     }
 

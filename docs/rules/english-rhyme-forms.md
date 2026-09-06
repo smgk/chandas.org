@@ -5,7 +5,7 @@ SPDX-License-Identifier: GPL-3.0-only
 
 # English rhyme and named forms — M5 rule packet
 
-**Status:** English Ear v2 and advanced M6/M7 implemented through version 1.62.0
+**Status:** English Ear v2 and advanced M6/M7 implemented through version 1.62.1
 **Updated:** 2026-09-05
 
 ## Scope
@@ -53,6 +53,33 @@ expensive; content-word demotion costs more than adjusting a function word;
 and the anacrusis penalty grows nonlinearly after its first syllable. The
 ordinary normalized fit remains the primary rank, with edit counts and meter
 prominence resolving close cases.
+
+## Pickup terminology
+
+The interface deliberately distinguishes a performance pickup from material
+outside a metrical template:
+
+- **Pickup** is the reader-facing name for syllables before the first chosen
+  beat (`||`). An iamb's expected initial weak position may therefore be a
+  pickup without being extrametrical.
+- **Anacrusis** is the established prosodic term for normally unstressed
+  syllable(s) preceding the verse proper. **Initial extrametricality** and the
+  German **Auftakt** are established descriptions for such material outside the
+  metered portion. Chandas says **extrametrical anacrusis** only when the
+  alignment has surplus opening syllables outside its fixed template.
+- **Ictus** means the metrical accent or strong metrical position. Chandas' `||`
+  marks the selected first ictus/tāḷa entry. A musical downbeat is a useful
+  analogy, not a claim that the verse has a notated musical measure.
+- **Procephalic** is a rare adjective for a line or foot with an extra initial
+  syllable. It is too obscure and too narrow to replace “pickup” in the UI.
+- **Hypercatalectic** describes excess at a line's ending, not “anacrusis in
+  reverse.” **Epicapital** is not an established term in the prosody references
+  consulted.
+
+Accordingly, anacrusis does not occur “before the first pickup”: it is itself a
+kind of pickup, though not every pickup is extrametrical. This distinction also
+prevents Chandas from treating every
+ordinary weak opening of an iambic line as a metrical defect.
 
 ## Data and reproducibility
 
@@ -110,6 +137,9 @@ form matches remain advisory and cannot create red correction marks.
 - [Poetry Foundation: Common measure](https://www.poetryfoundation.org/education/glossary/common-measure)
 - [Poetry Foundation: Alliterative verse](https://www.poetryfoundation.org/education/glossary/alliterative-verse)
 - [Poetry Foundation: Sprung rhythm](https://www.poetryfoundation.org/education/glossary/sprung-rhythm)
+- [Allen and Greenough: glossary of prosodic terms](https://www.perseus.tufts.edu/hopper/text?doc=Perseus%3Atext%3A1999.04.0001%3Apart%3D3%3Asection%3D6)
+- [Cambridge: *The Accentual Paradigm in Early English Metrics*](https://www.cambridge.org/core/books/reconstructing-alliterative-verse/accentual-paradigm-in-early-english-metrics/E684D7E185FD6153517F6469C0D5E834)
+- [Cambridge: *Metrical strength in Persian poetic metres*](https://www.cambridge.org/core/journals/journal-of-linguistics/article/metrical-strength-in-persian-poetic-metres/09CE8F0CD722CAAC06A74B3530C6485F)
 - [Folger Shakespeare Library: Original pronunciation](https://www.folger.edu/podcasts/shakespeare-unlimited/original-pronunciation/)
 - [CMU Pronouncing Dictionary](https://github.com/cmusphinx/cmudict)
 

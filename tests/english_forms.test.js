@@ -256,8 +256,10 @@ test("recognizes a flexible 3/3/2/2/3 AABBA poem as a common limerick", () => {
         "W || SWS",
         "WW || SWSS"
     ]);
-    assert.deepEqual(stanza.lines.map((line) => line.anacrusisCount),
+    assert.deepEqual(stanza.lines.map((line) => line.pickupCount),
         [0, 1, 1, 1, 2]);
+    assert.deepEqual(stanza.lines.map((line) => line.anacrusisCount),
+        [0, 0, 0, 0, 0]);
     assert.equal(stanza.violationCount, 0,
         "an automatically inferred beat form must remain advisory");
 });

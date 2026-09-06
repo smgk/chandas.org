@@ -748,8 +748,16 @@ recommended, and optional behavior.
     the metrical reading, and the writer MUST be able to override any word
     locally. For beat-led and inferred beat forms, the current pattern MUST
     mark the first tāḷa beat with `||`; syllables before that marker are the
-    anacrusis. An automatically inferred form remains advisory and MUST NOT
-    create red departure marks.
+    pickup. Surplus initial syllables outside a fixed metrical template MUST be
+    identified separately as extrametrical anacrusis. An automatically inferred
+    form remains advisory and MUST NOT create red departure marks.
+29. English meter selection MUST evaluate every cataloged meter and every legal
+    template variant. Alignment MAY promote or demote stress to obtain a
+    reading, but MUST retain the lexical reading and report each adjustment.
+    Structural insertions/deletions, content-word demotion, total contextual
+    stress changes, and the length and stress of extrametrical anacrusis MUST
+    contribute negative evidence. Meter prominence MAY break close ties but
+    MUST NOT erase a materially better rhythmic fit.
 
 ## 6. Analysis Engine Requirements
 

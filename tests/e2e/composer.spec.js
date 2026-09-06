@@ -368,7 +368,10 @@ test("round-trips English mode, meter, and Ghost guidance through an analysis UR
         .selectOption("english:iambic-tetrameter");
     await page.locator("#show-template").check();
     await context.grantPermissions(["clipboard-read", "clipboard-write"]);
-    await page.locator("#share").click();
+    // This case verifies URL state, not touch targeting. Dispatch directly so
+    // Android's browser-toolbar scroll adjustment cannot move the compact
+    // action row between Playwright's hit-test and click.
+    await page.locator("#share").evaluate((button) => button.click());
     await page.locator("#copy-analysis-url").click();
     const copied = new URL(await page.evaluate(() => navigator.clipboard.readText()));
     expect(copied.searchParams.get("scheme")).toBe("english");
@@ -402,6 +405,30 @@ test("round-trips English mode, meter, and Ghost guidance through an analysis UR
     await expect(linkedPage.locator("#english-rhyme-scheme"))
         .toHaveText("End rhyme · A");
     await linkedContext.close();
+});
+
+test("marks weighted promotion, demotion, pickup, and extrametrical anacrusis", async ({
+    page
+}) => {
+    await page.locator("#input-scheme").selectOption("english");
+    await expect(page.locator("#transliteration-help"))
+        .toHaveText("English stress analysis is ready offline.", { timeout: 15_000 });
+    await page.locator("#composition")
+        .fill("oh Shall I compare thee to a summer's day?");
+    await page.locator("#meter-picker summary").click();
+    await page.locator("#meter-search").fill("iambic pentameter");
+    await page.locator("#meter-select")
+        .selectOption("english:iambic-pentameter");
+
+    await expect(page.locator("#active-pattern")).toContainText("||");
+    await expect(page.locator("#active-matras")).toContainText("pickup");
+    await expect(page.locator("#highlight-layer .english-anacrusis", {
+        hasText: "oh"
+    })).toHaveCount(1);
+    await expect(page.locator("#english-reading-note"))
+        .toContainText("extrametrical anacrusis");
+    await expect(page.locator("#english-reading-note"))
+        .toContainText("promotion");
 });
 
 test("previews and applies whole-composition conversion without losing meter state", async ({

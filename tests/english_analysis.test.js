@@ -212,9 +212,51 @@ test("contextual function-word stress exposes the beat and anacrusis", () => {
 
     assert.equal(opening.scansionPattern, "SWSWS");
     assert.equal(opening.observedLexicalPattern, "SSWWS");
+    assert.equal(opening.promotionCount, 1);
+    assert.equal(opening.demotionCount, 1);
+    assert.deepEqual(opening.stressChanges.map((change) => change.kind),
+        ["demotion", "promotion"]);
     assert.equal(opening.anacrusisCount, 0);
     assert.equal(pickup.scansionPattern, "WSWSWS");
-    assert.equal(pickup.anacrusisCount, 1);
+    assert.equal(pickup.pickupCount, 1);
+    assert.equal(pickup.anacrusisCount, 0);
+});
+
+test("initial surplus syllables become increasingly costly anacrusis", () => {
+    const one = English.analyzeLine(
+        "oh Shall I compare thee to a summer's day?",
+        lexicon,
+        meters,
+        { selectedMeterId: "english:iambic-pentameter" }
+    ).selected;
+    const two = English.analyzeLine(
+        "well now Shall I compare thee to a summer's day?",
+        lexicon,
+        meters,
+        { selectedMeterId: "english:iambic-pentameter" }
+    ).selected;
+
+    assert.equal(one.anacrusisCount, 1);
+    assert.equal(one.extraCount, 0);
+    assert.equal(one.syllables[0].anacrusis, true);
+    assert.equal(one.syllables[0].expectedStress, null);
+    assert.ok(one.variations.includes("initial-extrametrical-1"));
+    assert.equal(two.anacrusisCount, 2);
+    assert.ok(two.anacrusisPenalty > one.anacrusisPenalty);
+});
+
+test("forced stress can suggest a reading without manufacturing an exact meter", () => {
+    const selected = English.analyzeLine(
+        "dog cat moon sun",
+        lexicon,
+        meters,
+        { selectedMeterId: "english:iambic-dimeter" }
+    ).selected;
+
+    assert.equal(selected.scansionPattern, "WSWS");
+    assert.equal(selected.demotionCount, 2);
+    assert.equal(selected.contentDemotionCount, 2);
+    assert.equal(selected.matchLevel, "approximate");
 });
 
 test("sprung rhythm permits adjacent beats and variable stress-led feet", () => {

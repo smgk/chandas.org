@@ -12,7 +12,7 @@
     const ENGLISH_CUSTOM_FORMS_META_KEY = "englishCustomForms.v1";
     const SAVE_DELAY_MS = 280;
     const UPDATE_CHECK_INTERVAL_MS = 15 * 60 * 1000;
-    const ENGLISH_ASSET_VERSION = "3.1.0";
+    const ENGLISH_ASSET_VERSION = "3.2.0";
     const ENGLISH_FORM_ASSET_VERSION = "3.0.0";
     const ENGLISH_ASSETS = Object.freeze({
         engine: `english_analysis.js?v=${ENGLISH_ASSET_VERSION}`,
@@ -161,7 +161,10 @@
             englishUncertain: "Guessed pronunciation",
             englishPattern: "Current stress pattern",
             englishLineSummary: "{lines} line(s) · {stresses} stressed syllable(s)",
-            englishTalaLegend: "|| tāḷa start · before it: anacrusis",
+            englishTalaLegend: "|| tāḷa start · before it: pickup",
+            englishStressAdjustmentCount: "{count} contextual stress change(s)",
+            englishStressAdjustmentDetail: "Reading: {promotions} promotion(s), {demotions} demotion(s)",
+            englishAnacrusisDetail: "{count} extrametrical anacrusis syllable(s)",
             englishCandidateDetail: "{observed}/{expected} syllables · {feet} {foot} feet",
             englishExact: "Exact",
             englishCompatible: "Compatible",
@@ -472,7 +475,10 @@
             englishUncertain: "ಊಹಿಸಿದ ಉಚ್ಚಾರಣೆ",
             englishPattern: "ಪ್ರಸ್ತುತ ಒತ್ತಡ ವಿನ್ಯಾಸ",
             englishLineSummary: "{lines} ಸಾಲು · {stresses} ಒತ್ತಿನ ಅಕ್ಷರಗಳು",
-            englishTalaLegend: "|| ತಾಳದ ಆರಂಭ · ಅದರ ಮುನ್ನ: anacrusis",
+            englishTalaLegend: "|| ತಾಳದ ಆರಂಭ · ಅದರ ಮುನ್ನ: pickup",
+            englishStressAdjustmentCount: "{count} ಸಂದರ್ಭೋಚಿತ ಒತ್ತು ಬದಲಾವಣೆ",
+            englishStressAdjustmentDetail: "ವಾಚನ: {promotions} ಏರಿಕೆ, {demotions} ಇಳಿಕೆ",
+            englishAnacrusisDetail: "{count} ಛಂದೋಬಾಹ್ಯ anacrusis ಅಕ್ಷರ",
             englishCandidateDetail: "{observed}/{expected} ಅಕ್ಷರ · {feet} {foot} ಗಣಗಳು",
             englishExact: "ನಿಖರ",
             englishCompatible: "ಹೊಂದಿಕೆಯಾಗುತ್ತದೆ",
@@ -783,7 +789,10 @@
             englishUncertain: "ఊహించిన ఉచ్చారణ",
             englishPattern: "ప్రస్తుత ఒత్తిడి నమూనా",
             englishLineSummary: "{lines} పంక్తులు · {stresses} ఒత్తు అక్షరాలు",
-            englishTalaLegend: "|| తాళ ప్రారంభం · దానికి ముందు: anacrusis",
+            englishTalaLegend: "|| తాళ ప్రారంభం · దానికి ముందు: pickup",
+            englishStressAdjustmentCount: "{count} సందర్భానుసార ఒత్తు మార్పులు",
+            englishStressAdjustmentDetail: "పఠనం: {promotions} పెంపు, {demotions} తగ్గింపు",
+            englishAnacrusisDetail: "{count} ఛందస్సుకు వెలుపలి anacrusis అక్షరాలు",
             englishCandidateDetail: "{observed}/{expected} అక్షరాలు · {feet} {foot} గణాలు",
             englishExact: "ఖచ్చితం",
             englishCompatible: "సరిపోతుంది",
@@ -1094,7 +1103,10 @@
             englishUncertain: "અનુમાનિત ઉચ્ચાર",
             englishPattern: "વર્તમાન ભાર-નમૂનો",
             englishLineSummary: "{lines} પંક્તિ · {stresses} ભારિત અક્ષરો",
-            englishTalaLegend: "|| તાલનો આરંભ · તેની પહેલાં: anacrusis",
+            englishTalaLegend: "|| તાલનો આરંભ · તેની પહેલાં: pickup",
+            englishStressAdjustmentCount: "{count} સંદર્ભિત ભાર ફેરફાર",
+            englishStressAdjustmentDetail: "વાંચન: {promotions} ભારવૃદ્ધિ, {demotions} ભારઘટાડો",
+            englishAnacrusisDetail: "{count} છંદબાહ્ય anacrusis અક્ષર",
             englishCandidateDetail: "{observed}/{expected} અક્ષરો · {feet} {foot} ગણ",
             englishExact: "ચોક્કસ",
             englishCompatible: "અનુકૂળ",
@@ -3546,6 +3558,7 @@
                         ? "english-strong" : "english-weak"
                     : segment.lexicalStress > 0
                         ? "english-strong" : "english-weak",
+                segment.anacrusis ? "english-anacrusis" : "",
                 segment.expectedStress === "S" &&
                     segment.expectedIndex !== null ? "english-beat" : "",
                 segment.violation ? "violation" : "",
@@ -4076,6 +4089,16 @@
             if (candidate.guessedWordCount) {
                 details.push(t("englishUncertain"));
             }
+            if (candidate.stressChangeCount) {
+                details.push(t("englishStressAdjustmentCount", {
+                    count: candidate.stressChangeCount
+                }));
+            }
+            if (candidate.anacrusisCount) {
+                details.push(t("englishAnacrusisDetail", {
+                    count: candidate.anacrusisCount
+                }));
+            }
             return details;
         }
         if (candidate.kind === "fixed" && candidate.expectedSyllables) {
@@ -4246,6 +4269,17 @@
         const line = lines.at(-1);
         const candidate = line && line.chosenCandidate;
         const lessons = [];
+        if (candidate && candidate.stressChangeCount) {
+            lessons.push(t("englishStressAdjustmentDetail", {
+                promotions: candidate.promotionCount,
+                demotions: candidate.demotionCount
+            }));
+        }
+        if (candidate && candidate.anacrusisCount) {
+            lessons.push(t("englishAnacrusisDetail", {
+                count: candidate.anacrusisCount
+            }));
+        }
         if (candidate && candidate.analysisMode === "accentual") {
             lessons.push(t("englishAccentualLesson", {
                 beats: candidate.beatCount || candidate.beats

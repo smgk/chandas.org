@@ -555,6 +555,24 @@
             };
         }
 
+        function stressChange(syllable, expected, cost) {
+            const observed = syllable.lexicalStress === 0 ? "W" : "S";
+            if (!expected || observed === expected) {
+                return null;
+            }
+            const kind = expected === "S" ? "promotion" : "demotion";
+            const functionWord = FUNCTION_WORDS.has(syllable.normalizedWord);
+            return {
+                kind,
+                observedStress: observed,
+                expectedStress: expected,
+                functionWord,
+                contentWord: !functionWord,
+                cost,
+                syllable
+            };
+        }
+
         function alignToTemplate(syllables, template, partial, meter) {
             const observedCount = syllables.length;
             const expectedCount = template.length;
@@ -610,6 +628,7 @@
 
             const assignments = Array(observedCount).fill(null);
             const deviations = [];
+            const stressChanges = [];
             let missingCount = 0;
             let extraCount = 0;
             let cursor = [observedCount, expectedCount];
@@ -631,6 +650,14 @@
                             syllable: syllables[observedIndex]
                         });
                     }
+                    const change = stressChange(
+                        syllables[observedIndex],
+                        template[expectedIndex],
+                        cell.evidence.cost
+                    );
+                    if (change) {
+                        stressChanges.push(change);
+                    }
                 } else if (cell.operation === "extra") {
                     const observedIndex = cursor[0] - 1;
                     extraCount += 1;
@@ -651,13 +678,100 @@
                 cursor = cell.previous;
             }
             deviations.reverse();
+            stressChanges.reverse();
             return {
                 cost: rows[observedCount][expectedCount].cost,
                 assignments,
                 deviations,
+                stressChanges,
                 missingCount,
-                extraCount
+                extraCount,
+                anacrusisCount: 0,
+                anacrusisPenalty: 0,
+                anacrusis: []
             };
+        }
+
+        function initialExtrametricalPenalty(syllables) {
+            return syllables.reduce((total, syllable, index) => {
+                const lengthCost = index === 0 ? 0.08 : index === 1 ? 0.22 :
+                    0.55 + (index - 2) * 0.25;
+                const stressedCost = syllable.lexicalStress > 0
+                    ? FUNCTION_WORDS.has(syllable.normalizedWord) ? 0.08 : 0.28
+                    : 0;
+                return total + lengthCost + stressedCost;
+            }, 0);
+        }
+
+        function alignWithInitialExtrametricality(syllables, template, partial,
+            meter) {
+            const surplus = Math.max(0, syllables.length - template.length);
+            const maximum = Math.min(4, surplus);
+            const alignments = [];
+            for (let count = 0; count <= maximum; count += 1) {
+                const prefix = syllables.slice(0, count);
+                const aligned = alignToTemplate(
+                    syllables.slice(count),
+                    template,
+                    partial,
+                    meter
+                );
+                const penalty = initialExtrametricalPenalty(prefix);
+                alignments.push({
+                    ...aligned,
+                    cost: aligned.cost + penalty,
+                    assignments: [
+                        ...prefix.map((syllable) => ({
+                            expectedStress: null,
+                            expectedIndex: null,
+                            deviation: "anacrusis",
+                            cost: 0,
+                            anacrusis: true,
+                            syllable
+                        })),
+                        ...aligned.assignments
+                    ],
+                    anacrusisCount: count,
+                    anacrusisPenalty: penalty,
+                    anacrusis: prefix.map((syllable) => ({
+                        start: syllable.start,
+                        end: syllable.end,
+                        stress: syllable.lexicalStress === 0 ? "W" : "S",
+                        syllable
+                    }))
+                });
+            }
+            return alignments;
+        }
+
+        function fitEvidence(fit) {
+            const changes = fit.aligned.stressChanges || [];
+            return {
+                structuralViolationCount: fit.aligned.extraCount +
+                    fit.aligned.missingCount,
+                contentDemotionCount: changes.filter((change) =>
+                    change.kind === "demotion" && change.contentWord).length,
+                stressChangeCount: changes.length,
+                promotionCount: changes.filter((change) =>
+                    change.kind === "promotion").length,
+                demotionCount: changes.filter((change) =>
+                    change.kind === "demotion").length,
+                anacrusisCount: fit.aligned.anacrusisCount || 0,
+                anacrusisPenalty: fit.aligned.anacrusisPenalty || 0
+            };
+        }
+
+        function compareFitEvidence(left, right) {
+            const leftEvidence = left.evidence || fitEvidence(left);
+            const rightEvidence = right.evidence || fitEvidence(right);
+            return leftEvidence.structuralViolationCount -
+                    rightEvidence.structuralViolationCount ||
+                leftEvidence.contentDemotionCount -
+                    rightEvidence.contentDemotionCount ||
+                leftEvidence.stressChangeCount - rightEvidence.stressChangeCount ||
+                leftEvidence.anacrusisPenalty - rightEvidence.anacrusisPenalty ||
+                left.rawScore - right.rawScore ||
+                left.variant.cost - right.variant.cost;
         }
 
         function naturalBeatCost(syllable) {
@@ -756,6 +870,12 @@
                 deviation: null,
                 cost: beatIndexes.has(index) ? naturalBeatCost(syllable) : 0
             }));
+            const stressChanges = assignments.map((assignment, index) =>
+                stressChange(
+                    realization.syllables[index],
+                    assignment.expectedStress,
+                    assignment.cost
+                )).filter(Boolean);
             const audibleStrong = realization.syllables.filter((syllable) =>
                 syllable.lexicalStress > 0 &&
                 !FUNCTION_WORDS.has(syllable.normalizedWord)).length;
@@ -766,10 +886,13 @@
                 ? beatGaps.filter((gap) => gap > 4).length
                 : 0;
             const missingCount = Math.max(0, requested - chosenCount);
+            const stressChangePenalty = stressChanges.reduce((sum, change) =>
+                sum + (change.functionWord ? 0.04 : 0.08), 0);
             const rawScore = chosen.cost + surplusProminence * (sprung ? 0.1 : 0.16) +
                 overlongSprungFeet * 0.35 +
+                stressChangePenalty +
                 (partial ? 0 : missingCount * 1.5) + realization.pronunciationCost;
-            return {
+            const fit = {
                 rawScore,
                 score: rawScore / Math.max(requested, 1),
                 variant: {
@@ -781,14 +904,20 @@
                     cost: rawScore,
                     assignments,
                     deviations: [],
+                    stressChanges,
                     missingCount,
-                    extraCount: 0
+                    extraCount: 0,
+                    anacrusisCount: 0,
+                    anacrusisPenalty: 0,
+                    anacrusis: []
                 },
                 realization,
                 beatCount: chosenCount,
                 partial,
                 analysisMode: meter.analysisMode
             };
+            fit.evidence = fitEvidence(fit);
+            return fit;
         }
 
         function fitRealization(realization, meter, options) {
@@ -808,25 +937,27 @@
                     Math.abs(variant.pattern.length - observedCount) ===
                         minimumLengthDistance);
             for (const variant of relevantVariants) {
-                const aligned = alignToTemplate(
+                const alignments = alignWithInitialExtrametricality(
                     realization.syllables,
                     variant.pattern,
                     partial,
                     meter
                 );
-                const rawScore = aligned.cost + variant.cost +
-                    realization.pronunciationCost;
-                const candidate = {
-                    rawScore,
-                    score: rawScore / Math.max(variant.pattern.length, 1),
-                    variant,
-                    aligned,
-                    realization
-                };
-                if (!best || candidate.rawScore < best.rawScore ||
-                    (candidate.rawScore === best.rawScore &&
-                        candidate.variant.cost < best.variant.cost)) {
-                    best = candidate;
+                for (const aligned of alignments) {
+                    const rawScore = aligned.cost + variant.cost +
+                        realization.pronunciationCost;
+                    const candidate = {
+                        rawScore,
+                        score: rawScore / Math.max(variant.pattern.length, 1),
+                        variant,
+                        aligned,
+                        realization,
+                        partial
+                    };
+                    candidate.evidence = fitEvidence(candidate);
+                    if (!best || compareFitEvidence(candidate, best) < 0) {
+                        best = candidate;
+                    }
                 }
             }
             return best;
@@ -903,7 +1034,7 @@
             for (const realization of realizations) {
                 const fit = fitRealization(realization, meter, options);
                 fits.push(fit);
-                if (!best || fit.rawScore < best.rawScore) {
+                if (!best || compareFitEvidence(fit, best) < 0) {
                     best = fit;
                 }
             }
@@ -974,7 +1105,17 @@
                     syllable.lexicalStress === 0 ? "W" : "S").join(""),
                 scansionPattern,
                 talaStartIndex: Math.max(0, talaStartIndex),
-                anacrusisCount: Math.max(0, talaStartIndex),
+                pickupCount: Math.max(0, talaStartIndex),
+                anacrusisCount: best.evidence.anacrusisCount,
+                anacrusisPenalty: best.evidence.anacrusisPenalty,
+                structuralViolationCount:
+                    best.evidence.structuralViolationCount,
+                contentDemotionCount: best.evidence.contentDemotionCount,
+                stressChangeCount: best.evidence.stressChangeCount,
+                promotionCount: best.evidence.promotionCount,
+                demotionCount: best.evidence.demotionCount,
+                stressChanges: best.aligned.stressChanges || [],
+                anacrusis: best.aligned.anacrusis || [],
                 score: best.score,
                 rawScore: best.rawScore,
                 effectiveScore: best.score + completionPenalty +
@@ -987,7 +1128,12 @@
                 alignmentConfidence,
                 missingCount: best.aligned.missingCount,
                 extraCount: best.aligned.extraCount,
-                variations: best.variant.variations,
+                variations: [
+                    ...best.variant.variations,
+                    ...(best.evidence.anacrusisCount
+                        ? [`initial-extrametrical-${best.evidence.anacrusisCount}`]
+                        : [])
+                ],
                 deviations: best.aligned.deviations,
                 guessedWordCount: guessedWords.length,
                 guessedWords: guessedWords.map((word) => word.text),
@@ -1025,6 +1171,14 @@
 
         function compareCandidates(left, right) {
             return left.effectiveScore - right.effectiveScore ||
+                (left.structuralViolationCount || 0) -
+                    (right.structuralViolationCount || 0) ||
+                (left.contentDemotionCount || 0) -
+                    (right.contentDemotionCount || 0) ||
+                (left.stressChangeCount || 0) -
+                    (right.stressChangeCount || 0) ||
+                (left.anacrusisPenalty || 0) -
+                    (right.anacrusisPenalty || 0) ||
                 (left.missingCount || 0) - (right.missingCount || 0) ||
                 (left.extraCount || 0) - (right.extraCount || 0) ||
                 compareText(left.id, right.id);
@@ -1157,6 +1311,20 @@
                         candidate.matchLevel === "exact").length,
                     compatibleLines: perLine.filter((candidate) =>
                         ["exact", "compatible"].includes(candidate.matchLevel)).length,
+                    structuralViolationCount: perLine.reduce((sum, candidate) =>
+                        sum + candidate.structuralViolationCount, 0),
+                    contentDemotionCount: perLine.reduce((sum, candidate) =>
+                        sum + candidate.contentDemotionCount, 0),
+                    stressChangeCount: perLine.reduce((sum, candidate) =>
+                        sum + candidate.stressChangeCount, 0),
+                    promotionCount: perLine.reduce((sum, candidate) =>
+                        sum + candidate.promotionCount, 0),
+                    demotionCount: perLine.reduce((sum, candidate) =>
+                        sum + candidate.demotionCount, 0),
+                    anacrusisCount: perLine.reduce((sum, candidate) =>
+                        sum + candidate.anacrusisCount, 0),
+                    anacrusisPenalty: perLine.reduce((sum, candidate) =>
+                        sum + candidate.anacrusisPenalty, 0),
                     lines: perLine
                 };
             }).sort(compareCandidates);

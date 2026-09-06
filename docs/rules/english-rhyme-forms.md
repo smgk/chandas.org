@@ -5,7 +5,7 @@ SPDX-License-Identifier: GPL-3.0-only
 
 # English rhyme and named forms — M5 rule packet
 
-**Status:** English Ear v2 and advanced M6/M7 implemented in version 1.61.0
+**Status:** English Ear v2 and advanced M6/M7 implemented through version 1.62.0
 **Updated:** 2026-09-05
 
 ## Scope
@@ -40,9 +40,19 @@ The dictionary supplies lexical possibilities, not a final performance.
 Monosyllabic function words can be promoted or demoted when a line's rhythm
 supports that reading. **Adjust stress & pronunciation** exposes every word so
 the writer can store a different local reading. In displayed scansion, `||`
-marks the first beat—the entry of the tāḷa—and anything before it is anacrusis.
-An exact inferred beat-form may guide this display line by line, but it remains
-advisory and therefore cannot create red errors.
+marks the first beat—the entry of the tāḷa—and anything before it is labeled a
+pickup. Only surplus initial syllables outside a fixed template are called
+extrametrical anacrusis. An exact inferred beat-form may guide this display
+line by line, but it remains advisory and therefore cannot create red errors.
+
+Every cataloged meter and legal variant is evaluated. Within a meter, dynamic
+programming finds the least-cost alignment rather than enumerating all `2ⁿ`
+stress strings. Promotion and demotion, internal missing/extra positions, and
+initial extrametrical material retain separate evidence. Structural damage is
+expensive; content-word demotion costs more than adjusting a function word;
+and the anacrusis penalty grows nonlinearly after its first syllable. The
+ordinary normalized fit remains the primary rank, with edit counts and meter
+prominence resolving close cases.
 
 ## Data and reproducibility
 

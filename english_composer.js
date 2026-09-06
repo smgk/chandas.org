@@ -90,12 +90,20 @@
         });
 
         function compareComposerCandidates(left, right) {
-            // effectiveScore already includes completion, family, and
-            // prominence priors. Rank by that evidence before the coarse
-            // human-facing label so a generic accentual "exact" does not
-            // outrank a materially stronger named-foot reading.
+            // The normalized weighted alignment, including restrained family
+            // and prominence priors, remains primary. Explicit structural
+            // damage, costly content-word demotion, total reading changes, and
+            // extrametrical length then resolve genuine ties.
             return (left.effectiveScore ?? left.score ?? Infinity) -
                     (right.effectiveScore ?? right.score ?? Infinity) ||
+                (left.structuralViolationCount || 0) -
+                    (right.structuralViolationCount || 0) ||
+                (left.contentDemotionCount || 0) -
+                    (right.contentDemotionCount || 0) ||
+                (left.stressChangeCount || 0) -
+                    (right.stressChangeCount || 0) ||
+                (left.anacrusisPenalty || 0) -
+                    (right.anacrusisPenalty || 0) ||
                 (MATCH_LEVEL_RANK[left.matchLevel] ?? 4) -
                     (MATCH_LEVEL_RANK[right.matchLevel] ?? 4) ||
                 (left.missingCount || 0) - (right.missingCount || 0) ||
@@ -112,6 +120,12 @@
                 sum + line.extraCount, 0);
             const deviationCount = lines.reduce((sum, line) =>
                 sum + line.deviations.length, 0);
+            const promotionCount = lines.reduce((sum, line) =>
+                sum + (line.promotionCount || 0), 0);
+            const demotionCount = lines.reduce((sum, line) =>
+                sum + (line.demotionCount || 0), 0);
+            const anacrusisCount = lines.reduce((sum, line) =>
+                sum + (line.anacrusisCount || 0), 0);
             const guessedWords = Array.from(new Set(lines.flatMap((line) =>
                 line.guessedWords || [])));
             return {
@@ -129,6 +143,10 @@
                 missingCount,
                 extraCount,
                 deviationCount,
+                promotionCount,
+                demotionCount,
+                stressChangeCount: promotionCount + demotionCount,
+                anacrusisCount,
                 guessedWords,
                 guessedWordCount: guessedWords.length,
                 observedSyllables: activeLine ? activeLine.syllables.length : 0,
@@ -216,6 +234,7 @@
                     ? (chosen.scansionPattern.match(/S/g) || []).length
                     : 0,
                 talaStartIndex: chosen ? chosen.talaStartIndex : 0,
+                pickupCount: chosen ? chosen.pickupCount : 0,
                 anacrusisCount: chosen ? chosen.anacrusisCount : 0,
                 chosenCandidate: chosen,
                 selectedCandidate: selectedMeterId ? chosen : null,
@@ -377,7 +396,7 @@
                 };
             });
             return {
-                analysisVersion: "english-stress-3.1.0",
+                analysisVersion: "english-stress-3.2.0",
                 analysisSystem: "english-stress",
                 text: source,
                 stanzas,

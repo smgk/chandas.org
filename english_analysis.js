@@ -911,6 +911,18 @@
                 ...syllable,
                 ...(best.aligned.assignments[index] || {})
             }));
+            const talaStartIndex = syllables.findIndex((syllable) =>
+                syllable.expectedStress === "S" &&
+                Number.isInteger(syllable.expectedIndex));
+            const scansionPattern = syllables.map((syllable) => {
+                if (syllable.pronunciationProvenance === "override") {
+                    return syllable.lexicalStress === 0 ? "W" : "S";
+                }
+                if (syllable.expectedStress) {
+                    return syllable.expectedStress;
+                }
+                return syllable.lexicalStress === 0 ? "W" : "S";
+            }).join("");
             const guessedWords = best.realization.words.filter((word) =>
                 word.pronunciationConfidence === "guessed");
             const partial = Boolean(options && options.partial);
@@ -960,6 +972,9 @@
                 expectedPattern: best.variant.pattern,
                 observedLexicalPattern: syllables.map((syllable) =>
                     syllable.lexicalStress === 0 ? "W" : "S").join(""),
+                scansionPattern,
+                talaStartIndex: Math.max(0, talaStartIndex),
+                anacrusisCount: Math.max(0, talaStartIndex),
                 score: best.score,
                 rawScore: best.rawScore,
                 effectiveScore: best.score + completionPenalty +

@@ -244,6 +244,26 @@ test("detects perfect rhyme and named forms only in English mode", async ({
         .toContainText("Form · Common limerick");
     await expect(page.locator("#english-form-list"))
         .toContainText("Possible form · Limerick-y");
+    await expect(page.locator("#active-pattern")).toHaveText(
+        "|| SWSWS / W || SWSWS / W || SWS / W || SWS / WW || SWSS"
+    );
+    await expect(page.locator("#highlight-layer .english-weak", {
+        hasText: "there"
+    })).toHaveCount(1);
+    await expect(page.locator("#highlight-layer .english-strong", {
+        hasText: "was"
+    })).toHaveCount(1);
+    await page.locator("#english-pronunciation-review summary").click();
+    await page.locator("#english-pronunciation-list button", {
+        hasText: "bird"
+    }).first().click();
+    await expect(page.locator("#english-pronunciation-choices button", {
+        hasText: "0"
+    })).toHaveCount(1);
+    await expect(page.locator("#english-pronunciation-choices button", {
+        hasText: "1"
+    })).toHaveCount(1);
+    await page.locator("#close-english-pronunciation").click();
 
     await page.locator("#composition").fill("cat\nhat\nbee\ntree\nbat");
     await expect(page.locator("#english-rhyme-scheme"))
@@ -377,7 +397,8 @@ test("round-trips English mode, meter, and Ghost guidance through an analysis UR
     await expect(linkedPage.locator("#input-scheme")).toHaveValue("english");
     await expect(linkedPage.locator("#selected-meter-name"))
         .toHaveText("Iambic tetrameter");
-    await expect(linkedPage.locator("#active-pattern")).toHaveText("WSWSWSWS");
+    await expect(linkedPage.locator("#active-pattern"))
+        .toHaveText("W || SWSWSWS");
     await expect(linkedPage.locator("#english-rhyme-scheme"))
         .toHaveText("End rhyme · A");
     await linkedContext.close();

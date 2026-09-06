@@ -180,20 +180,26 @@
         function lineView(line, selectedMeterId, index, options) {
             const formMeterIds = options && options.formMeterIds;
             const formSelected = Boolean(formMeterIds && formMeterIds.length);
+            const advisoryForm = Boolean(options && options.advisoryForm);
             const chosen = chosenLineCandidate(
                 line,
                 selectedMeterId,
                 formMeterIds,
                 options && options.dominantMeterId
             );
-            const validates = Boolean(selectedMeterId || formSelected);
+            const validates = Boolean(selectedMeterId ||
+                (formSelected && !advisoryForm));
             const hardDeviations = new Set((validates && chosen
                 ? chosen.deviations || []
                 : [])
                 .map((item) => `${item.syllable.start}:${item.syllable.end}`));
-            const syllables = (chosen && chosen.syllables || []).map((syllable) => ({
+            const syllables = (chosen && chosen.syllables || []).map((syllable,
+                syllableIndex) => ({
                 ...syllable,
                 script: "english",
+                scansionStress: chosen.scansionPattern
+                    ? chosen.scansionPattern[syllableIndex]
+                    : syllable.lexicalStress === 0 ? "W" : "S",
                 violation: hardDeviations.has(`${syllable.start}:${syllable.end}`),
                 uncertain: syllable.pronunciationConfidence === "guessed" ||
                     syllable.alignmentConfidence === "low"
@@ -202,15 +208,33 @@
                 ...line,
                 index,
                 syllables,
-                pattern: chosen ? chosen.observedLexicalPattern : "",
+                pattern: chosen
+                    ? chosen.scansionPattern || chosen.observedLexicalPattern
+                    : "",
                 expectedPattern: chosen ? chosen.expectedPattern : "",
-                stressCount: syllables.filter((syllable) =>
-                    syllable.lexicalStress > 0).length,
+                stressCount: chosen
+                    ? (chosen.scansionPattern.match(/S/g) || []).length
+                    : 0,
+                talaStartIndex: chosen ? chosen.talaStartIndex : 0,
+                anacrusisCount: chosen ? chosen.anacrusisCount : 0,
                 chosenCandidate: chosen,
                 selectedCandidate: selectedMeterId ? chosen : null,
-                formTargetCandidate: formSelected ? chosen : null,
+                formTargetCandidate: formSelected && !advisoryForm ? chosen : null,
                 validationCandidate: validates ? chosen : null
             };
+        }
+
+        function markedScansionPattern(line) {
+            const pattern = String(line && line.pattern || "");
+            if (!pattern) {
+                return "";
+            }
+            const start = Math.max(0, Math.min(
+                Number(line.talaStartIndex) || 0,
+                pattern.length
+            ));
+            return `${pattern.slice(0, start)}${start ? " " : ""}|| ${
+                pattern.slice(start)}`;
         }
 
         function formMeterChoices(form, lineIndex) {
@@ -255,12 +279,45 @@
                         overrides: formTools && formTools.overrides
                     }
                 );
-                const lines = result.lines.map((line, index) =>
+                let lines = result.lines.map((line, index) =>
                     lineView(line, selectedMeterId, index, {
                         formMeterIds: formMeterChoices(selectedForm, index),
                         dominantMeterId: result.bestCandidate &&
                             result.bestCandidate.id
                     }));
+                const analyzeFormsForLines = (lineViews) =>
+                    formTools && formTools.engine &&
+                        formTools.rhymeLexicon && formTools.catalog
+                        ? formTools.engine.analyzeStanza(
+                            lineViews,
+                            formTools.rhymeLexicon,
+                            formTools.catalog,
+                            {
+                                selectedFormId,
+                                rhymeOverrides: formTools.rhymeOverrides,
+                                readingProfile: formTools.readingProfile
+                            }
+                        )
+                        : null;
+                let formAnalysis = analyzeFormsForLines(lines);
+                const inferredBeatForm = !selectedMeterId && !selectedFormId &&
+                    formAnalysis && formAnalysis.bestForm &&
+                    formAnalysis.bestForm.matchLevel === "exact" &&
+                    Array.isArray(formAnalysis.bestForm.meterFits) &&
+                    formAnalysis.bestForm.meterFits.length === lines.length &&
+                    formTools.catalog.forms.find((form) =>
+                        form.id === formAnalysis.bestForm.id &&
+                        Array.isArray(form.beatSequence));
+                if (inferredBeatForm) {
+                    lines = result.lines.map((line, index) =>
+                        lineView(line, "", index, {
+                            formMeterIds: [formAnalysis.bestForm.meterFits[index].id],
+                            dominantMeterId: result.bestCandidate &&
+                                result.bestCandidate.id,
+                            advisoryForm: true
+                        }));
+                    formAnalysis = analyzeFormsForLines(lines);
+                }
                 lines.forEach((line) => {
                     segments.push(...line.syllables);
                     (line.chosenCandidate && line.chosenCandidate.words || [])
@@ -291,24 +348,11 @@
                 const violationCount = lines.reduce((sum, line) =>
                     sum + line.syllables.filter((syllable) => syllable.violation).length,
                 0);
-                const formAnalysis = formTools && formTools.engine &&
-                    formTools.rhymeLexicon && formTools.catalog
-                    ? formTools.engine.analyzeStanza(
-                        lines,
-                        formTools.rhymeLexicon,
-                        formTools.catalog,
-                        {
-                            selectedFormId,
-                            rhymeOverrides: formTools.rhymeOverrides,
-                            readingProfile: formTools.readingProfile
-                        }
-                    )
-                    : null;
                 return {
                     ...frame,
                     lines,
                     scripts: ["english"],
-                    patterns: lines.map((line) => line.pattern),
+                    patterns: lines.map(markedScansionPattern),
                     matraPattern: [],
                     candidates,
                     selectedMeterId,
@@ -333,7 +377,7 @@
                 };
             });
             return {
-                analysisVersion: "english-stress-3.0.0",
+                analysisVersion: "english-stress-3.1.0",
                 analysisSystem: "english-stress",
                 text: source,
                 stanzas,

@@ -196,6 +196,27 @@ test("accentual lines retain their beat count while allowing variable slack", ()
     assert.equal(long.extraCount, 0);
 });
 
+test("contextual function-word stress exposes the beat and anacrusis", () => {
+    const opening = English.analyzeLine(
+        "once there was a bird",
+        lexicon,
+        meters,
+        { selectedMeterId: "english:trochaic-trimeter" }
+    ).selected;
+    const pickup = English.analyzeLine(
+        "a song it never heard",
+        lexicon,
+        meters,
+        { selectedMeterId: "english:iambic-trimeter" }
+    ).selected;
+
+    assert.equal(opening.scansionPattern, "SWSWS");
+    assert.equal(opening.observedLexicalPattern, "SSWWS");
+    assert.equal(opening.anacrusisCount, 0);
+    assert.equal(pickup.scansionPattern, "WSWSWS");
+    assert.equal(pickup.anacrusisCount, 1);
+});
+
 test("sprung rhythm permits adjacent beats and variable stress-led feet", () => {
     const selected = English.analyzeLine(
         "Glory be to God for dappled things",

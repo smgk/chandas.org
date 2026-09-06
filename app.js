@@ -12,7 +12,7 @@
     const ENGLISH_CUSTOM_FORMS_META_KEY = "englishCustomForms.v1";
     const SAVE_DELAY_MS = 280;
     const UPDATE_CHECK_INTERVAL_MS = 15 * 60 * 1000;
-    const ENGLISH_ASSET_VERSION = "3.0.0";
+    const ENGLISH_ASSET_VERSION = "3.1.0";
     const ENGLISH_FORM_ASSET_VERSION = "3.0.0";
     const ENGLISH_ASSETS = Object.freeze({
         engine: `english_analysis.js?v=${ENGLISH_ASSET_VERSION}`,
@@ -161,6 +161,7 @@
             englishUncertain: "Guessed pronunciation",
             englishPattern: "Current stress pattern",
             englishLineSummary: "{lines} line(s) · {stresses} stressed syllable(s)",
+            englishTalaLegend: "|| tāḷa start · before it: anacrusis",
             englishCandidateDetail: "{observed}/{expected} syllables · {feet} {foot} feet",
             englishExact: "Exact",
             englishCompatible: "Compatible",
@@ -195,9 +196,9 @@
             englishFormMeterProgress: "{matching}/{typed} lines fit the rhythm",
             englishFormRhymeProgress: "{matching}/{expected} rhyme links found",
             englishFormPlausibleRhymes: "{count} near or eye rhyme link(s)",
-            englishReviewPronunciation: "Review pronunciation",
-            englishPronunciationHelp: "Choose how a word is spoken here; your choice stays on this device.",
-            englishPronunciation: "Pronunciation",
+            englishReviewPronunciation: "Adjust stress & pronunciation",
+            englishPronunciationHelp: "Tap any word to change its stress or pronunciation in this reading; your choice stays on this device.",
+            englishPronunciation: "Stress & pronunciation",
             englishStressPatternHelp: "Use 0 for weak, 1 for primary stress, and 2 for secondary stress.",
             englishCustomStress: "Custom stress pattern",
             englishUseDictionary: "Use dictionary",
@@ -471,6 +472,7 @@
             englishUncertain: "ಊಹಿಸಿದ ಉಚ್ಚಾರಣೆ",
             englishPattern: "ಪ್ರಸ್ತುತ ಒತ್ತಡ ವಿನ್ಯಾಸ",
             englishLineSummary: "{lines} ಸಾಲು · {stresses} ಒತ್ತಿನ ಅಕ್ಷರಗಳು",
+            englishTalaLegend: "|| ತಾಳದ ಆರಂಭ · ಅದರ ಮುನ್ನ: anacrusis",
             englishCandidateDetail: "{observed}/{expected} ಅಕ್ಷರ · {feet} {foot} ಗಣಗಳು",
             englishExact: "ನಿಖರ",
             englishCompatible: "ಹೊಂದಿಕೆಯಾಗುತ್ತದೆ",
@@ -505,9 +507,9 @@
             englishFormMeterProgress: "{matching}/{typed} ಸಾಲುಗಳ ಲಯ ಹೊಂದುತ್ತದೆ",
             englishFormRhymeProgress: "{matching}/{expected} ಪ್ರಾಸ ಕೊಂಡಿಗಳು ದೊರೆತಿವೆ",
             englishFormPlausibleRhymes: "{count} ಸಮೀಪ ಅಥವಾ ದೃಶ್ಯ ಪ್ರಾಸ ಕೊಂಡಿ(ಗಳು)",
-            englishReviewPronunciation: "ಉಚ್ಚಾರಣೆ ಪರಿಶೀಲಿಸಿ",
-            englishPronunciationHelp: "ಇಲ್ಲಿ ಪದವನ್ನು ಹೇಗೆ ಉಚ್ಚರಿಸಬೇಕು ಎಂದು ಆರಿಸಿ; ಆಯ್ಕೆ ಈ ಸಾಧನದಲ್ಲೇ ಇರುತ್ತದೆ.",
-            englishPronunciation: "ಉಚ್ಚಾರಣೆ",
+            englishReviewPronunciation: "ಒತ್ತು ಮತ್ತು ಉಚ್ಚಾರಣೆ ಸರಿಪಡಿಸಿ",
+            englishPronunciationHelp: "ಈ ವಾಚನದಲ್ಲಿ ಯಾವುದೇ ಪದದ ಒತ್ತು ಅಥವಾ ಉಚ್ಚಾರಣೆಯನ್ನು ಬದಲಿಸಿ; ಆಯ್ಕೆ ಈ ಸಾಧನದಲ್ಲೇ ಇರುತ್ತದೆ.",
+            englishPronunciation: "ಒತ್ತು ಮತ್ತು ಉಚ್ಚಾರಣೆ",
             englishStressPatternHelp: "ದುರ್ಬಲಕ್ಕೆ 0, ಮುಖ್ಯ ಒತ್ತಿಗೆ 1 ಮತ್ತು ಉಪಒತ್ತಿಗೆ 2 ಬಳಸಿ.",
             englishCustomStress: "ಸ್ವಂತ ಒತ್ತು ಮಾದರಿ",
             englishUseDictionary: "ನಿಘಂಟಿನ ಉಚ್ಚಾರಣೆ",
@@ -781,6 +783,7 @@
             englishUncertain: "ఊహించిన ఉచ్చారణ",
             englishPattern: "ప్రస్తుత ఒత్తిడి నమూనా",
             englishLineSummary: "{lines} పంక్తులు · {stresses} ఒత్తు అక్షరాలు",
+            englishTalaLegend: "|| తాళ ప్రారంభం · దానికి ముందు: anacrusis",
             englishCandidateDetail: "{observed}/{expected} అక్షరాలు · {feet} {foot} గణాలు",
             englishExact: "ఖచ్చితం",
             englishCompatible: "సరిపోతుంది",
@@ -815,9 +818,9 @@
             englishFormMeterProgress: "{matching}/{typed} పంక్తుల లయ సరిపోతుంది",
             englishFormRhymeProgress: "{matching}/{expected} ప్రాస జతలు దొరికాయి",
             englishFormPlausibleRhymes: "{count} సమీప లేదా దృశ్య ప్రాస జత(లు)",
-            englishReviewPronunciation: "ఉచ్చారణను పరిశీలించండి",
-            englishPronunciationHelp: "ఇక్కడ పదాన్ని ఎలా పలకాలో ఎంచుకోండి; ఎంపిక ఈ పరికరంలోనే ఉంటుంది.",
-            englishPronunciation: "ఉచ్చారణ",
+            englishReviewPronunciation: "ఒత్తు మరియు ఉచ్చారణను సవరించండి",
+            englishPronunciationHelp: "ఈ పఠనంలో ఏ పదానికైనా ఒత్తు లేదా ఉచ్చారణను మార్చండి; ఎంపిక ఈ పరికరంలోనే ఉంటుంది.",
+            englishPronunciation: "ఒత్తు మరియు ఉచ్చారణ",
             englishStressPatternHelp: "బలహీనానికి 0, ప్రధాన ఒత్తుకు 1, ద్వితీయ ఒత్తుకు 2 వాడండి.",
             englishCustomStress: "స్వంత ఒత్తు నమూనా",
             englishUseDictionary: "నిఘంటు ఉచ్చారణ",
@@ -1091,6 +1094,7 @@
             englishUncertain: "અનુમાનિત ઉચ્ચાર",
             englishPattern: "વર્તમાન ભાર-નમૂનો",
             englishLineSummary: "{lines} પંક્તિ · {stresses} ભારિત અક્ષરો",
+            englishTalaLegend: "|| તાલનો આરંભ · તેની પહેલાં: anacrusis",
             englishCandidateDetail: "{observed}/{expected} અક્ષરો · {feet} {foot} ગણ",
             englishExact: "ચોક્કસ",
             englishCompatible: "અનુકૂળ",
@@ -1125,9 +1129,9 @@
             englishFormMeterProgress: "{matching}/{typed} પંક્તિની લય મળે છે",
             englishFormRhymeProgress: "{matching}/{expected} પ્રાસ કડીઓ મળી",
             englishFormPlausibleRhymes: "{count} નજીકની અથવા દૃશ્ય પ્રાસ કડી(ઓ)",
-            englishReviewPronunciation: "ઉચ્ચાર તપાસો",
-            englishPronunciationHelp: "અહીં શબ્દ કેવી રીતે બોલાય તે પસંદ કરો; પસંદગી આ ઉપકરણમાં જ રહે છે.",
-            englishPronunciation: "ઉચ્ચાર",
+            englishReviewPronunciation: "ભાર અને ઉચ્ચાર સુધારો",
+            englishPronunciationHelp: "આ વાંચનમાં કોઈપણ શબ્દનો ભાર અથવા ઉચ્ચાર બદલો; પસંદગી આ ઉપકરણમાં જ રહે છે.",
+            englishPronunciation: "ભાર અને ઉચ્ચાર",
             englishStressPatternHelp: "નબળા માટે 0, મુખ્ય ભાર માટે 1 અને ગૌણ ભાર માટે 2 વાપરો.",
             englishCustomStress: "પોતાની ભાર-રચના",
             englishUseDictionary: "શબ્દકોશનો ઉચ્ચાર",
@@ -3537,7 +3541,11 @@
             start: segment.start,
             end: segment.end,
             className: [
-                segment.lexicalStress > 0 ? "english-strong" : "english-weak",
+                segment.scansionStress
+                    ? segment.scansionStress === "S"
+                        ? "english-strong" : "english-weak"
+                    : segment.lexicalStress > 0
+                        ? "english-strong" : "english-weak",
                 segment.expectedStress === "S" &&
                     segment.expectedIndex !== null ? "english-beat" : "",
                 segment.violation ? "violation" : "",
@@ -4299,12 +4307,12 @@
         for (const line of stanza && stanza.lines || []) {
             for (const word of line.chosenCandidate &&
                 line.chosenCandidate.words || []) {
-                const alternatives = word.pronunciationAlternatives || [word.stress];
+                const listed = word.pronunciationAlternatives || [word.stress];
+                const alternatives = word.stress.length === 1
+                    ? [...new Set([...listed, "0", "1"])]
+                    : listed;
                 const key = `${word.start}:${word.end}`;
-                if (seen.has(key) ||
-                    (alternatives.length < 2 &&
-                        word.pronunciationConfidence !== "guessed" &&
-                        word.contextualRole === "unknown")) {
+                if (seen.has(key)) {
                     continue;
                 }
                 seen.add(key);
@@ -4622,11 +4630,15 @@
         });
         elements["pattern-block"].hidden = false;
         elements["active-pattern"].textContent = stanza.patterns.join(" / ") || "—";
-        elements["active-matras"].textContent = t("englishLineSummary", {
+        const lineSummary = t("englishLineSummary", {
             lines: stanza.lines.length,
             stresses: stanza.lines.reduce((sum, line) =>
                 sum + line.stressCount, 0)
         });
+        elements["active-matras"].textContent = stanza.lines.some((line) =>
+            line.anacrusisCount > 0)
+            ? `${lineSummary} · ${t("englishTalaLegend")}`
+            : lineSummary;
         elements["suggestion-heading"].hidden = false;
         elements["candidate-list"].hidden = false;
         elements["show-template"].disabled = !selectedMeter;

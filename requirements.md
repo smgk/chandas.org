@@ -743,6 +743,13 @@ recommended, and optional behavior.
     the writer's private form, stored on-device, and included in full backup.
 27. Items 21–26 MUST activate only in explicit English stress mode and MUST NOT
     change Indic catalogs, analysis, templates, or startup behavior.
+28. English scansion MUST distinguish dictionary stress from contextual poetic
+    stress. Common monosyllabic function words MAY be promoted or demoted by
+    the metrical reading, and the writer MUST be able to override any word
+    locally. For beat-led and inferred beat forms, the current pattern MUST
+    mark the first tāḷa beat with `||`; syllables before that marker are the
+    anacrusis. An automatically inferred form remains advisory and MUST NOT
+    create red departure marks.
 
 ## 6. Analysis Engine Requirements
 

@@ -5,7 +5,7 @@ SPDX-License-Identifier: GPL-3.0-only
 
 # English rhyme and named forms — M5 rule packet
 
-**Status:** English Ear v2 and advanced M6/M7 implemented in version 1.60.0
+**Status:** English Ear v2 and advanced M6/M7 implemented in version 1.61.0
 **Updated:** 2026-09-05
 
 ## Scope
@@ -35,6 +35,14 @@ not claim genuine Old English language or Sievers-type classification.
 The compact “English ear tools” disclosure also contains on-device custom-form
 learning. Strong guidance uses whole-word phrase cells, never rewritten or
 synthetically split spelling.
+
+The dictionary supplies lexical possibilities, not a final performance.
+Monosyllabic function words can be promoted or demoted when a line's rhythm
+supports that reading. **Adjust stress & pronunciation** exposes every word so
+the writer can store a different local reading. In displayed scansion, `||`
+marks the first beat—the entry of the tāḷa—and anything before it is anacrusis.
+An exact inferred beat-form may guide this display line by line, but it remains
+advisory and therefore cannot create red errors.
 
 ## Data and reproducibility
 

@@ -5,8 +5,8 @@
 
 "use strict";
 
-const CACHE_NAME = "chandas-shell-v74";
-const ENGLISH_CACHE_NAME = "chandas-english-v9";
+const CACHE_NAME = "chandas-shell-v75";
+const ENGLISH_CACHE_NAME = "chandas-english-v10";
 const UPDATE_UI_BOOTSTRAP_CACHE = "chandas-shell-v30";
 const ENGLISH_ASSET_PATHS = [
     "/english_analysis.js",
